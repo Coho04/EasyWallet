@@ -33,8 +33,14 @@ dependencies:
   provider: ^6.0.0
   sqflite: ^2.0.0+3
   path_provider: ^2.0.7
-  workmanager: ^0.4.1
-  flutter_local_notifications: ^9.1.4
+  workmanager: ^0.5.2
+  flutter_local_notifications: ^17.2.1
+  intl: ^0.19.0
+  cached_network_image: ^3.2.1
+  shared_preferences: ^2.0.6
+  universal_io: ^2.0.4
+  syncfusion_flutter_charts : ^26.1.39
+  url_launcher: ^6.3.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -50,7 +56,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

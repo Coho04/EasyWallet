@@ -53,6 +53,15 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'org.jetbrains.kotlin' && details.requested.name.contains('kotlin')) {
+            details.useVersion '1.8.10' // Verwenden Sie hier die gewünschte Kotlin-Version
+        }
+    }
+}
+
+
 flutter {
     source = "../.."
 }
