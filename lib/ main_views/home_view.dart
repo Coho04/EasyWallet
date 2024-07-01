@@ -17,6 +17,7 @@ class _HomeViewState extends State<HomeView> {
   bool isAnnual = false;
   String searchText = "";
   SortOption sortOption = SortOption.remainingDaysAscending;
+  String paymentRate = "Monatlich";
 
   List<Subscription> subscriptions = [];
 
@@ -30,7 +31,8 @@ class _HomeViewState extends State<HomeView> {
     try {
       if (!kIsWeb) {
         final persistenceController = PersistenceController.instance;
-        final loadedSubscriptions = await persistenceController.getAllSubscriptions();
+        final loadedSubscriptions =
+        await persistenceController.getAllSubscriptions();
         setState(() {
           subscriptions = loadedSubscriptions;
         });
@@ -63,14 +65,34 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     final filteredSubscriptions = subscriptions.where((subscription) {
-      return subscription.title!.toLowerCase().contains(searchText.toLowerCase());
+      return subscription.title.toLowerCase().contains(searchText.toLowerCase());
     }).toList();
+
+    double totalAmount =
+    subscriptions.fold(0, (sum, subscription) => sum + subscription.amount);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Subscriptions'),
-        actions: const [
-          // Add sorting and navigation actions here
+        leading: IconButton(
+          onPressed: () {
+            // Handle sorting logic
+          },
+          icon: const Icon(Icons.sort),
+        ),
+        title: const Text('Abonnements'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const SubscriptionCreateView()),
+              ).then((value) {
+                _loadSubscriptions();
+              });
+            },
+            icon: const Icon(Icons.add),
+          ),
         ],
       ),
       body: Column(
@@ -79,7 +101,7 @@ class _HomeViewState extends State<HomeView> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               decoration: const InputDecoration(
-                labelText: 'Search',
+                labelText: 'Suchen',
                 border: OutlineInputBorder(),
               ),
               onChanged: (value) {
@@ -87,6 +109,34 @@ class _HomeViewState extends State<HomeView> {
                   searchText = value;
                 });
               },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Bezahlungsrate',
+                ),
+                DropdownButton<String>(
+                  value: paymentRate,
+                  items: ['Monatlich', 'Jährlich']
+                      .map((rate) => DropdownMenuItem<String>(
+                    value: rate,
+                    child: Text(rate),
+                  ))
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      paymentRate = value!;
+                    });
+                  },
+                ),
+                Text(
+                  '${totalAmount.toStringAsFixed(2)} €',
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -101,18 +151,6 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const SubscriptionCreateView()),
-          ).then((value) {
-            // Reload the subscriptions after returning from the create view
-            _loadSubscriptions();
-          });
-        },
-        child: const Icon(Icons.add),
       ),
     );
   }

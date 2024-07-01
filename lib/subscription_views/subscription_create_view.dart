@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_wallet/model/subscription.dart';
-import 'package:easy_wallet/persistence_controller.dart'; // Assuming this file contains PersistenceController class
+import 'package:easy_wallet/persistence_controller.dart';
 
 class SubscriptionCreateView extends StatefulWidget {
   const SubscriptionCreateView({super.key});
@@ -16,18 +16,25 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   final _urlController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  String _selectedPayRate = 'Monthly';
-  String _selectedRememberCycle = 'SameDay';
+  String _selectedPayRate = 'Monatlich';
+  String _selectedRememberCycle = 'Am selben Tag';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Subscription'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text('Abo hinzufügen'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
+          TextButton(
+            key: const Key('save_button'),
             onPressed: _isFormValid() ? _saveItem : null,
+            child: const Text('Speichern', style: TextStyle(color: Colors.grey)),
           ),
         ],
       ),
@@ -40,6 +47,7 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
               decoration: const InputDecoration(labelText: 'Title'),
               autocorrect: false,
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: _urlController,
               decoration: const InputDecoration(labelText: 'URL'),
@@ -53,12 +61,13 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 }
               },
             ),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: _amountController,
-                    decoration: const InputDecoration(labelText: 'Amount'),
+                    decoration: const InputDecoration(labelText: 'Anzahl'),
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     autocorrect: false,
                   ),
@@ -67,15 +76,17 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 const Text('Euro'),
               ],
             ),
+            const SizedBox(height: 16),
             ListTile(
-              title: Text('Start Date: ${DateFormat.yMd().format(_selectedDate)}'),
-              trailing: const Icon(Icons.calendar_today),
+              title: const Text('Start Datum'),
+              trailing: Text(DateFormat('dd.MM.yyyy').format(_selectedDate)),
               onTap: _pickDate,
             ),
+            const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              decoration: const  InputDecoration(labelText: 'Payment rate'),
+              decoration: const InputDecoration(labelText: 'Bezahlungsrate'),
               value: _selectedPayRate,
-              items: ['Monthly', 'Yearly', 'Weekly'].map((String value) {
+              items: ['Monatlich', 'Jährlich'].map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -87,10 +98,11 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 });
               },
             ),
+            const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              decoration: const  InputDecoration(labelText: 'Remind me'),
+              decoration: const InputDecoration(labelText: 'Erinnern Sie mich'),
               value: _selectedRememberCycle,
-              items: ['SameDay', 'OneDayBefore', 'TwoDaysBefore', 'OneWeekBefore'].map((String value) {
+              items: ['Am selben Tag', 'Ein Tag vorher', 'Zwei Tage vorher', 'Eine Woche vorher'].map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -102,12 +114,34 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 });
               },
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: _notesController,
-              decoration: const InputDecoration(labelText: 'Notes'),
+              decoration: const InputDecoration(labelText: 'Notizen'),
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.subscriptions),
+            label: 'Abonnements',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart),
+            label: 'Statistiken',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Einstellungen',
+          ),
+        ],
+        currentIndex: 0,
+        selectedItemColor: Colors.blue,
+        onTap: (index) {
+          // Handle navigation
+        },
       ),
     );
   }

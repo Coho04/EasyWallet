@@ -1,12 +1,12 @@
 import 'package:easy_wallet/%20main_views/home_view.dart';
 import 'package:easy_wallet/%20main_views/settings_view.dart';
-import 'package:easy_wallet/background_task_manager.dart';
 import 'package:easy_wallet/%20main_views/statistic_view.dart';
+import 'package:easy_wallet/background_task_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart';
-import 'package:flutter/foundation.dart'; // Import for kIsWeb
-import 'persistence_controller.dart'; // Import the PersistenceController
+import 'package:flutter/foundation.dart';
+import 'persistence_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,8 +14,12 @@ void main() async {
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   const AndroidInitializationSettings initializationSettingsAndroid =
   AndroidInitializationSettings('@mipmap/ic_launcher');
+  const DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
+    onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+  );
   const InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
+    iOS: initializationSettingsDarwin,
   );
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
@@ -42,6 +46,11 @@ void callbackDispatcher() {
 
 Future selectNotification(String? payload) async {
   // Handle notification tapped logic here
+}
+
+Future onDidReceiveLocalNotification(
+    int id, String? title, String? body, String? payload) async {
+  // Handle local notification received logic here
 }
 
 class EasyWalletApp extends StatelessWidget {
@@ -90,16 +99,16 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.subscriptions),
+            label: 'Abonnements',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart),
-            label: 'Statistics',
+            label: 'Statistiken',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            label: 'Settings',
+            label: 'Einstellungen',
           ),
         ],
         currentIndex: _selectedIndex,
