@@ -30,7 +30,7 @@ class SubscriptionItem extends StatelessWidget {
             _convertedPrice(subscription),
             style: TextStyle(
               fontSize: 12,
-              color: subscription.isPaused ? Colors.grey : Colors.black,
+              // color: subscription.isPaused ? Colors.grey : Colors.black,
             ),
           ),
           Row(
@@ -39,7 +39,7 @@ class SubscriptionItem extends StatelessWidget {
                 _remainingDays(subscription) ?? 'Unknown',
                 style: TextStyle(
                   fontSize: 12,
-                  color: subscription.isPaused ? Colors.grey : Colors.black,
+                  // color: subscription.isPaused ? Colors.grey : Colors.black,
                 ),
               ),
               const SizedBox(width: 4),
@@ -47,7 +47,7 @@ class SubscriptionItem extends StatelessWidget {
                 'Days',
                 style: TextStyle(
                   fontSize: 12,
-                  color: subscription.isPaused ? Colors.grey : Colors.black,
+                  // color: subscription.isPaused ? Colors.grey : Colors.black,
                 ),
               ),
             ],

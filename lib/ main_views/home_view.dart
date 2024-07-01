@@ -1,3 +1,4 @@
+import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/model/subscription_item.dart';
 import 'package:flutter/foundation.dart';
@@ -31,13 +32,11 @@ class _HomeViewState extends State<HomeView> {
     try {
       if (!kIsWeb) {
         final persistenceController = PersistenceController.instance;
-        final loadedSubscriptions =
-        await persistenceController.getAllSubscriptions();
+        final loadedSubscriptions = await persistenceController.getAllSubscriptions();
         setState(() {
           subscriptions = loadedSubscriptions;
         });
       } else {
-        // Handle web version
         setState(() {
           subscriptions = [
             Subscription(
@@ -64,12 +63,19 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredSubscriptions = subscriptions.where((subscription) {
+    final filteredYearSubscriptions = subscriptions.where((subscription) {
       return subscription.title.toLowerCase().contains(searchText.toLowerCase());
+    }).where((subscription) {
+      return subscription.repeatPattern == PaymentRate.yearly.value;
     }).toList();
 
-    double totalAmount =
-    subscriptions.fold(0, (sum, subscription) => sum + subscription.amount);
+    final filteredMonthlySubscriptions = subscriptions.where((subscription) {
+      return subscription.title.toLowerCase().contains(searchText.toLowerCase());
+    }).where((subscription) {
+      return subscription.repeatPattern == PaymentRate.monthly.value;
+    }).toList();
+
+    double totalAmount = subscriptions.fold(0, (sum, subscription) => sum + subscription.amount);
 
     return Scaffold(
       appBar: AppBar(
@@ -77,80 +83,100 @@ class _HomeViewState extends State<HomeView> {
           onPressed: () {
             // Handle sorting logic
           },
-          icon: const Icon(Icons.sort),
+          icon: const Icon(Icons.sort, color: Colors.blueAccent),
         ),
-        title: const Text('Abonnements'),
+        title: const Text('Abonnements', style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           IconButton(
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => const SubscriptionCreateView()),
+                MaterialPageRoute(builder: (context) => const SubscriptionCreateView()),
               ).then((value) {
                 _loadSubscriptions();
               });
             },
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.add, color: Colors.blueAccent),
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Suchen',
-                border: OutlineInputBorder(),
+      body: Container(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                decoration: const InputDecoration(
+                  labelText: 'Suchen',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueAccent),
+                  ),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    searchText = value;
+                  });
+                },
               ),
-              onChanged: (value) {
-                setState(() {
-                  searchText = value;
-                });
-              },
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Bezahlungsrate',
-                ),
-                DropdownButton<String>(
-                  value: paymentRate,
-                  items: ['Monatlich', 'Jährlich']
-                      .map((rate) => DropdownMenuItem<String>(
-                    value: rate,
-                    child: Text(rate),
-                  ))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      paymentRate = value!;
-                    });
-                  },
-                ),
-                Text(
-                  '${totalAmount.toStringAsFixed(2)} €',
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Bezahlungsrate'),
+                  DropdownButton<String>(
+                    value: paymentRate,
+                    items: ['Monatlich', 'Jährlich'].map((rate) => DropdownMenuItem<String>(
+                      value: rate,
+                      child: Text(rate),
+                    )).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        paymentRate = value!;
+                      });
+                    },
+                  ),
+                  Text('${totalAmount.toStringAsFixed(2)} €'),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredSubscriptions.length,
-              itemBuilder: (context, index) {
-                return SubscriptionItem(
-                  subscription: filteredSubscriptions[index],
-                  isAnnual: isAnnual,
-                );
-              },
+            Expanded(
+              child: ListView.builder(
+                itemCount: filteredMonthlySubscriptions.length,
+                itemBuilder: (context, index) {
+                  return SubscriptionItem(
+                    subscription: filteredMonthlySubscriptions[index],
+                    isAnnual: isAnnual,
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Yearly', style: TextStyle(color: Colors.white)),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: filteredYearSubscriptions.length,
+                itemBuilder: (context, index) {
+                  return SubscriptionItem(
+                    subscription: filteredYearSubscriptions[index],
+                    isAnnual: isAnnual,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'package:easy_wallet/enum/payment_rate.dart';
+import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_wallet/model/subscription.dart';
@@ -16,8 +18,8 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   final _urlController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  String _selectedPayRate = 'Monatlich';
-  String _selectedRememberCycle = 'Am selben Tag';
+  String _selectedPayRate = PaymentRate.monthly.value;
+  String _selectedRememberCycle = RememberCycle.sameDay.value;
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +31,12 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
             Navigator.of(context).pop();
           },
         ),
-        title: const Text('Abo hinzufügen'),
+        title: const Text('Abo hinzufügen', style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           TextButton(
             key: const Key('save_button'),
             onPressed: _isFormValid() ? _saveItem : null,
-            child: const Text('Speichern', style: TextStyle(color: Colors.grey)),
+            child: const Text('Speichern', style: TextStyle(color: Colors.blueAccent)),
           ),
         ],
       ),
@@ -44,20 +46,37 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
           children: [
             TextField(
               controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Title'),
+              decoration: const InputDecoration(
+                labelText: 'Title',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
+              ),
               autocorrect: false,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _urlController,
-              decoration: const InputDecoration(labelText: 'URL'),
+              decoration: const InputDecoration(
+                labelText: 'URL',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
+              ),
               keyboardType: TextInputType.url,
               autocorrect: false,
               onChanged: (value) {
                 if (!value.startsWith('https://')) {
                   _urlController.text = 'https://${value.replaceFirst('https://', '')}';
                   _urlController.selection = TextSelection.fromPosition(
-                      TextPosition(offset: _urlController.text.length));
+                    TextPosition(offset: _urlController.text.length),
+                  );
                 }
               },
             ),
@@ -67,7 +86,15 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 Expanded(
                   child: TextField(
                     controller: _amountController,
-                    decoration: const InputDecoration(labelText: 'Anzahl'),
+                    decoration: const InputDecoration(
+                      labelText: 'Anzahl',
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blueAccent),
+                      ),
+                    ),
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     autocorrect: false,
                   ),
@@ -84,9 +111,17 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              decoration: const InputDecoration(labelText: 'Bezahlungsrate'),
+              decoration: const InputDecoration(
+                labelText: 'Bezahlungsrate',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
+              ),
               value: _selectedPayRate,
-              items: ['Monatlich', 'Jährlich'].map((String value) {
+              items: PaymentRate.all().map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -100,9 +135,17 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              decoration: const InputDecoration(labelText: 'Erinnern Sie mich'),
+              decoration: const InputDecoration(
+                labelText: 'Erinnern Sie mich',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
+              ),
               value: _selectedRememberCycle,
-              items: ['Am selben Tag', 'Ein Tag vorher', 'Zwei Tage vorher', 'Eine Woche vorher'].map((String value) {
+              items: RememberCycle.all().map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -117,31 +160,19 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
             const SizedBox(height: 16),
             TextField(
               controller: _notesController,
-              decoration: const InputDecoration(labelText: 'Notizen'),
+              decoration: const InputDecoration(
+                labelText: 'Notizen',
+                labelStyle: TextStyle(color: Colors.white70),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blueAccent),
+                ),
+              ),
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.subscriptions),
-            label: 'Abonnements',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Statistiken',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Einstellungen',
-          ),
-        ],
-        currentIndex: 0,
-        selectedItemColor: Colors.blue,
-        onTap: (index) {
-          // Handle navigation
-        },
       ),
     );
   }

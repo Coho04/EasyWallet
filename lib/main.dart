@@ -63,6 +63,8 @@ class EasyWalletApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      darkTheme: ThemeData.dark(), // standard dark theme
+      themeMode: ThemeMode.system, // device controls theme
       home: const MainScreen(), // Use MainScreen as home
     );
   }
