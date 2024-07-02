@@ -2,7 +2,7 @@ import 'package:easy_wallet/%20main_views/home_view.dart';
 import 'package:easy_wallet/%20main_views/settings_view.dart';
 import 'package:easy_wallet/%20main_views/statistic_view.dart';
 import 'package:easy_wallet/background_task_manager.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:flutter/foundation.dart';
@@ -13,8 +13,9 @@ void main() async {
 
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   const AndroidInitializationSettings initializationSettingsAndroid =
-  AndroidInitializationSettings('@mipmap/ic_launcher');
-  const DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings(
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+  const DarwinInitializationSettings initializationSettingsDarwin =
+      DarwinInitializationSettings(
     onDidReceiveLocalNotification: onDidReceiveLocalNotification,
   );
   const InitializationSettings initializationSettings = InitializationSettings(
@@ -24,8 +25,8 @@ void main() async {
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) async {
-        selectNotification(response.payload);
-      });
+    selectNotification(response.payload);
+  });
 
   if (!kIsWeb) {
     Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
@@ -58,14 +59,12 @@ class EasyWalletApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const CupertinoApp(
       title: 'EasyWallet',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      theme: CupertinoThemeData(
+        primaryColor: CupertinoColors.activeBlue,
       ),
-      darkTheme: ThemeData.dark(), // standard dark theme
-      themeMode: ThemeMode.system, // device controls theme
-      home: const MainScreen(), // Use MainScreen as home
+      home: MainScreen(),
     );
   }
 }
@@ -94,29 +93,34 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
+    return CupertinoTabScaffold(
+      tabBar: CupertinoTabBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.subscriptions),
+            icon: Icon(CupertinoIcons.creditcard_fill),
             label: 'Abonnements',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
+            icon: Icon(CupertinoIcons.chart_bar_fill),
             label: 'Statistiken',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
+            icon: Icon(CupertinoIcons.settings),
             label: 'Einstellungen',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
         onTap: _onItemTapped,
       ),
+      tabBuilder: (context, index) {
+        return CupertinoTabView(
+          builder: (context) {
+            return CupertinoPageScaffold(
+              child: _widgetOptions[index],
+            );
+          },
+        );
+      },
     );
   }
 }

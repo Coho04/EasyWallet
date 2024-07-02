@@ -1,8 +1,7 @@
-import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/model/subscription_item.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:easy_wallet/persistence_controller.dart';
 import 'package:easy_wallet/subscription_views/subscription_create_view.dart';
 
@@ -14,11 +13,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  double monthlyLimit = 0.0;
-  bool isAnnual = false;
   String searchText = "";
-  SortOption sortOption = SortOption.remainingDaysAscending;
-  String paymentRate = "Monatlich";
 
   List<Subscription> subscriptions = [];
 
@@ -32,7 +27,8 @@ class _HomeViewState extends State<HomeView> {
     try {
       if (!kIsWeb) {
         final persistenceController = PersistenceController.instance;
-        final loadedSubscriptions = await persistenceController.getAllSubscriptions();
+        final loadedSubscriptions =
+        await persistenceController.getAllSubscriptions();
         setState(() {
           subscriptions = loadedSubscriptions;
         });
@@ -50,7 +46,6 @@ class _HomeViewState extends State<HomeView> {
               title: 'Netflix',
               url: 'https://www.netflix.com',
             ),
-            // Add more subscriptions as needed
           ];
         });
       }
@@ -63,58 +58,34 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredYearSubscriptions = subscriptions.where((subscription) {
-      return subscription.title.toLowerCase().contains(searchText.toLowerCase());
-    }).where((subscription) {
-      return subscription.repeatPattern == PaymentRate.yearly.value;
-    }).toList();
-
-    final filteredMonthlySubscriptions = subscriptions.where((subscription) {
-      return subscription.title.toLowerCase().contains(searchText.toLowerCase());
-    }).where((subscription) {
-      return subscription.repeatPattern == PaymentRate.monthly.value;
+    final filteredSubscriptions = subscriptions.where((subscription) {
+      return subscription.title!
+          .toLowerCase()
+          .contains(searchText.toLowerCase());
     }).toList();
 
     double totalAmount = subscriptions.fold(0, (sum, subscription) => sum + subscription.amount);
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            // Handle sorting logic
-          },
-          icon: const Icon(Icons.sort, color: Colors.blueAccent),
-        ),
-        title: const Text('Abonnements', style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SubscriptionCreateView()),
-              ).then((value) {
-                _loadSubscriptions();
-              });
-            },
-            icon: const Icon(Icons.add, color: Colors.blueAccent),
-          ),
-        ],
-      ),
-      body: Container(
-        child: Column(
+    double monthlySpent = subscriptions.where((subscription) {
+      final now = DateTime.now();
+      return subscription.date != null &&
+          subscription.date!.year == now.year &&
+          subscription.date!.month == now.month;
+    }).fold(0, (sum, subscription) => sum + subscription.amount);
+
+    double yearlySpent = subscriptions.where((subscription) {
+      final now = DateTime.now();
+      return subscription.date != null && subscription.date!.year == now.year;
+    }).fold(0, (sum, subscription) => sum + subscription.amount);
+
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                decoration: const InputDecoration(
-                  labelText: 'Suchen',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueAccent),
-                  ),
-                ),
+            SizedBox(
+              height: 36,
+              child: CupertinoSearchTextField(
+                placeholder: 'Suchen',
                 onChanged: (value) {
                   setState(() {
                     searchText = value;
@@ -122,71 +93,102 @@ class _HomeViewState extends State<HomeView> {
                 },
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Bezahlungsrate'),
-                  DropdownButton<String>(
-                    value: paymentRate,
-                    items: ['Monatlich', 'Jährlich'].map((rate) => DropdownMenuItem<String>(
-                      value: rate,
-                      child: Text(rate),
-                    )).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        paymentRate = value!;
-                      });
-                    },
-                  ),
-                  Text('${totalAmount.toStringAsFixed(2)} €'),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: filteredMonthlySubscriptions.length,
-                itemBuilder: (context, index) {
-                  return SubscriptionItem(
-                    subscription: filteredMonthlySubscriptions[index],
-                    isAnnual: isAnnual,
-                  );
-                },
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Yearly', style: TextStyle(color: Colors.white)),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: filteredYearSubscriptions.length,
-                itemBuilder: (context, index) {
-                  return SubscriptionItem(
-                    subscription: filteredYearSubscriptions[index],
-                    isAnnual: isAnnual,
-                  );
-                },
-              ),
-            ),
           ],
         ),
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            // Handle sorting logic
+          },
+          child: const Icon(CupertinoIcons.arrow_up_arrow_down,
+              color: CupertinoColors.activeBlue),
+        ),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => const SubscriptionCreateView(),
+              ),
+            ).then((value) {
+              _loadSubscriptions();
+            });
+          },
+          child:
+          const Icon(CupertinoIcons.add, color: CupertinoColors.activeBlue),
+        ),
+      ),
+      child: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 100,
+            child: Center(
+              child: Text(
+                'Abonnements',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Ausgaben diesen Monat',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: CupertinoColors.systemGrey,
+                      ),
+                    ),
+                    Text(
+                      '${monthlySpent.toStringAsFixed(2)} €',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Text(
+                      'Ausgaben dieses Jahr',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: CupertinoColors.systemGrey,
+                      ),
+                    ),
+                    Text(
+                      '${yearlySpent.toStringAsFixed(2)} €',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: filteredSubscriptions.length,
+              itemBuilder: (context, index) {
+                return SubscriptionItem(
+                  subscription: filteredSubscriptions[index],
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
-}
-
-enum SortOption {
-  alphabeticalAscending,
-  alphabeticalDescending,
-  costAscending,
-  costDescending,
-  remainingDaysAscending,
-  remainingDaysDescending,
 }

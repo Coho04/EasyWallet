@@ -1,143 +1,230 @@
-import 'package:easy_wallet/model/subscription.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'subscription_edit_view.dart'; // Assuming this file contains SubscriptionEditView class
-import 'package:easy_wallet/persistence_controller.dart'; // Assuming this file contains PersistenceController class
+import 'subscription_edit_view.dart';
+import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/persistence_controller.dart';
 
-class SubscriptionDetailView extends StatelessWidget {
+class SubscriptionDetailView extends StatefulWidget {
   final Subscription subscription;
 
   const SubscriptionDetailView({super.key, required this.subscription});
 
   @override
+  _SubscriptionDetailViewState createState() => _SubscriptionDetailViewState();
+}
+
+class _SubscriptionDetailViewState extends State<SubscriptionDetailView> {
+  late Subscription subscription;
+
+  @override
+  void initState() {
+    super.initState();
+    subscription = widget.subscription;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Subscriptions'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        SubscriptionEditView(subscription: subscription)),
-              );
-            },
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: const Text('Abonnements'),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) =>
+                    SubscriptionEditView(subscription: subscription),
+              ),
+            );
+          },
+          child: const Icon(CupertinoIcons.pencil),
+        ),
+      ),
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.only(left: 16.0, right: 16),
+              children: <Widget>[
+                _buildHeader(),
+                const SizedBox(height: 20),
+                _buildCardSection('Allgemeine Informationen', [
+                  _buildDetailRow('Kosten', '${subscription.amount.toStringAsFixed(2)} €'),
+                  _buildDetailRow('Wiederholungsrate', _repeatPattern(subscription)),
+                ]),
+                const SizedBox(height: 20),
+                _buildCardSection('Rechnungsinformationen', [
+                  _buildDetailRow('Nächste Rechnung', _formatDate(_calculateNextBillDate(subscription))),
+                  _buildDetailRow('Vorherige Rechnung', _formatDate(_calculatePreviousBillDate(subscription))),
+                  _buildDetailRow('Erste Abbuchung', _formatDate(subscription.date)),
+                  _buildDetailRow('Erstellt am', _formatDateTime(subscription.timestamp)),
+                ]),
+                const SizedBox(height: 20),
+                _buildCardSection('Zusätzliche Informationen', [
+                  _buildDetailRow('Bisherige Abbuchungen', _countPayment(subscription).toString()),
+                  _buildDetailRow('Kosten insgesamt', '${_sumPayment(subscription).toStringAsFixed(2)} €'),
+                  if (subscription.notes != null && subscription.notes!.trim().isNotEmpty)
+                    _buildDetailRow('Notizen', subscription.notes!),
+                ]),
+                const SizedBox(height: 20),
+                _buildCardSection('Aktionen', [
+                  _buildAction(
+                    subscription.isPinned ? 'Dieses Abonnement lösen' : 'Dieses Abonnement anheften',
+                    subscription.isPinned ? CupertinoIcons.pin_slash : CupertinoIcons.pin,
+                        () => _togglePin(),
+                    color: subscription.isPinned ? CupertinoColors.systemBlue : null,
+                  ),
+                  _buildAction(
+                    subscription.isPaused ? 'Dieses Abonnement fortsetzen' : 'Dieses Abonnement pausieren',
+                    subscription.isPaused ? CupertinoIcons.play_arrow_solid : CupertinoIcons.pause,
+                        () => _togglePause(),
+                  ),
+                  _buildAction(
+                    'Dieses Abonnement löschen',
+                    CupertinoIcons.delete,
+                        () => _deleteItem(),
+                    color: CupertinoColors.destructiveRed,
+                  ),
+                ]),
+              ],
+            ),
           ),
         ],
       ),
-      body: ListView(
+    );
+  }
+
+  Widget _buildCardSection(String title, List<Widget> children) {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: CupertinoColors.systemGrey6,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: const [
+          BoxShadow(
+            color: CupertinoColors.systemGrey4,
+            blurRadius: 10.0,
+            spreadRadius: 1.0,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (subscription.url != null)
-            ListTile(
-              leading: CachedNetworkImage(
-                imageUrl:
-                    'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
-                placeholder: (context, url) =>
-                    const CircularProgressIndicator(),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-                width: 20,
-                height: 20,
-              ),
-              title: Text(subscription.title ?? 'Unknown',
-                  style: const TextStyle(fontSize: 24)),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
-          _buildDetailRow('Costs',
-              '${subscription.amount.toStringAsFixed(2)} € ${_repeatPattern(subscription)}'),
-          _buildDetailRow(
-              'Next invoice',
-              _calculateNextBillDate(subscription) != null
-                  ? DateFormat.yMMMd()
-                      .format(_calculateNextBillDate(subscription)!)
-                  : ''),
-          _buildDetailRow(
-              'Previous invoice',
-              _calculatePreviousBillDate(subscription) != null
-                  ? DateFormat.yMMMd()
-                      .format(_calculatePreviousBillDate(subscription)!)
-                  : ''),
-          _buildDetailRow(
-              'Created on',
-              subscription.timestamp != null
-                  ? DateFormat('EEEE, dd.MM.yyyy HH:mm')
-                      .format(subscription.timestamp!)
-                  : 'Unknown'),
-          if (subscription.notes != null &&
-              subscription.notes!.trim().isNotEmpty)
-            _buildDetailRow('Notes', subscription.notes!),
-          _buildActions(context),
+          ),
+          const SizedBox(height: 10),
+          ...children,
         ],
       ),
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
-    return ListTile(
-      title: Text(label,
-          style:
-              const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
-      subtitle: Text(value),
-    );
-  }
-
-  Widget _buildActions(BuildContext context) {
-    return Column(
+  Widget _buildHeader() {
+    return Row(
       children: [
-        _buildAction(
-          context,
-          subscription.isPinned
-              ? 'Unpin this subscription.'
-              : 'Pin this subscription',
-          subscription.isPinned ? Icons.push_pin_outlined : Icons.push_pin,
-          () => _togglePin(context),
+        CachedNetworkImage(
+          imageUrl: _subscriptionUrl(),
+          placeholder: (context, url) =>
+          const CupertinoActivityIndicator(),
+          errorWidget: (context, url, error) =>
+          const Icon(CupertinoIcons.exclamationmark_triangle),
+          width: 40,
+          height: 40,
         ),
-        _buildAction(
-          context,
-          subscription.isPaused
-              ? 'Continue this subscription'
-              : 'Pause this subscription',
-          subscription.isPaused ? Icons.play_arrow : Icons.pause,
-          () => _togglePause(context),
-        ),
-        _buildAction(
-          context,
-          'Delete this subscription',
-          Icons.delete,
-          () => _deleteItem(context),
-          color: Colors.red,
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            subscription.title,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildAction(
-      BuildContext context, String label, IconData icon, VoidCallback onTap,
-      {Color? color}) {
-    return ListTile(
-      title: Text(label),
-      trailing: Icon(icon, color: color),
-      onTap: onTap,
+  Widget _buildDetailRow(String label, String value) {
+    return CupertinoFormRow(
+      prefix: Text(
+        label,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: CupertinoColors.systemGrey,
+        ),
+      ),
+      child: Text(value, style: const TextStyle(fontSize: 16)),
     );
   }
 
-  void _togglePin(BuildContext context) {
-    subscription.isPinned = !subscription.isPinned;
-    _saveItem(context);
+  Widget _buildAction(String label, IconData icon, VoidCallback onTap, {Color? color}) {
+    return CupertinoFormRow(
+      child: CupertinoButton(
+        padding: EdgeInsets.zero,
+        onPressed: onTap,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: color ?? CupertinoColors.systemGrey,
+              ),
+            ),
+            Icon(icon, color: color ?? CupertinoColors.systemGrey),
+          ],
+        ),
+      ),
+    );
   }
 
-  void _togglePause(BuildContext context) {
-    subscription.isPaused = !subscription.isPaused;
-    _saveItem(context);
+  void _togglePin() {
+    setState(() {
+      subscription.isPinned = !subscription.isPinned;
+    });
+    _saveItem();
   }
 
-  Future<void> _deleteItem(BuildContext context) async {
+  void _togglePause() {
+    setState(() {
+      subscription.isPaused = !subscription.isPaused;
+    });
+    _saveItem();
+  }
+
+  String _subscriptionUrl() {
+    if (subscription.url != null) {
+      return 'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}';
+    }
+    return '';
+  }
+
+  Future<void> _deleteItem() async {
     if (kIsWeb) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Deletion is not supported on the web')),
+      showCupertinoDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: const Text('Hinweis'),
+          content: const Text('Löschen wird im Web nicht unterstützt'),
+          actions: [
+            CupertinoDialogAction(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
       );
     } else {
       final persistenceController = PersistenceController.instance;
@@ -146,17 +233,17 @@ class SubscriptionDetailView extends StatelessWidget {
     }
   }
 
-  void _saveItem(BuildContext context) {
-    final viewContext = PersistenceController.instance;
-    viewContext.saveSubscription(subscription);
+  void _saveItem() async {
+    final persistenceController = PersistenceController.instance;
+    await persistenceController.saveSubscription(subscription);
   }
 
   String _repeatPattern(Subscription subscription) {
     switch (subscription.repeatPattern) {
       case 'monthly':
-        return 'Monthly';
+        return 'Monatlich';
       case 'yearly':
-        return 'Yearly';
+        return 'Jährlich';
       default:
         return '';
     }
@@ -206,5 +293,57 @@ class SubscriptionDetailView extends StatelessWidget {
       nextBillDate = nextBillDate.add(interval);
     }
     return nextBillDate;
+  }
+
+  int _countPayment(Subscription subscription) {
+    if (subscription.date == null) {
+      return 0;
+    }
+    final today = DateTime.now();
+    DateTime nextBillDate = subscription.date!;
+    Duration interval;
+    if (subscription.repeatPattern == 'yearly') {
+      interval = const Duration(days: 365);
+    } else {
+      interval = const Duration(days: 30);
+    }
+
+    int count = 0;
+    while (nextBillDate.isBefore(today)) {
+      nextBillDate = nextBillDate.add(interval);
+      count++;
+    }
+    return count;
+  }
+
+  double _sumPayment(Subscription subscription) {
+    if (subscription.date == null) {
+      return 0.0;
+    }
+    final today = DateTime.now();
+    DateTime nextBillDate = subscription.date!;
+    Duration interval;
+    if (subscription.repeatPattern == 'yearly') {
+      interval = const Duration(days: 365);
+    } else {
+      interval = const Duration(days: 30);
+    }
+
+    double sum = 0;
+    while (nextBillDate.isBefore(today)) {
+      nextBillDate = nextBillDate.add(interval);
+      sum += subscription.amount;
+    }
+    return sum;
+  }
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'Unbekannt';
+    return DateFormat.yMMMd().format(date);
+  }
+
+  String _formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) return 'Unbekannt';
+    return DateFormat('EEEE, dd.MM.yyyy HH:mm').format(dateTime);
   }
 }

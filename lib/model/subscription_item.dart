@@ -1,80 +1,103 @@
 import 'package:easy_wallet/subscription_views/subscription_detail_view.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'subscription.dart';
+import 'package:easy_wallet/model/subscription.dart';
 
 class SubscriptionItem extends StatelessWidget {
   final Subscription subscription;
-  final bool isAnnual;
 
-  const SubscriptionItem({super.key, required this.subscription, required this.isAnnual});
+  const SubscriptionItem({super.key, required this.subscription});
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: subscription.url != null
-          ? CachedNetworkImage(
-              imageUrl:
-                  'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
-              placeholder: (context, url) => const CircularProgressIndicator(),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-              width: 20,
-              height: 20,
-            )
-          : null,
-      title: Text(subscription.title),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: CupertinoColors.separator,
+          ),
+        ),
+      ),
+      child: Row(
         children: [
-          Text(
-            _convertedPrice(subscription),
-            style: TextStyle(
-              fontSize: 12,
-              // color: subscription.isPaused ? Colors.grey : Colors.black,
+          if (subscription.url != null)
+            CachedNetworkImage(
+              imageUrl:
+              'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
+              placeholder: (context, url) => const CupertinoActivityIndicator(),
+              errorWidget: (context, url, error) =>
+              const Icon(CupertinoIcons.exclamationmark_triangle),
+              width: 40,
+              height: 40,
+            ),
+          const SizedBox(width: 16.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  subscription.title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  '${subscription.amount.toStringAsFixed(2)} €',
+                  style: const TextStyle(
+                    color: CupertinoColors.systemGrey,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
             ),
           ),
+          const SizedBox(width: 16.0),
           Row(
             children: [
-              Text(
-                _remainingDays(subscription) ?? 'Unknown',
-                style: TextStyle(
-                  fontSize: 12,
-                  // color: subscription.isPaused ? Colors.grey : Colors.black,
-                ),
+              Column(
+                children: [
+                  Text(
+                    '${_remainingDays(subscription)} Tage',
+                    style: const TextStyle(
+                      color: CupertinoColors.systemGrey,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    '(${_convertPrice(subscription)})',
+                    style: const TextStyle(
+                      color: CupertinoColors.systemGrey,
+                      fontSize: 16,
+                    ),
+                  )
+                ],
               ),
-              const SizedBox(width: 4),
-              Text(
-                'Days',
-                style: TextStyle(
-                  fontSize: 12,
-                  // color: subscription.isPaused ? Colors.grey : Colors.black,
+              CupertinoButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (context) =>
+                          SubscriptionDetailView(subscription: subscription),
+                    ),
+                  );
+                },
+                child: const Icon(
+                  CupertinoIcons.right_chevron,
+                  color: CupertinoColors.systemGrey,
                 ),
-              ),
+              )
             ],
           ),
         ],
       ),
-      trailing: subscription.isPinned
-          ? const Icon(
-              Icons.push_pin,
-              color: Colors.yellow,
-            )
-          : null,
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                SubscriptionDetailView(subscription: subscription),
-          ),
-        );
-      },
-      tileColor: subscription.isPaused ? Colors.grey.withOpacity(0.5) : null,
     );
   }
 
   String? _remainingDays(Subscription subscription) {
-    if (subscription.date == null) return null;
+    if (subscription.date == null) return 'Unknown';
 
     DateTime nextBillDate = subscription.date!;
     DateTime today = DateTime.now();
@@ -83,7 +106,7 @@ class SubscriptionItem extends StatelessWidget {
     if (subscription.repeatPattern == 'yearly') {
       interval = const Duration(days: 365);
     } else {
-      interval = const Duration(days: 30); // assuming monthly if not yearly
+      interval = const Duration(days: 30);
     }
 
     while (nextBillDate.isBefore(today)) {
@@ -94,22 +117,12 @@ class SubscriptionItem extends StatelessWidget {
     return difference.toString();
   }
 
-  String _convertedPrice(Subscription subscription) {
-    if (subscription.amount == 0) {
-      return 'For free';
+  String? _convertPrice(Subscription subscription) {
+    if (subscription.repeatPattern == 'yearly') {
+      return '${(subscription.amount / 12).toStringAsFixed(2)} €/Monat';
+    } else if (subscription.repeatPattern == 'monthly') {
+      return '${(subscription.amount * 12).toStringAsFixed(2)} €/Jahr';
     }
-
-    double amount = subscription.amount;
-    if (isAnnual) {
-      if (subscription.repeatPattern == 'monthly') {
-        amount *= 12;
-      }
-    } else {
-      if (subscription.repeatPattern == 'yearly') {
-        amount /= 12;
-      }
-    }
-
-    return '${amount.toStringAsFixed(2)} €';
+    return null;
   }
 }

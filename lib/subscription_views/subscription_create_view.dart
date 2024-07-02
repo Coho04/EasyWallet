@@ -1,9 +1,9 @@
-import 'package:easy_wallet/enum/payment_rate.dart';
-import 'package:easy_wallet/enum/remember_cycle.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/persistence_controller.dart';
+import 'package:easy_wallet/enum/payment_rate.dart';
+import 'package:easy_wallet/enum/remember_cycle.dart';
 
 class SubscriptionCreateView extends StatefulWidget {
   const SubscriptionCreateView({super.key});
@@ -23,78 +23,44 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: const Text('Abo hinzufügen'),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: _isFormValid() ? _saveItem : null,
+          child: const Text('Speichern'),
         ),
-        title: const Text('Abo hinzufügen', style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: [
-          TextButton(
-            key: const Key('save_button'),
-            onPressed: _isFormValid() ? _saveItem : null,
-            child: const Text('Speichern', style: TextStyle(color: Colors.blueAccent)),
-          ),
-        ],
       ),
-      body: Padding(
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            TextField(
+            CupertinoTextField(
               controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent),
-                ),
-              ),
-              autocorrect: false,
+              placeholder: 'Title',
             ),
-            const SizedBox(height: 16),
-            TextField(
+            const SizedBox(height: 8),
+            CupertinoTextField(
               controller: _urlController,
-              decoration: const InputDecoration(
-                labelText: 'URL',
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent),
-                ),
-              ),
+              placeholder: 'URL',
               keyboardType: TextInputType.url,
               autocorrect: false,
               onChanged: (value) {
                 if (!value.startsWith('https://')) {
                   _urlController.text = 'https://${value.replaceFirst('https://', '')}';
                   _urlController.selection = TextSelection.fromPosition(
-                    TextPosition(offset: _urlController.text.length),
-                  );
+                      TextPosition(offset: _urlController.text.length));
                 }
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
-                  child: TextField(
+                  child: CupertinoTextField(
                     controller: _amountController,
-                    decoration: const InputDecoration(
-                      labelText: 'Anzahl',
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blueAccent),
-                      ),
-                    ),
+                    placeholder: 'Anzahl',
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     autocorrect: false,
                   ),
@@ -103,73 +69,65 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 const Text('Euro'),
               ],
             ),
-            const SizedBox(height: 16),
-            ListTile(
-              title: const Text('Start Datum'),
-              trailing: Text(DateFormat('dd.MM.yyyy').format(_selectedDate)),
-              onTap: _pickDate,
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Bezahlungsrate',
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent),
+            const SizedBox(height: 8),
+            CupertinoFormRow(
+              child: GestureDetector(
+                onTap: _pickDate,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Start Datum'),
+                    Text(DateFormat('dd.MM.yyyy').format(_selectedDate)),
+                  ],
                 ),
               ),
-              value: _selectedPayRate,
-              items: PaymentRate.all().map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedPayRate = newValue!;
-                });
-              },
             ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: 'Erinnern Sie mich',
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
+            const SizedBox(height: 8),
+            CupertinoFormRow(
+              child: GestureDetector(
+                onTap: () => _showPicker(
+                  context,
+                  PaymentRate.all(),
+                      (index) {
+                    setState(() {
+                      _selectedPayRate = PaymentRate.all()[index];
+                    });
+                  },
                 ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Payment rate'),
+                    Text(_selectedPayRate),
+                  ],
                 ),
               ),
-              value: _selectedRememberCycle,
-              items: RememberCycle.all().map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedRememberCycle = newValue!;
-                });
-              },
             ),
-            const SizedBox(height: 16),
-            TextField(
+            const SizedBox(height: 8),
+            CupertinoFormRow(
+              child: GestureDetector(
+                onTap: () => _showPicker(
+                  context,
+                  RememberCycle.all(),
+                      (index) {
+                    setState(() {
+                      _selectedRememberCycle = RememberCycle.all()[index];
+                    });
+                  },
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Remind me'),
+                    Text(_selectedRememberCycle),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            CupertinoTextField(
               controller: _notesController,
-              decoration: const InputDecoration(
-                labelText: 'Notizen',
-                labelStyle: TextStyle(color: Colors.white70),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent),
-                ),
-              ),
+              placeholder: 'Notizen',
             ),
           ],
         ),
@@ -183,17 +141,73 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   }
 
   Future<void> _pickDate() async {
-    final DateTime? pickedDate = await showDatePicker(
+    final DateTime? pickedDate = await showCupertinoModalPopup(
       context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
+      builder: (context) {
+        return Container(
+          height: 250,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 200,
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: _selectedDate,
+                  onDateTimeChanged: (DateTime newDate) {
+                    setState(() {
+                      _selectedDate = newDate;
+                    });
+                  },
+                ),
+              ),
+              CupertinoButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
         _selectedDate = pickedDate;
       });
     }
+  }
+
+  Future<void> _showPicker(BuildContext context, List<String> items, Function(int) onSelectedItemChanged) async {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) {
+        return Container(
+          height: 250,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 200,
+                child: CupertinoPicker(
+                  itemExtent: 32,
+                  useMagnifier: true,
+                  onSelectedItemChanged: onSelectedItemChanged,
+                  children: items.map((e) => Text(e)).toList(),
+                ),
+              ),
+              CupertinoButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _saveItem() {
@@ -219,7 +233,6 @@ class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
 
       final viewContext = PersistenceController.instance;
       viewContext.saveSubscription(newSubscription);
-
       Navigator.of(context).pop();
     }
   }

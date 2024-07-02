@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/persistence_controller.dart';
@@ -62,16 +62,16 @@ class _StatisticViewState extends State<StatisticView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Statistics'),
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Statistiken'),
       ),
-      body: SingleChildScrollView(
+      child: SingleChildScrollView(
         child: Column(
           children: [
-            _buildChart('Yearly vs Monthly Expenses', _makeYearlyToMonthlyData()),
-            _buildChart('Pinned vs Unpinned Subscriptions', _makePinnedData()),
-            _buildChart('Paused vs Active Subscriptions', _makePausedData()),
+            _buildChart('Jährliche vs Monatliche Ausgaben', _makeYearlyToMonthlyData()),
+            _buildChart('Gepinnt vs Nicht Gepinnt Abonnements', _makePinnedData()),
+            _buildChart('Pausiert vs Aktive Abonnements', _makePausedData()),
           ],
         ),
       ),
@@ -108,15 +108,15 @@ class _StatisticViewState extends State<StatisticView> {
 
   List<ChartData> _makeYearlyToMonthlyData() {
     return [
-      ChartData('Monthly', monthlyExpenses, Colors.blue),
-      ChartData('Yearly', yearlyExpenses, Colors.red),
+      ChartData('Monatlich', monthlyExpenses, CupertinoColors.systemBlue),
+      ChartData('Jährlich', yearlyExpenses, CupertinoColors.systemRed),
     ];
   }
 
   List<ChartData> _makePinnedData() {
     return [
-      ChartData('Pinned', pinnedCount.toDouble(), Colors.blue),
-      ChartData('Unpinned', unpinnedCount.toDouble(), Colors.red),
+      ChartData('Gepinnt', pinnedCount.toDouble(), CupertinoColors.systemBlue),
+      ChartData('Nicht Gepinnt', unpinnedCount.toDouble(), CupertinoColors.systemRed),
     ];
   }
 
@@ -124,8 +124,8 @@ class _StatisticViewState extends State<StatisticView> {
     int activeCount = nextDueSubscriptions.length - nextDueSubscriptions.where((sub) => sub.isPaused).length;
     int pausedCount = nextDueSubscriptions.where((sub) => sub.isPaused).length;
     return [
-      ChartData('Active', activeCount.toDouble(), Colors.blue),
-      ChartData('Paused', pausedCount.toDouble(), Colors.red),
+      ChartData('Aktiv', activeCount.toDouble(), CupertinoColors.systemBlue),
+      ChartData('Pausiert', pausedCount.toDouble(), CupertinoColors.systemRed),
     ];
   }
 }

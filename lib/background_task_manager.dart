@@ -11,20 +11,23 @@ class BackgroundTaskManager {
   static const String taskName = "de.golden-developer.easywallet.refresh";
   static const String lastNotificationKey = "LastNotificationScheduleDate";
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
     await _initNotifications();
     if (!kIsWeb) {
       Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-      Workmanager().registerPeriodicTask("1", taskName, frequency: Duration(hours: 24));
+      Workmanager().registerPeriodicTask("1", taskName,
+          frequency: const Duration(hours: 24));
     }
   }
 
   Future<void> _initNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-    final InitializationSettings initializationSettings = InitializationSettings(
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
       android: initializationSettingsAndroid,
     );
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
@@ -37,7 +40,9 @@ class BackgroundTaskManager {
     final String? lastScheduledDate = prefs.getString(lastNotificationKey);
 
     if (lastScheduledDate == today) {
-      print("Notifications were already scheduled today. Skipping.");
+      if (kDebugMode) {
+        print("Notifications were already scheduled today. Skipping.");
+      }
       return;
     }
 
@@ -59,13 +64,13 @@ class BackgroundTaskManager {
 
       switch (subscription['remembercycle']) {
         case 'OneDayBefore':
-          eventDate = eventDate.subtract(Duration(days: 1));
+          eventDate = eventDate.subtract(const Duration(days: 1));
           break;
         case 'TwoDaysBefore':
-          eventDate = eventDate.subtract(Duration(days: 2));
+          eventDate = eventDate.subtract(const Duration(days: 2));
           break;
         case 'OneWeekBefore':
-          eventDate = eventDate.subtract(Duration(days: 7));
+          eventDate = eventDate.subtract(const Duration(days: 7));
           break;
         case 'SameDay':
         default:
@@ -85,9 +90,13 @@ class BackgroundTaskManager {
 
   Future<void> _scheduleNotification(Map<String, dynamic> subscription) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails('your_channel_id', 'easy_wallet', channelDescription: "EasyWallet App Notify Channel", importance: Importance.max, priority: Priority.high, showWhen: false);
+        AndroidNotificationDetails('your_channel_id', 'easy_wallet',
+            channelDescription: "EasyWallet App Notify Channel",
+            importance: Importance.max,
+            priority: Priority.high,
+            showWhen: false);
     const NotificationDetails platformChannelSpecifics =
-    NotificationDetails(android: androidPlatformChannelSpecifics);
+        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
       0,
       'Subscription Reminder',
@@ -105,9 +114,9 @@ class BackgroundTaskManager {
     Duration interval;
 
     if (subscription['repeatPattern'] == 'monthly') {
-      interval = Duration(days: 30);
+      interval = const Duration(days: 30);
     } else if (subscription['repeatPattern'] == 'yearly') {
-      interval = Duration(days: 365);
+      interval = const Duration(days: 365);
     } else {
       return null;
     }

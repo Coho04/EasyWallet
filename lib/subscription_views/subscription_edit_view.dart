@@ -1,7 +1,8 @@
 import 'package:easy_wallet/model/subscription.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:easy_wallet/persistence_controller.dart'; // Assuming this file contains PersistenceController class
+import 'package:easy_wallet/persistence_controller.dart';
 
 class SubscriptionEditView extends StatefulWidget {
   final Subscription subscription;
@@ -9,10 +10,10 @@ class SubscriptionEditView extends StatefulWidget {
   const SubscriptionEditView({super.key, required this.subscription});
 
   @override
-  _SubscriptionEditViewState createState() => _SubscriptionEditViewState();
+  SubscriptionEditViewState createState() => SubscriptionEditViewState();
 }
 
-class _SubscriptionEditViewState extends State<SubscriptionEditView> {
+class SubscriptionEditViewState extends State<SubscriptionEditView> {
   late TextEditingController _titleController;
   late TextEditingController _urlController;
   late TextEditingController _amountController;
@@ -24,10 +25,13 @@ class _SubscriptionEditViewState extends State<SubscriptionEditView> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.subscription.title ?? '');
+    _titleController =
+        TextEditingController(text: widget.subscription.title ?? '');
     _urlController = TextEditingController(text: widget.subscription.url ?? '');
-    _amountController = TextEditingController(text: widget.subscription.amount.toString());
-    _notesController = TextEditingController(text: widget.subscription.notes ?? '');
+    _amountController =
+        TextEditingController(text: widget.subscription.amount.toString());
+    _notesController =
+        TextEditingController(text: widget.subscription.notes ?? '');
     _date = widget.subscription.date ?? DateTime.now();
     _paymentRate = widget.subscription.repeatPattern ?? 'monthly';
     _rememberCycle = widget.subscription.rememberCycle ?? 'SameDay';
@@ -44,7 +48,10 @@ class _SubscriptionEditViewState extends State<SubscriptionEditView> {
 
   bool get _isFormValid {
     final amount = double.tryParse(_amountController.text.replaceAll(',', '.'));
-    return _titleController.text.isNotEmpty && amount != null && amount >= 0 && amount <= 10000;
+    return _titleController.text.isNotEmpty &&
+        amount != null &&
+        amount >= 0 &&
+        amount <= 10000;
   }
 
   void _saveItem() {
@@ -64,98 +71,135 @@ class _SubscriptionEditViewState extends State<SubscriptionEditView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit subscription'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: _isFormValid ? _saveItem : null,
-          ),
-        ],
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: const Text('Abo bearbeiten'),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: _isFormValid ? _saveItem : null,
+          child: const Text('Speichern'),
+        ),
       ),
-      body: Padding(
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           child: ListView(
             children: [
-              TextFormField(
+              CupertinoTextField(
                 controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
-                autocorrect: false,
+                placeholder: 'Titel',
               ),
-              TextFormField(
+              const SizedBox(height: 8),
+              CupertinoTextField(
                 controller: _urlController,
-                decoration: const InputDecoration(labelText: 'URL'),
+                placeholder: 'URL',
                 keyboardType: TextInputType.url,
                 autocorrect: false,
               ),
-              TextFormField(
-                controller: _amountController,
-                decoration: const InputDecoration(labelText: 'Amount'),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                autocorrect: false,
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                      child:
+                      CupertinoTextField(
+                        controller: _amountController,
+                        placeholder: 'Kosten',
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        autocorrect: false,
+                      ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text('Euro'),
+                ],
               ),
-              DropdownButtonFormField<String>(
-                value: _paymentRate,
-                decoration: const InputDecoration(labelText: 'Payment rate'),
-                items: ['monthly', 'yearly'].map((rate) {
-                  return DropdownMenuItem(
-                    value: rate,
-                    child: Text(rate.capitalize()),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _paymentRate = value!;
-                  });
-                },
+              const SizedBox(height: 8),
+              CupertinoFormRow(
+                prefix: const Text('Bezahlrate'),
+                child: CupertinoPicker(
+                  itemExtent: 32,
+                  useMagnifier: true,
+                  onSelectedItemChanged: (index) {
+                    setState(() {
+                      _paymentRate = ['monthly', 'yearly'][index];
+                    });
+                  },
+                  children: ['monthly', 'yearly'].map((e) => Text(e.capitalize())).toList(),
+                ),
               ),
-              InputDatePickerFormField(
-                initialDate: _date,
-                firstDate: DateTime(2000),
-                lastDate: DateTime(2101),
-                fieldLabelText: 'Start Date',
-                onDateSaved: (date) {
-                  setState(() {
-                    _date = date;
-                  });
-                },
-                onDateSubmitted: (date) {
-                  setState(() {
-                    _date = date;
-                  });
-                },
+              const SizedBox(height: 8),
+              CupertinoFormRow(
+                prefix: const Text('Start Datum'),
+                child: GestureDetector(
+                  onTap: _pickDate,
+                  child: Text(
+                    DateFormat('dd.MM.yyyy').format(_date),
+                    style: const TextStyle(fontSize: 16, color: CupertinoColors.inactiveGray),
+                  ),
+                ),
               ),
-              DropdownButtonFormField<String>(
-                value: _rememberCycle,
-                decoration: const InputDecoration(labelText: 'Remind me'),
-                items: ['SameDay', 'OneDayBefore', 'OneWeekBefore'].map((cycle) {
-                  return DropdownMenuItem(
-                    value: cycle,
-                    child: Text(cycle.capitalize()),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _rememberCycle = value!;
-                  });
-                },
+              const SizedBox(height: 8),
+              CupertinoFormRow(
+                prefix: const Text('Erinnern an'),
+                child: CupertinoPicker(
+                  itemExtent: 32,
+                  useMagnifier: true,
+                  onSelectedItemChanged: (index) {
+                    setState(() {
+                      _rememberCycle = ['SameDay', 'OneDayBefore', 'OneWeekBefore'][index];
+                    });
+                  },
+                  children: ['SameDay', 'OneDayBefore', 'OneWeekBefore'].map((e) => Text(e.capitalize())).toList(),
+                ),
               ),
-              TextFormField(
+              const SizedBox(height: 8),
+              CupertinoTextField(
                 controller: _notesController,
-                decoration: const  InputDecoration(labelText: 'Notes'),
-                autocorrect: false,
-              ),
-              ElevatedButton(
-                onPressed: _isFormValid ? _saveItem : null,
-                child: const  Text('Save'),
+                placeholder: 'Notizen',
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _pickDate() async {
+    final DateTime? pickedDate = await showCupertinoModalPopup(
+      context: context,
+      builder: (context) {
+        return Container(
+          height: 250,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 200,
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: _date,
+                  onDateTimeChanged: (DateTime newDate) {
+                    setState(() {
+                      _date = newDate;
+                    });
+                  },
+                ),
+              ),
+              CupertinoButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (pickedDate != null && pickedDate != _date) {
+      setState(() {
+        _date = pickedDate;
+      });
+    }
   }
 }
 
@@ -164,11 +208,9 @@ extension StringExtension on String {
     if (this == null) {
       throw ArgumentError("string: $this");
     }
-
     if (this.isEmpty) {
       return this;
     }
-
     return this[0].toUpperCase() + this.substring(1);
   }
 }

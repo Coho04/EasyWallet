@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -12,7 +12,7 @@ class SettingsView extends StatefulWidget {
 class _SettingsViewState extends State<SettingsView> {
   bool notificationsEnabled = true;
   bool includeCostInNotifications = false;
-  TimeOfDay notificationTime = TimeOfDay.now();
+  DateTime notificationTime = DateTime.now();
   String currency = "USD";
   double monthlyLimit = 0.0;
 
@@ -31,9 +31,13 @@ class _SettingsViewState extends State<SettingsView> {
       monthlyLimit = prefs.getDouble('monthlyLimit') ?? 0.0;
       final notificationTimeString = prefs.getString('notificationTime');
       if (notificationTimeString != null) {
-        notificationTime = TimeOfDay(
-          hour: int.parse(notificationTimeString.split(':')[0]),
-          minute: int.parse(notificationTimeString.split(':')[1]),
+        final timeParts = notificationTimeString.split(':');
+        notificationTime = DateTime(
+          notificationTime.year,
+          notificationTime.month,
+          notificationTime.day,
+          int.parse(timeParts[0]),
+          int.parse(timeParts[1]),
         );
       }
     });
@@ -45,7 +49,8 @@ class _SettingsViewState extends State<SettingsView> {
     prefs.setBool('includeCostInNotifications', includeCostInNotifications);
     prefs.setString('currency', currency);
     prefs.setDouble('monthlyLimit', monthlyLimit);
-    prefs.setString('notificationTime', '${notificationTime.hour}:${notificationTime.minute}');
+    prefs.setString('notificationTime',
+        '${notificationTime.hour}:${notificationTime.minute}');
   }
 
   void _handleNotificationsToggle(bool isEnabled) {
@@ -59,11 +64,22 @@ class _SettingsViewState extends State<SettingsView> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      // Show an error message if the URL could not be launched
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Could not launch $url'),
-        ),
+      showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: const Text('Error'),
+            content: Text('Could not launch $url'),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
       );
     }
   }
@@ -74,9 +90,38 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   Future<void> _selectNotificationTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
+    final DateTime? picked = await showCupertinoModalPopup<DateTime>(
       context: context,
-      initialTime: notificationTime,
+      builder: (BuildContext context) {
+        return Container(
+          height: 250,
+          color: CupertinoColors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 180,
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.time,
+                  initialDateTime: notificationTime,
+                  onDateTimeChanged: (DateTime newDateTime) {
+                    setState(() {
+                      notificationTime = newDateTime;
+                    });
+                    _saveSettings();
+                  },
+                ),
+              ),
+              CupertinoButton(
+                child: const Text('Done'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
     if (picked != null && picked != notificationTime) {
       setState(() {
@@ -86,77 +131,175 @@ class _SettingsViewState extends State<SettingsView> {
     }
   }
 
+  String _formatTime(DateTime time) {
+    final hours = time.hour.toString().padLeft(2, '0');
+    final minutes = time.minute.toString().padLeft(2, '0');
+    return '$hours:$minutes';
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
+    return CupertinoPageScaffold(
+      navigationBar: const CupertinoNavigationBar(
+        middle: Text('Einstellungen'),
       ),
-      body: ListView(
+      child: ListView(
         children: [
-          SwitchListTile(
-            title: const Text('Enable Notifications'),
-            value: notificationsEnabled,
-            onChanged: _handleNotificationsToggle,
+          CupertinoFormSection.insetGrouped(
+            header: const Text('Benachrichtigungen'),
+            children: [
+              CupertinoFormRow(
+                prefix: const Text('Benachrichtigungen aktivieren'),
+                child: CupertinoSwitch(
+                  value: notificationsEnabled,
+                  onChanged: _handleNotificationsToggle,
+                ),
+              ),
+              CupertinoFormRow(
+                prefix: const Text('Kosten in Benachrichtigungen anzeigen'),
+                child: CupertinoSwitch(
+                  value: includeCostInNotifications,
+                  onChanged: (value) {
+                    setState(() {
+                      includeCostInNotifications = value;
+                    });
+                    _saveSettings();
+                  },
+                ),
+              ),
+              CupertinoFormRow(
+                prefix: const Text('Benachrichtigungszeit'),
+                child: GestureDetector(
+                  onTap: () => _selectNotificationTime(context),
+                  child: Text(
+                    _formatTime(notificationTime),
+                    style: const TextStyle(
+                      color: CupertinoColors.systemBlue,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          SwitchListTile(
-            title: const Text('Include Cost in Notifications'),
-            value: includeCostInNotifications,
-            onChanged: (value) {
-              setState(() {
-                includeCostInNotifications = value;
-              });
-              _saveSettings();
-            },
+          CupertinoFormSection.insetGrouped(
+            header: const Text('Einstellungen'),
+            children: [
+              CupertinoFormRow(
+                prefix: const Text('Währung'),
+                child: GestureDetector(
+                  onTap: () {
+                    // Implement currency selection dialog here
+                  },
+                  child: Text(
+                    currency,
+                    style: const TextStyle(
+                      color: CupertinoColors.systemBlue,
+                    ),
+                  ),
+                ),
+              ),
+              CupertinoFormRow(
+                prefix: const Text('Monatliches Limit'),
+                child: GestureDetector(
+                  onTap: () {
+                    // Implement monthly limit input here
+                  },
+                  child: Text(
+                    '$monthlyLimit $currency',
+                    style: const TextStyle(
+                      color: CupertinoColors.systemBlue,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-          ListTile(
-            title: const Text('Notification Time'),
-            subtitle: Text(notificationTime.format(context)),
-            trailing: const Icon(Icons.access_time),
-            onTap: () => _selectNotificationTime(context),
-          ),
-          ListTile(
-            title: const Text('Currency'),
-            subtitle: Text(currency),
-            onTap: () {
-              // Implement currency selection dialog here
-            },
-          ),
-          ListTile(
-            title: const Text('Monthly Limit'),
-            subtitle: Text('$monthlyLimit $currency'),
-            onTap: () {
-              // Implement monthly limit input here
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Imprint'),
-            onTap: () => _openWebPage("https://golden-developer.de/imprint"),
-          ),
-          ListTile(
-            title: const Text('Privacy Policy'),
-            onTap: () => _openWebPage("https://golden-developer.de/privacy"),
-          ),
-          ListTile(
-            title: const Text('Help'),
-            onTap: () => _openWebPage("https://support.golden-developer.de"),
-          ),
-          ListTile(
-            title: const Text('Feedback'),
-            onTap: _rateApp,
-          ),
-          ListTile(
-            title: const Text('Contact Developer'),
-            onTap: () => _openWebPage("https://support.golden-developer.de"),
-          ),
-          ListTile(
-            title: const Text('Tip Jar'),
-            onTap: () => _openWebPage("https://donate.golden-developer.de"),
-          ),
-          ListTile(
-            title: const Text('Rate the App'),
-            onTap: _rateApp,
+          CupertinoFormSection.insetGrouped(
+            header: const Text('Support'),
+            children: [
+              CupertinoFormRow(
+                child: GestureDetector(
+                  onTap: () =>
+                      _openWebPage("https://golden-developer.de/imprint"),
+                  child: const Text(
+                    'Impressum',
+                    style: TextStyle(
+                      color: CupertinoColors.systemBlue,
+                    ),
+                  ),
+                ),
+              ),
+              CupertinoFormRow(
+                child: GestureDetector(
+                  onTap: () =>
+                      _openWebPage("https://golden-developer.de/privacy"),
+                  child: const Text(
+                    'Datenschutz',
+                    style: TextStyle(
+                      color: CupertinoColors.systemBlue,
+                    ),
+                  ),
+                ),
+              ),
+              CupertinoFormRow(
+                child: GestureDetector(
+                  onTap: () =>
+                      _openWebPage("https://support.golden-developer.de"),
+                  child: const Text(
+                    'Hilfe',
+                    style: TextStyle(
+                      color: CupertinoColors.systemBlue,
+                    ),
+                  ),
+                ),
+              ),
+              CupertinoFormRow(
+                child: GestureDetector(
+                  onTap: _rateApp,
+                  child: const Text(
+                    'Feedback',
+                    style: TextStyle(
+                      color: CupertinoColors.systemBlue,
+                    ),
+                  ),
+                ),
+              ),
+              CupertinoFormRow(
+                child: GestureDetector(
+                  onTap: () =>
+                      _openWebPage("https://support.golden-developer.de"),
+                  child: const Text(
+                    'Kontaktieren Sie den Entwickler',
+                    style: TextStyle(
+                      color: CupertinoColors.systemBlue,
+                    ),
+                  ),
+                ),
+              ),
+              CupertinoFormRow(
+                child: GestureDetector(
+                  onTap: () =>
+                      _openWebPage("https://donate.golden-developer.de"),
+                  child: const Text(
+                    'Trinkgeld Kasse',
+                    style: TextStyle(
+                      color: CupertinoColors.systemBlue,
+                    ),
+                  ),
+                ),
+              ),
+              CupertinoFormRow(
+                child: GestureDetector(
+                  onTap: _rateApp,
+                  child: const Text(
+                    'Bewerten Sie die App',
+                    style: TextStyle(
+                      color: CupertinoColors.systemBlue,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
