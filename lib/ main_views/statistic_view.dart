@@ -66,14 +66,27 @@ class StatisticViewState extends State<StatisticView> {
       navigationBar: const CupertinoNavigationBar(
         middle: Text('Statistiken'),
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildChart('Jährliche vs Monatliche Ausgaben', _makeYearlyToMonthlyData()),
-            _buildChart('Gepinnt vs Nicht Gepinnt Abonnements', _makePinnedData()),
-            _buildChart('Pausiert vs Aktive Abonnements', _makePausedData()),
-          ],
-        ),
+      child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Text('Gesamtausgaben: ${(monthlyExpenses + yearlyExpenses).toStringAsFixed(2)} €',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                _buildChart('Monatliche Ausgaben', [
+                  ChartData('Monatlich', monthlyExpenses, CupertinoColors.systemBlue),
+                ]),
+                _buildChart('Jährliche Ausgaben', [
+                  ChartData('Jährlich', yearlyExpenses, CupertinoColors.systemRed),
+                ]),
+                _buildChart('Jährliche vs Monatliche Ausgaben',
+                    _makeYearlyToMonthlyData()),
+                _buildChart(
+                    'Gepinnt vs Nicht Gepinnt Abonnements', _makePinnedData()),
+                _buildChart(
+                    'Pausiert vs Aktive Abonnements', _makePausedData()),
+              ],
+            ),
+          ),
       ),
     );
   }
@@ -116,13 +129,18 @@ class StatisticViewState extends State<StatisticView> {
   List<ChartData> _makePinnedData() {
     return [
       ChartData('Gepinnt', pinnedCount.toDouble(), CupertinoColors.systemBlue),
-      ChartData('Nicht Gepinnt', unpinnedCount.toDouble(), CupertinoColors.systemRed),
+      ChartData(
+          'Nicht Gepinnt', unpinnedCount.toDouble(), CupertinoColors.systemRed),
     ];
   }
 
   List<ChartData> _makePausedData() {
-    int activeCount = nextDueSubscriptions.length - nextDueSubscriptions.where((sub) => sub.isPaused).length;
-    int pausedCount = nextDueSubscriptions.where((sub) => sub.isPaused).length;
+    int activeCount = nextDueSubscriptions.length - nextDueSubscriptions
+        .where((sub) => sub.isPaused)
+        .length;
+    int pausedCount = nextDueSubscriptions
+        .where((sub) => sub.isPaused)
+        .length;
     return [
       ChartData('Aktiv', activeCount.toDouble(), CupertinoColors.systemBlue),
       ChartData('Pausiert', pausedCount.toDouble(), CupertinoColors.systemRed),

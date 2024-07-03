@@ -68,13 +68,13 @@ class HomeViewState extends State<HomeView> {
     });
   }
 
-  void _updateAllSubscription(Subscription updatedSubscription) {
+  void _updateAllSubscription(Subscription subscription) {
     _loadSubscriptions();
   }
 
   List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
     List<Subscription> filteredSubscriptions = subscriptions.where((subscription) {
-      return subscription.title
+      return subscription.title!
           .toLowerCase()
           .contains(searchText.toLowerCase());
     }).toList();
@@ -87,9 +87,9 @@ class HomeViewState extends State<HomeView> {
 
       switch (sortOption) {
         case SortOption.alphabeticalAscending:
-          return a.title.compareTo(b.title);
+          return a.title!.compareTo(b.title!);
         case SortOption.alphabeticalDescending:
-          return b.title.compareTo(a.title);
+          return b.title!.compareTo(a.title!);
         case SortOption.costAscending:
           return a.amount.compareTo(b.amount);
         case SortOption.costDescending:
@@ -230,8 +230,10 @@ class HomeViewState extends State<HomeView> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.only(bottom: 85.0),
+            child: subscriptions.isEmpty
+                ? _buildEmptyState()
+                : ListView.builder(
+              padding: EdgeInsets.zero,
               itemCount: subscriptions.length,
               itemBuilder: (context, index) {
                 return SubscriptionItem(
@@ -241,6 +243,34 @@ class HomeViewState extends State<HomeView> {
                 );
               },
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Keine Abonnements vorhanden',
+            style: TextStyle(fontSize: 18, color: CupertinoColors.systemGrey),
+          ),
+          const SizedBox(height: 16),
+          CupertinoButton.filled(
+            onPressed: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => const SubscriptionCreateView(),
+                ),
+              ).then((value) {
+                _loadSubscriptions();
+              });
+            },
+            child: const Text('Neues Abonnement hinzufügen'),
           ),
         ],
       ),
