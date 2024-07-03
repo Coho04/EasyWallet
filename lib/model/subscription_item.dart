@@ -2,6 +2,7 @@ import 'package:easy_wallet/subscription_views/subscription_detail_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:flutter/material.dart';
 
 class SubscriptionItem extends StatelessWidget {
   final Subscription subscription;
@@ -10,89 +11,101 @@ class SubscriptionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: CupertinoColors.separator,
+    return GestureDetector(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: CupertinoColors.separator,
+            ),
           ),
         ),
-      ),
-      child: Row(
-        children: [
-          if (subscription.url != null)
-            CachedNetworkImage(
-              imageUrl:
-              'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
-              placeholder: (context, url) => const CupertinoActivityIndicator(),
-              errorWidget: (context, url, error) =>
-              const Icon(CupertinoIcons.exclamationmark_triangle),
-              width: 40,
-              height: 40,
-            ),
-          const SizedBox(width: 16.0),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  subscription.title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  '${subscription.amount.toStringAsFixed(2)} €',
-                  style: const TextStyle(
-                    color: CupertinoColors.systemGrey,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 16.0),
-          Row(
-            children: [
-              Column(
+        child: Row(
+          children: [
+            if (subscription.url != null)
+              CachedNetworkImage(
+                imageUrl:
+                    'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
+                placeholder: (context, url) =>
+                    const CupertinoActivityIndicator(),
+                errorWidget: (context, url, error) =>
+                    const Icon(CupertinoIcons.exclamationmark_triangle),
+                width: 40,
+                height: 40,
+              ),
+            const SizedBox(width: 16.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${_remainingDays(subscription)} Tage',
+                    subscription.title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '${subscription.amount.toStringAsFixed(2)} €',
                     style: const TextStyle(
                       color: CupertinoColors.systemGrey,
                       fontSize: 16,
                     ),
                   ),
-                  Text(
-                    '(${_convertPrice(subscription)})',
-                    style: const TextStyle(
-                      color: CupertinoColors.systemGrey,
-                      fontSize: 16,
-                    ),
-                  )
                 ],
               ),
-              CupertinoButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) =>
-                          SubscriptionDetailView(subscription: subscription),
+            ),
+            const SizedBox(width: 16.0),
+            Row(
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      '${_remainingDays(subscription)} Tage',
+                      style: const TextStyle(
+                        color: CupertinoColors.systemGrey,
+                        fontSize: 16,
+                      ),
                     ),
-                  );
-                },
-                child: const Icon(
-                  CupertinoIcons.right_chevron,
-                  color: CupertinoColors.systemGrey,
+                    Text(
+                      '(${_convertPrice(subscription)})',
+                      style: const TextStyle(
+                        color: CupertinoColors.systemGrey,
+                        fontSize: 16,
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-        ],
+                CupertinoButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) =>
+                            SubscriptionDetailView(subscription: subscription),
+                      ),
+                    );
+                  },
+                  child: const Icon(
+                    CupertinoIcons.right_chevron,
+                    color: CupertinoColors.systemGrey,
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
       ),
+      onTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) =>
+                SubscriptionDetailView(subscription: subscription),
+          ),
+        );
+      },
     );
   }
 

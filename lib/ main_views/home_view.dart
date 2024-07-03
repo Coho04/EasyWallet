@@ -59,12 +59,10 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     final filteredSubscriptions = subscriptions.where((subscription) {
-      return subscription.title!
+      return subscription.title
           .toLowerCase()
           .contains(searchText.toLowerCase());
     }).toList();
-
-    double totalAmount = subscriptions.fold(0, (sum, subscription) => sum + subscription.amount);
 
     double monthlySpent = subscriptions.where((subscription) {
       final now = DateTime.now();

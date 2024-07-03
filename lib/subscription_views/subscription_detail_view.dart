@@ -12,10 +12,10 @@ class SubscriptionDetailView extends StatefulWidget {
   const SubscriptionDetailView({super.key, required this.subscription});
 
   @override
-  _SubscriptionDetailViewState createState() => _SubscriptionDetailViewState();
+  SubscriptionDetailViewState createState() => SubscriptionDetailViewState();
 }
 
-class _SubscriptionDetailViewState extends State<SubscriptionDetailView> {
+class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
   late Subscription subscription;
 
   @override
@@ -35,64 +35,61 @@ class _SubscriptionDetailViewState extends State<SubscriptionDetailView> {
             Navigator.push(
               context,
               CupertinoPageRoute(
-                builder: (context) =>
-                    SubscriptionEditView(subscription: subscription),
+                builder: (context) => SubscriptionEditView(subscription: subscription),
               ),
             );
           },
           child: const Icon(CupertinoIcons.pencil),
         ),
       ),
-      child: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.only(left: 16.0, right: 16),
-              children: <Widget>[
-                _buildHeader(),
-                const SizedBox(height: 20),
-                _buildCardSection('Allgemeine Informationen', [
-                  _buildDetailRow('Kosten', '${subscription.amount.toStringAsFixed(2)} €'),
-                  _buildDetailRow('Wiederholungsrate', _repeatPattern(subscription)),
-                ]),
-                const SizedBox(height: 20),
-                _buildCardSection('Rechnungsinformationen', [
-                  _buildDetailRow('Nächste Rechnung', _formatDate(_calculateNextBillDate(subscription))),
-                  _buildDetailRow('Vorherige Rechnung', _formatDate(_calculatePreviousBillDate(subscription))),
-                  _buildDetailRow('Erste Abbuchung', _formatDate(subscription.date)),
-                  _buildDetailRow('Erstellt am', _formatDateTime(subscription.timestamp)),
-                ]),
-                const SizedBox(height: 20),
-                _buildCardSection('Zusätzliche Informationen', [
-                  _buildDetailRow('Bisherige Abbuchungen', _countPayment(subscription).toString()),
-                  _buildDetailRow('Kosten insgesamt', '${_sumPayment(subscription).toStringAsFixed(2)} €'),
-                  if (subscription.notes != null && subscription.notes!.trim().isNotEmpty)
-                    _buildDetailRow('Notizen', subscription.notes!),
-                ]),
-                const SizedBox(height: 20),
-                _buildCardSection('Aktionen', [
-                  _buildAction(
-                    subscription.isPinned ? 'Dieses Abonnement lösen' : 'Dieses Abonnement anheften',
-                    subscription.isPinned ? CupertinoIcons.pin_slash : CupertinoIcons.pin,
-                        () => _togglePin(),
-                    color: subscription.isPinned ? CupertinoColors.systemBlue : null,
-                  ),
-                  _buildAction(
-                    subscription.isPaused ? 'Dieses Abonnement fortsetzen' : 'Dieses Abonnement pausieren',
-                    subscription.isPaused ? CupertinoIcons.play_arrow_solid : CupertinoIcons.pause,
-                        () => _togglePause(),
-                  ),
-                  _buildAction(
-                    'Dieses Abonnement löschen',
-                    CupertinoIcons.delete,
-                        () => _deleteItem(),
-                    color: CupertinoColors.destructiveRed,
-                  ),
-                ]),
-              ],
-            ),
-          ),
-        ],
+      child: SafeArea(
+        top: true,
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          children: <Widget>[
+            const SizedBox(height: 20),
+            _buildHeader(),
+            const SizedBox(height: 20),
+            _buildCardSection('Allgemeine Informationen', [
+              _buildDetailRow('Kosten', '${subscription.amount.toStringAsFixed(2)} €'),
+              _buildDetailRow('Wiederholungsrate', _repeatPattern(subscription)),
+            ]),
+            const SizedBox(height: 20),
+            _buildCardSection('Rechnungsinformationen', [
+              _buildDetailRow('Nächste Rechnung', _formatDate(_calculateNextBillDate(subscription))),
+              _buildDetailRow('Vorherige Rechnung', _formatDate(_calculatePreviousBillDate(subscription))),
+              _buildDetailRow('Erste Abbuchung', _formatDate(subscription.date)),
+              _buildDetailRow('Erstellt am', _formatDateTime(subscription.timestamp)),
+            ]),
+            const SizedBox(height: 20),
+            _buildCardSection('Zusätzliche Informationen', [
+              _buildDetailRow('Bisherige Abbuchungen', _countPayment(subscription).toString()),
+              _buildDetailRow('Kosten insgesamt', '${_sumPayment(subscription).toStringAsFixed(2)} €'),
+              if (subscription.notes != null && subscription.notes!.trim().isNotEmpty)
+                _buildDetailRow('Notizen', subscription.notes!),
+            ]),
+            const SizedBox(height: 20),
+            _buildCardSection('Aktionen', [
+              _buildAction(
+                subscription.isPinned ? 'Dieses Abonnement lösen' : 'Dieses Abonnement anheften',
+                subscription.isPinned ? CupertinoIcons.pin_slash : CupertinoIcons.pin,
+                    () => _togglePin(),
+                color: subscription.isPinned ? CupertinoColors.systemBlue : null,
+              ),
+              _buildAction(
+                subscription.isPaused ? 'Dieses Abonnement fortsetzen' : 'Dieses Abonnement pausieren',
+                subscription.isPaused ? CupertinoIcons.play_arrow_solid : CupertinoIcons.pause,
+                    () => _togglePause(),
+              ),
+              _buildAction(
+                'Dieses Abonnement löschen',
+                CupertinoIcons.delete,
+                    () => _deleteItem(),
+                color: CupertinoColors.destructiveRed,
+              ),
+            ]),
+          ],
+        ),
       ),
     );
   }
@@ -133,10 +130,8 @@ class _SubscriptionDetailViewState extends State<SubscriptionDetailView> {
       children: [
         CachedNetworkImage(
           imageUrl: _subscriptionUrl(),
-          placeholder: (context, url) =>
-          const CupertinoActivityIndicator(),
-          errorWidget: (context, url, error) =>
-          const Icon(CupertinoIcons.exclamationmark_triangle),
+          placeholder: (context, url) => const CupertinoActivityIndicator(),
+          errorWidget: (context, url, error) => const Icon(CupertinoIcons.exclamationmark_triangle),
           width: 40,
           height: 40,
         ),
