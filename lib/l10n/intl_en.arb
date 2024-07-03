@@ -11,5 +11,19 @@
   },
   "@settings": {
     "description": "Label for the settings tab"
-  }
+  },
+  "notifications": "Notifications",
+  "enableNotifications": "Enable Notifications",
+  "includeCostInNotifications": "Include cost in notifications",
+  "notificationTime": "Notification Time",
+  "currency": "Currency",
+  "monthlyLimit": "Monthly Limit",
+  "support": "Support",
+  "imprint": "Imprint",
+  "privacyPolicy": "Privacy Policy",
+  "help": "Help",
+  "feedback": "Feedback",
+  "contactDeveloper": "Contact Developer",
+  "tipJar": "Tip Jar",
+  "rateApp": "Rate the App"
 }

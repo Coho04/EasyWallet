@@ -11,5 +11,19 @@
   },
   "@settings": {
     "description": "Label for the settings tab"
-  }
+  },
+  "notifications": "Benachrichtigungen",
+  "enableNotifications": "Benachrichtigungen aktivieren",
+  "includeCostInNotifications": "Kosten in Benachrichtigungen anzeigen",
+  "notificationTime": "Benachrichtigungszeit",
+  "currency": "Währung",
+  "monthlyLimit": "Monatliches Limit",
+  "support": "Support",
+  "imprint": "Impressum",
+  "privacyPolicy": "Datenschutz",
+  "help": "Hilfe",
+  "feedback": "Feedback",
+  "contactDeveloper": "Kontaktieren Sie den Entwickler",
+  "tipJar": "Trinkgeld Kasse",
+  "rateApp": "Bewerten Sie die App"
 }

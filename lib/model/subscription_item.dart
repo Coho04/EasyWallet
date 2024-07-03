@@ -11,12 +11,14 @@ class SubscriptionItem extends StatelessWidget {
 
   const SubscriptionItem(
       {super.key,
-      required this.subscription,
-      required this.onUpdate,
-      required this.onDelete});
+        required this.subscription,
+        required this.onUpdate,
+        required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+
     return GestureDetector(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -26,7 +28,9 @@ class SubscriptionItem extends StatelessWidget {
               color: CupertinoColors.separator,
             ),
           ),
-          color: (subscription.isPaused ? CupertinoColors.systemGrey5 : null),
+          color: subscription.isPaused
+              ? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey5)
+              : (isDarkMode ? CupertinoColors.darkBackgroundGray : null),
         ),
         child: Row(
           children: [
@@ -40,9 +44,10 @@ class SubscriptionItem extends StatelessWidget {
                     children: [
                       Text(
                         subscription.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
                         ),
                       ),
                       if (subscription.isPinned)
@@ -54,8 +59,8 @@ class SubscriptionItem extends StatelessWidget {
                   ),
                   Text(
                     '${subscription.amount.toStringAsFixed(2)} €',
-                    style: const TextStyle(
-                      color: CupertinoColors.systemGrey,
+                    style: TextStyle(
+                      color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
                       fontSize: 16,
                     ),
                   ),
@@ -69,15 +74,15 @@ class SubscriptionItem extends StatelessWidget {
                   children: [
                     Text(
                       '${_remainingDays(subscription)} Tage',
-                      style: const TextStyle(
-                        color: CupertinoColors.systemGrey,
+                      style: TextStyle(
+                        color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
                         fontSize: 16,
                       ),
                     ),
                     Text(
                       '(${_convertPrice(subscription)})',
-                      style: const TextStyle(
-                        color: CupertinoColors.systemGrey,
+                      style: TextStyle(
+                        color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
                         fontSize: 16,
                       ),
                     )
@@ -96,9 +101,9 @@ class SubscriptionItem extends StatelessWidget {
                       ),
                     ).then((_) => onUpdate(subscription));
                   },
-                  child: const Icon(
+                  child: Icon(
                     CupertinoIcons.right_chevron,
-                    color: CupertinoColors.systemGrey,
+                    color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
                   ),
                 ),
               ],
@@ -137,7 +142,7 @@ class SubscriptionItem extends StatelessWidget {
     } else {
       return CachedNetworkImage(
         imageUrl:
-            'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
+        'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
         placeholder: (context, url) => const CupertinoActivityIndicator(),
         errorWidget: (context, url, error) => const Icon(
           CupertinoIcons.exclamationmark_triangle,

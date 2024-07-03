@@ -79,6 +79,146 @@ class S {
       args: [],
     );
   }
+
+  /// `Notifications`
+  String get notifications {
+    return Intl.message(
+      'Notifications',
+      name: 'notifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable Notifications`
+  String get enableNotifications {
+    return Intl.message(
+      'Enable Notifications',
+      name: 'enableNotifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Include cost in notifications`
+  String get includeCostInNotifications {
+    return Intl.message(
+      'Include cost in notifications',
+      name: 'includeCostInNotifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notification Time`
+  String get notificationTime {
+    return Intl.message(
+      'Notification Time',
+      name: 'notificationTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Currency`
+  String get currency {
+    return Intl.message(
+      'Currency',
+      name: 'currency',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly Limit`
+  String get monthlyLimit {
+    return Intl.message(
+      'Monthly Limit',
+      name: 'monthlyLimit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Support`
+  String get support {
+    return Intl.message(
+      'Support',
+      name: 'support',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Imprint`
+  String get imprint {
+    return Intl.message(
+      'Imprint',
+      name: 'imprint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Privacy Policy`
+  String get privacyPolicy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'privacyPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Help`
+  String get help {
+    return Intl.message(
+      'Help',
+      name: 'help',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Feedback`
+  String get feedback {
+    return Intl.message(
+      'Feedback',
+      name: 'feedback',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Contact Developer`
+  String get contactDeveloper {
+    return Intl.message(
+      'Contact Developer',
+      name: 'contactDeveloper',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tip Jar`
+  String get tipJar {
+    return Intl.message(
+      'Tip Jar',
+      name: 'tipJar',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rate the App`
+  String get rateApp {
+    return Intl.message(
+      'Rate the App',
+      name: 'rateApp',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

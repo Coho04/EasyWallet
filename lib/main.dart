@@ -70,6 +70,16 @@ class EasyWalletApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: S.delegate.supportedLocales,
+      localeResolutionCallback: (locale, supportedLocales) {
+        // Check if the current device locale is supported
+        for (var supportedLocale in supportedLocales) {
+          if (supportedLocale.languageCode == locale?.languageCode) {
+            return supportedLocale;
+          }
+        }
+        // If the locale of the device is not supported, use the first one from the list
+        return supportedLocales.first;
+      },
       theme: const CupertinoThemeData(
         primaryColor: CupertinoColors.activeBlue,
       ),

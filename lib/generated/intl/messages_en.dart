@@ -22,8 +22,26 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "contactDeveloper":
+            MessageLookupByLibrary.simpleMessage("Contact Developer"),
+        "currency": MessageLookupByLibrary.simpleMessage("Currency"),
+        "enableNotifications":
+            MessageLookupByLibrary.simpleMessage("Enable Notifications"),
+        "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
+        "help": MessageLookupByLibrary.simpleMessage("Help"),
+        "imprint": MessageLookupByLibrary.simpleMessage("Imprint"),
+        "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
+            "Include cost in notifications"),
+        "monthlyLimit": MessageLookupByLibrary.simpleMessage("Monthly Limit"),
+        "notificationTime":
+            MessageLookupByLibrary.simpleMessage("Notification Time"),
+        "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
+        "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
+        "rateApp": MessageLookupByLibrary.simpleMessage("Rate the App"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
         "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
-        "subscriptions": MessageLookupByLibrary.simpleMessage("Subscriptions")
+        "subscriptions": MessageLookupByLibrary.simpleMessage("Subscriptions"),
+        "support": MessageLookupByLibrary.simpleMessage("Support"),
+        "tipJar": MessageLookupByLibrary.simpleMessage("Tip Jar")
       };
 }

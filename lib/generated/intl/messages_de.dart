@@ -22,8 +22,28 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "contactDeveloper": MessageLookupByLibrary.simpleMessage(
+            "Kontaktieren Sie den Entwickler"),
+        "currency": MessageLookupByLibrary.simpleMessage("Währung"),
+        "enableNotifications": MessageLookupByLibrary.simpleMessage(
+            "Benachrichtigungen aktivieren"),
+        "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
+        "help": MessageLookupByLibrary.simpleMessage("Hilfe"),
+        "imprint": MessageLookupByLibrary.simpleMessage("Impressum"),
+        "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
+            "Kosten in Benachrichtigungen anzeigen"),
+        "monthlyLimit":
+            MessageLookupByLibrary.simpleMessage("Monatliches Limit"),
+        "notificationTime":
+            MessageLookupByLibrary.simpleMessage("Benachrichtigungszeit"),
+        "notifications":
+            MessageLookupByLibrary.simpleMessage("Benachrichtigungen"),
+        "privacyPolicy": MessageLookupByLibrary.simpleMessage("Datenschutz"),
+        "rateApp": MessageLookupByLibrary.simpleMessage("Bewerten Sie die App"),
         "settings": MessageLookupByLibrary.simpleMessage("Einstellungen"),
         "statistics": MessageLookupByLibrary.simpleMessage("Statistiken"),
-        "subscriptions": MessageLookupByLibrary.simpleMessage("Abonnements")
+        "subscriptions": MessageLookupByLibrary.simpleMessage("Abonnements"),
+        "support": MessageLookupByLibrary.simpleMessage("Support"),
+        "tipJar": MessageLookupByLibrary.simpleMessage("Trinkgeld Kasse")
       };
 }

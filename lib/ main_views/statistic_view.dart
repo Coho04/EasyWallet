@@ -59,29 +59,29 @@ class StatisticViewState extends State<StatisticView> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
-        middle: Text('Statistiken'),
+        middle: Text('Statistics'),
       ),
       child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Text('Gesamtausgaben: ${(monthlyExpenses + yearlyExpenses).toStringAsFixed(2)} €',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                _buildChart('Monatliche Ausgaben', [
-                  ChartData('Monatlich', monthlyExpenses, CupertinoColors.systemBlue),
-                ]),
-                _buildChart('Jährliche Ausgaben', [
-                  ChartData('Jährlich', yearlyExpenses, CupertinoColors.systemRed),
-                ]),
-                _buildChart('Jährliche vs Monatliche Ausgaben',
-                    _makeYearlyToMonthlyData()),
-                _buildChart(
-                    'Gepinnt vs Nicht Gepinnt Abonnements', _makePinnedData()),
-                _buildChart(
-                    'Pausiert vs Aktive Abonnements', _makePausedData()),
-              ],
-            ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Text('Total Expenses: ${(monthlyExpenses + yearlyExpenses).toStringAsFixed(2)} €',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              _buildChart('Monthly Expenses', [
+                ChartData('Monthly', monthlyExpenses, CupertinoColors.systemBlue),
+              ]),
+              _buildChart('Yearly Expenses', [
+                ChartData('Yearly', yearlyExpenses, CupertinoColors.systemRed),
+              ]),
+              _buildChart('Yearly vs Monthly Expenses',
+                  _makeYearlyToMonthlyData()),
+              _buildChart(
+                  'Pinned vs Unpinned Subscriptions', _makePinnedData()),
+              _buildChart(
+                  'Paused vs Active Subscriptions', _makePausedData()),
+            ],
           ),
+        ),
       ),
     );
   }
@@ -116,16 +116,16 @@ class StatisticViewState extends State<StatisticView> {
 
   List<ChartData> _makeYearlyToMonthlyData() {
     return [
-      ChartData('Monatlich', monthlyExpenses, CupertinoColors.systemBlue),
-      ChartData('Jährlich', yearlyExpenses, CupertinoColors.systemRed),
+      ChartData('Monthly', monthlyExpenses, CupertinoColors.systemBlue),
+      ChartData('Yearly', yearlyExpenses, CupertinoColors.systemRed),
     ];
   }
 
   List<ChartData> _makePinnedData() {
     return [
-      ChartData('Gepinnt', pinnedCount.toDouble(), CupertinoColors.systemBlue),
+      ChartData('Pinned', pinnedCount.toDouble(), CupertinoColors.systemBlue),
       ChartData(
-          'Nicht Gepinnt', unpinnedCount.toDouble(), CupertinoColors.systemRed),
+          'Unpinned', unpinnedCount.toDouble(), CupertinoColors.systemRed),
     ];
   }
 
@@ -137,8 +137,8 @@ class StatisticViewState extends State<StatisticView> {
         .where((sub) => sub.isPaused)
         .length;
     return [
-      ChartData('Aktiv', activeCount.toDouble(), CupertinoColors.systemBlue),
-      ChartData('Pausiert', pausedCount.toDouble(), CupertinoColors.systemRed),
+      ChartData('Active', activeCount.toDouble(), CupertinoColors.systemBlue),
+      ChartData('Paused', pausedCount.toDouble(), CupertinoColors.systemRed),
     ];
   }
 }

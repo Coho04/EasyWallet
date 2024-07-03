@@ -139,7 +139,7 @@ class HomeViewState extends State<HomeView> {
             SizedBox(
               height: 36,
               child: CupertinoSearchTextField(
-                placeholder: 'Suchen',
+                placeholder: 'Search',
                 onChanged: (value) {
                   setState(() {
                     searchText = value;
@@ -178,7 +178,7 @@ class HomeViewState extends State<HomeView> {
             height: 100,
             child: Center(
               child: Text(
-                'Abonnements',
+                'Subscriptions',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
@@ -192,7 +192,7 @@ class HomeViewState extends State<HomeView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Ausgaben diesen Monat',
+                      'Expenses this Month',
                       style: TextStyle(
                         fontSize: 16,
                         color: CupertinoColors.systemGrey,
@@ -211,7 +211,7 @@ class HomeViewState extends State<HomeView> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     const Text(
-                      'Ausgaben dieses Jahr',
+                      'Expenses this Year',
                       style: TextStyle(
                         fontSize: 16,
                         color: CupertinoColors.systemGrey,
@@ -255,7 +255,7 @@ class HomeViewState extends State<HomeView> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text(
-            'Keine Abonnements vorhanden',
+            'No subscriptions available',
             style: TextStyle(fontSize: 18, color: CupertinoColors.systemGrey),
           ),
           const SizedBox(height: 16),
@@ -270,7 +270,7 @@ class HomeViewState extends State<HomeView> {
                 _loadSubscriptions();
               });
             },
-            child: const Text('Neues Abonnement hinzufügen'),
+            child: const Text('Add New Subscription'),
           ),
         ],
       ),
@@ -281,10 +281,10 @@ class HomeViewState extends State<HomeView> {
     showCupertinoModalPopup(
       context: context,
       builder: (context) => CupertinoActionSheet(
-        title: const Text('Sortieroptionen'),
+        title: const Text('Sort Options'),
         actions: <Widget>[
           CupertinoActionSheetAction(
-            child: const Text('Alphabetisch aufsteigend'),
+            child: const Text('Alphabetical Ascending'),
             onPressed: () {
               setState(() {
                 sortOption = SortOption.alphabeticalAscending;
@@ -294,7 +294,7 @@ class HomeViewState extends State<HomeView> {
             },
           ),
           CupertinoActionSheetAction(
-            child: const Text('Alphabetisch absteigend'),
+            child: const Text('Alphabetical Descending'),
             onPressed: () {
               setState(() {
                 sortOption = SortOption.alphabeticalDescending;
@@ -304,7 +304,7 @@ class HomeViewState extends State<HomeView> {
             },
           ),
           CupertinoActionSheetAction(
-            child: const Text('Kosten aufsteigend'),
+            child: const Text('Cost Ascending'),
             onPressed: () {
               setState(() {
                 sortOption = SortOption.costAscending;
@@ -314,7 +314,7 @@ class HomeViewState extends State<HomeView> {
             },
           ),
           CupertinoActionSheetAction(
-            child: const Text('Kosten absteigend'),
+            child: const Text('Cost Descending'),
             onPressed: () {
               setState(() {
                 sortOption = SortOption.costDescending;
@@ -324,7 +324,7 @@ class HomeViewState extends State<HomeView> {
             },
           ),
           CupertinoActionSheetAction(
-            child: const Text('Tage aufsteigend'),
+            child: const Text('Days Remaining Ascending'),
             onPressed: () {
               setState(() {
                 sortOption = SortOption.remainingDaysAscending;
@@ -334,7 +334,7 @@ class HomeViewState extends State<HomeView> {
             },
           ),
           CupertinoActionSheetAction(
-            child: const Text('Tage absteigend'),
+            child: const Text('Days Remaining Descending'),
             onPressed: () {
               setState(() {
                 sortOption = SortOption.remainingDaysDescending;
@@ -345,7 +345,7 @@ class HomeViewState extends State<HomeView> {
           ),
         ],
         cancelButton: CupertinoActionSheetAction(
-          child: const Text('Abbrechen'),
+          child: const Text('Cancel'),
           onPressed: () {
             Navigator.pop(context);
           },
