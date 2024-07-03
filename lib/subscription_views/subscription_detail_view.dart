@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'subscription_edit_view.dart';
@@ -8,8 +9,10 @@ import 'package:easy_wallet/persistence_controller.dart';
 
 class SubscriptionDetailView extends StatefulWidget {
   final Subscription subscription;
+  final ValueChanged<Subscription> onUpdate;
+  final ValueChanged<Subscription> onDelete;
 
-  const SubscriptionDetailView({super.key, required this.subscription});
+  const SubscriptionDetailView({super.key, required this.subscription, required this.onUpdate, required this.onDelete});
 
   @override
   SubscriptionDetailViewState createState() => SubscriptionDetailViewState();
@@ -35,7 +38,15 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
             Navigator.push(
               context,
               CupertinoPageRoute(
-                builder: (context) => SubscriptionEditView(subscription: subscription),
+                builder: (context) => SubscriptionEditView(
+                  subscription: subscription,
+                  onUpdate: (updatedSubscription) {
+                    setState(() {
+                      subscription = updatedSubscription;
+                    });
+                    widget.onUpdate(updatedSubscription);
+                  },
+                ),
               ),
             );
           },
@@ -128,13 +139,7 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
   Widget _buildHeader() {
     return Row(
       children: [
-        CachedNetworkImage(
-          imageUrl: _subscriptionUrl(),
-          placeholder: (context, url) => const CupertinoActivityIndicator(),
-          errorWidget: (context, url, error) => const Icon(CupertinoIcons.exclamationmark_triangle),
-          width: 40,
-          height: 40,
-        ),
+        _buildImage(),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
@@ -183,6 +188,35 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
     );
   }
 
+  Widget _buildImage() {
+    if (subscription.url == null) {
+      return const Icon(
+        CupertinoIcons.exclamationmark_triangle,
+        color: CupertinoColors.systemGrey,
+        size: 40,
+      );
+    } else if (subscription.url!.isEmpty) {
+      return const Icon(
+        Icons.account_balance_wallet_rounded,
+        color: CupertinoColors.systemGrey,
+        size: 40,
+      );
+    } else {
+      return CachedNetworkImage(
+        imageUrl:
+        'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
+        placeholder: (context, url) => const CupertinoActivityIndicator(),
+        errorWidget: (context, url, error) => const Icon(
+          CupertinoIcons.exclamationmark_triangle,
+          color: CupertinoColors.systemGrey,
+          size: 40,
+        ),
+        width: 40,
+        height: 40,
+      );
+    }
+  }
+
   void _togglePin() {
     setState(() {
       subscription.isPinned = !subscription.isPinned;
@@ -195,13 +229,6 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
       subscription.isPaused = !subscription.isPaused;
     });
     _saveItem();
-  }
-
-  String _subscriptionUrl() {
-    if (subscription.url != null) {
-      return 'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}';
-    }
-    return '';
   }
 
   Future<void> _deleteItem() async {
@@ -224,6 +251,7 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
     } else {
       final persistenceController = PersistenceController.instance;
       await persistenceController.deleteSubscription(subscription);
+      widget.onDelete(subscription);
       Navigator.of(context).pop();
     }
   }
@@ -231,6 +259,7 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
   void _saveItem() async {
     final persistenceController = PersistenceController.instance;
     await persistenceController.saveSubscription(subscription);
+    widget.onUpdate(subscription);
   }
 
   String _repeatPattern(Subscription subscription) {
