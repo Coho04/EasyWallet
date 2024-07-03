@@ -1,0 +1,15 @@
+{
+  "@@locale": "en",
+  "subscriptions": "Subscriptions",
+  "statistics": "Statistics",
+  "settings": "Settings",
+  "@subscriptions": {
+    "description": "Label for the subscriptions tab"
+  },
+  "@statistics": {
+    "description": "Label for the statistics tab"
+  },
+  "@settings": {
+    "description": "Label for the settings tab"
+  }
+}

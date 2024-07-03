@@ -29,6 +29,8 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: const Text('Abo hinzufügen'),
@@ -44,11 +46,12 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
           child: Form(
             child: ListView(
               children: [
-                _buildHeader(),
+                _buildHeader(isDarkMode),
                 const SizedBox(height: 16),
                 _buildTextField(
                   _urlController,
                   'URL',
+                  isDarkMode: isDarkMode,
                   keyboardType: TextInputType.url,
                   autocorrect: false,
                   onChanged: (value) {
@@ -57,14 +60,13 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                       _urlController.selection = TextSelection.fromPosition(
                           TextPosition(offset: _urlController.text.length));
                     }
-                    //Update the image
                     setState(() {});
                   },
                 ),
                 const SizedBox(height: 16),
-                _buildAmountField(),
+                _buildAmountField(isDarkMode),
                 const SizedBox(height: 16),
-                _buildDatePickerField('Start Datum', _selectedDate, _pickDate),
+                _buildDatePickerField('Start Datum', _selectedDate, _pickDate, isDarkMode),
                 const SizedBox(height: 16),
                 _buildDropdownField(
                   'Bezahlrate',
@@ -75,6 +77,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                       _selectedPayRate = value!;
                     });
                   },
+                  isDarkMode,
                 ),
                 const SizedBox(height: 16),
                 _buildDropdownField(
@@ -86,9 +89,10 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                       _selectedRememberCycle = value!;
                     });
                   },
+                  isDarkMode,
                 ),
                 const SizedBox(height: 16),
-                _buildTextField(_notesController, 'Notizen', maxLines: 5),
+                _buildTextField(_notesController, 'Notizen', maxLines: 5, isDarkMode: isDarkMode),
               ],
             ),
           ),
@@ -102,6 +106,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         bool autocorrect = false,
         ValueChanged<String>? onChanged,
         int maxLines = 1,
+        required bool isDarkMode,
         bool isValid = true}) {
     return CupertinoTextField(
       controller: controller,
@@ -109,14 +114,18 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
       keyboardType: keyboardType,
       autocorrect: autocorrect,
       onChanged: onChanged,
+      style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
       decoration: BoxDecoration(
-        color: isValid
+        color: isDarkMode
+            ? CupertinoColors.darkBackgroundGray
+            : isValid
             ? CupertinoColors.systemGrey6
             : CupertinoColors.systemRed.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
-          color:
-          isValid ? CupertinoColors.systemGrey6 : CupertinoColors.systemRed,
+          color: isValid
+              ? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey6)
+              : CupertinoColors.systemRed,
           width: 1.0,
         ),
       ),
@@ -125,7 +134,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isDarkMode) {
     return Row(
       children: [
         _buildImage(),
@@ -134,11 +143,14 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
           child: CupertinoTextField(
             controller: _titleController,
             placeholder: 'Titel',
+            style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
             decoration: BoxDecoration(
-              color: CupertinoColors.systemGrey6,
+              color: isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.systemGrey6,
               borderRadius: BorderRadius.circular(8.0),
               border: Border.all(
-                color: _isTitleValid ? CupertinoColors.systemGrey4 : CupertinoColors.destructiveRed,
+                color: _isTitleValid
+                    ? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey4)
+                    : CupertinoColors.destructiveRed,
               ),
             ),
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -175,7 +187,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     }
   }
 
-  Widget _buildAmountField() {
+  Widget _buildAmountField(bool isDarkMode) {
     return Row(
       children: [
         Expanded(
@@ -184,36 +196,42 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
             'Kosten',
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             isValid: _isAmountValid,
+            isDarkMode: isDarkMode,
           ),
         ),
         const SizedBox(width: 8),
-        const Text('Euro'),
+        Text(
+          'Euro',
+          style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+        ),
       ],
     );
   }
 
-  Widget _buildDatePickerField(String label, DateTime date, VoidCallback onTap) {
+  Widget _buildDatePickerField(String label, DateTime date, VoidCallback onTap, bool isDarkMode) {
     return CupertinoFormRow(
       prefix: Padding(
         padding: const EdgeInsets.only(right: 16.0),
-        child: Text(label),
+        child: Text(
+          label,
+          style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+        ),
       ),
       child: GestureDetector(
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
-            color: CupertinoColors.systemGrey6,
+            color: isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.systemGrey6,
             borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: CupertinoColors.systemGrey4),
+            border: Border.all(color: isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey4),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 DateFormat('dd.MM.yyyy').format(date),
-                style: const TextStyle(
-                    fontSize: 16, color: CupertinoColors.inactiveGray),
+                style: const TextStyle(fontSize: 16, color: CupertinoColors.inactiveGray),
               ),
               const Icon(
                 CupertinoIcons.calendar,
@@ -227,29 +245,30 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     );
   }
 
-  Widget _buildDropdownField(String label, String currentValue,
-      List<String> options, ValueChanged<String?> onChanged) {
+  Widget _buildDropdownField(String label, String currentValue, List<String> options, ValueChanged<String?> onChanged, bool isDarkMode) {
     return CupertinoFormRow(
       prefix: Padding(
         padding: const EdgeInsets.only(right: 16.0),
-        child: Text(label),
+        child: Text(
+          label,
+          style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+        ),
       ),
       child: GestureDetector(
         onTap: () => _showOptions(context, options, onChanged),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
-            color: CupertinoColors.systemGrey6,
+            color: isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.systemGrey6,
             borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: CupertinoColors.systemGrey4),
+            border: Border.all(color: isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey4),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 _capitalize(currentValue),
-                style: const TextStyle(
-                    fontSize: 16, color: CupertinoColors.inactiveGray),
+                style: const TextStyle(fontSize: 16, color: CupertinoColors.inactiveGray),
               ),
               const Icon(
                 CupertinoIcons.chevron_down,
@@ -302,8 +321,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     }
   }
 
-  Future<void> _showOptions(BuildContext context, List<String> options,
-      ValueChanged<String?> onChanged) async {
+  Future<void> _showOptions(BuildContext context, List<String> options, ValueChanged<String?> onChanged) async {
     await showCupertinoModalPopup<String>(
       context: context,
       builder: (BuildContext context) {

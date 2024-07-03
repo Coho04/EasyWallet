@@ -29,6 +29,8 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: const Text('Abonnements'),
@@ -59,61 +61,80 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           children: <Widget>[
             const SizedBox(height: 20),
-            _buildHeader(),
+            _buildHeader(isDarkMode),
             const SizedBox(height: 20),
-            _buildCardSection('Allgemeine Informationen', [
-              _buildDetailRow('Kosten', '${subscription.amount.toStringAsFixed(2)} €'),
-              _buildDetailRow('Wiederholungsrate', _repeatPattern(subscription)),
-            ]),
+            _buildCardSection(
+              'Allgemeine Informationen',
+              [
+                _buildDetailRow('Kosten', '${subscription.amount.toStringAsFixed(2)} €', isDarkMode),
+                _buildDetailRow('Wiederholungsrate', _repeatPattern(subscription), isDarkMode),
+              ],
+              isDarkMode,
+            ),
             const SizedBox(height: 20),
-            _buildCardSection('Rechnungsinformationen', [
-              _buildDetailRow('Nächste Rechnung', _formatDate(_calculateNextBillDate(subscription))),
-              _buildDetailRow('Vorherige Rechnung', _formatDate(_calculatePreviousBillDate(subscription))),
-              _buildDetailRow('Erste Abbuchung', _formatDate(subscription.date)),
-              _buildDetailRow('Erstellt am', _formatDateTime(subscription.timestamp)),
-            ]),
+            _buildCardSection(
+              'Rechnungsinformationen',
+              [
+                _buildDetailRow('Nächste Rechnung', _formatDate(_calculateNextBillDate(subscription)), isDarkMode),
+                _buildDetailRow('Vorherige Rechnung', _formatDate(_calculatePreviousBillDate(subscription)), isDarkMode),
+                _buildDetailRow('Erste Abbuchung', _formatDate(subscription.date), isDarkMode),
+                _buildDetailRow('Erstellt am', _formatDateTime(subscription.timestamp), isDarkMode),
+              ],
+              isDarkMode,
+            ),
             const SizedBox(height: 20),
-            _buildCardSection('Zusätzliche Informationen', [
-              _buildDetailRow('Bisherige Abbuchungen', _countPayment(subscription).toString()),
-              _buildDetailRow('Kosten insgesamt', '${_sumPayment(subscription).toStringAsFixed(2)} €'),
-              if (subscription.notes != null && subscription.notes!.trim().isNotEmpty)
-                _buildDetailRow('Notizen', subscription.notes!),
-            ]),
+            _buildCardSection(
+              'Zusätzliche Informationen',
+              [
+                _buildDetailRow('Bisherige Abbuchungen', _countPayment(subscription).toString(), isDarkMode),
+                _buildDetailRow('Kosten insgesamt', '${_sumPayment(subscription).toStringAsFixed(2)} €', isDarkMode),
+                if (subscription.notes != null && subscription.notes!.trim().isNotEmpty)
+                  _buildDetailRow('Notizen', subscription.notes!, isDarkMode),
+              ],
+              isDarkMode,
+            ),
             const SizedBox(height: 20),
-            _buildCardSection('Aktionen', [
-              _buildAction(
-                subscription.isPinned ? 'Dieses Abonnement lösen' : 'Dieses Abonnement anheften',
-                subscription.isPinned ? CupertinoIcons.pin_slash : CupertinoIcons.pin,
-                    () => _togglePin(),
-                color: subscription.isPinned ? CupertinoColors.systemBlue : null,
-              ),
-              _buildAction(
-                subscription.isPaused ? 'Dieses Abonnement fortsetzen' : 'Dieses Abonnement pausieren',
-                subscription.isPaused ? CupertinoIcons.play_arrow_solid : CupertinoIcons.pause,
-                    () => _togglePause(),
-              ),
-              _buildAction(
-                'Dieses Abonnement löschen',
-                CupertinoIcons.delete,
-                    () => _deleteItem(),
-                color: CupertinoColors.destructiveRed,
-              ),
-            ]),
+            _buildCardSection(
+              'Aktionen',
+              [
+                _buildAction(
+                  subscription.isPinned ? 'Dieses Abonnement lösen' : 'Dieses Abonnement anheften',
+                  subscription.isPinned ? CupertinoIcons.pin_slash : CupertinoIcons.pin,
+                      () => _togglePin(),
+                  color: subscription.isPinned ? CupertinoColors.systemBlue : null,
+                  isDarkMode: isDarkMode,
+                ),
+                _buildAction(
+                  subscription.isPaused ? 'Dieses Abonnement fortsetzen' : 'Dieses Abonnement pausieren',
+                  subscription.isPaused ? CupertinoIcons.play_arrow_solid : CupertinoIcons.pause,
+                      () => _togglePause(),
+                  isDarkMode: isDarkMode,
+                ),
+                _buildAction(
+                  'Dieses Abonnement löschen',
+                  CupertinoIcons.delete,
+                      () => _deleteItem(),
+                  color: CupertinoColors.destructiveRed,
+                  isDarkMode: isDarkMode,
+                ),
+              ],
+              isDarkMode,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCardSection(String title, List<Widget> children) {
+  Widget _buildCardSection(String title, List<Widget> children, bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        color: isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.systemGrey6,
         borderRadius: BorderRadius.circular(12.0),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: CupertinoColors.systemGrey4,
+            color: isDarkMode ? CupertinoColors.black : CupertinoColors.systemGrey4,
             blurRadius: 10.0,
             spreadRadius: 1.0,
           ),
@@ -124,9 +145,10 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
+              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
             ),
           ),
           const SizedBox(height: 10),
@@ -136,7 +158,7 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(bool isDarkMode) {
     return Row(
       children: [
         _buildImage(),
@@ -144,9 +166,10 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
         Expanded(
           child: Text(
             subscription.title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
+              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
             ),
           ),
         ),
@@ -154,20 +177,26 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildDetailRow(String label, String value, bool isDarkMode) {
     return CupertinoFormRow(
       prefix: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: CupertinoColors.systemGrey,
+          color: isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey,
         ),
       ),
-      child: Text(value, style: const TextStyle(fontSize: 16)),
+      child: Text(
+        value,
+        style: TextStyle(
+          fontSize: 16,
+          color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+        ),
+      ),
     );
   }
 
-  Widget _buildAction(String label, IconData icon, VoidCallback onTap, {Color? color}) {
+  Widget _buildAction(String label, IconData icon, VoidCallback onTap, {Color? color, required bool isDarkMode}) {
     return CupertinoFormRow(
       child: CupertinoButton(
         padding: EdgeInsets.zero,
@@ -178,10 +207,13 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
             Text(
               label,
               style: TextStyle(
-                color: color ?? CupertinoColors.systemGrey,
+                color: color ?? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.black),
               ),
             ),
-            Icon(icon, color: color ?? CupertinoColors.systemGrey),
+            Icon(
+              icon,
+              color: color ?? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.black),
+            ),
           ],
         ),
       ),

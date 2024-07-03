@@ -40,12 +40,7 @@ class StatisticViewState extends State<StatisticView> {
         totalYearlyExpenses += subscription.amount;
       }
 
-      if (subscription.isPinned) {
-        pinnedCount++;
-      } else {
-        unpinnedCount++;
-      }
-
+      subscription.isPinned ? pinnedCount++ : unpinnedCount++;
       if (subscription.date != null && !subscription.isPaused) {
         nextDue.add(subscription);
       }

@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 
 class BackgroundTaskManager {
-  static const String taskName = "de.golden-developer.easywallet.refresh";
+  static const String taskName = "io.github.coho04.easywallet.refresh";
   static const String lastNotificationKey = "LastNotificationScheduleDate";
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =

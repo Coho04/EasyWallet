@@ -39,9 +39,10 @@ dependencies:
   cached_network_image: ^3.2.1
   shared_preferences: ^2.0.6
   universal_io: ^2.0.4
-  syncfusion_flutter_charts : ^26.1.39
+  syncfusion_flutter_charts: ^26.1.39
   url_launcher: ^6.3.0
-
+  flutter_localizations:
+    sdk: flutter
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -67,8 +68,12 @@ flutter_icons:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
+flutter_intl:
+  enabled: true
+
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
@@ -78,6 +83,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icon.png
+    - lib/l10n/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -2,8 +2,10 @@ import 'package:easy_wallet/%20main_views/home_view.dart';
 import 'package:easy_wallet/%20main_views/settings_view.dart';
 import 'package:easy_wallet/%20main_views/statistic_view.dart';
 import 'package:easy_wallet/background_task_manager.dart';
+import 'package:easy_wallet/generated/l10n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:flutter/foundation.dart';
 import 'persistence_controller.dart';
@@ -13,9 +15,9 @@ void main() async {
 
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
+  AndroidInitializationSettings('@mipmap/ic_launcher');
   const DarwinInitializationSettings initializationSettingsDarwin =
-      DarwinInitializationSettings(
+  DarwinInitializationSettings(
     onDidReceiveLocalNotification: onDidReceiveLocalNotification,
   );
   const InitializationSettings initializationSettings = InitializationSettings(
@@ -25,8 +27,8 @@ void main() async {
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) async {
-    selectNotification(response.payload);
-  });
+        selectNotification(response.payload);
+      });
 
   if (!kIsWeb) {
     Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
@@ -59,12 +61,19 @@ class EasyWalletApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CupertinoApp(
+    return CupertinoApp(
       title: 'EasyWallet',
-      theme: CupertinoThemeData(
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
+      theme: const CupertinoThemeData(
         primaryColor: CupertinoColors.activeBlue,
       ),
-      home: MainScreen(),
+      home: const MainScreen(),
     );
   }
 }
@@ -95,18 +104,18 @@ class MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.creditcard_fill),
-            label: 'Abonnements',
+            icon: const Icon(CupertinoIcons.creditcard_fill),
+            label: S.of(context).subscriptions,
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.chart_bar_fill),
-            label: 'Statistiken',
+            icon: const Icon(CupertinoIcons.chart_bar_fill),
+            label: S.of(context).statistics,
           ),
           BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.settings),
-            label: 'Einstellungen',
+            icon: const Icon(CupertinoIcons.settings),
+            label: S.of(context).settings,
           ),
         ],
         currentIndex: _selectedIndex,
