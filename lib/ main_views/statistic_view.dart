@@ -7,10 +7,10 @@ class StatisticView extends StatefulWidget {
   const StatisticView({super.key});
 
   @override
-  _StatisticViewState createState() => _StatisticViewState();
+  StatisticViewState createState() => StatisticViewState();
 }
 
-class _StatisticViewState extends State<StatisticView> {
+class StatisticViewState extends State<StatisticView> {
   double monthlyExpenses = 0.0;
   double yearlyExpenses = 0.0;
   List<Subscription> nextDueSubscriptions = [];

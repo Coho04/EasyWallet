@@ -91,7 +91,12 @@ class SubscriptionItem extends StatelessWidget {
                     CupertinoIcons.right_chevron,
                     color: CupertinoColors.systemGrey,
                   ),
-                )
+                ),
+                if (subscription.isPinned)
+                  const Icon(
+                    CupertinoIcons.pin_fill,
+                    color: CupertinoColors.systemGrey,
+                  ),
               ],
             ),
           ],

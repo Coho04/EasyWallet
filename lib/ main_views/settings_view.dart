@@ -6,10 +6,10 @@ class SettingsView extends StatefulWidget {
   const SettingsView({super.key});
 
   @override
-  _SettingsViewState createState() => _SettingsViewState();
+  SettingsViewState createState() => SettingsViewState();
 }
 
-class _SettingsViewState extends State<SettingsView> {
+class SettingsViewState extends State<SettingsView> {
   bool notificationsEnabled = true;
   bool includeCostInNotifications = false;
   DateTime notificationTime = DateTime.now();

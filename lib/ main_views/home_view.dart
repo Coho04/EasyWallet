@@ -1,3 +1,4 @@
+import 'package:easy_wallet/enum/sort_option.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/model/subscription_item.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,11 +10,12 @@ class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
   @override
-  _HomeViewState createState() => _HomeViewState();
+  HomeViewState createState() => HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
+class HomeViewState extends State<HomeView> {
   String searchText = "";
+  SortOption sortOption = SortOption.remainingDaysAscending;
 
   List<Subscription> subscriptions = [];
 
@@ -56,14 +58,49 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final filteredSubscriptions = subscriptions.where((subscription) {
-      return subscription.title
+  List<Subscription> get sortedSubscriptions {
+    List<Subscription> filteredSubscriptions = subscriptions.where((subscription) {
+      return subscription.title!
           .toLowerCase()
           .contains(searchText.toLowerCase());
     }).toList();
 
+    filteredSubscriptions.sort((a, b) {
+      switch (sortOption) {
+        case SortOption.alphabeticalAscending:
+          return a.title!.compareTo(b.title!);
+        case SortOption.alphabeticalDescending:
+          return b.title!.compareTo(a.title!);
+        case SortOption.costAscending:
+          return a.amount.compareTo(b.amount);
+        case SortOption.costDescending:
+          return b.amount.compareTo(a.amount);
+        case SortOption.remainingDaysAscending:
+          return _remainingDays(a).compareTo(_remainingDays(b));
+        case SortOption.remainingDaysDescending:
+          return _remainingDays(b).compareTo(_remainingDays(a));
+        default:
+          return 0;
+      }
+    });
+    return filteredSubscriptions;
+  }
+
+  int _remainingDays(Subscription subscription) {
+    if (subscription.date == null) return 0;
+    DateTime nextBillDate = subscription.date!;
+    DateTime today = DateTime.now();
+    Duration interval = subscription.repeatPattern == 'yearly'
+        ? const Duration(days: 365)
+        : const Duration(days: 30);
+    while (nextBillDate.isBefore(today)) {
+      nextBillDate = nextBillDate.add(interval);
+    }
+    return nextBillDate.difference(today).inDays;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     double monthlySpent = subscriptions.where((subscription) {
       final now = DateTime.now();
       return subscription.date != null &&
@@ -95,9 +132,7 @@ class _HomeViewState extends State<HomeView> {
         ),
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
-          onPressed: () {
-            // Handle sorting logic
-          },
+          onPressed: () => _showSortOptions(context),
           child: const Icon(CupertinoIcons.arrow_up_arrow_down,
               color: CupertinoColors.activeBlue),
         ),
@@ -177,15 +212,86 @@ class _HomeViewState extends State<HomeView> {
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.zero,
-              itemCount: filteredSubscriptions.length,
+              itemCount: sortedSubscriptions.length,
               itemBuilder: (context, index) {
                 return SubscriptionItem(
-                  subscription: filteredSubscriptions[index],
+                  subscription: sortedSubscriptions[index],
                 );
               },
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showSortOptions(BuildContext context) {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        title: const Text('Sortieroptionen'),
+        actions: <Widget>[
+          CupertinoActionSheetAction(
+            child: const Text('Alphabetisch aufsteigend'),
+            onPressed: () {
+              setState(() {
+                sortOption = SortOption.alphabeticalAscending;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Alphabetisch absteigend'),
+            onPressed: () {
+              setState(() {
+                sortOption = SortOption.alphabeticalDescending;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Kosten aufsteigend'),
+            onPressed: () {
+              setState(() {
+                sortOption = SortOption.costAscending;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Kosten absteigend'),
+            onPressed: () {
+              setState(() {
+                sortOption = SortOption.costDescending;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Tage aufsteigend'),
+            onPressed: () {
+              setState(() {
+                sortOption = SortOption.remainingDaysAscending;
+              });
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Tage absteigend'),
+            onPressed: () {
+              setState(() {
+                sortOption = SortOption.remainingDaysDescending;
+              });
+              Navigator.pop(context);
+            },
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          child: const Text('Abbrechen'),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
     );
   }

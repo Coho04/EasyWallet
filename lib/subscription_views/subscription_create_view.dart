@@ -9,10 +9,10 @@ class SubscriptionCreateView extends StatefulWidget {
   const SubscriptionCreateView({super.key});
 
   @override
-  _SubscriptionCreateViewState createState() => _SubscriptionCreateViewState();
+  SubscriptionCreateViewState createState() => SubscriptionCreateViewState();
 }
 
-class _SubscriptionCreateViewState extends State<SubscriptionCreateView> {
+class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   final _titleController = TextEditingController();
   final _notesController = TextEditingController();
   final _urlController = TextEditingController();
