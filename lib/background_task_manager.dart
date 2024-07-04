@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'package:easy_wallet/enum/payment_rate.dart';
-import 'package:easy_wallet/enum/remember_cycle.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:sqflite/sqflite.dart';
@@ -9,29 +7,64 @@ import 'package:path/path.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:flutter/material.dart';
 
 class BackgroundTaskManager {
   static const String taskName = "io.github.coho04.easywallet.refresh";
   static const String lastNotificationKey = "LastNotificationScheduleDate";
+  static const String groupKey = "com.easy_wallet.SUBSCRIPTION_NOTIFICATIONS";
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
+    print('Initializing background task manager.');
     await _initNotifications();
     if (!kIsWeb) {
+      print('Initializing Workmanager.');
       Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-      Workmanager().registerPeriodicTask(
-        "1",
-        taskName,
-        frequency: const Duration(minutes: 15), // For example, every 15 minutes
-      );
+      Workmanager()
+          .registerPeriodicTask(
+        "io.github.coho04.easywallet.periodicTask.id.1.1",
+        "io.github.coho04.easywallet.periodicTask.id.1",
+        existingWorkPolicy: ExistingWorkPolicy.append,
+        frequency: const Duration(minutes: 15),
+      )
+          .then((value) {
+        print('Periodic task registered.');
+        _showNotification("Background Task", "Periodic task registered.");
+      });
+
+      // Führe den ersten Check sofort aus
+      await scheduleNotifications();
     }
+  }
+
+  Future<void> _initNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    tz.initializeTimeZones();
   }
 
   Future<TimeOfDay> _getUserNotificationTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? notificationTimeString = prefs.getString('notificationTime');
+    final String? notificationTimeString = prefs.getString('notification_time');
     if (notificationTimeString != null) {
       final timeParts = notificationTimeString.split(':');
       return TimeOfDay(
@@ -39,19 +72,7 @@ class BackgroundTaskManager {
         minute: int.parse(timeParts[1]),
       );
     }
-    return TimeOfDay(hour: 9, minute: 0); // Default time
-  }
-
-
-
-  Future<void> _initNotifications() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
-    );
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    return const TimeOfDay(hour: 9, minute: 0);
   }
 
   Future<void> scheduleNotifications() async {
@@ -60,10 +81,29 @@ class BackgroundTaskManager {
     final String today = formatter.format(DateTime.now());
     final String? lastScheduledDate = prefs.getString(lastNotificationKey);
 
+    _showNotification("Subscription Check", "Subscription check executed");
+
+    if (kDebugMode) {
+      print("Last scheduled date: $lastScheduledDate");
+    }
     if (lastScheduledDate == today) {
       if (kDebugMode) {
         print("Notifications were already scheduled today. Skipping.");
       }
+      return;
+    }
+
+    final TimeOfDay userNotificationTime = await _getUserNotificationTime();
+    final DateTime now = DateTime.now();
+    final DateTime notificationDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      userNotificationTime.hour,
+      userNotificationTime.minute,
+    );
+
+    if (now.isAfter(notificationDateTime)) {
       return;
     }
 
@@ -75,6 +115,9 @@ class BackgroundTaskManager {
     );
 
     if (subscriptions.isEmpty) {
+      if (kDebugMode) {
+        print("No subscriptions found that require notifications.");
+      }
       return;
     }
 
@@ -84,47 +127,87 @@ class BackgroundTaskManager {
       if (eventDate == null) continue;
 
       switch (subscription['remembercycle']) {
-        case RememberCycle.dayBefore:
+        case 'day_before':
           eventDate = eventDate.subtract(const Duration(days: 1));
           break;
-        case RememberCycle.twoDaysBefore:
+        case 'two_days_before':
           eventDate = eventDate.subtract(const Duration(days: 2));
           break;
-        case RememberCycle.weekBefore:
+        case 'week_before':
           eventDate = eventDate.subtract(const Duration(days: 7));
           break;
-        case RememberCycle.sameDay:
+        case 'same_day':
         default:
           break;
       }
 
       if (DateFormat('yyyy-MM-dd').format(eventDate) == today) {
-        await _scheduleNotification(subscription);
+        await _scheduleNotification(subscription, notificationDateTime);
         notificationsScheduled = true;
+        if (kDebugMode) {
+          print(
+              "Scheduled notification for subscription: ${subscription['title']}");
+        }
       }
     }
 
     if (notificationsScheduled) {
       prefs.setString(lastNotificationKey, today);
+      if (kDebugMode) {
+        print("Notifications were scheduled for today.");
+      }
+      _showNotification(
+          "Notifications Scheduled", "Notifications were scheduled for today.");
+    } else {
+      if (kDebugMode) {
+        print("No notifications were scheduled for today.");
+      }
+      _showNotification(
+          "No Notifications", "No notifications were scheduled for today.");
     }
   }
 
-  Future<void> _scheduleNotification(Map<String, dynamic> subscription) async {
+  Future<void> _scheduleNotification(
+      Map<String, dynamic> subscription, DateTime scheduledTime) async {
+    int notificationId =
+        DateTime.now().millisecondsSinceEpoch.remainder(100000);
+
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails('your_channel_id', 'easy_wallet',
-            channelDescription: "EasyWallet App Notify Channel",
-            importance: Importance.max,
-            priority: Priority.high,
-            showWhen: false);
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-      0,
+        AndroidNotificationDetails(
+      'easy_wallet',
+      'easy_wallet',
+      channelDescription: "EasyWallet App Notify Channel",
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: true,
+      groupKey: groupKey,
+      setAsGroupSummary: false,
+    );
+
+    const DarwinNotificationDetails iosPlatformChannelSpecifics =
+        DarwinNotificationDetails();
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iosPlatformChannelSpecifics,
+    );
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      notificationId,
       'Subscription Reminder',
       'Your subscription ${subscription['title']} is due soon!',
+      tz.TZDateTime.from(scheduledTime, tz.local),
       platformChannelSpecifics,
       payload: 'item x',
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
     );
+    if (kDebugMode) {
+      print(
+          "Notification scheduled: ${subscription['title']} at $scheduledTime");
+    }
   }
 
   DateTime? _calculateNextBillDate(Map<String, dynamic> subscription) {
@@ -144,6 +227,11 @@ class BackgroundTaskManager {
 
     while (startBillDate.isBefore(today)) {
       startBillDate = startBillDate.add(interval);
+    }
+
+    if (kDebugMode) {
+      print(
+          "Next bill date calculated for ${subscription['title']}: $startBillDate");
     }
 
     return startBillDate;
@@ -171,10 +259,51 @@ class BackgroundTaskManager {
     );
   }
 
+  Future<void> _showNotification(String title, String body) async {
+    int notificationId =
+        DateTime.now().millisecondsSinceEpoch.remainder(100000);
+
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'default_channel_id',
+      'default_channel_name',
+      channelDescription: 'default_channel_description',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: true,
+      groupKey: groupKey,
+      setAsGroupSummary: false,
+    );
+
+    const DarwinNotificationDetails iosPlatformChannelSpecifics =
+        DarwinNotificationDetails();
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iosPlatformChannelSpecifics,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      notificationId,
+      title,
+      body,
+      platformChannelSpecifics,
+    );
+  }
+
   static void callbackDispatcher() {
     Workmanager().executeTask((task, inputData) async {
-      final manager = BackgroundTaskManager();
-      await manager.scheduleNotifications();
+      // print("Background task executed: $task");
+      // final manager = BackgroundTaskManager();
+      // await manager._initNotifications();
+      // await manager._showNotification(
+      //     "Background Task", "Background task executed: $task");
+      // await manager.scheduleNotifications();
+      // if (kDebugMode) {
+      //   print("Background task executed: $task");
+      // }
+      // await manager._showNotification(
+      //     "Background Task", "Background task executed: $task");
       return Future.value(true);
     });
   }

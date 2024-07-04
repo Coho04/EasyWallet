@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -30,9 +31,19 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   bool _titleValid = true;
   bool _amountValid = true;
 
+  String _currency = 'USD';
+
+  Future<void> _loadCurrency() async {
+    final currency = await Settings.getCurrency();
+    setState(() {
+      _currency = currency.name;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadCurrency();
     _titleController = TextEditingController(text: widget.subscription.title);
     _urlController = TextEditingController(text: widget.subscription.url ?? '');
     _amountController =
@@ -94,11 +105,11 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text(Intl.message('Edit Subscription')),
+        middle: Text(Intl.message('editSubscription')),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _saveItem,
-          child: Text(Intl.message('Save')),
+          child: Text(Intl.message('save')),
         ),
       ),
       child: SafeArea(
@@ -127,7 +138,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                 _buildAmountField(isDarkMode),
                 const SizedBox(height: 16),
                 _buildDropdownField(
-                  Intl.message('Payment Rate'),
+                  Intl.message('paymentRate'),
                   _paymentRate,
                   PaymentRate.values,
                       (value) {
@@ -139,14 +150,14 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                 ),
                 const SizedBox(height: 16),
                 _buildDatePickerField(
-                  Intl.message('Start Date'),
+                  Intl.message('startDate'),
                   _date,
                   _pickDate,
                   isDarkMode,
                 ),
                 const SizedBox(height: 16),
                 _buildDropdownField(
-                  Intl.message('Remembering'),
+                  Intl.message('remembering'),
                   _rememberCycle,
                   RememberCycle.values,
                       (value) {
@@ -157,7 +168,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                   isDarkMode,
                 ),
                 const SizedBox(height: 16),
-                _buildTextField(_notesController, Intl.message('Notes'),
+                _buildTextField(_notesController, Intl.message('notes'),
                     maxLines: 5, isDarkMode: isDarkMode),
               ],
             ),
@@ -279,7 +290,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
           ),
         ),
         const SizedBox(width: 8),
-        Text(Intl.message('Euro'),
+        Text(_currency,
             style: TextStyle(
                 color: isDarkMode
                     ? CupertinoColors.white
@@ -444,7 +455,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
             );
           }).toList(),
           cancelButton: CupertinoActionSheetAction(
-            child: Text(Intl.message('Cancel')),
+            child: Text(Intl.message('cancel')),
             onPressed: () {
               Navigator.pop(context);
             },
