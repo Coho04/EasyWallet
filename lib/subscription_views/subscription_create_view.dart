@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +24,23 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   DateTime _selectedDate = DateTime.now();
   String _selectedPayRate = PaymentRate.monthly.value;
   String _selectedRememberCycle = RememberCycle.sameDay.value;
+  String _currency = 'USD';
 
   bool _isTitleValid = true;
   bool _isAmountValid = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrency();
+  }
+
+  Future<void> _loadCurrency() async {
+    final currency = await Settings.getCurrency();
+    setState(() {
+      _currency = currency.symbol;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +48,11 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('Abo hinzufügen'),
+        middle: Text(Intl.message('Add Subscription')),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _saveItem,
-          child: const Text('Speichern'),
+          child: Text(Intl.message('Save')),
         ),
       ),
       child: SafeArea(
@@ -66,12 +81,12 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 const SizedBox(height: 16),
                 _buildAmountField(isDarkMode),
                 const SizedBox(height: 16),
-                _buildDatePickerField('Start Datum', _selectedDate, _pickDate, isDarkMode),
+                _buildDatePickerField(Intl.message('Start Date'), _selectedDate, _pickDate, isDarkMode),
                 const SizedBox(height: 16),
                 _buildDropdownField(
-                  'Bezahlrate',
+                  Intl.message('Payment Rate'),
                   _selectedPayRate,
-                  PaymentRate.all(),
+                  PaymentRate.values,
                       (value) {
                     setState(() {
                       _selectedPayRate = value!;
@@ -81,9 +96,9 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 ),
                 const SizedBox(height: 16),
                 _buildDropdownField(
-                  'Erinnern an',
+                  Intl.message('Remembering'),
                   _selectedRememberCycle,
-                  RememberCycle.all(),
+                  RememberCycle.values,
                       (value) {
                     setState(() {
                       _selectedRememberCycle = value!;
@@ -92,7 +107,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                   isDarkMode,
                 ),
                 const SizedBox(height: 16),
-                _buildTextField(_notesController, 'Notizen', maxLines: 5, isDarkMode: isDarkMode),
+                _buildTextField(_notesController, Intl.message('Notes'), maxLines: 5, isDarkMode: isDarkMode),
               ],
             ),
           ),
@@ -116,16 +131,10 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
       onChanged: onChanged,
       style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
       decoration: BoxDecoration(
-        color: isDarkMode
-            ? CupertinoColors.darkBackgroundGray
-            : isValid
-            ? CupertinoColors.systemGrey6
-            : CupertinoColors.systemRed.withOpacity(0.1),
+        color: isDarkMode ? CupertinoColors.darkBackgroundGray : isValid ? CupertinoColors.systemGrey6 : CupertinoColors.systemRed.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
-          color: isValid
-              ? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey6)
-              : CupertinoColors.systemRed,
+          color: isValid ? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey6) : CupertinoColors.systemRed,
           width: 1.0,
         ),
       ),
@@ -142,15 +151,13 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         Expanded(
           child: CupertinoTextField(
             controller: _titleController,
-            placeholder: 'Titel',
+            placeholder: Intl.message('Title'),
             style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
             decoration: BoxDecoration(
               color: isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.systemGrey6,
               borderRadius: BorderRadius.circular(8.0),
               border: Border.all(
-                color: _isTitleValid
-                    ? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey4)
-                    : CupertinoColors.destructiveRed,
+                color: _isTitleValid ? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey4) : CupertinoColors.destructiveRed,
               ),
             ),
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -193,7 +200,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         Expanded(
           child: _buildTextField(
             _amountController,
-            'Kosten',
+            Intl.message('Costs'),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             isValid: _isAmountValid,
             isDarkMode: isDarkMode,
@@ -201,7 +208,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         ),
         const SizedBox(width: 8),
         Text(
-          'Euro',
+          _currency,
           style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
         ),
       ],
@@ -245,7 +252,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     );
   }
 
-  Widget _buildDropdownField(String label, String currentValue, List<String> options, ValueChanged<String?> onChanged, bool isDarkMode) {
+  Widget _buildDropdownField<T>(String label, String currentValue, List<T> options, ValueChanged<String?> onChanged, bool isDarkMode) {
     return CupertinoFormRow(
       prefix: Padding(
         padding: const EdgeInsets.only(right: 16.0),
@@ -267,7 +274,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                _capitalize(currentValue),
+                _capitalize(_translateEnum(currentValue, options)),
                 style: const TextStyle(fontSize: 16, color: CupertinoColors.inactiveGray),
               ),
               const Icon(
@@ -280,6 +287,17 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         ),
       ),
     );
+  }
+
+  String _translateEnum<T>(String value, List<T> options) {
+    for (var option in options) {
+      if (option is PaymentRate && option.value == value) {
+        return option.translate();
+      } else if (option is RememberCycle && option.value == value) {
+        return option.translate();
+      }
+    }
+    return value;
   }
 
   Future<void> _pickDate() async {
@@ -321,14 +339,15 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     }
   }
 
-  Future<void> _showOptions(BuildContext context, List<String> options, ValueChanged<String?> onChanged) async {
+  Future<void> _showOptions<T>(BuildContext context, List<T> options, ValueChanged<String?> onChanged) async {
     await showCupertinoModalPopup<String>(
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
-          actions: options.map((String value) {
+          actions: options.map((option) {
+            final String value = (option is PaymentRate) ? option.value : (option as RememberCycle).value;
             return CupertinoActionSheetAction(
-              child: Text(_capitalize(value)),
+              child: Text(_capitalize(_translateEnum(value, options))),
               onPressed: () {
                 onChanged(value);
                 Navigator.pop(context);
@@ -336,7 +355,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
             );
           }).toList(),
           cancelButton: CupertinoActionSheetAction(
-            child: const Text('Abbrechen'),
+            child: Text(Intl.message('Cancel')),
             onPressed: () {
               Navigator.pop(context);
             },

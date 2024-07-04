@@ -1,4 +1,6 @@
+import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/persistence_controller.dart';
@@ -34,9 +36,9 @@ class StatisticViewState extends State<StatisticView> {
     List<Subscription> nextDue = [];
 
     for (var subscription in subscriptions) {
-      if (subscription.repeatPattern == 'monthly') {
+      if (subscription.repeatPattern == PaymentRate.monthly.value) {
         totalMonthlyExpenses += subscription.amount;
-      } else if (subscription.repeatPattern == 'yearly') {
+      } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
         totalYearlyExpenses += subscription.amount;
       }
 
@@ -58,27 +60,31 @@ class StatisticViewState extends State<StatisticView> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Statistics'),
+      navigationBar: CupertinoNavigationBar(
+        middle: Text(Intl.message('statistics')),
       ),
       child: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Text('Total Expenses: ${(monthlyExpenses + yearlyExpenses).toStringAsFixed(2)} €',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              _buildChart('Monthly Expenses', [
-                ChartData('Monthly', monthlyExpenses, CupertinoColors.systemBlue),
+              Text(
+                  '${Intl.message('totalExpenses')}: ${(monthlyExpenses + yearlyExpenses).toStringAsFixed(2)} €',
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold)),
+              _buildChart(Intl.message('monthlyExpenses'), [
+                ChartData(Intl.message('monthly'), monthlyExpenses,
+                    CupertinoColors.systemBlue),
               ]),
-              _buildChart('Yearly Expenses', [
-                ChartData('Yearly', yearlyExpenses, CupertinoColors.systemRed),
+              _buildChart(Intl.message('yearlyExpenses'), [
+                ChartData(Intl.message('yearly'), yearlyExpenses,
+                    CupertinoColors.systemRed),
               ]),
-              _buildChart('Yearly vs Monthly Expenses',
+              _buildChart(Intl.message('yearlyVsMonthlyExpenses'),
                   _makeYearlyToMonthlyData()),
-              _buildChart(
-                  'Pinned vs Unpinned Subscriptions', _makePinnedData()),
-              _buildChart(
-                  'Paused vs Active Subscriptions', _makePausedData()),
+              _buildChart(Intl.message('pinnedVsUnpinnedSubscriptions'),
+                  _makePinnedData()),
+              _buildChart(Intl.message('pausedVsActiveSubscriptions'),
+                  _makePausedData()),
             ],
           ),
         ),
@@ -116,29 +122,29 @@ class StatisticViewState extends State<StatisticView> {
 
   List<ChartData> _makeYearlyToMonthlyData() {
     return [
-      ChartData('Monthly', monthlyExpenses, CupertinoColors.systemBlue),
-      ChartData('Yearly', yearlyExpenses, CupertinoColors.systemRed),
+      ChartData(
+          Intl.message('monthly'), monthlyExpenses, CupertinoColors.systemBlue),
+      ChartData(
+          Intl.message('yearly'), yearlyExpenses, CupertinoColors.systemRed),
     ];
   }
 
   List<ChartData> _makePinnedData() {
     return [
-      ChartData('Pinned', pinnedCount.toDouble(), CupertinoColors.systemBlue),
-      ChartData(
-          'Unpinned', unpinnedCount.toDouble(), CupertinoColors.systemRed),
+      ChartData(Intl.message('pinned'), pinnedCount.toDouble(),
+          CupertinoColors.systemBlue),
+      ChartData(Intl.message('unpinned'), unpinnedCount.toDouble(),
+          CupertinoColors.systemRed),
     ];
   }
 
   List<ChartData> _makePausedData() {
-    int activeCount = nextDueSubscriptions.length - nextDueSubscriptions
-        .where((sub) => sub.isPaused)
-        .length;
-    int pausedCount = nextDueSubscriptions
-        .where((sub) => sub.isPaused)
-        .length;
+    int activeCount = nextDueSubscriptions.length -
+        nextDueSubscriptions.where((sub) => sub.isPaused).length;
+    int pausedCount = nextDueSubscriptions.where((sub) => sub.isPaused).length;
     return [
-      ChartData('Active', activeCount.toDouble(), CupertinoColors.systemBlue),
-      ChartData('Paused', pausedCount.toDouble(), CupertinoColors.systemRed),
+      ChartData(Intl.message('active'), activeCount.toDouble(), CupertinoColors.systemBlue),
+      ChartData(Intl.message('paused'), pausedCount.toDouble(), CupertinoColors.systemRed),
     ];
   }
 }

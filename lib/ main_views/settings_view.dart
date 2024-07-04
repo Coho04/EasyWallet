@@ -1,3 +1,4 @@
+import 'package:easy_wallet/enum/currency.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -70,8 +71,8 @@ class SettingsViewState extends State<SettingsView> {
         context: context,
         builder: (context) {
           return CupertinoAlertDialog(
-            title: const Text('Error'),
-            content: Text('Could not launch $url'),
+            title: Text(Intl.message('error')),
+            content: Text('${Intl.message('couldNotLaunch')} $url'),
             actions: <Widget>[
               CupertinoDialogAction(
                 child: const Text('OK'),
@@ -114,7 +115,7 @@ class SettingsViewState extends State<SettingsView> {
                 ),
               ),
               CupertinoButton(
-                child: const Text('Done'),
+                child: Text(Intl.message('done')),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -133,12 +134,12 @@ class SettingsViewState extends State<SettingsView> {
   }
 
   Future<void> _selectCurrency(BuildContext context) async {
-    final List<String> currencies = ["USD", "EUR", "GBP"];
+    final List<String> currencies = Currency.all();
     await showCupertinoModalPopup<String>(
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
-          title: Text(Intl.message('Select Currency')),
+          title: Text(Intl.message('selectCurrency')),
           actions: currencies.map((String value) {
             return CupertinoActionSheetAction(
               child: Text(value),
@@ -152,7 +153,7 @@ class SettingsViewState extends State<SettingsView> {
             );
           }).toList(),
           cancelButton: CupertinoActionSheetAction(
-            child: Text(Intl.message('Cancel')),
+            child: Text(Intl.message('cancel')),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -169,15 +170,15 @@ class SettingsViewState extends State<SettingsView> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
-          title: Text(Intl.message('Enter Monthly Limit')),
+          title: Text(Intl.message('enterMonthlyLimit')),
           message: CupertinoTextField(
             controller: limitController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            placeholder: Intl.message('Monthly Limit'),
+            placeholder: Intl.message('monthlyLimit'),
           ),
           actions: <CupertinoActionSheetAction>[
             CupertinoActionSheetAction(
-              child: Text(Intl.message('Save')),
+              child: Text(Intl.message('save')),
               onPressed: () {
                 setState(() {
                   monthlyLimit = double.tryParse(limitController.text) ?? 0.0;
@@ -188,7 +189,7 @@ class SettingsViewState extends State<SettingsView> {
             ),
           ],
           cancelButton: CupertinoActionSheetAction(
-            child: Text(Intl.message('Cancel')),
+            child: Text(Intl.message('cancel')),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -218,7 +219,7 @@ class SettingsViewState extends State<SettingsView> {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text(
-          Intl.message('Settings'),
+          Intl.message('settings'),
           style: TextStyle(color: textColor),
         ),
         backgroundColor: backgroundColor,
@@ -228,11 +229,11 @@ class SettingsViewState extends State<SettingsView> {
         child: ListView(
           children: [
             CupertinoFormSection.insetGrouped(
-              header: Text(Intl.message('Notifications'),
+              header: Text(Intl.message('notifications'),
                   style: TextStyle(color: sectionHeaderColor)),
               children: [
                 CupertinoFormRow(
-                  prefix: Text(Intl.message('Enable Notifications'),
+                  prefix: Text(Intl.message('enableNotifications'),
                       style: TextStyle(color: textColor)),
                   child: CupertinoSwitch(
                     value: notificationsEnabled,
@@ -242,7 +243,7 @@ class SettingsViewState extends State<SettingsView> {
                 CupertinoFormRow(
                   prefix: Flexible(
                     child: Text(
-                      Intl.message('Include cost in notifications'),
+                      Intl.message('includeCostInNotifications'),
                       style: TextStyle(color: textColor),
                       softWrap: true,
                     ),
@@ -258,40 +259,40 @@ class SettingsViewState extends State<SettingsView> {
                   ),
                 ),
                 CupertinoFormRow(
-                  prefix: Text(Intl.message('Notification Time'),
+                  prefix: Text(Intl.message('notificationTime'),
                       style: TextStyle(color: textColor)),
                   child: GestureDetector(
                     onTap: () => _selectNotificationTime(context),
                     child: Text(
                       _formatTime(notificationTime),
-                      style: TextStyle(color: CupertinoColors.systemBlue),
+                      style: const TextStyle(color: CupertinoColors.systemBlue),
                     ),
                   ),
                 ),
               ],
             ),
             CupertinoFormSection.insetGrouped(
-              header: Text(Intl.message('Settings'),
+              header: Text(Intl.message('settings'),
                   style: TextStyle(color: sectionHeaderColor)),
               children: [
                 CupertinoFormRow(
-                  prefix: Text(Intl.message('Currency'), style: TextStyle(color: textColor)),
+                  prefix: Text(Intl.message('currency'), style: TextStyle(color: textColor)),
                   child: GestureDetector(
                     onTap: () => _selectCurrency(context),
                     child: Text(
                       currency,
-                      style: TextStyle(color: CupertinoColors.systemBlue),
+                      style: const TextStyle(color: CupertinoColors.systemBlue),
                     ),
                   ),
                 ),
                 CupertinoFormRow(
-                  prefix: Text(Intl.message('Monthly Limit'),
+                  prefix: Text(Intl.message('monthlyLimit'),
                       style: TextStyle(color: textColor)),
                   child: GestureDetector(
                     onTap: () => _enterMonthlyLimit(context),
                     child: Text(
                       '$monthlyLimit $currency',
-                      style: TextStyle(color: CupertinoColors.systemBlue),
+                      style: const TextStyle(color: CupertinoColors.systemBlue),
                     ),
                   ),
                 ),
@@ -299,7 +300,7 @@ class SettingsViewState extends State<SettingsView> {
             ),
             CupertinoFormSection.insetGrouped(
               header:
-              Text(Intl.message('Support'), style: TextStyle(color: sectionHeaderColor)),
+              Text(Intl.message('support'), style: TextStyle(color: sectionHeaderColor)),
               children: [
                 CupertinoFormRow(
                   child: GestureDetector(
@@ -308,8 +309,8 @@ class SettingsViewState extends State<SettingsView> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        Intl.message('Imprint'),
-                        style: TextStyle(color: CupertinoColors.systemBlue),
+                        Intl.message('imprint'),
+                        style: const TextStyle(color: CupertinoColors.systemBlue),
                       ),
                     ),
                   ),
@@ -321,8 +322,8 @@ class SettingsViewState extends State<SettingsView> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        Intl.message('Privacy Policy'),
-                        style: TextStyle(color: CupertinoColors.systemBlue),
+                        Intl.message('privacyPolicy'),
+                        style: const TextStyle(color: CupertinoColors.systemBlue),
                       ),
                     ),
                   ),
@@ -334,8 +335,8 @@ class SettingsViewState extends State<SettingsView> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        Intl.message('Help'),
-                        style: TextStyle(color: CupertinoColors.systemBlue),
+                        Intl.message('help'),
+                        style: const TextStyle(color: CupertinoColors.systemBlue),
                       ),
                     ),
                   ),
@@ -346,8 +347,8 @@ class SettingsViewState extends State<SettingsView> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        Intl.message('Feedback'),
-                        style: TextStyle(color: CupertinoColors.systemBlue),
+                        Intl.message('feedback'),
+                        style: const TextStyle(color: CupertinoColors.systemBlue),
                       ),
                     ),
                   ),
@@ -359,8 +360,8 @@ class SettingsViewState extends State<SettingsView> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        Intl.message('Contact Developer'),
-                        style: TextStyle(color: CupertinoColors.systemBlue),
+                        Intl.message('contactDeveloper'),
+                        style: const TextStyle(color: CupertinoColors.systemBlue),
                       ),
                     ),
                   ),
@@ -372,8 +373,8 @@ class SettingsViewState extends State<SettingsView> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        Intl.message('Tip Jar'),
-                        style: TextStyle(color: CupertinoColors.systemBlue),
+                        Intl.message('tipJar'),
+                        style: const TextStyle(color: CupertinoColors.systemBlue),
                       ),
                     ),
                   ),
@@ -384,8 +385,8 @@ class SettingsViewState extends State<SettingsView> {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        Intl.message('Rate the App'),
-                        style: TextStyle(color: CupertinoColors.systemBlue),
+                        Intl.message('rateApp'),
+                        style: const TextStyle(color: CupertinoColors.systemBlue),
                       ),
                     ),
                   ),

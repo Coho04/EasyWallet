@@ -1,8 +1,10 @@
+import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/subscription_views/subscription_detail_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class SubscriptionItem extends StatelessWidget {
   final Subscription subscription;
@@ -73,7 +75,7 @@ class SubscriptionItem extends StatelessWidget {
                 Column(
                   children: [
                     Text(
-                      '${_remainingDays(subscription)} Tage',
+                      '${_remainingDays(subscription)} ${Intl.message('days')}',
                       style: TextStyle(
                         color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
                         fontSize: 16,
@@ -156,13 +158,13 @@ class SubscriptionItem extends StatelessWidget {
   }
 
   String? _remainingDays(Subscription subscription) {
-    if (subscription.date == null) return 'Unknown';
+    if (subscription.date == null) return Intl.message('unknown');
 
     DateTime nextBillDate = subscription.date!;
     DateTime today = DateTime.now();
     Duration interval;
 
-    if (subscription.repeatPattern == 'yearly') {
+    if (subscription.repeatPattern == PaymentRate.yearly.value) {
       interval = const Duration(days: 365);
     } else {
       interval = const Duration(days: 30);
@@ -177,10 +179,10 @@ class SubscriptionItem extends StatelessWidget {
   }
 
   String? _convertPrice(Subscription subscription) {
-    if (subscription.repeatPattern == 'yearly') {
-      return '${(subscription.amount / 12).toStringAsFixed(2)} €/Monat';
-    } else if (subscription.repeatPattern == 'monthly') {
-      return '${(subscription.amount * 12).toStringAsFixed(2)} €/Jahr';
+    if (subscription.repeatPattern  == PaymentRate.yearly.value) {
+      return '${(subscription.amount / 12).toStringAsFixed(2)} €/${Intl.message('month')}';
+    } else if (subscription.repeatPattern  == PaymentRate.monthly.value) {
+      return '${(subscription.amount * 12).toStringAsFixed(2)} €/${Intl.message('year')}';
     }
     return null;
   }

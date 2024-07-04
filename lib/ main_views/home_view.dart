@@ -1,3 +1,4 @@
+import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/sort_option.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/model/subscription_item.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:easy_wallet/persistence_controller.dart';
 import 'package:easy_wallet/subscription_views/subscription_create_view.dart';
+import 'package:intl/intl.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -29,7 +31,8 @@ class HomeViewState extends State<HomeView> {
     try {
       if (!kIsWeb) {
         final persistenceController = PersistenceController.instance;
-        final loadedSubscriptions = await persistenceController.getAllSubscriptions();
+        final loadedSubscriptions =
+            await persistenceController.getAllSubscriptions();
         setState(() {
           subscriptions = _sortSubscriptions(loadedSubscriptions);
         });
@@ -43,7 +46,7 @@ class HomeViewState extends State<HomeView> {
               isPaused: false,
               isPinned: true,
               repeating: true,
-              repeatPattern: 'monthly',
+              repeatPattern: PaymentRate.monthly.value,
               title: 'Netflix',
               url: 'https://www.netflix.com',
             ),
@@ -60,7 +63,8 @@ class HomeViewState extends State<HomeView> {
 
   void _updateSubscription(Subscription updatedSubscription) {
     setState(() {
-      int index = subscriptions.indexWhere((sub) => sub.id == updatedSubscription.id);
+      int index =
+          subscriptions.indexWhere((sub) => sub.id == updatedSubscription.id);
       if (index != -1) {
         subscriptions[index] = updatedSubscription;
       }
@@ -73,7 +77,8 @@ class HomeViewState extends State<HomeView> {
   }
 
   List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
-    List<Subscription> filteredSubscriptions = subscriptions.where((subscription) {
+    List<Subscription> filteredSubscriptions =
+        subscriptions.where((subscription) {
       return subscription.title
           .toLowerCase()
           .contains(searchText.toLowerCase());
@@ -109,7 +114,7 @@ class HomeViewState extends State<HomeView> {
     if (subscription.date == null) return 0;
     DateTime nextBillDate = subscription.date!;
     DateTime today = DateTime.now();
-    Duration interval = subscription.repeatPattern == 'yearly'
+    Duration interval = subscription.repeatPattern == PaymentRate.yearly.value
         ? const Duration(days: 365)
         : const Duration(days: 30);
     while (nextBillDate.isBefore(today)) {
@@ -139,7 +144,7 @@ class HomeViewState extends State<HomeView> {
             SizedBox(
               height: 36,
               child: CupertinoSearchTextField(
-                placeholder: 'Search',
+                placeholder: Intl.message('search'),
                 onChanged: (value) {
                   setState(() {
                     searchText = value;
@@ -169,31 +174,33 @@ class HomeViewState extends State<HomeView> {
             });
           },
           child:
-          const Icon(CupertinoIcons.add, color: CupertinoColors.activeBlue),
+              const Icon(CupertinoIcons.add, color: CupertinoColors.activeBlue),
         ),
       ),
       child: Column(
         children: <Widget>[
-          const SizedBox(
+          SizedBox(
             height: 100,
             child: Center(
               child: Text(
-                'Subscriptions',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                Intl.message('subscriptions'),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Expenses this Month',
-                      style: TextStyle(
+                    Text(
+                      Intl.message('expenditureMonth'),
+                      style: const TextStyle(
                         fontSize: 16,
                         color: CupertinoColors.systemGrey,
                       ),
@@ -210,9 +217,9 @@ class HomeViewState extends State<HomeView> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Text(
-                      'Expenses this Year',
-                      style: TextStyle(
+                    Text(
+                      Intl.message('expenditureYear'),
+                      style: const TextStyle(
                         fontSize: 16,
                         color: CupertinoColors.systemGrey,
                       ),
@@ -233,16 +240,16 @@ class HomeViewState extends State<HomeView> {
             child: subscriptions.isEmpty
                 ? _buildEmptyState()
                 : ListView.builder(
-              padding: const EdgeInsets.only(bottom: 85.0),
-              itemCount: subscriptions.length,
-              itemBuilder: (context, index) {
-                return SubscriptionItem(
-                  subscription: subscriptions[index],
-                  onUpdate: _updateSubscription,
-                  onDelete: _updateAllSubscription,
-                );
-              },
-            ),
+                    padding: const EdgeInsets.only(bottom: 85.0),
+                    itemCount: subscriptions.length,
+                    itemBuilder: (context, index) {
+                      return SubscriptionItem(
+                        subscription: subscriptions[index],
+                        onUpdate: _updateSubscription,
+                        onDelete: _updateAllSubscription,
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -254,9 +261,10 @@ class HomeViewState extends State<HomeView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            'No subscriptions available',
-            style: TextStyle(fontSize: 18, color: CupertinoColors.systemGrey),
+          Text(
+            Intl.message('noSubscriptionsAvailable'),
+            style: const TextStyle(
+                fontSize: 18, color: CupertinoColors.systemGrey),
           ),
           const SizedBox(height: 16),
           CupertinoButton.filled(
@@ -270,7 +278,7 @@ class HomeViewState extends State<HomeView> {
                 _loadSubscriptions();
               });
             },
-            child: const Text('Add New Subscription'),
+            child: Text(Intl.message('addNewSubscription')),
           ),
         ],
       ),
@@ -281,71 +289,22 @@ class HomeViewState extends State<HomeView> {
     showCupertinoModalPopup(
       context: context,
       builder: (context) => CupertinoActionSheet(
-        title: const Text('Sort Options'),
+        title: Text(Intl.message('sortOptions')),
         actions: <Widget>[
-          CupertinoActionSheetAction(
-            child: const Text('Alphabetical Ascending'),
-            onPressed: () {
-              setState(() {
-                sortOption = SortOption.alphabeticalAscending;
-                subscriptions = _sortSubscriptions(subscriptions);
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: const Text('Alphabetical Descending'),
-            onPressed: () {
-              setState(() {
-                sortOption = SortOption.alphabeticalDescending;
-                subscriptions = _sortSubscriptions(subscriptions);
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: const Text('Cost Ascending'),
-            onPressed: () {
-              setState(() {
-                sortOption = SortOption.costAscending;
-                subscriptions = _sortSubscriptions(subscriptions);
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: const Text('Cost Descending'),
-            onPressed: () {
-              setState(() {
-                sortOption = SortOption.costDescending;
-                subscriptions = _sortSubscriptions(subscriptions);
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: const Text('Days Remaining Ascending'),
-            onPressed: () {
-              setState(() {
-                sortOption = SortOption.remainingDaysAscending;
-                subscriptions = _sortSubscriptions(subscriptions);
-              });
-              Navigator.pop(context);
-            },
-          ),
-          CupertinoActionSheetAction(
-            child: const Text('Days Remaining Descending'),
-            onPressed: () {
-              setState(() {
-                sortOption = SortOption.remainingDaysDescending;
-                subscriptions = _sortSubscriptions(subscriptions);
-              });
-              Navigator.pop(context);
-            },
-          ),
+          for (SortOption option in SortOption.values)
+            CupertinoActionSheetAction(
+              child: Text(option.translate()),
+              onPressed: () {
+                setState(() {
+                  sortOption = option;
+                  subscriptions = _sortSubscriptions(subscriptions);
+                });
+                Navigator.pop(context);
+              },
+            ),
         ],
         cancelButton: CupertinoActionSheetAction(
-          child: const Text('Cancel'),
+          child: Text(Intl.message('cancel')),
           onPressed: () {
             Navigator.pop(context);
           },

@@ -1,3 +1,4 @@
+import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,11 @@ class SubscriptionDetailView extends StatefulWidget {
   final ValueChanged<Subscription> onUpdate;
   final ValueChanged<Subscription> onDelete;
 
-  const SubscriptionDetailView({super.key, required this.subscription, required this.onUpdate, required this.onDelete});
+  const SubscriptionDetailView(
+      {super.key,
+      required this.subscription,
+      required this.onUpdate,
+      required this.onDelete});
 
   @override
   SubscriptionDetailViewState createState() => SubscriptionDetailViewState();
@@ -29,11 +34,12 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('Abonnements'),
+        middle: Text(Intl.message('subscriptions')),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: () {
@@ -64,56 +70,81 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
             _buildHeader(isDarkMode),
             const SizedBox(height: 20),
             _buildCardSection(
-              'Allgemeine Informationen',
+              Intl.message('generalInformation'),
               [
-                _buildDetailRow('Kosten', '${subscription.amount.toStringAsFixed(2)} €', isDarkMode),
-                _buildDetailRow('Wiederholungsrate', _repeatPattern(subscription), isDarkMode),
+                _buildDetailRow(Intl.message('costs'),
+                    '${subscription.amount.toStringAsFixed(2)} €', isDarkMode),
+                _buildDetailRow(Intl.message('repetitionRate'),
+                    _repeatPattern(subscription), isDarkMode),
               ],
               isDarkMode,
             ),
             const SizedBox(height: 20),
             _buildCardSection(
-              'Rechnungsinformationen',
+              Intl.message('invoiceInformation'),
               [
-                _buildDetailRow('Nächste Rechnung', _formatDate(_calculateNextBillDate(subscription)), isDarkMode),
-                _buildDetailRow('Vorherige Rechnung', _formatDate(_calculatePreviousBillDate(subscription)), isDarkMode),
-                _buildDetailRow('Erste Abbuchung', _formatDate(subscription.date), isDarkMode),
-                _buildDetailRow('Erstellt am', _formatDateTime(subscription.timestamp), isDarkMode),
+                _buildDetailRow(
+                    Intl.message('nextInvoice'),
+                    _formatDate(_calculateNextBillDate(subscription)),
+                    isDarkMode),
+                _buildDetailRow(
+                    Intl.message('previousInvoice'),
+                    _formatDate(_calculatePreviousBillDate(subscription)),
+                    isDarkMode),
+                _buildDetailRow(Intl.message('firstDebit'),
+                    _formatDate(subscription.date), isDarkMode),
+                _buildDetailRow(Intl.message('createdOn'),
+                    _formatDateTime(subscription.timestamp), isDarkMode),
               ],
               isDarkMode,
             ),
             const SizedBox(height: 20),
             _buildCardSection(
-              'Zusätzliche Informationen',
+              Intl.message('additionalInformation'),
               [
-                _buildDetailRow('Bisherige Abbuchungen', _countPayment(subscription).toString(), isDarkMode),
-                _buildDetailRow('Kosten insgesamt', '${_sumPayment(subscription).toStringAsFixed(2)} €', isDarkMode),
-                if (subscription.notes != null && subscription.notes!.trim().isNotEmpty)
-                  _buildDetailRow('Notizen', subscription.notes!, isDarkMode),
+                _buildDetailRow(Intl.message('previousDebits'),
+                    _countPayment(subscription).toString(), isDarkMode),
+                _buildDetailRow(
+                    Intl.message('totalCosts'),
+                    '${_sumPayment(subscription).toStringAsFixed(2)} €',
+                    isDarkMode),
+                if (subscription.notes != null &&
+                    subscription.notes!.trim().isNotEmpty)
+                  _buildDetailRow(
+                      Intl.message('notes'), subscription.notes!, isDarkMode),
               ],
               isDarkMode,
             ),
             const SizedBox(height: 20),
             _buildCardSection(
-              'Aktionen',
+              Intl.message('actions'),
               [
                 _buildAction(
-                  subscription.isPinned ? 'Dieses Abonnement lösen' : 'Dieses Abonnement anheften',
-                  subscription.isPinned ? CupertinoIcons.pin_slash : CupertinoIcons.pin,
-                      () => _togglePin(),
-                  color: subscription.isPinned ? CupertinoColors.systemBlue : null,
+                  subscription.isPinned
+                      ? Intl.message('unpinSubscription')
+                      : Intl.message('pinSubscription'),
+                  subscription.isPinned
+                      ? CupertinoIcons.pin_slash
+                      : CupertinoIcons.pin,
+                  () => _togglePin(),
+                  color:
+                      subscription.isPinned ? CupertinoColors.systemBlue : null,
                   isDarkMode: isDarkMode,
                 ),
                 _buildAction(
-                  subscription.isPaused ? 'Dieses Abonnement fortsetzen' : 'Dieses Abonnement pausieren',
-                  subscription.isPaused ? CupertinoIcons.play_arrow_solid : CupertinoIcons.pause,
-                      () => _togglePause(),
+                  subscription.isPaused
+                      ? Intl.message('continueSubscription')
+                      : Intl.message('pauseSubscription'),
+                  subscription.isPaused
+                      ? CupertinoIcons.play_arrow_solid
+                      : CupertinoIcons.pause,
+                  () => _togglePause(),
                   isDarkMode: isDarkMode,
                 ),
                 _buildAction(
-                  'Dieses Abonnement löschen',
+                  Intl.message('deleteSubscription'),
                   CupertinoIcons.delete,
-                      () => _deleteItem(),
+                  () => _deleteItem(),
                   color: CupertinoColors.destructiveRed,
                   isDarkMode: isDarkMode,
                 ),
@@ -126,15 +157,20 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
     );
   }
 
-  Widget _buildCardSection(String title, List<Widget> children, bool isDarkMode) {
+  Widget _buildCardSection(
+      String title, List<Widget> children, bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.systemGrey6,
+        color: isDarkMode
+            ? CupertinoColors.darkBackgroundGray
+            : CupertinoColors.systemGrey6,
         borderRadius: BorderRadius.circular(12.0),
         boxShadow: [
           BoxShadow(
-            color: isDarkMode ? CupertinoColors.black : CupertinoColors.systemGrey4,
+            color: isDarkMode
+                ? CupertinoColors.black
+                : CupertinoColors.systemGrey4,
             blurRadius: 10.0,
             spreadRadius: 1.0,
           ),
@@ -183,7 +219,9 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
         label,
         style: TextStyle(
           fontWeight: FontWeight.bold,
-          color: isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey,
+          color: isDarkMode
+              ? CupertinoColors.systemGrey
+              : CupertinoColors.systemGrey,
         ),
       ),
       child: Text(
@@ -196,7 +234,8 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
     );
   }
 
-  Widget _buildAction(String label, IconData icon, VoidCallback onTap, {Color? color, required bool isDarkMode}) {
+  Widget _buildAction(String label, IconData icon, VoidCallback onTap,
+      {Color? color, required bool isDarkMode}) {
     return CupertinoFormRow(
       child: CupertinoButton(
         padding: EdgeInsets.zero,
@@ -207,12 +246,18 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
             Text(
               label,
               style: TextStyle(
-                color: color ?? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.black),
+                color: color ??
+                    (isDarkMode
+                        ? CupertinoColors.systemGrey
+                        : CupertinoColors.black),
               ),
             ),
             Icon(
               icon,
-              color: color ?? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.black),
+              color: color ??
+                  (isDarkMode
+                      ? CupertinoColors.systemGrey
+                      : CupertinoColors.black),
             ),
           ],
         ),
@@ -236,7 +281,7 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
     } else {
       return CachedNetworkImage(
         imageUrl:
-        'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
+            'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
         placeholder: (context, url) => const CupertinoActivityIndicator(),
         errorWidget: (context, url, error) => const Icon(
           CupertinoIcons.exclamationmark_triangle,
@@ -268,8 +313,8 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
       showCupertinoDialog(
         context: context,
         builder: (context) => CupertinoAlertDialog(
-          title: const Text('Hinweis'),
-          content: const Text('Löschen wird im Web nicht unterstützt'),
+          title: Text(Intl.message('hint')),
+          content: Text(Intl.message('Deletion is not supported on the web')),
           actions: [
             CupertinoDialogAction(
               child: const Text('OK'),
@@ -313,9 +358,9 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
     final startBillDate = subscription.date!;
     DateTime potentialPreviousBillDate = startBillDate;
     Duration interval;
-    if (subscription.repeatPattern == 'monthly') {
+    if (subscription.repeatPattern == PaymentRate.monthly.value) {
       interval = const Duration(days: 30);
-    } else if (subscription.repeatPattern == 'yearly') {
+    } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
       interval = const Duration(days: 365);
     } else {
       return null;
@@ -337,9 +382,9 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
     final today = DateTime.now();
     DateTime nextBillDate = subscription.date!;
     Duration interval;
-    if (subscription.repeatPattern == 'monthly') {
+    if (subscription.repeatPattern == PaymentRate.monthly.value) {
       interval = const Duration(days: 30);
-    } else if (subscription.repeatPattern == 'yearly') {
+    } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
       interval = const Duration(days: 365);
     } else {
       return null;
@@ -358,7 +403,7 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
     final today = DateTime.now();
     DateTime nextBillDate = subscription.date!;
     Duration interval;
-    if (subscription.repeatPattern == 'yearly') {
+    if (subscription.repeatPattern == PaymentRate.yearly.value) {
       interval = const Duration(days: 365);
     } else {
       interval = const Duration(days: 30);
@@ -379,7 +424,7 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
     final today = DateTime.now();
     DateTime nextBillDate = subscription.date!;
     Duration interval;
-    if (subscription.repeatPattern == 'yearly') {
+    if (subscription.repeatPattern == PaymentRate.yearly.value) {
       interval = const Duration(days: 365);
     } else {
       interval = const Duration(days: 30);
@@ -394,12 +439,12 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
   }
 
   String _formatDate(DateTime? date) {
-    if (date == null) return 'Unbekannt';
+    if (date == null) return Intl.message('unknown');
     return DateFormat.yMMMd().format(date);
   }
 
   String _formatDateTime(DateTime? dateTime) {
-    if (dateTime == null) return 'Unbekannt';
+    if (dateTime == null) return Intl.message('unknown');
     return DateFormat('EEEE, dd.MM.yyyy HH:mm').format(dateTime);
   }
 }

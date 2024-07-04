@@ -70,16 +70,6 @@ class S {
     );
   }
 
-  /// `Settings`
-  String get settings {
-    return Intl.message(
-      'Settings',
-      name: 'settings',
-      desc: 'Label for the settings tab',
-      args: [],
-    );
-  }
-
   /// `Notifications`
   String get notifications {
     return Intl.message(
@@ -215,6 +205,666 @@ class S {
     return Intl.message(
       'Rate the App',
       name: 'rateApp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search`
+  String get search {
+    return Intl.message(
+      'Search',
+      name: 'search',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expenses this Month`
+  String get expensesThisMonth {
+    return Intl.message(
+      'Expenses this Month',
+      name: 'expensesThisMonth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expenses this Year`
+  String get expensesThisYear {
+    return Intl.message(
+      'Expenses this Year',
+      name: 'expensesThisYear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No subscriptions available`
+  String get noSubscriptionsAvailable {
+    return Intl.message(
+      'No subscriptions available',
+      name: 'noSubscriptionsAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add New Subscription`
+  String get addNewSubscription {
+    return Intl.message(
+      'Add New Subscription',
+      name: 'addNewSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sort Options`
+  String get sortOptions {
+    return Intl.message(
+      'Sort Options',
+      name: 'sortOptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Alphabetical Ascending`
+  String get alphabeticalAscending {
+    return Intl.message(
+      'Alphabetical Ascending',
+      name: 'alphabeticalAscending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Alphabetical Descending`
+  String get alphabeticalDescending {
+    return Intl.message(
+      'Alphabetical Descending',
+      name: 'alphabeticalDescending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cost Ascending`
+  String get costAscending {
+    return Intl.message(
+      'Cost Ascending',
+      name: 'costAscending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cost Descending`
+  String get costDescending {
+    return Intl.message(
+      'Cost Descending',
+      name: 'costDescending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Days Remaining Ascending`
+  String get daysRemainingAscending {
+    return Intl.message(
+      'Days Remaining Ascending',
+      name: 'daysRemainingAscending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Days Remaining Descending`
+  String get daysRemainingDescending {
+    return Intl.message(
+      'Days Remaining Descending',
+      name: 'daysRemainingDescending',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message(
+      'Cancel',
+      name: 'cancel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not launch`
+  String get couldNotLaunch {
+    return Intl.message(
+      'Could not launch',
+      name: 'couldNotLaunch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error`
+  String get error {
+    return Intl.message(
+      'Error',
+      name: 'error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Done`
+  String get done {
+    return Intl.message(
+      'Done',
+      name: 'done',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Currency`
+  String get selectCurrency {
+    return Intl.message(
+      'Select Currency',
+      name: 'selectCurrency',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter Monthly Limit`
+  String get enterMonthlyLimit {
+    return Intl.message(
+      'Enter Monthly Limit',
+      name: 'enterMonthlyLimit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message(
+      'Save',
+      name: 'save',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get settings {
+    return Intl.message(
+      'Settings',
+      name: 'settings',
+      desc: 'Label for the settings tab',
+      args: [],
+    );
+  }
+
+  /// `Total Expenses`
+  String get totalExpenses {
+    return Intl.message(
+      'Total Expenses',
+      name: 'totalExpenses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly Expenses`
+  String get monthlyExpenses {
+    return Intl.message(
+      'Monthly Expenses',
+      name: 'monthlyExpenses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yearly Expenses`
+  String get yearlyExpenses {
+    return Intl.message(
+      'Yearly Expenses',
+      name: 'yearlyExpenses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yearly vs Monthly Expenses`
+  String get yearlyVsMonthlyExpenses {
+    return Intl.message(
+      'Yearly vs Monthly Expenses',
+      name: 'yearlyVsMonthlyExpenses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pinned vs Unpinned Subscriptions`
+  String get pinnedVsUnpinnedSubscriptions {
+    return Intl.message(
+      'Pinned vs Unpinned Subscriptions',
+      name: 'pinnedVsUnpinnedSubscriptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paused vs Active Subscriptions`
+  String get pausedVsActiveSubscriptions {
+    return Intl.message(
+      'Paused vs Active Subscriptions',
+      name: 'pausedVsActiveSubscriptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly`
+  String get monthly {
+    return Intl.message(
+      'Monthly',
+      name: 'monthly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yearly`
+  String get yearly {
+    return Intl.message(
+      'Yearly',
+      name: 'yearly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pinned`
+  String get pinned {
+    return Intl.message(
+      'Pinned',
+      name: 'pinned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unpinned`
+  String get unpinned {
+    return Intl.message(
+      'Unpinned',
+      name: 'unpinned',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Active`
+  String get active {
+    return Intl.message(
+      'Active',
+      name: 'active',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Paused`
+  String get paused {
+    return Intl.message(
+      'Paused',
+      name: 'paused',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `unknown`
+  String get unknown {
+    return Intl.message(
+      'unknown',
+      name: 'unknown',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `month`
+  String get month {
+    return Intl.message(
+      'month',
+      name: 'month',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `year`
+  String get year {
+    return Intl.message(
+      'year',
+      name: 'year',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Costs`
+  String get costs {
+    return Intl.message(
+      'Costs',
+      name: 'costs',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add subscription`
+  String get addSubscription {
+    return Intl.message(
+      'Add subscription',
+      name: 'addSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start date`
+  String get startDate {
+    return Intl.message(
+      'Start date',
+      name: 'startDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Payment rate`
+  String get paymentRate {
+    return Intl.message(
+      'Payment rate',
+      name: 'paymentRate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remembering`
+  String get remembering {
+    return Intl.message(
+      'Remembering',
+      name: 'remembering',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Title`
+  String get title {
+    return Intl.message(
+      'Title',
+      name: 'title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete this subscription`
+  String get deleteSubscription {
+    return Intl.message(
+      'Delete this subscription',
+      name: 'deleteSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Continue this subscription`
+  String get continueSubscription {
+    return Intl.message(
+      'Continue this subscription',
+      name: 'continueSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pause this subscription`
+  String get pauseSubscription {
+    return Intl.message(
+      'Pause this subscription',
+      name: 'pauseSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unpin this subscription`
+  String get unpinSubscription {
+    return Intl.message(
+      'Unpin this subscription',
+      name: 'unpinSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pin this subscription`
+  String get pinSubscription {
+    return Intl.message(
+      'Pin this subscription',
+      name: 'pinSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Actions`
+  String get actions {
+    return Intl.message(
+      'Actions',
+      name: 'actions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notes`
+  String get notes {
+    return Intl.message(
+      'Notes',
+      name: 'notes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total costs`
+  String get totalCosts {
+    return Intl.message(
+      'Total costs',
+      name: 'totalCosts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Previous debits`
+  String get previousDebits {
+    return Intl.message(
+      'Previous debits',
+      name: 'previousDebits',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Additional information`
+  String get additionalInformation {
+    return Intl.message(
+      'Additional information',
+      name: 'additionalInformation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Created on`
+  String get createdOn {
+    return Intl.message(
+      'Created on',
+      name: 'createdOn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `First Debit`
+  String get firstDebit {
+    return Intl.message(
+      'First Debit',
+      name: 'firstDebit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Previous invoice`
+  String get previousInvoice {
+    return Intl.message(
+      'Previous invoice',
+      name: 'previousInvoice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next invoice`
+  String get nextInvoice {
+    return Intl.message(
+      'Next invoice',
+      name: 'nextInvoice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invoice information`
+  String get invoiceInformation {
+    return Intl.message(
+      'Invoice information',
+      name: 'invoiceInformation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Repetition rate`
+  String get repetitionRate {
+    return Intl.message(
+      'Repetition rate',
+      name: 'repetitionRate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `General information`
+  String get generalInformation {
+    return Intl.message(
+      'General information',
+      name: 'generalInformation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Days`
+  String get days {
+    return Intl.message(
+      'Days',
+      name: 'days',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit subscription`
+  String get editSubscription {
+    return Intl.message(
+      'Edit subscription',
+      name: 'editSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expenditure this month`
+  String get expenditureMonth {
+    return Intl.message(
+      'Expenditure this month',
+      name: 'expenditureMonth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expenditure this year`
+  String get expenditureYear {
+    return Intl.message(
+      'Expenditure this year',
+      name: 'expenditureYear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Same Day`
+  String get sameDay {
+    return Intl.message(
+      'Same Day',
+      name: 'sameDay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One Day Before`
+  String get dayBefore {
+    return Intl.message(
+      'One Day Before',
+      name: 'dayBefore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Two Days Before`
+  String get twoDaysBefore {
+    return Intl.message(
+      'Two Days Before',
+      name: 'twoDaysBefore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One Week Before`
+  String get weekBefore {
+    return Intl.message(
+      'One Week Before',
+      name: 'weekBefore',
       desc: '',
       args: [],
     );

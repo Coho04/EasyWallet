@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:easy_wallet/enum/payment_rate.dart';
+import 'package:easy_wallet/enum/remember_cycle.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:sqflite/sqflite.dart';
@@ -18,10 +21,28 @@ class BackgroundTaskManager {
     await _initNotifications();
     if (!kIsWeb) {
       Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-      Workmanager().registerPeriodicTask("1", taskName,
-          frequency: const Duration(hours: 24));
+      Workmanager().registerPeriodicTask(
+        "1",
+        taskName,
+        frequency: const Duration(minutes: 15), // For example, every 15 minutes
+      );
     }
   }
+
+  Future<TimeOfDay> _getUserNotificationTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? notificationTimeString = prefs.getString('notificationTime');
+    if (notificationTimeString != null) {
+      final timeParts = notificationTimeString.split(':');
+      return TimeOfDay(
+        hour: int.parse(timeParts[0]),
+        minute: int.parse(timeParts[1]),
+      );
+    }
+    return TimeOfDay(hour: 9, minute: 0); // Default time
+  }
+
+
 
   Future<void> _initNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -63,16 +84,16 @@ class BackgroundTaskManager {
       if (eventDate == null) continue;
 
       switch (subscription['remembercycle']) {
-        case 'OneDayBefore':
+        case RememberCycle.dayBefore:
           eventDate = eventDate.subtract(const Duration(days: 1));
           break;
-        case 'TwoDaysBefore':
+        case RememberCycle.twoDaysBefore:
           eventDate = eventDate.subtract(const Duration(days: 2));
           break;
-        case 'OneWeekBefore':
+        case RememberCycle.weekBefore:
           eventDate = eventDate.subtract(const Duration(days: 7));
           break;
-        case 'SameDay':
+        case RememberCycle.sameDay:
         default:
           break;
       }
@@ -113,9 +134,9 @@ class BackgroundTaskManager {
     DateTime today = DateTime.now();
     Duration interval;
 
-    if (subscription['repeatPattern'] == 'monthly') {
+    if (subscription['repeatPattern'] == PaymentRate.monthly.value) {
       interval = const Duration(days: 30);
-    } else if (subscription['repeatPattern'] == 'yearly') {
+    } else if (subscription['repeatPattern'] == PaymentRate.yearly.value) {
       interval = const Duration(days: 365);
     } else {
       return null;
