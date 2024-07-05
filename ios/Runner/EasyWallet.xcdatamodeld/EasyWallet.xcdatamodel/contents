@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23F79" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="Subscription" representedClassName="Subscription" syncable="YES" codeGenerationType="class">
-         <attribute name="amount" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
-         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
-         <attribute name="isPaused" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-         <attribute name="isPinned" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
-         <attribute name="notes" optional="YES" attributeType="String"/>
-         <attribute name="remembercycle" optional="YES" attributeType="String"/>
-         <attribute name="repeating" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
-         <attribute name="repeatPattern" optional="YES" attributeType="String"/>
-         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-         <attribute name="title" attributeType="String"/>
-         <attribute name="url" optional="YES" attributeType="String"/>
+        <attribute name="amount" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="isPaused" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="isPinned" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String"/>
+        <attribute name="remembercycle" optional="YES" attributeType="String"/>
+        <attribute name="repeating" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="repeatPattern" optional="YES" attributeType="String"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="title" attributeType="String"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
     </entity>
 </model>
