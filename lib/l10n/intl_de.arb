@@ -90,5 +90,7 @@
   "sameDay":  "Am selben Tag",
   "dayBefore": "Einen Tag vorher",
   "twoDaysBefore":  "Zwei Tage vorher",
-  "weekBefore": "Eine Woche vorher"
+  "weekBefore": "Eine Woche vorher",
+  "subscriptionReminder": "Abonnement Erinnerung",
+  "subscriptionIsDueSoon": "Ihr Abonnement ${subscription['title']} steht kurz bevor!"
 }

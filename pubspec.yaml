@@ -42,6 +42,7 @@ dependencies:
   universal_io: ^2.0.4
   syncfusion_flutter_charts: ^26.1.39
   url_launcher: ^6.3.0
+  permission_handler: ^10.2.0
   flutter_localizations:
     sdk: flutter
 

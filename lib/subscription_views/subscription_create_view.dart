@@ -314,6 +314,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.date,
                   initialDateTime: _selectedDate,
+                  use24hFormat: true,
                   onDateTimeChanged: (DateTime newDate) {
                     setState(() {
                       _selectedDate = newDate;

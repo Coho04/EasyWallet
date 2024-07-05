@@ -18,6 +18,13 @@ enum RememberCycle {
     return Intl.message(camelCase);
   }
 
+  static RememberCycle? findByName(String name) {
+    return RememberCycle.values.firstWhere(
+          (e) => e.name == name,
+      orElse: () => RememberCycle.dayBefore,
+    );
+  }
+
   static List<String> all() {
     return RememberCycle.values.map((e) => e.value).toList();
   }

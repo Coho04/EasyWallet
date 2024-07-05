@@ -122,6 +122,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "sortOptions": MessageLookupByLibrary.simpleMessage("Sort Options"),
         "startDate": MessageLookupByLibrary.simpleMessage("Start date"),
         "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
+        "subscriptionIsDueSoon": MessageLookupByLibrary.simpleMessage(
+            "Your subscription \${subscription[\'title\']} is due soon!"),
+        "subscriptionReminder":
+            MessageLookupByLibrary.simpleMessage("Subscription Reminder"),
         "subscriptions": MessageLookupByLibrary.simpleMessage("Subscriptions"),
         "support": MessageLookupByLibrary.simpleMessage("Support"),
         "tipJar": MessageLookupByLibrary.simpleMessage("Tip Jar"),

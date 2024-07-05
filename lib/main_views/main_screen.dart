@@ -1,7 +1,10 @@
+import 'package:easy_wallet/background_task_manager.dart';
 import 'package:easy_wallet/main_views/home_view.dart';
 import 'package:easy_wallet/main_views/settings_view.dart';
 import 'package:easy_wallet/main_views/statistic_view.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../generated/l10n.dart';
 
@@ -20,6 +23,40 @@ class MainScreenState extends State<MainScreen> {
     StatisticView(),
     SettingsView(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _initNotifications();
+    _checkAndRequestNotificationPermissions();
+  }
+
+  void _initNotifications() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    final backgroundTaskManager = BackgroundTaskManager();
+    await backgroundTaskManager.init();
+  }
+
+  void _checkAndRequestNotificationPermissions() async {
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+    final IOSFlutterLocalNotificationsPlugin? iosImplementation =
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>();
+
+    iosImplementation?.requestPermissions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    final status = await Permission.notification.status;
+    if (!status.isGranted) {
+      await Permission.notification.request();
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {

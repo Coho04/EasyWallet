@@ -413,6 +413,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.date,
                   initialDateTime: _date,
+                  use24hFormat: true,
                   onDateTimeChanged: (DateTime newDate) {
                     setState(() {
                       _date = newDate;

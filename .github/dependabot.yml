@@ -14,6 +14,9 @@ updates:
       - "Coho04"
     reviewers:
       - "Coho04"
+    labels:
+      - "dependencies"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -22,3 +25,27 @@ updates:
       - "Coho04"
     reviewers:
       - "Coho04"
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "gradle"
+    directory: "/android"
+    schedule:
+      interval: "daily"
+    assignees:
+      - "Coho04"
+    reviewers:
+      - "Coho04"
+    labels:
+      - "dependencies"
+
+  - package-ecosystem: "bundler"
+    directory: "/ios"
+    schedule:
+      interval: "daily"
+    assignees:
+      - "Coho04"
+    reviewers:
+      - "Coho04"
+    labels:
+      - "dependencies"

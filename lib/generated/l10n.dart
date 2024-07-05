@@ -869,6 +869,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Subscription Reminder`
+  String get subscriptionReminder {
+    return Intl.message(
+      'Subscription Reminder',
+      name: 'subscriptionReminder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your subscription ${subscription['title']} is due soon!`
+  String get subscriptionIsDueSoon {
+    return Intl.message(
+      'Your subscription \${subscription[\'title\']} is due soon!',
+      name: 'subscriptionIsDueSoon',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

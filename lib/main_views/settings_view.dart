@@ -106,6 +106,7 @@ class SettingsViewState extends State<SettingsView> {
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.time,
                   initialDateTime: notificationTime,
+                  use24hFormat: true,
                   onDateTimeChanged: (DateTime newDateTime) {
                     setState(() {
                       notificationTime = newDateTime;
