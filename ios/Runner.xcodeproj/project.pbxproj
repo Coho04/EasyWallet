@@ -16,7 +16,8 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		B77A3B6B2C3819DB003D7591 /* EasyWallet.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B77A3B692C3819DB003D7591 /* EasyWallet.xcdatamodeld */; };
+		B71B22CD2C3861C400897B2F /* EasyWallet.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B77A3B692C3819DB003D7591 /* EasyWallet.xcdatamodeld */; };
+		B71B22CE2C3861CC00897B2F /* EasyWallet.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B77A3B692C3819DB003D7591 /* EasyWallet.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -373,6 +374,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B71B22CE2C3861CC00897B2F /* EasyWallet.xcdatamodeld in Sources */,
 				331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -383,7 +385,7 @@
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
-				B77A3B6B2C3819DB003D7591 /* EasyWallet.xcdatamodeld in Sources */,
+				B71B22CD2C3861C400897B2F /* EasyWallet.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
