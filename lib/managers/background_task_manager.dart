@@ -2,15 +2,16 @@ import 'dart:async';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:workmanager/workmanager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter/material.dart';
-import 'generated/l10n.dart';
+import 'package:workmanager/workmanager.dart';
+
+import '../generated/l10n.dart';
 
 class BackgroundTaskManager {
   static const String groupKey = "com.easy_wallet.SUBSCRIPTION_NOTIFICATIONS";
@@ -20,15 +21,16 @@ class BackgroundTaskManager {
 
   Future<void> init() async {
     await _initNotifications();
-    if (!kIsWeb) {
-      Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+    await scheduleNotifications();
+    if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.android)) {
+      // Register periodic task only on Android
+      Workmanager().initialize(callbackDispatcher, isInDebugMode: kDebugMode);
       Workmanager().registerPeriodicTask(
         "1",
         "easy_wallet",
         existingWorkPolicy: ExistingWorkPolicy.append,
         frequency: const Duration(minutes: 15),
       );
-      await scheduleNotifications();
     }
   }
 
@@ -120,7 +122,9 @@ class BackgroundTaskManager {
           final bool alreadyNotified = prefs.getBool(notificationKey) ?? false;
 
           if (!alreadyNotified) {
-            await _showNotification(subscription);
+            final String title = S.current.subscriptionReminder;
+            final String body = S.current.subscriptionIsDueSoon(subscription['title']);
+            await _showNotification(subscription, title, body);
             prefs.setBool(notificationKey, true);
           }
         }
@@ -128,21 +132,21 @@ class BackgroundTaskManager {
     }
   }
 
-  Future<void> _showNotification(Map<String, dynamic> subscription) async {
+  Future<void> _showNotification(Map<String, dynamic> subscription, String title, String body) async {
     int notificationId =
     DateTime.now().millisecondsSinceEpoch.remainder(100000);
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
-      'easy_wallet_channel_id',
-      'EasyWallet',
-      icon: '@mipmap/ic_launcher',
+      'easy_wallet_channel_id', // Kanal-ID
+      'EasyWallet', // Kanalname
       channelDescription: "EasyWallet App Notify Channel",
       importance: Importance.max,
       priority: Priority.high,
       showWhen: true,
       groupKey: groupKey,
       setAsGroupSummary: false,
+      icon: '@mipmap/ic_launcher', // Icon
     );
 
     const DarwinNotificationDetails iosPlatformChannelSpecifics =
@@ -156,8 +160,8 @@ class BackgroundTaskManager {
     try {
       await flutterLocalNotificationsPlugin.show(
         notificationId,
-        S.current.subscriptionReminder,
-        S.current.subscriptionIsDueSoon(subscription['title']),
+        title,
+        body,
         platformChannelSpecifics,
         payload: 'item x',
       );

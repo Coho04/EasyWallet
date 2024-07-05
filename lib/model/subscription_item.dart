@@ -179,9 +179,9 @@ class SubscriptionItem extends StatelessWidget {
   }
 
   String? _convertPrice(Subscription subscription) {
-    if (subscription.repeatPattern  == PaymentRate.yearly.value) {
+    if (subscription.repeatPattern  == PaymentRate.monthly.value) {
       return '${(subscription.amount / 12).toStringAsFixed(2)} €/${Intl.message('month')}';
-    } else if (subscription.repeatPattern  == PaymentRate.monthly.value) {
+    } else if (subscription.repeatPattern  == PaymentRate.yearly.value) {
       return '${(subscription.amount * 12).toStringAsFixed(2)} €/${Intl.message('year')}';
     }
     return null;

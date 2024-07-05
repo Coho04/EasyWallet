@@ -1,4 +1,4 @@
-import 'package:easy_wallet/background_task_manager.dart';
+import 'package:easy_wallet/managers/background_task_manager.dart';
 import 'package:easy_wallet/main_views/home_view.dart';
 import 'package:easy_wallet/main_views/settings_view.dart';
 import 'package:easy_wallet/main_views/statistic_view.dart';
@@ -27,13 +27,8 @@ class MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _initNotifications();
     _checkAndRequestNotificationPermissions();
-  }
-
-  void _initNotifications() async {
-    final backgroundTaskManager = BackgroundTaskManager();
-    await backgroundTaskManager.init();
+    _initNotifications();
   }
 
   void _checkAndRequestNotificationPermissions() async {
@@ -54,6 +49,11 @@ class MainScreenState extends State<MainScreen> {
     if (!status.isGranted) {
       await Permission.notification.request();
     }
+  }
+
+  void _initNotifications() async {
+    final backgroundTaskManager = BackgroundTaskManager();
+    await backgroundTaskManager.init();
   }
 
   void _onItemTapped(int index) {

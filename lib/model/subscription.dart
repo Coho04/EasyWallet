@@ -1,3 +1,6 @@
+import 'package:easy_wallet/enum/payment_rate.dart';
+import 'package:easy_wallet/enum/remember_cycle.dart';
+
 class Subscription {
   int? id;
   double amount;
@@ -47,14 +50,31 @@ class Subscription {
   factory Subscription.fromJson(Map<String, dynamic> json) {
     return Subscription(
       id: json['id'],
-      amount: json['amount'],
+      amount: (json['amount'] as num).toDouble(),
       date: json['date'] != null ? DateTime.parse(json['date']) : null,
       isPaused: json['isPaused'] == 1,
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],
-      rememberCycle: json['rememberCycle'],
+      rememberCycle: RememberCycle.findByName(json['rememberCycle'] ?? RememberCycle.sameDay.value).value,
       repeating: json['repeating'] == 1,
-      repeatPattern: json['repeatPattern'],
+      repeatPattern: PaymentRate.findByName(json['repeatPattern']).value,
+      timestamp: json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
+      title: json['title'],
+      url: json['url'],
+    );
+  }
+
+  factory Subscription.migrate(Map<String, dynamic> json) {
+    return Subscription(
+      id: json['id'],
+      amount: (json['amount'] as num).toDouble(),
+      date: json['date'] != null ? DateTime.parse(json['date']) : null,
+      isPaused: json['isPaused'] == 1,
+      isPinned: json['isPinned'] == 1,
+      notes: json['notes'],
+      rememberCycle: RememberCycle.migrate(json['remembercycle'].toString()).value,
+      repeating: json['repeating'] == 1,
+      repeatPattern: PaymentRate.findByName(json['repeatPattern'].toString()).value,
       timestamp: json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
       title: json['title'],
       url: json['url'],

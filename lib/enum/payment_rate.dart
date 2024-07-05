@@ -14,6 +14,13 @@ enum PaymentRate {
     return Intl.message(value);
   }
 
+  static PaymentRate findByName(String name) {
+    return PaymentRate.values.firstWhere(
+          (e) => e.value == name,
+      orElse: () => PaymentRate.monthly,
+    );
+  }
+
   static List<String> all() {
     return PaymentRate.values.map((e) => e.value).toList();
   }

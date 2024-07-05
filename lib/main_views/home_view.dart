@@ -2,10 +2,10 @@ import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/sort_option.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/model/subscription_item.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:easy_wallet/persistence_controller.dart';
+import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/subscription_views/subscription_create_view.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class HomeView extends StatefulWidget {
@@ -19,8 +19,6 @@ class HomeViewState extends State<HomeView> {
   String searchText = "";
   SortOption sortOption = SortOption.remainingDaysAscending;
 
-  List<Subscription> subscriptions = [];
-
   @override
   void initState() {
     super.initState();
@@ -28,60 +26,12 @@ class HomeViewState extends State<HomeView> {
   }
 
   Future<void> _loadSubscriptions() async {
-    try {
-      if (!kIsWeb) {
-        final persistenceController = PersistenceController.instance;
-        final loadedSubscriptions =
-            await persistenceController.getAllSubscriptions();
-        setState(() {
-          subscriptions = _sortSubscriptions(loadedSubscriptions);
-        });
-      } else {
-        setState(() {
-          subscriptions = [
-            Subscription(
-              id: 1,
-              amount: 10.0,
-              date: DateTime.now().subtract(const Duration(days: 10)),
-              isPaused: false,
-              isPinned: true,
-              repeating: true,
-              repeatPattern: PaymentRate.monthly.value,
-              title: 'Netflix',
-              url: 'https://www.netflix.com',
-            ),
-          ];
-          subscriptions = _sortSubscriptions(subscriptions);
-        });
-      }
-    } catch (error) {
-      if (kDebugMode) {
-        print("Failed to load subscriptions: $error");
-      }
-    }
-  }
-
-  void _updateSubscription(Subscription updatedSubscription) {
-    setState(() {
-      int index =
-          subscriptions.indexWhere((sub) => sub.id == updatedSubscription.id);
-      if (index != -1) {
-        subscriptions[index] = updatedSubscription;
-      }
-      subscriptions = _sortSubscriptions(subscriptions);
-    });
-  }
-
-  void _updateAllSubscription(Subscription subscription) {
-    _loadSubscriptions();
+    await Provider.of<SubscriptionProvider>(context, listen: false).loadSubscriptions();
   }
 
   List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
-    List<Subscription> filteredSubscriptions =
-        subscriptions.where((subscription) {
-      return subscription.title
-          .toLowerCase()
-          .contains(searchText.toLowerCase());
+    List<Subscription> filteredSubscriptions = subscriptions.where((subscription) {
+      return subscription.title.toLowerCase().contains(searchText.toLowerCase());
     }).toList();
 
     filteredSubscriptions.sort((a, b) {
@@ -125,6 +75,7 @@ class HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final subscriptions = Provider.of<SubscriptionProvider>(context).subscriptions;
     double monthlySpent = subscriptions.where((subscription) {
       final now = DateTime.now();
       return subscription.date != null &&
@@ -148,7 +99,6 @@ class HomeViewState extends State<HomeView> {
                 onChanged: (value) {
                   setState(() {
                     searchText = value;
-                    subscriptions = _sortSubscriptions(subscriptions);
                   });
                 },
               ),
@@ -174,7 +124,7 @@ class HomeViewState extends State<HomeView> {
             });
           },
           child:
-              const Icon(CupertinoIcons.add, color: CupertinoColors.activeBlue),
+          const Icon(CupertinoIcons.add, color: CupertinoColors.activeBlue),
         ),
       ),
       child: Column(
@@ -185,13 +135,13 @@ class HomeViewState extends State<HomeView> {
               child: Text(
                 Intl.message('subscriptions'),
                 style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
           ),
           Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -240,16 +190,22 @@ class HomeViewState extends State<HomeView> {
             child: subscriptions.isEmpty
                 ? _buildEmptyState()
                 : ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 85.0),
-                    itemCount: subscriptions.length,
-                    itemBuilder: (context, index) {
-                      return SubscriptionItem(
-                        subscription: subscriptions[index],
-                        onUpdate: _updateSubscription,
-                        onDelete: _updateAllSubscription,
-                      );
-                    },
-                  ),
+              padding: const EdgeInsets.only(bottom: 85.0),
+              itemCount: subscriptions.length,
+              itemBuilder: (context, index) {
+                return SubscriptionItem(
+                  subscription: subscriptions[index],
+                  onUpdate: (updatedSubscription) {
+                    Provider.of<SubscriptionProvider>(context, listen: false)
+                        .updateSubscription(updatedSubscription);
+                  },
+                  onDelete: (deletedSubscription) {
+                    Provider.of<SubscriptionProvider>(context, listen: false)
+                        .deleteSubscription(deletedSubscription);
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -297,7 +253,6 @@ class HomeViewState extends State<HomeView> {
               onPressed: () {
                 setState(() {
                   sortOption = option;
-                  subscriptions = _sortSubscriptions(subscriptions);
                 });
                 Navigator.pop(context);
               },
