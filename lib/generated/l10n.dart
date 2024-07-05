@@ -880,13 +880,13 @@ class S {
     );
   }
 
-  /// `Your subscription ${subscription['title']} is due soon!`
-  String get subscriptionIsDueSoon {
+  /// `Your subscription {title} is due soon!`
+  String subscriptionIsDueSoon(String title) {
     return Intl.message(
-      'Your subscription \${subscription[\'title\']} is due soon!',
+      'Your subscription $title is due soon!',
       name: 'subscriptionIsDueSoon',
-      desc: '',
-      args: [],
+      desc: 'A message that indicates a subscription is due soon.',
+      args: [title],
     );
   }
 }

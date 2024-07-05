@@ -92,5 +92,14 @@
   "twoDaysBefore":  "Zwei Tage vorher",
   "weekBefore": "Eine Woche vorher",
   "subscriptionReminder": "Abonnement Erinnerung",
-  "subscriptionIsDueSoon": "Ihr Abonnement ${subscription['title']} steht kurz bevor!"
+  "subscriptionIsDueSoon": "Ihr Abonnement {title} steht bald an!",
+  "@subscriptionIsDueSoon": {
+    "description": "Eine Nachricht, die darauf hinweist, dass ein Abonnement bald fällig ist.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Netflix"
+      }
+    }
+  }
 }

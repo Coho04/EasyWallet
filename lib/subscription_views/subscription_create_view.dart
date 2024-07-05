@@ -367,10 +367,10 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   }
 
   void _saveItem() {
-    final title = _titleController.text;
+    final title = _titleController.text.trim();
     final amount = double.tryParse(_amountController.text.replaceAll(',', '.'));
     final url = _urlController.text;
-    final notes = _notesController.text;
+    final notes = _notesController.text.trim();
 
     setState(() {
       _isTitleValid = title.isNotEmpty;

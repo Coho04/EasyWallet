@@ -10,13 +10,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter/material.dart';
+import 'generated/l10n.dart';
 
 class BackgroundTaskManager {
   static const String groupKey = "com.easy_wallet.SUBSCRIPTION_NOTIFICATIONS";
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
-
 
   Future<void> init() async {
     await _initNotifications();
@@ -134,7 +134,7 @@ class BackgroundTaskManager {
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
-      'EasyWallet',
+      'easy_wallet_channel_id',
       'EasyWallet',
       icon: '@mipmap/ic_launcher',
       channelDescription: "EasyWallet App Notify Channel",
@@ -156,12 +156,8 @@ class BackgroundTaskManager {
     try {
       await flutterLocalNotificationsPlugin.show(
         notificationId,
-        Intl.message('Subscription Reminder'),
-        Intl.message(
-          'Your subscription ${subscription['title']} is due soon!',
-          args: [subscription['title']],
-          name: 'subscriptionIsDueSoon',
-        ),
+        S.current.subscriptionReminder,
+        S.current.subscriptionIsDueSoon(subscription['title']),
         platformChannelSpecifics,
         payload: 'item x',
       );

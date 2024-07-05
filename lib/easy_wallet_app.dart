@@ -1,6 +1,6 @@
+import 'package:easy_wallet/background_task_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
 import 'generated/l10n.dart';
 import 'main_views/main_screen.dart';
 

@@ -92,5 +92,14 @@
   "twoDaysBefore":  "Two Days Before",
   "weekBefore": "One Week Before",
   "subscriptionReminder": "Subscription Reminder",
-  "subscriptionIsDueSoon": "Your subscription ${subscription['title']} is due soon!"
+  "subscriptionIsDueSoon": "Your subscription {title} is due soon!",
+  "@subscriptionIsDueSoon": {
+    "description": "A message that indicates a subscription is due soon.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Netflix"
+      }
+    }
+  }
 }

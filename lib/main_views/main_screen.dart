@@ -32,7 +32,6 @@ class MainScreenState extends State<MainScreen> {
   }
 
   void _initNotifications() async {
-    WidgetsFlutterBinding.ensureInitialized();
     final backgroundTaskManager = BackgroundTaskManager();
     await backgroundTaskManager.init();
   }
@@ -43,8 +42,7 @@ class MainScreenState extends State<MainScreen> {
 
     final IOSFlutterLocalNotificationsPlugin? iosImplementation =
     flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>();
+        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
 
     iosImplementation?.requestPermissions(
       alert: true,

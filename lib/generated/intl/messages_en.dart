@@ -20,6 +20,8 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
+  static String m0(title) => "Your subscription ${title} is due soon!";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "actions": MessageLookupByLibrary.simpleMessage("Actions"),
@@ -122,8 +124,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "sortOptions": MessageLookupByLibrary.simpleMessage("Sort Options"),
         "startDate": MessageLookupByLibrary.simpleMessage("Start date"),
         "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
-        "subscriptionIsDueSoon": MessageLookupByLibrary.simpleMessage(
-            "Your subscription \${subscription[\'title\']} is due soon!"),
+        "subscriptionIsDueSoon": m0,
         "subscriptionReminder":
             MessageLookupByLibrary.simpleMessage("Subscription Reminder"),
         "subscriptions": MessageLookupByLibrary.simpleMessage("Subscriptions"),

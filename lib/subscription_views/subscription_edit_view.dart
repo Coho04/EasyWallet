@@ -78,7 +78,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   void _saveItem() {
     if (_validateForm()) {
       final subscription = widget.subscription;
-      subscription.title = _titleController.text;
+      subscription.title = _titleController.text.trim();
       if (_urlController.text == 'https://') {
         subscription.url = '';
       } else {
@@ -87,7 +87,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       subscription.amount =
           double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0;
       subscription.date = _date;
-      subscription.notes = _notesController.text;
+      subscription.notes = _notesController.text.trim();
       subscription.repeatPattern = _paymentRate;
       subscription.rememberCycle = _rememberCycle;
 
