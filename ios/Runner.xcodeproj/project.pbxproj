@@ -59,6 +59,7 @@
 		B7EBB4E12C397241001788AA /* Generated.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Generated.xcconfig; sourceTree = "<group>"; };
 		B7EBB4E52C3977F6001788AA /* EasyWallet.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EasyWallet.xcdatamodel; sourceTree = "<group>"; };
 		B7EBB4E72C39789D001788AA /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
+		B7EBB4EA2C397D8E001788AA /* EasyWallet 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EasyWallet 2.xcdatamodel"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -638,6 +639,7 @@
 		B7EBB4E42C3977F6001788AA /* EasyWallet.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				B7EBB4EA2C397D8E001788AA /* EasyWallet 2.xcdatamodel */,
 				B7EBB4E52C3977F6001788AA /* EasyWallet.xcdatamodel */,
 			);
 			currentVersion = B7EBB4E52C3977F6001788AA /* EasyWallet.xcdatamodel */;
