@@ -756,7 +756,7 @@
 			);
 			currentVersion = B7EBB4EA2C397D8E001788AA /* EasyWallet 2.xcdatamodel */;
 			name = EasyWallet.xcdatamodeld;
-			path = /Users/c.ilgner/IdeaProjects/EasyWallet_Flutter/ios/Runner/EasyWallet.xcdatamodeld;
+			path = EasyWallet.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
