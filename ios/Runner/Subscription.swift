@@ -2,11 +2,10 @@
 //  Subscription.swift
 //  
 //
-//  Created by Collin Ilgner on 05.07.24.
+//  Created by Collin Ilgner on 06.07.24.
 //
 //
 
-import CoreData
 import Foundation
 import SwiftData
 

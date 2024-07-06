@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>de.golden-developer.easywallet.refresh</string>
@@ -38,17 +40,19 @@
 		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
-    <key>UILaunchScreen</key>
-    <dict>
-        <key>ImageName</key>
-        <string>LaunchImage</string>
-        <key>ImageMinimumOSVersion</key>
-        <string>14.0</string>
-        <key>ImageOrientation</key>
-        <string>Portrait</string>
-        <key>ImageDisplayGamut</key>
-        <string>P3</string>
-    </dict>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>ImageDisplayGamut</key>
+		<string>P3</string>
+		<key>ImageMinimumOSVersion</key>
+		<string>17.0</string>
+		<key>ImageName</key>
+		<string>LaunchImage</string>
+		<key>ImageOrientation</key>
+		<string>Portrait</string>
+	</dict>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen.storyboard</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>

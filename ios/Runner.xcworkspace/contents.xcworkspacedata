@@ -2,10 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Runner/Subscription+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Runner/Subscription+CoreDataProperties.swift">
+      location = "group:Runner/Subscription.swift">
    </FileRef>
    <FileRef
       location = "group:Runner.xcodeproj">
