@@ -38,17 +38,17 @@
 		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
-    <key>UILaunchScreen</key>
-    <dict>
-        <key>ImageName</key>
-        <string>LaunchImage</string>
-        <key>ImageMinimumOSVersion</key>
-        <string>14.0</string>
-        <key>ImageOrientation</key>
-        <string>Portrait</string>
-        <key>ImageDisplayGamut</key>
-        <string>P3</string>
-    </dict>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>ImageDisplayGamut</key>
+		<string>P3</string>
+		<key>ImageMinimumOSVersion</key>
+		<string>14.0</string>
+		<key>ImageName</key>
+		<string>LaunchImage</string>
+		<key>ImageOrientation</key>
+		<string>Portrait</string>
+	</dict>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
@@ -64,9 +64,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
 </dict>
 </plist>
