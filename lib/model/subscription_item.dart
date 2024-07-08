@@ -50,7 +50,7 @@ class SubscriptionItem extends StatelessWidget {
                     children: [
                       Text(
                         subscription.title,
-                        style: EasyWalletApp.responsiveTextStyle(18, context,
+                        style: EasyWalletApp.responsiveTextStyle(15, context,
                             color: isDarkMode
                                 ? CupertinoColors.white
                                 : CupertinoColors.black,
@@ -77,11 +77,11 @@ class SubscriptionItem extends StatelessWidget {
                   children: [
                     Text(
                       '${subscription.remainingDays()} ${Intl.message('days')}',
-                      style: EasyWalletApp.responsiveTextStyle(16, context,  color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey),
+                      style: EasyWalletApp.responsiveTextStyle(15, context,  color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey),
                     ),
                     Text(
                       '(${_convertPrice(subscription)})',
-                      style: EasyWalletApp.responsiveTextStyle(16, context,  color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey),
+                      style: EasyWalletApp.responsiveTextStyle(15, context,  color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey),
                     )
                   ],
                 ),
