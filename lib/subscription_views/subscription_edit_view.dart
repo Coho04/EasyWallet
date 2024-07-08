@@ -33,7 +33,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   bool _titleValid = true;
   bool _amountValid = true;
 
-  String _currency = Currency.USD.symbol;
+  String _currency = Currency.usd.symbol;
 
   Future<void> _loadCurrency() async {
     final currency = await Settings.getCurrency();

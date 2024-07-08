@@ -16,7 +16,7 @@ class SettingsViewState extends State<SettingsView> {
   bool notificationsEnabled = true;
   bool includeCostInNotifications = false;
   DateTime notificationTime = DateTime.now();
-  String currency = Currency.USD.name;
+  String currency = Currency.usd.name;
   double monthlyLimit = 0.0;
 
   @override
@@ -65,8 +65,9 @@ class SettingsViewState extends State<SettingsView> {
   }
 
   Future<void> _openWebPage(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
     } else {
       showCupertinoDialog(
         context: context,

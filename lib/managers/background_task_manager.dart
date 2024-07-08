@@ -98,9 +98,7 @@ class BackgroundTaskManager {
         DateTime? eventDate = _calculateNextBillDate(subscription);
         if (eventDate == null) continue;
 
-        RememberCycle? cycle = RememberCycle.findByName(subscription['remembercycle']);
-
-        if (cycle == null) continue;
+        RememberCycle cycle = RememberCycle.findByName(subscription['remembercycle']);
         switch (cycle) {
           case RememberCycle.dayBefore:
             eventDate = eventDate.subtract(const Duration(days: 1));

@@ -3,9 +3,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 import 'main_views/main_screen.dart';
 
-import 'package:sentry/sentry.dart';
-
-
 class EasyWalletApp extends StatelessWidget {
   const EasyWalletApp({super.key});
 
@@ -42,7 +39,7 @@ class EasyWalletApp extends StatelessWidget {
         Color? color,
       }) {
     return TextStyle(
-        fontSize: baseSize / MediaQuery.of(context).textScaleFactor,
+        fontSize: baseSize / MediaQuery.textScalerOf(context).scale(1),
         fontWeight: bold ? FontWeight.bold : null,
         color: color);
   }

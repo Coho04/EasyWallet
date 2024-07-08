@@ -26,7 +26,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   DateTime _selectedDate = DateTime.now();
   String _selectedPayRate = PaymentRate.monthly.value;
   String _selectedRememberCycle = RememberCycle.sameDay.value;
-  String _currency = Currency.USD.symbol;
+  String _currency = Currency.usd.symbol;
 
   bool _isTitleValid = true;
   bool _isAmountValid = true;
