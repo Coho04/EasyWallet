@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_wallet/easy_wallet_app.dart';
+import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/model/subscription.dart';
@@ -31,12 +33,12 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   bool _titleValid = true;
   bool _amountValid = true;
 
-  String _currency = 'USD';
+  String _currency = Currency.USD.symbol;
 
   Future<void> _loadCurrency() async {
     final currency = await Settings.getCurrency();
     setState(() {
-      _currency = currency.name;
+      _currency = currency.symbol;
     });
   }
 
@@ -105,11 +107,16 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text(Intl.message('editSubscription')),
+        middle: Text(
+          Intl.message('editSubscription'),
+          style: EasyWalletApp.responsiveTextStyle(20, context),
+        ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _saveItem,
-          child: Text(Intl.message('save')),
+          child: Text(Intl.message('save'),
+              style: EasyWalletApp.responsiveTextStyle(16, context,
+                  color: CupertinoColors.activeBlue)),
         ),
       ),
       child: SafeArea(
@@ -128,7 +135,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                   onChanged: (value) {
                     if (!value.startsWith('https://')) {
                       _urlController.text =
-                      'https://${value.replaceFirst('https://', '')}';
+                          'https://${value.replaceFirst('https://', '')}';
                       _urlController.selection = TextSelection.fromPosition(
                           TextPosition(offset: _urlController.text.length));
                     }
@@ -141,7 +148,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                   Intl.message('paymentRate'),
                   _paymentRate,
                   PaymentRate.values,
-                      (value) {
+                  (value) {
                     setState(() {
                       _paymentRate = value!;
                     });
@@ -160,7 +167,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                   Intl.message('remembering'),
                   _rememberCycle,
                   RememberCycle.values,
-                      (value) {
+                  (value) {
                     setState(() {
                       _rememberCycle = value!;
                     });
@@ -189,7 +196,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
             placeholder: Intl.message('title'),
             style: TextStyle(
                 color:
-                isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+                    isDarkMode ? CupertinoColors.white : CupertinoColors.black),
             decoration: BoxDecoration(
               color: isDarkMode
                   ? CupertinoColors.darkBackgroundGray
@@ -198,8 +205,8 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
               border: Border.all(
                 color: _titleValid
                     ? (isDarkMode
-                    ? CupertinoColors.systemGrey
-                    : CupertinoColors.systemGrey4)
+                        ? CupertinoColors.systemGrey
+                        : CupertinoColors.systemGrey4)
                     : CupertinoColors.destructiveRed,
               ),
             ),
@@ -220,7 +227,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
     } else {
       return CachedNetworkImage(
         imageUrl:
-        'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(_urlController.text).host}',
+            'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(_urlController.text).host}',
         placeholder: (context, url) => const CupertinoActivityIndicator(),
         errorWidget: (context, url, error) => const Icon(
           CupertinoIcons.exclamationmark_triangle,
@@ -235,9 +242,9 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
 
   Widget _buildTextField(TextEditingController controller, String placeholder,
       {TextInputType keyboardType = TextInputType.text,
-        int maxLines = 1,
-        required bool isDarkMode,
-        ValueChanged<String>? onChanged}) {
+      int maxLines = 1,
+      required bool isDarkMode,
+      ValueChanged<String>? onChanged}) {
     return CupertinoTextField(
       controller: controller,
       placeholder: placeholder,
@@ -272,7 +279,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             style: TextStyle(
                 color:
-                isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+                    isDarkMode ? CupertinoColors.white : CupertinoColors.black),
             decoration: BoxDecoration(
               color: isDarkMode
                   ? CupertinoColors.darkBackgroundGray
@@ -281,8 +288,8 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
               border: Border.all(
                 color: _amountValid
                     ? (isDarkMode
-                    ? CupertinoColors.systemGrey
-                    : CupertinoColors.systemGrey4)
+                        ? CupertinoColors.systemGrey
+                        : CupertinoColors.systemGrey4)
                     : CupertinoColors.destructiveRed,
               ),
             ),
@@ -290,11 +297,14 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
           ),
         ),
         const SizedBox(width: 8),
-        Text(_currency,
-            style: TextStyle(
-                color: isDarkMode
-                    ? CupertinoColors.white
-                    : CupertinoColors.black)),
+        Text(
+          _currency,
+          style: EasyWalletApp.responsiveTextStyle(
+            16,
+            context,
+            color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+          ),
+        ),
       ],
     );
   }
@@ -304,11 +314,14 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
     return CupertinoFormRow(
       prefix: Padding(
         padding: const EdgeInsets.only(right: 16.0),
-        child: Text(label,
-            style: TextStyle(
-                color: isDarkMode
-                    ? CupertinoColors.white
-                    : CupertinoColors.black)),
+        child: Text(
+          label,
+          style: EasyWalletApp.responsiveTextStyle(
+            16,
+            context,
+            color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+          ),
+        ),
       ),
       child: GestureDetector(
         onTap: () => _showOptions(context, options, onChanged, isDarkMode),
@@ -329,11 +342,13 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
             children: [
               Text(
                 _capitalize(_translateEnum(currentValue, options)),
-                style: TextStyle(
-                    fontSize: 16,
-                    color: isDarkMode
-                        ? CupertinoColors.white
-                        : CupertinoColors.inactiveGray),
+                style: EasyWalletApp.responsiveTextStyle(
+                  16,
+                  context,
+                  color: isDarkMode
+                      ? CupertinoColors.white
+                      : CupertinoColors.inactiveGray,
+                ),
               ),
               Icon(
                 CupertinoIcons.chevron_down,
@@ -354,11 +369,14 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
     return CupertinoFormRow(
       prefix: Padding(
         padding: const EdgeInsets.only(right: 16.0),
-        child: Text(label,
-            style: TextStyle(
-                color: isDarkMode
-                    ? CupertinoColors.white
-                    : CupertinoColors.black)),
+        child: Text(
+          label,
+          style: EasyWalletApp.responsiveTextStyle(
+            16,
+            context,
+            color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+          ),
+        ),
       ),
       child: GestureDetector(
         onTap: onTap,
@@ -379,11 +397,13 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
             children: [
               Text(
                 DateFormat('dd.MM.yyyy').format(date),
-                style: TextStyle(
-                    fontSize: 16,
-                    color: isDarkMode
-                        ? CupertinoColors.white
-                        : CupertinoColors.inactiveGray),
+                style: EasyWalletApp.responsiveTextStyle(
+                  16,
+                  context,
+                  color: isDarkMode
+                      ? CupertinoColors.white
+                      : CupertinoColors.inactiveGray,
+                ),
               ),
               Icon(
                 CupertinoIcons.calendar,
@@ -422,7 +442,14 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                 ),
               ),
               CupertinoButton(
-                child: const Text('OK'),
+                child: Text(
+                  'OK',
+                  style: EasyWalletApp.responsiveTextStyle(
+                    20,
+                    context,
+                    color: CupertinoColors.activeBlue,
+                  ),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -446,9 +473,15 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       builder: (BuildContext context) {
         return CupertinoActionSheet(
           actions: options.map((option) {
-            final String value = (option is PaymentRate) ? option.value : (option as RememberCycle).value;
+            final String value = (option is PaymentRate)
+                ? option.value
+                : (option as RememberCycle).value;
             return CupertinoActionSheetAction(
-              child: Text(_capitalize(_translateEnum(value, options))),
+              child: Text(
+                _capitalize(_translateEnum(value, options)),
+                style: EasyWalletApp.responsiveTextStyle(20, context,
+                    color: CupertinoColors.activeBlue),
+              ),
               onPressed: () {
                 onChanged(value);
                 Navigator.pop(context);
@@ -456,7 +489,14 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
             );
           }).toList(),
           cancelButton: CupertinoActionSheetAction(
-            child: Text(Intl.message('cancel')),
+            child: Text(
+              Intl.message('cancel'),
+              style: EasyWalletApp.responsiveTextStyle(
+                22,
+                context,
+                color: CupertinoColors.activeBlue,
+              ),
+            ),
             onPressed: () {
               Navigator.pop(context);
             },

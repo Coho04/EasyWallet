@@ -31,4 +31,16 @@ class EasyWalletApp extends StatelessWidget {
       home: const MainScreen(),
     );
   }
+
+  static TextStyle responsiveTextStyle(
+      double baseSize,
+      BuildContext context, {
+        bool bold = false,
+        Color? color,
+      }) {
+    return TextStyle(
+        fontSize: baseSize / MediaQuery.of(context).textScaleFactor,
+        fontWeight: bold ? FontWeight.bold : null,
+        color: color);
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,10 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text(Intl.message('subscriptions')),
+        middle: Text(
+          Intl.message('subscriptions'),
+          style: EasyWalletApp.responsiveTextStyle(24, context),
+        ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: () {
@@ -180,9 +184,10 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+            style: EasyWalletApp.responsiveTextStyle(
+              16,
+              context,
+              bold: true,
               color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
             ),
           ),
@@ -201,9 +206,10 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
         Expanded(
           child: Text(
             subscription.title,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+            style: EasyWalletApp.responsiveTextStyle(
+              24,
+              context,
+              bold: true,
               color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
             ),
           ),
@@ -215,9 +221,11 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
   Widget _buildDetailRow(String label, String value, bool isDarkMode) {
     return CupertinoFormRow(
       prefix: Text(
-        label,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
+        label, //TODO Color CHECKEN
+        style: EasyWalletApp.responsiveTextStyle(
+          16,
+          context,
+          bold: true,
           color: isDarkMode
               ? CupertinoColors.systemGrey
               : CupertinoColors.systemGrey,
@@ -225,8 +233,9 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
       ),
       child: Text(
         value,
-        style: TextStyle(
-          fontSize: 16,
+        style: EasyWalletApp.responsiveTextStyle(
+          16,
+          context,
           color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
         ),
       ),
@@ -244,12 +253,8 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
           children: [
             Text(
               label,
-              style: TextStyle(
-                color: color ??
-                    (isDarkMode
-                        ? CupertinoColors.systemGrey
-                        : CupertinoColors.black),
-              ),
+              style: EasyWalletApp.responsiveTextStyle(16, context,
+                  color: color ?? CupertinoColors.systemGrey),
             ),
             Icon(
               icon,
@@ -312,11 +317,14 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
       showCupertinoDialog(
         context: context,
         builder: (context) => CupertinoAlertDialog(
-          title: Text(Intl.message('hint')),
-          content: Text(Intl.message('Deletion is not supported on the web')),
+          title: Text(Intl.message('hint'),
+              style: EasyWalletApp.responsiveTextStyle(16, context)),
+          content: Text(Intl.message('Deletion is not supported on the web'),
+              style: EasyWalletApp.responsiveTextStyle(16, context)),
           actions: [
             CupertinoDialogAction(
-              child: const Text('OK'),
+              child: Text('OK',
+                  style: EasyWalletApp.responsiveTextStyle(16, context)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
