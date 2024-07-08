@@ -48,11 +48,11 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text(Intl.message('Add Subscription')),
+        middle: Text(Intl.message('addSubscription')),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _saveItem,
-          child: Text(Intl.message('Save')),
+          child: Text(Intl.message('save')),
         ),
       ),
       child: SafeArea(
@@ -81,10 +81,10 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 const SizedBox(height: 16),
                 _buildAmountField(isDarkMode),
                 const SizedBox(height: 16),
-                _buildDatePickerField(Intl.message('Start Date'), _selectedDate, _pickDate, isDarkMode),
+                _buildDatePickerField(Intl.message('startDate'), _selectedDate, _pickDate, isDarkMode),
                 const SizedBox(height: 16),
                 _buildDropdownField(
-                  Intl.message('Payment Rate'),
+                  Intl.message('paymentRate'),
                   _selectedPayRate,
                   PaymentRate.values,
                       (value) {
@@ -96,7 +96,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 ),
                 const SizedBox(height: 16),
                 _buildDropdownField(
-                  Intl.message('Remembering'),
+                  Intl.message('remembering'),
                   _selectedRememberCycle,
                   RememberCycle.values,
                       (value) {
@@ -107,7 +107,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                   isDarkMode,
                 ),
                 const SizedBox(height: 16),
-                _buildTextField(_notesController, Intl.message('Notes'), maxLines: 5, isDarkMode: isDarkMode),
+                _buildTextField(_notesController, Intl.message('notes'), maxLines: 5, isDarkMode: isDarkMode),
               ],
             ),
           ),
@@ -151,7 +151,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         Expanded(
           child: CupertinoTextField(
             controller: _titleController,
-            placeholder: Intl.message('Title'),
+            placeholder: Intl.message('title'),
             style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
             decoration: BoxDecoration(
               color: isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.systemGrey6,
@@ -200,7 +200,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         Expanded(
           child: _buildTextField(
             _amountController,
-            Intl.message('Costs'),
+            Intl.message('costs'),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             isValid: _isAmountValid,
             isDarkMode: isDarkMode,
@@ -356,7 +356,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
             );
           }).toList(),
           cancelButton: CupertinoActionSheetAction(
-            child: Text(Intl.message('Cancel')),
+            child: Text(Intl.message('cancel')),
             onPressed: () {
               Navigator.pop(context);
             },

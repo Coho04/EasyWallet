@@ -1,4 +1,3 @@
-import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +74,7 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
                 _buildDetailRow(Intl.message('costs'),
                     '${subscription.amount.toStringAsFixed(2)} €', isDarkMode),
                 _buildDetailRow(Intl.message('repetitionRate'),
-                    _repeatPattern(subscription), isDarkMode),
+                    subscription.getRepeatPattern().translate(), isDarkMode),
               ],
               isDarkMode,
             ),
@@ -85,11 +84,11 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
               [
                 _buildDetailRow(
                     Intl.message('nextInvoice'),
-                    _formatDate(_calculateNextBillDate(subscription)),
+                    _formatDate(subscription.calculateNextBillDate()),
                     isDarkMode),
                 _buildDetailRow(
                     Intl.message('previousInvoice'),
-                    _formatDate(_calculatePreviousBillDate(subscription)),
+                    _formatDate(subscription.calculatePreviousBillDate()),
                     isDarkMode),
                 _buildDetailRow(Intl.message('firstDebit'),
                     _formatDate(subscription.date), isDarkMode),
@@ -103,10 +102,10 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
               Intl.message('additionalInformation'),
               [
                 _buildDetailRow(Intl.message('previousDebits'),
-                    _countPayment(subscription).toString(), isDarkMode),
+                    subscription.countPayment().toString(), isDarkMode),
                 _buildDetailRow(
                     Intl.message('totalCosts'),
-                    '${_sumPayment(subscription).toStringAsFixed(2)} €',
+                    '${subscription.sumPayment().toStringAsFixed(2)} €',
                     isDarkMode),
                 if (subscription.notes != null &&
                     subscription.notes!.trim().isNotEmpty)
@@ -337,105 +336,6 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
     final persistenceController = PersistenceController.instance;
     await persistenceController.saveSubscription(subscription);
     widget.onUpdate(subscription);
-  }
-
-  String _repeatPattern(Subscription subscription) {
-    switch (subscription.repeatPattern) {
-      case 'monthly':
-        return 'Monatlich';
-      case 'yearly':
-        return 'Jährlich';
-      default:
-        return '';
-    }
-  }
-
-  DateTime? _calculatePreviousBillDate(Subscription subscription) {
-    if (subscription.date == null || subscription.repeatPattern == null) {
-      return null;
-    }
-    final today = DateTime.now();
-    final startBillDate = subscription.date!;
-    DateTime potentialPreviousBillDate = startBillDate;
-    Duration interval;
-    if (subscription.repeatPattern == PaymentRate.monthly.value) {
-      interval = const Duration(days: 30);
-    } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
-      interval = const Duration(days: 365);
-    } else {
-      return null;
-    }
-
-    DateTime? lastBillDate;
-    while (potentialPreviousBillDate.isBefore(today)) {
-      lastBillDate = potentialPreviousBillDate;
-      potentialPreviousBillDate = potentialPreviousBillDate.add(interval);
-    }
-
-    return lastBillDate;
-  }
-
-  DateTime? _calculateNextBillDate(Subscription subscription) {
-    if (subscription.date == null) {
-      return null;
-    }
-    final today = DateTime.now();
-    DateTime nextBillDate = subscription.date!;
-    Duration interval;
-    if (subscription.repeatPattern == PaymentRate.monthly.value) {
-      interval = const Duration(days: 30);
-    } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
-      interval = const Duration(days: 365);
-    } else {
-      return null;
-    }
-
-    while (nextBillDate.isBefore(today)) {
-      nextBillDate = nextBillDate.add(interval);
-    }
-    return nextBillDate;
-  }
-
-  int _countPayment(Subscription subscription) {
-    if (subscription.date == null) {
-      return 0;
-    }
-    final today = DateTime.now();
-    DateTime nextBillDate = subscription.date!;
-    Duration interval;
-    if (subscription.repeatPattern == PaymentRate.yearly.value) {
-      interval = const Duration(days: 365);
-    } else {
-      interval = const Duration(days: 30);
-    }
-
-    int count = 0;
-    while (nextBillDate.isBefore(today)) {
-      nextBillDate = nextBillDate.add(interval);
-      count++;
-    }
-    return count;
-  }
-
-  double _sumPayment(Subscription subscription) {
-    if (subscription.date == null) {
-      return 0.0;
-    }
-    final today = DateTime.now();
-    DateTime nextBillDate = subscription.date!;
-    Duration interval;
-    if (subscription.repeatPattern == PaymentRate.yearly.value) {
-      interval = const Duration(days: 365);
-    } else {
-      interval = const Duration(days: 30);
-    }
-
-    double sum = 0;
-    while (nextBillDate.isBefore(today)) {
-      nextBillDate = nextBillDate.add(interval);
-      sum += subscription.amount;
-    }
-    return sum;
   }
 
   String _formatDate(DateTime? date) {

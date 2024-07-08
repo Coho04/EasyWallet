@@ -810,21 +810,21 @@ class S {
     );
   }
 
-  /// `Expenditure this month`
-  String get expenditureMonth {
+  /// `Outstanding expenditure month`
+  String get outstandingExpenditureMonth {
     return Intl.message(
-      'Expenditure this month',
-      name: 'expenditureMonth',
+      'Outstanding expenditure month',
+      name: 'outstandingExpenditureMonth',
       desc: '',
       args: [],
     );
   }
 
-  /// `Expenditure this year`
-  String get expenditureYear {
+  /// `Open expenditure year`
+  String get openExpenditureYear {
     return Intl.message(
-      'Expenditure this year',
-      name: 'expenditureYear',
+      'Open expenditure year',
+      name: 'openExpenditureYear',
       desc: '',
       args: [],
     );

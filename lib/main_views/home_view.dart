@@ -26,12 +26,16 @@ class HomeViewState extends State<HomeView> {
   }
 
   Future<void> _loadSubscriptions() async {
-    await Provider.of<SubscriptionProvider>(context, listen: false).loadSubscriptions();
+    await Provider.of<SubscriptionProvider>(context, listen: false)
+        .loadSubscriptions();
   }
 
   List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
-    List<Subscription> filteredSubscriptions = subscriptions.where((subscription) {
-      return subscription.title.toLowerCase().contains(searchText.toLowerCase());
+    List<Subscription> filteredSubscriptions =
+    subscriptions.where((subscription) {
+      return subscription.title
+          .toLowerCase()
+          .contains(searchText.toLowerCase());
     }).toList();
 
     filteredSubscriptions.sort((a, b) {
@@ -75,17 +79,35 @@ class HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final subscriptions = Provider.of<SubscriptionProvider>(context).subscriptions;
+    final subscriptions =
+        Provider.of<SubscriptionProvider>(context).subscriptions;
+
     double monthlySpent = subscriptions.where((subscription) {
       final now = DateTime.now();
-      return subscription.date != null &&
-          subscription.date!.year == now.year &&
-          subscription.date!.month == now.month;
+      DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+      DateTime nextBillDate = subscription.date!;
+      Duration interval = subscription.repeatPattern == PaymentRate.yearly.value
+          ? const Duration(days: 365)
+          : const Duration(days: 30);
+      while (nextBillDate.isBefore(now)) {
+        nextBillDate = nextBillDate.add(interval);
+      }
+      return nextBillDate.isBefore(lastDayOfMonth) &&
+          nextBillDate.month == now.month;
     }).fold(0, (sum, subscription) => sum + subscription.amount);
 
     double yearlySpent = subscriptions.where((subscription) {
       final now = DateTime.now();
-      return subscription.date != null && subscription.date!.year == now.year;
+      DateTime lastDayOfYear = DateTime(now.year, 12, 31);
+      DateTime nextBillDate = subscription.date!;
+      Duration interval = subscription.repeatPattern == PaymentRate.yearly.value
+          ? const Duration(days: 365)
+          : const Duration(days: 30);
+      while (nextBillDate.isBefore(now)) {
+        nextBillDate = nextBillDate.add(interval);
+      }
+      return nextBillDate.isBefore(lastDayOfYear) &&
+          nextBillDate.year == now.year;
     }).fold(0, (sum, subscription) => sum + subscription.amount);
 
     return CupertinoPageScaffold(
@@ -149,7 +171,7 @@ class HomeViewState extends State<HomeView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      Intl.message('expenditureMonth'),
+                      Intl.message('outstandingExpenditureMonth'),
                       style: const TextStyle(
                         fontSize: 16,
                         color: CupertinoColors.systemGrey,
@@ -168,7 +190,7 @@ class HomeViewState extends State<HomeView> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      Intl.message('expenditureYear'),
+                      Intl.message('openExpenditureYear'),
                       style: const TextStyle(
                         fontSize: 16,
                         color: CupertinoColors.systemGrey,
@@ -196,11 +218,13 @@ class HomeViewState extends State<HomeView> {
                 return SubscriptionItem(
                   subscription: subscriptions[index],
                   onUpdate: (updatedSubscription) {
-                    Provider.of<SubscriptionProvider>(context, listen: false)
+                    Provider.of<SubscriptionProvider>(context,
+                        listen: false)
                         .updateSubscription(updatedSubscription);
                   },
                   onDelete: (deletedSubscription) {
-                    Provider.of<SubscriptionProvider>(context, listen: false)
+                    Provider.of<SubscriptionProvider>(context,
+                        listen: false)
                         .deleteSubscription(deletedSubscription);
                   },
                 );

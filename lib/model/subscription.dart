@@ -47,6 +47,126 @@ class Subscription {
     };
   }
 
+  int? remainingDays() {
+    if (date == null) return null;
+    DateTime nextBillDate = date!;
+    DateTime today = DateTime.now();
+    Duration interval;
+
+    if (repeatPattern == PaymentRate.yearly.value) {
+      interval = const Duration(days: 365);
+    } else {
+      interval = const Duration(days: 30);
+    }
+
+    while (nextBillDate.isBefore(today)) {
+      nextBillDate = nextBillDate.add(interval);
+    }
+    return nextBillDate.difference(today).inDays;
+  }
+
+  double? convertPrice() {
+    if (repeatPattern == PaymentRate.monthly.value) {
+      return (amount / 12);
+    } else if (repeatPattern == PaymentRate.yearly.value) {
+      return (amount * 12);
+    }
+    return null;
+  }
+
+  DateTime? calculatePreviousBillDate() {
+    if (date == null || repeatPattern == null) {
+      return null;
+    }
+    final today = DateTime.now();
+    final startBillDate = date!;
+    DateTime potentialPreviousBillDate = startBillDate;
+    Duration interval;
+    if (repeatPattern == PaymentRate.monthly.value) {
+      interval = const Duration(days: 30);
+    } else if (repeatPattern == PaymentRate.yearly.value) {
+      interval = const Duration(days: 365);
+    } else {
+      return null;
+    }
+
+    DateTime? lastBillDate;
+    while (potentialPreviousBillDate.isBefore(today)) {
+      lastBillDate = potentialPreviousBillDate;
+      potentialPreviousBillDate = potentialPreviousBillDate.add(interval);
+    }
+
+    return lastBillDate;
+  }
+
+  DateTime? calculateNextBillDate() {
+    if (date == null) {
+      return null;
+    }
+    final today = DateTime.now();
+    DateTime nextBillDate = date!;
+    Duration interval;
+    if (repeatPattern == PaymentRate.monthly.value) {
+      interval = const Duration(days: 30);
+    } else if (repeatPattern == PaymentRate.yearly.value) {
+      interval = const Duration(days: 365);
+    } else {
+      return null;
+    }
+
+    while (nextBillDate.isBefore(today)) {
+      nextBillDate = nextBillDate.add(interval);
+    }
+    return nextBillDate;
+  }
+
+
+  int countPayment() {
+    if (date == null) {
+      return 0;
+    }
+    final today = DateTime.now();
+    DateTime nextBillDate = date!;
+    Duration interval;
+    if (repeatPattern == PaymentRate.yearly.value) {
+      interval = const Duration(days: 365);
+    } else {
+      interval = const Duration(days: 30);
+    }
+
+    int count = 0;
+    while (nextBillDate.isBefore(today)) {
+      nextBillDate = nextBillDate.add(interval);
+      count++;
+    }
+    return count;
+  }
+
+  double sumPayment() {
+    if (date == null) {
+      return 0.0;
+    }
+    final today = DateTime.now();
+    DateTime nextBillDate = date!;
+    Duration interval;
+    if (repeatPattern == PaymentRate.yearly.value) {
+      interval = const Duration(days: 365);
+    } else {
+      interval = const Duration(days: 30);
+    }
+
+    double sum = 0;
+    while (nextBillDate.isBefore(today)) {
+      nextBillDate = nextBillDate.add(interval);
+      sum += amount;
+    }
+    return sum;
+  }
+
+  PaymentRate getRepeatPattern() {
+    return PaymentRate.findByName(repeatPattern!);
+  }
+
   factory Subscription.fromJson(Map<String, dynamic> json) {
     return Subscription(
       id: json['id'],
@@ -55,10 +175,13 @@ class Subscription {
       isPaused: json['isPaused'] == 1,
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],
-      rememberCycle: RememberCycle.findByName(json['rememberCycle'] ?? RememberCycle.sameDay.value).value,
+      rememberCycle: RememberCycle.findByName(
+              json['rememberCycle'] ?? RememberCycle.sameDay.value)
+          .value,
       repeating: json['repeating'] == 1,
       repeatPattern: PaymentRate.findByName(json['repeatPattern']).value,
-      timestamp: json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
+      timestamp:
+          json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
       title: json['title'],
       url: json['url'],
     );
@@ -72,10 +195,13 @@ class Subscription {
       isPaused: json['isPaused'] == 1,
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],
-      rememberCycle: RememberCycle.migrate(json['remembercycle'].toString()).value,
+      rememberCycle:
+          RememberCycle.migrate(json['remembercycle'].toString()).value,
       repeating: json['repeating'] == 1,
-      repeatPattern: PaymentRate.findByName(json['repeatPattern'].toString()).value,
-      timestamp: json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
+      repeatPattern:
+          PaymentRate.findByName(json['repeatPattern'].toString()).value,
+      timestamp:
+          json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
       title: json['title'],
       url: json['url'],
     );
