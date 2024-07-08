@@ -18,21 +18,33 @@ class HomeView extends StatefulWidget {
 class HomeViewState extends State<HomeView> {
   String searchText = "";
   SortOption sortOption = SortOption.remainingDaysAscending;
+  List<Subscription> sortedSubscriptions = [];
 
   @override
   void initState() {
     super.initState();
-    _loadSubscriptions();
+    _loadAndSortSubscriptions();
   }
 
-  Future<void> _loadSubscriptions() async {
+  Future<void> _loadAndSortSubscriptions() async {
     await Provider.of<SubscriptionProvider>(context, listen: false)
         .loadSubscriptions();
+    setState(() {
+      sortedSubscriptions = _sortSubscriptions(
+          Provider.of<SubscriptionProvider>(context, listen: false)
+              .subscriptions);
+    });
+  }
+
+  void _updateSubscription(Subscription updatedSubscription) {
+    setState(() {
+      _loadAndSortSubscriptions();
+    });
   }
 
   List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
     List<Subscription> filteredSubscriptions =
-    subscriptions.where((subscription) {
+        subscriptions.where((subscription) {
       return subscription.title
           .toLowerCase()
           .contains(searchText.toLowerCase());
@@ -54,9 +66,9 @@ class HomeViewState extends State<HomeView> {
         case SortOption.costDescending:
           return b.amount.compareTo(a.amount);
         case SortOption.remainingDaysAscending:
-          return _remainingDays(a).compareTo(_remainingDays(b));
+          return a.remainingDays().compareTo(b.remainingDays());
         case SortOption.remainingDaysDescending:
-          return _remainingDays(b).compareTo(_remainingDays(a));
+          return b.remainingDays().compareTo(a.remainingDays());
         default:
           return 0;
       }
@@ -64,8 +76,8 @@ class HomeViewState extends State<HomeView> {
     return filteredSubscriptions;
   }
 
-  int _remainingDays(Subscription subscription) {
-    if (subscription.date == null) return 0;
+  DateTime _nextBillDate(Subscription subscription) {
+    if (subscription.date == null) return DateTime.now();
     DateTime nextBillDate = subscription.date!;
     DateTime today = DateTime.now();
     Duration interval = subscription.repeatPattern == PaymentRate.yearly.value
@@ -74,7 +86,7 @@ class HomeViewState extends State<HomeView> {
     while (nextBillDate.isBefore(today)) {
       nextBillDate = nextBillDate.add(interval);
     }
-    return nextBillDate.difference(today).inDays;
+    return nextBillDate;
   }
 
   @override
@@ -82,30 +94,18 @@ class HomeViewState extends State<HomeView> {
     final subscriptions =
         Provider.of<SubscriptionProvider>(context).subscriptions;
 
-    double monthlySpent = subscriptions.where((subscription) {
+    double monthlySpent = sortedSubscriptions.where((subscription) {
       final now = DateTime.now();
       DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
-      DateTime nextBillDate = subscription.date!;
-      Duration interval = subscription.repeatPattern == PaymentRate.yearly.value
-          ? const Duration(days: 365)
-          : const Duration(days: 30);
-      while (nextBillDate.isBefore(now)) {
-        nextBillDate = nextBillDate.add(interval);
-      }
+      DateTime nextBillDate = _nextBillDate(subscription);
       return nextBillDate.isBefore(lastDayOfMonth) &&
           nextBillDate.month == now.month;
     }).fold(0, (sum, subscription) => sum + subscription.amount);
 
-    double yearlySpent = subscriptions.where((subscription) {
+    double yearlySpent = sortedSubscriptions.where((subscription) {
       final now = DateTime.now();
       DateTime lastDayOfYear = DateTime(now.year, 12, 31);
-      DateTime nextBillDate = subscription.date!;
-      Duration interval = subscription.repeatPattern == PaymentRate.yearly.value
-          ? const Duration(days: 365)
-          : const Duration(days: 30);
-      while (nextBillDate.isBefore(now)) {
-        nextBillDate = nextBillDate.add(interval);
-      }
+      DateTime nextBillDate = _nextBillDate(subscription);
       return nextBillDate.isBefore(lastDayOfYear) &&
           nextBillDate.year == now.year;
     }).fold(0, (sum, subscription) => sum + subscription.amount);
@@ -121,6 +121,7 @@ class HomeViewState extends State<HomeView> {
                 onChanged: (value) {
                   setState(() {
                     searchText = value;
+                    sortedSubscriptions = _sortSubscriptions(subscriptions);
                   });
                 },
               ),
@@ -142,11 +143,11 @@ class HomeViewState extends State<HomeView> {
                 builder: (context) => const SubscriptionCreateView(),
               ),
             ).then((value) {
-              _loadSubscriptions();
+              _loadAndSortSubscriptions();
             });
           },
           child:
-          const Icon(CupertinoIcons.add, color: CupertinoColors.activeBlue),
+              const Icon(CupertinoIcons.add, color: CupertinoColors.activeBlue),
         ),
       ),
       child: Column(
@@ -157,13 +158,13 @@ class HomeViewState extends State<HomeView> {
               child: Text(
                 Intl.message('subscriptions'),
                 style:
-                const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
           ),
           Padding(
             padding:
-            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -209,27 +210,25 @@ class HomeViewState extends State<HomeView> {
             ),
           ),
           Expanded(
-            child: subscriptions.isEmpty
+            child: sortedSubscriptions.isEmpty
                 ? _buildEmptyState()
                 : ListView.builder(
-              padding: const EdgeInsets.only(bottom: 85.0),
-              itemCount: subscriptions.length,
-              itemBuilder: (context, index) {
-                return SubscriptionItem(
-                  subscription: subscriptions[index],
-                  onUpdate: (updatedSubscription) {
-                    Provider.of<SubscriptionProvider>(context,
-                        listen: false)
-                        .updateSubscription(updatedSubscription);
-                  },
-                  onDelete: (deletedSubscription) {
-                    Provider.of<SubscriptionProvider>(context,
-                        listen: false)
-                        .deleteSubscription(deletedSubscription);
-                  },
-                );
-              },
-            ),
+                    padding: const EdgeInsets.only(bottom: 85.0),
+                    itemCount: sortedSubscriptions.length,
+                    itemBuilder: (context, index) {
+                      return SubscriptionItem(
+                        subscription: sortedSubscriptions[index],
+                        onUpdate: _updateSubscription,
+                        onDelete: (deletedSubscription) {
+                          setState(() {
+                            sortedSubscriptions.remove(deletedSubscription);
+                            sortedSubscriptions =
+                                _sortSubscriptions(sortedSubscriptions);
+                          });
+                        },
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -255,7 +254,7 @@ class HomeViewState extends State<HomeView> {
                   builder: (context) => const SubscriptionCreateView(),
                 ),
               ).then((value) {
-                _loadSubscriptions();
+                _loadAndSortSubscriptions();
               });
             },
             child: Text(Intl.message('addNewSubscription')),
@@ -277,6 +276,9 @@ class HomeViewState extends State<HomeView> {
               onPressed: () {
                 setState(() {
                   sortOption = option;
+                  sortedSubscriptions = _sortSubscriptions(
+                      Provider.of<SubscriptionProvider>(context, listen: false)
+                          .subscriptions);
                 });
                 Navigator.pop(context);
               },

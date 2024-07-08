@@ -14,18 +14,11 @@ class DataMigrationManager {
     final prefs = await SharedPreferences.getInstance();
     final isMigrationDone = prefs.getBool('isMigrationDone') ?? false;
     if (isMigrationDone) {
-      if (kDebugMode) {
-        print("Datenmigration wurde bereits durchgeführt.");
-      }
       return;
     }
 
     try {
-      final String result = await platform.invokeMethod('exportCoreDataToJSON');
-      if (kDebugMode) {
-        print("Daten exportiert: $result");
-      }
-
+      await platform.invokeMethod('exportCoreDataToJSON');
       final directory = await getApplicationDocumentsDirectory();
       final jsonFilePath = '${directory.path}/subscriptions.json';
 
@@ -38,21 +31,11 @@ class DataMigrationManager {
 
         for (var item in data) {
           final Map<String, dynamic> subscriptionJson = item;
-          if (kDebugMode) {
-            print(item);
-          }
           final subscription = Subscription.migrate(subscriptionJson);
           await persistenceController.saveSubscription(subscription);
         }
 
         await prefs.setBool('isMigrationDone', true);
-        if (kDebugMode) {
-          print('Datenmigration abgeschlossen.');
-        }
-      } else {
-        if (kDebugMode) {
-          print('Keine Daten zum Migrieren gefunden.');
-        }
       }
     } on PlatformException catch (e) {
       if (kDebugMode) {

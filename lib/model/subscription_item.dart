@@ -82,7 +82,7 @@ class SubscriptionItem extends StatelessWidget {
                 Column(
                   children: [
                     Text(
-                      '${subscription.remainingDays() ?? Intl.message('unknown')} ${Intl.message('days')}',
+                      '${subscription.remainingDays()} ${Intl.message('days')}',
                       style: TextStyle(
                         color: isDarkMode
                             ? CupertinoColors.systemGrey2
@@ -174,7 +174,7 @@ class SubscriptionItem extends StatelessWidget {
     String priceString = subscription.convertPrice()?.toStringAsFixed(2) ??
         Intl.message('unknown');
     return subscription.repeatPattern == PaymentRate.monthly.value
-        ? '$priceString €/${Intl.message('month')}'
-        : '$priceString €/${Intl.message('year')}';
+        ? '$priceString €/${Intl.message('year')}'
+        : '$priceString €/${Intl.message('month')}';
   }
 }

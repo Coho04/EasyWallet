@@ -47,18 +47,12 @@ class Subscription {
     };
   }
 
-  int? remainingDays() {
-    if (date == null) return null;
+  int remainingDays() {
+    if (date == null) return 0;
     DateTime nextBillDate = date!;
     DateTime today = DateTime.now();
-    Duration interval;
-
-    if (repeatPattern == PaymentRate.yearly.value) {
-      interval = const Duration(days: 365);
-    } else {
-      interval = const Duration(days: 30);
-    }
-
+    Duration interval =
+        Duration(days: repeatPattern == PaymentRate.yearly.value ? 365 : 30);
     while (nextBillDate.isBefore(today)) {
       nextBillDate = nextBillDate.add(interval);
     }
@@ -66,9 +60,9 @@ class Subscription {
   }
 
   double? convertPrice() {
-    if (repeatPattern == PaymentRate.monthly.value) {
+    if (repeatPattern == PaymentRate.yearly.value) {
       return (amount / 12);
-    } else if (repeatPattern == PaymentRate.yearly.value) {
+    } else if (repeatPattern == PaymentRate.monthly.value) {
       return (amount * 12);
     }
     return null;
@@ -119,7 +113,6 @@ class Subscription {
     }
     return nextBillDate;
   }
-
 
   int countPayment() {
     if (date == null) {

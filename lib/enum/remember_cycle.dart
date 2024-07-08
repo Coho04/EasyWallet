@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 enum RememberCycle {
@@ -22,9 +21,6 @@ enum RememberCycle {
   }
 
   static RememberCycle migrate(String? value) {
-    if (kDebugMode) {
-      print(value);
-    }
     if (value == null) {
       return RememberCycle.dayBefore;
     }
