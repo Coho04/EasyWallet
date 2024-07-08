@@ -174,7 +174,7 @@ class HomeViewState extends State<HomeView> {
                   children: [
                     Text(
                       Intl.message('outstandingExpenditureMonth'),
-                      style: EasyWalletApp.responsiveTextStyle(16, context,
+                      style: EasyWalletApp.responsiveTextStyle(15, context,
                           color: CupertinoColors.systemGrey),
                     ),
                     Text(
@@ -189,7 +189,7 @@ class HomeViewState extends State<HomeView> {
                   children: [
                     Text(
                       Intl.message('openExpenditureYear'),
-                      style: EasyWalletApp.responsiveTextStyle(16, context,
+                      style: EasyWalletApp.responsiveTextStyle(15, context,
                           color: CupertinoColors.systemGrey),
                     ),
                     Text(
