@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_wallet/easy_wallet_app.dart';
+import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/model/subscription.dart';
@@ -24,7 +26,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   DateTime _selectedDate = DateTime.now();
   String _selectedPayRate = PaymentRate.monthly.value;
   String _selectedRememberCycle = RememberCycle.sameDay.value;
-  String _currency = 'USD';
+  String _currency = Currency.USD.symbol;
 
   bool _isTitleValid = true;
   bool _isAmountValid = true;
@@ -44,15 +46,25 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text(Intl.message('addSubscription')),
+        middle: Text(
+          Intl.message('addSubscription'),
+          style: EasyWalletApp.responsiveTextStyle(20, context),
+        ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _saveItem,
-          child: Text(Intl.message('save')),
+          child: Text(
+            Intl.message('save'),
+            style: EasyWalletApp.responsiveTextStyle(16, context,
+                color: isDarkMode
+                    ? CupertinoColors.white
+                    : CupertinoColors.activeBlue),
+          ),
         ),
       ),
       child: SafeArea(
@@ -70,7 +82,8 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                   keyboardType: TextInputType.url,
                   autocorrect: false,
                   onChanged: (value) {
-                    if (!value.startsWith('https://') && !value.startsWith('http://')) {
+                    if (!value.startsWith('https://') &&
+                        !value.startsWith('http://')) {
                       _urlController.text = 'https://$value';
                       _urlController.selection = TextSelection.fromPosition(
                           TextPosition(offset: _urlController.text.length));
@@ -81,13 +94,14 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 const SizedBox(height: 16),
                 _buildAmountField(isDarkMode),
                 const SizedBox(height: 16),
-                _buildDatePickerField(Intl.message('startDate'), _selectedDate, _pickDate, isDarkMode),
+                _buildDatePickerField(Intl.message('startDate'), _selectedDate,
+                    _pickDate, isDarkMode),
                 const SizedBox(height: 16),
                 _buildDropdownField(
                   Intl.message('paymentRate'),
                   _selectedPayRate,
                   PaymentRate.values,
-                      (value) {
+                  (value) {
                     setState(() {
                       _selectedPayRate = value!;
                     });
@@ -99,7 +113,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                   Intl.message('remembering'),
                   _selectedRememberCycle,
                   RememberCycle.values,
-                      (value) {
+                  (value) {
                     setState(() {
                       _selectedRememberCycle = value!;
                     });
@@ -107,7 +121,8 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                   isDarkMode,
                 ),
                 const SizedBox(height: 16),
-                _buildTextField(_notesController, Intl.message('notes'), maxLines: 5, isDarkMode: isDarkMode),
+                _buildTextField(_notesController, Intl.message('notes'),
+                    maxLines: 5, isDarkMode: isDarkMode),
               ],
             ),
           ),
@@ -118,23 +133,32 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
 
   Widget _buildTextField(TextEditingController controller, String placeholder,
       {TextInputType keyboardType = TextInputType.text,
-        bool autocorrect = false,
-        ValueChanged<String>? onChanged,
-        int maxLines = 1,
-        required bool isDarkMode,
-        bool isValid = true}) {
+      bool autocorrect = false,
+      ValueChanged<String>? onChanged,
+      int maxLines = 1,
+      required bool isDarkMode,
+      bool isValid = true}) {
     return CupertinoTextField(
       controller: controller,
       placeholder: placeholder,
       keyboardType: keyboardType,
       autocorrect: autocorrect,
       onChanged: onChanged,
-      style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+      style: TextStyle(
+          color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
       decoration: BoxDecoration(
-        color: isDarkMode ? CupertinoColors.darkBackgroundGray : isValid ? CupertinoColors.systemGrey6 : CupertinoColors.systemRed.withOpacity(0.1),
+        color: isDarkMode
+            ? CupertinoColors.darkBackgroundGray
+            : isValid
+                ? CupertinoColors.systemGrey6
+                : CupertinoColors.systemRed.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
-          color: isValid ? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey6) : CupertinoColors.systemRed,
+          color: isValid
+              ? (isDarkMode
+                  ? CupertinoColors.systemGrey
+                  : CupertinoColors.systemGrey6)
+              : CupertinoColors.systemRed,
           width: 1.0,
         ),
       ),
@@ -152,12 +176,20 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
           child: CupertinoTextField(
             controller: _titleController,
             placeholder: Intl.message('title'),
-            style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+            style: TextStyle(
+                color:
+                    isDarkMode ? CupertinoColors.white : CupertinoColors.black),
             decoration: BoxDecoration(
-              color: isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.systemGrey6,
+              color: isDarkMode
+                  ? CupertinoColors.darkBackgroundGray
+                  : CupertinoColors.systemGrey6,
               borderRadius: BorderRadius.circular(8.0),
               border: Border.all(
-                color: _isTitleValid ? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey4) : CupertinoColors.destructiveRed,
+                color: _isTitleValid
+                    ? (isDarkMode
+                        ? CupertinoColors.systemGrey
+                        : CupertinoColors.systemGrey4)
+                    : CupertinoColors.destructiveRed,
               ),
             ),
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -181,7 +213,8 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
             print('Image loading failed: $exception');
           }
         },
-        imageUrl: 'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(_urlController.text).host}',
+        imageUrl:
+            'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(_urlController.text).host}',
         placeholder: (context, url) => const CupertinoActivityIndicator(),
         errorWidget: (context, url, error) => const Icon(
           CupertinoIcons.exclamationmark_triangle,
@@ -209,19 +242,24 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         const SizedBox(width: 8),
         Text(
           _currency,
-          style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+          style: EasyWalletApp.responsiveTextStyle(16, context,
+              color:
+                  isDarkMode ? CupertinoColors.white : CupertinoColors.black),
         ),
       ],
     );
   }
 
-  Widget _buildDatePickerField(String label, DateTime date, VoidCallback onTap, bool isDarkMode) {
+  Widget _buildDatePickerField(
+      String label, DateTime date, VoidCallback onTap, bool isDarkMode) {
     return CupertinoFormRow(
       prefix: Padding(
         padding: const EdgeInsets.only(right: 16.0),
         child: Text(
           label,
-          style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+          style: EasyWalletApp.responsiveTextStyle(16, context,
+              color:
+                  isDarkMode ? CupertinoColors.white : CupertinoColors.black),
         ),
       ),
       child: GestureDetector(
@@ -229,16 +267,22 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
-            color: isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.systemGrey6,
+            color: isDarkMode
+                ? CupertinoColors.darkBackgroundGray
+                : CupertinoColors.systemGrey6,
             borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey4),
+            border: Border.all(
+                color: isDarkMode
+                    ? CupertinoColors.systemGrey
+                    : CupertinoColors.systemGrey4),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 DateFormat('dd.MM.yyyy').format(date),
-                style: const TextStyle(fontSize: 16, color: CupertinoColors.inactiveGray),
+                style: EasyWalletApp.responsiveTextStyle(16, context,
+                    color: CupertinoColors.inactiveGray),
               ),
               const Icon(
                 CupertinoIcons.calendar,
@@ -252,13 +296,16 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     );
   }
 
-  Widget _buildDropdownField<T>(String label, String currentValue, List<T> options, ValueChanged<String?> onChanged, bool isDarkMode) {
+  Widget _buildDropdownField<T>(String label, String currentValue,
+      List<T> options, ValueChanged<String?> onChanged, bool isDarkMode) {
     return CupertinoFormRow(
       prefix: Padding(
         padding: const EdgeInsets.only(right: 16.0),
         child: Text(
           label,
-          style: TextStyle(color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+          style: EasyWalletApp.responsiveTextStyle(16, context,
+              color:
+                  isDarkMode ? CupertinoColors.white : CupertinoColors.black),
         ),
       ),
       child: GestureDetector(
@@ -266,16 +313,22 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
-            color: isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.systemGrey6,
+            color: isDarkMode
+                ? CupertinoColors.darkBackgroundGray
+                : CupertinoColors.systemGrey6,
             borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey4),
+            border: Border.all(
+                color: isDarkMode
+                    ? CupertinoColors.systemGrey
+                    : CupertinoColors.systemGrey4),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 _capitalize(_translateEnum(currentValue, options)),
-                style: const TextStyle(fontSize: 16, color: CupertinoColors.inactiveGray),
+                style: EasyWalletApp.responsiveTextStyle(16, context,
+                    color: CupertinoColors.inactiveGray),
               ),
               const Icon(
                 CupertinoIcons.chevron_down,
@@ -323,7 +376,11 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 ),
               ),
               CupertinoButton(
-                child: const Text('OK'),
+                child: Text(
+                  'OK',
+                  style: EasyWalletApp.responsiveTextStyle(20, context,
+                      color: CupertinoColors.activeBlue),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -340,15 +397,20 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     }
   }
 
-  Future<void> _showOptions<T>(BuildContext context, List<T> options, ValueChanged<String?> onChanged) async {
+  Future<void> _showOptions<T>(BuildContext context, List<T> options,
+      ValueChanged<String?> onChanged) async {
     await showCupertinoModalPopup<String>(
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
           actions: options.map((option) {
-            final String value = (option is PaymentRate) ? option.value : (option as RememberCycle).value;
+            final String value = (option is PaymentRate)
+                ? option.value
+                : (option as RememberCycle).value;
             return CupertinoActionSheetAction(
-              child: Text(_capitalize(_translateEnum(value, options))),
+              child: Text(_capitalize(_translateEnum(value, options)),
+                  style: EasyWalletApp.responsiveTextStyle(20, context,
+                      color: CupertinoColors.activeBlue)),
               onPressed: () {
                 onChanged(value);
                 Navigator.pop(context);
@@ -356,7 +418,9 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
             );
           }).toList(),
           cancelButton: CupertinoActionSheetAction(
-            child: Text(Intl.message('cancel')),
+            child: Text(Intl.message('cancel'),
+                style: EasyWalletApp.responsiveTextStyle(20, context,
+                    color: CupertinoColors.activeBlue)),
             onPressed: () {
               Navigator.pop(context);
             },

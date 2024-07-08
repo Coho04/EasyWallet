@@ -1,3 +1,4 @@
+import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/sort_option.dart';
 import 'package:easy_wallet/model/subscription.dart';
@@ -158,7 +159,7 @@ class HomeViewState extends State<HomeView> {
               child: Text(
                 Intl.message('subscriptions'),
                 style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    EasyWalletApp.responsiveTextStyle(16, context, bold: true),
               ),
             ),
           ),
@@ -173,17 +174,13 @@ class HomeViewState extends State<HomeView> {
                   children: [
                     Text(
                       Intl.message('outstandingExpenditureMonth'),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: CupertinoColors.systemGrey,
-                      ),
+                      style: EasyWalletApp.responsiveTextStyle(16, context,
+                          color: CupertinoColors.systemGrey),
                     ),
                     Text(
                       '${monthlySpent.toStringAsFixed(2)} €',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: EasyWalletApp.responsiveTextStyle(16, context,
+                          bold: true),
                     ),
                   ],
                 ),
@@ -192,17 +189,13 @@ class HomeViewState extends State<HomeView> {
                   children: [
                     Text(
                       Intl.message('openExpenditureYear'),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: CupertinoColors.systemGrey,
-                      ),
+                      style: EasyWalletApp.responsiveTextStyle(16, context,
+                          color: CupertinoColors.systemGrey),
                     ),
                     Text(
                       '${yearlySpent.toStringAsFixed(2)} €',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: EasyWalletApp.responsiveTextStyle(16, context,
+                          bold: true),
                     ),
                   ],
                 ),
@@ -242,8 +235,8 @@ class HomeViewState extends State<HomeView> {
         children: [
           Text(
             Intl.message('noSubscriptionsAvailable'),
-            style: const TextStyle(
-                fontSize: 18, color: CupertinoColors.systemGrey),
+            style: EasyWalletApp.responsiveTextStyle(16, context,
+                color: CupertinoColors.systemGrey),
           ),
           const SizedBox(height: 16),
           CupertinoButton.filled(
@@ -257,7 +250,11 @@ class HomeViewState extends State<HomeView> {
                 _loadAndSortSubscriptions();
               });
             },
-            child: Text(Intl.message('addNewSubscription')),
+            child: Text(
+              Intl.message('addNewSubscription'),
+              style: EasyWalletApp.responsiveTextStyle(16, context,
+                  bold: true, color: CupertinoColors.white),
+            ),
           ),
         ],
       ),
@@ -268,11 +265,19 @@ class HomeViewState extends State<HomeView> {
     showCupertinoModalPopup(
       context: context,
       builder: (context) => CupertinoActionSheet(
-        title: Text(Intl.message('sortOptions')),
+        title: Text(
+          Intl.message('sortOptions'),
+          style: EasyWalletApp.responsiveTextStyle(16, context,
+              color: CupertinoColors.systemGrey),
+        ),
         actions: <Widget>[
           for (SortOption option in SortOption.values)
             CupertinoActionSheetAction(
-              child: Text(option.translate()),
+              child: Text(
+                option.translate(),
+                style: EasyWalletApp.responsiveTextStyle(16, context,
+                    color: CupertinoColors.activeBlue),
+              ),
               onPressed: () {
                 setState(() {
                   sortOption = option;
@@ -285,7 +290,9 @@ class HomeViewState extends State<HomeView> {
             ),
         ],
         cancelButton: CupertinoActionSheetAction(
-          child: Text(Intl.message('cancel')),
+          child: Text(Intl.message('cancel'),
+              style: EasyWalletApp.responsiveTextStyle(16, context,
+                  color: CupertinoColors.systemGrey)),
           onPressed: () {
             Navigator.pop(context);
           },

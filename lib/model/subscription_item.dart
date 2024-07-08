@@ -1,3 +1,4 @@
+import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/subscription_views/subscription_detail_view.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,13 +50,11 @@ class SubscriptionItem extends StatelessWidget {
                     children: [
                       Text(
                         subscription.title,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: isDarkMode
-                              ? CupertinoColors.white
-                              : CupertinoColors.black,
-                        ),
+                        style: EasyWalletApp.responsiveTextStyle(18, context,
+                            color: isDarkMode
+                                ? CupertinoColors.white
+                                : CupertinoColors.black,
+                            bold: true),
                       ),
                       if (subscription.isPinned)
                         const Icon(
@@ -66,12 +65,7 @@ class SubscriptionItem extends StatelessWidget {
                   ),
                   Text(
                     '${subscription.amount.toStringAsFixed(2)} €',
-                    style: TextStyle(
-                      color: isDarkMode
-                          ? CupertinoColors.systemGrey2
-                          : CupertinoColors.systemGrey,
-                      fontSize: 16,
-                    ),
+                    style: EasyWalletApp.responsiveTextStyle(16, context,  color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey),
                   ),
                 ],
               ),
@@ -83,21 +77,11 @@ class SubscriptionItem extends StatelessWidget {
                   children: [
                     Text(
                       '${subscription.remainingDays()} ${Intl.message('days')}',
-                      style: TextStyle(
-                        color: isDarkMode
-                            ? CupertinoColors.systemGrey2
-                            : CupertinoColors.systemGrey,
-                        fontSize: 16,
-                      ),
+                      style: EasyWalletApp.responsiveTextStyle(16, context,  color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey),
                     ),
                     Text(
                       '(${_convertPrice(subscription)})',
-                      style: TextStyle(
-                        color: isDarkMode
-                            ? CupertinoColors.systemGrey2
-                            : CupertinoColors.systemGrey,
-                        fontSize: 16,
-                      ),
+                      style: EasyWalletApp.responsiveTextStyle(16, context,  color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey),
                     )
                   ],
                 ),
