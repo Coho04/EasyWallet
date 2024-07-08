@@ -16,7 +16,19 @@ Future<void> main() async {
       options.tracesSampleRate = 1.0;
       options.profilesSampleRate = 1.0;
     },
-    appRunner: () {
+    appRunner: () async {
+      // Performance test
+      final transaction = Sentry.startTransaction('mainInitialization', 'task');
+
+      try {
+        await processOrderBatch(transaction);
+      } catch (exception) {
+        transaction.throwable = exception;
+        transaction.status = SpanStatus.internalError();
+      } finally {
+        await transaction.finish();
+      }
+
       runApp(
         MultiProvider(
           providers: [
@@ -27,4 +39,19 @@ Future<void> main() async {
       );
     },
   );
+}
+
+Future<void> processOrderBatch(ISentrySpan span) async {
+  // span operation: task, span description: operation
+  final innerSpan = span.startChild('task', description: 'operation');
+
+  try {
+    // Simulating some asynchronous work
+    await Future.delayed(Duration(seconds: 2));
+  } catch (exception) {
+    innerSpan.throwable = exception;
+    innerSpan.status = SpanStatus.notFound();
+  } finally {
+    await innerSpan.finish();
+  }
 }
