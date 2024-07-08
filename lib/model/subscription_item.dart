@@ -13,13 +13,14 @@ class SubscriptionItem extends StatelessWidget {
 
   const SubscriptionItem(
       {super.key,
-        required this.subscription,
-        required this.onUpdate,
-        required this.onDelete});
+      required this.subscription,
+      required this.onUpdate,
+      required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     return GestureDetector(
       child: Container(
@@ -31,7 +32,9 @@ class SubscriptionItem extends StatelessWidget {
             ),
           ),
           color: subscription.isPaused
-              ? (isDarkMode ? CupertinoColors.systemGrey : CupertinoColors.systemGrey5)
+              ? (isDarkMode
+                  ? CupertinoColors.systemGrey
+                  : CupertinoColors.systemGrey5)
               : (isDarkMode ? CupertinoColors.darkBackgroundGray : null),
         ),
         child: Row(
@@ -49,7 +52,9 @@ class SubscriptionItem extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+                          color: isDarkMode
+                              ? CupertinoColors.white
+                              : CupertinoColors.black,
                         ),
                       ),
                       if (subscription.isPinned)
@@ -62,7 +67,9 @@ class SubscriptionItem extends StatelessWidget {
                   Text(
                     '${subscription.amount.toStringAsFixed(2)} €',
                     style: TextStyle(
-                      color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
+                      color: isDarkMode
+                          ? CupertinoColors.systemGrey2
+                          : CupertinoColors.systemGrey,
                       fontSize: 16,
                     ),
                   ),
@@ -75,16 +82,20 @@ class SubscriptionItem extends StatelessWidget {
                 Column(
                   children: [
                     Text(
-                      '${_remainingDays(subscription)} ${Intl.message('days')}',
+                      '${subscription.remainingDays()} ${Intl.message('days')}',
                       style: TextStyle(
-                        color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
+                        color: isDarkMode
+                            ? CupertinoColors.systemGrey2
+                            : CupertinoColors.systemGrey,
                         fontSize: 16,
                       ),
                     ),
                     Text(
                       '(${_convertPrice(subscription)})',
                       style: TextStyle(
-                        color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
+                        color: isDarkMode
+                            ? CupertinoColors.systemGrey2
+                            : CupertinoColors.systemGrey,
                         fontSize: 16,
                       ),
                     )
@@ -105,7 +116,9 @@ class SubscriptionItem extends StatelessWidget {
                   },
                   child: Icon(
                     CupertinoIcons.right_chevron,
-                    color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
+                    color: isDarkMode
+                        ? CupertinoColors.systemGrey2
+                        : CupertinoColors.systemGrey,
                   ),
                 ),
               ],
@@ -144,7 +157,7 @@ class SubscriptionItem extends StatelessWidget {
     } else {
       return CachedNetworkImage(
         imageUrl:
-        'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
+            'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
         placeholder: (context, url) => const CupertinoActivityIndicator(),
         errorWidget: (context, url, error) => const Icon(
           CupertinoIcons.exclamationmark_triangle,
@@ -157,33 +170,11 @@ class SubscriptionItem extends StatelessWidget {
     }
   }
 
-  String? _remainingDays(Subscription subscription) {
-    if (subscription.date == null) return Intl.message('unknown');
-
-    DateTime nextBillDate = subscription.date!;
-    DateTime today = DateTime.now();
-    Duration interval;
-
-    if (subscription.repeatPattern == PaymentRate.yearly.value) {
-      interval = const Duration(days: 365);
-    } else {
-      interval = const Duration(days: 30);
-    }
-
-    while (nextBillDate.isBefore(today)) {
-      nextBillDate = nextBillDate.add(interval);
-    }
-
-    final difference = nextBillDate.difference(today).inDays;
-    return difference.toString();
-  }
-
   String? _convertPrice(Subscription subscription) {
-    if (subscription.repeatPattern  == PaymentRate.monthly.value) {
-      return '${(subscription.amount / 12).toStringAsFixed(2)} €/${Intl.message('month')}';
-    } else if (subscription.repeatPattern  == PaymentRate.yearly.value) {
-      return '${(subscription.amount * 12).toStringAsFixed(2)} €/${Intl.message('year')}';
-    }
-    return null;
+    String priceString = subscription.convertPrice()?.toStringAsFixed(2) ??
+        Intl.message('unknown');
+    return subscription.repeatPattern == PaymentRate.monthly.value
+        ? '$priceString €/${Intl.message('year')}'
+        : '$priceString €/${Intl.message('month')}';
   }
 }

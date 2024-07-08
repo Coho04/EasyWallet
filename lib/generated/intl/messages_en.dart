@@ -65,10 +65,6 @@ class MessageLookup extends MessageLookupByLibrary {
         "enterMonthlyLimit":
             MessageLookupByLibrary.simpleMessage("Enter Monthly Limit"),
         "error": MessageLookupByLibrary.simpleMessage("Error"),
-        "expenditureMonth":
-            MessageLookupByLibrary.simpleMessage("Expenditure this month"),
-        "expenditureYear":
-            MessageLookupByLibrary.simpleMessage("Expenditure this year"),
         "expensesThisMonth":
             MessageLookupByLibrary.simpleMessage("Expenses this Month"),
         "expensesThisYear":
@@ -95,6 +91,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "notificationTime":
             MessageLookupByLibrary.simpleMessage("Notification Time"),
         "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
+        "openExpenditureYear":
+            MessageLookupByLibrary.simpleMessage("Open expenditure year"),
+        "outstandingExpenditureMonth": MessageLookupByLibrary.simpleMessage(
+            "Outstanding expenditure month"),
         "pauseSubscription":
             MessageLookupByLibrary.simpleMessage("Pause this subscription"),
         "paused": MessageLookupByLibrary.simpleMessage("Paused"),

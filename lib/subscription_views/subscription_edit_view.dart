@@ -186,7 +186,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
         Expanded(
           child: CupertinoTextField(
             controller: _titleController,
-            placeholder: Intl.message('Title'),
+            placeholder: Intl.message('title'),
             style: TextStyle(
                 color:
                 isDarkMode ? CupertinoColors.white : CupertinoColors.black),
