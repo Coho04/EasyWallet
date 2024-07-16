@@ -44,7 +44,7 @@ dependencies:
   url_launcher: ^6.3.0
   permission_handler: ^11.3.1
   path: ^1.9.0
-  sentry_flutter: ^8.3.0
+  sentry_flutter: ^8.4.0
   flutter_localizations:
     sdk: flutter
 
