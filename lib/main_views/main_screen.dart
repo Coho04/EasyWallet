@@ -1,4 +1,4 @@
-import 'package:easy_wallet/managers/background_task_manager.dart';
+import 'package:easy_wallet/background_task_manager.dart';
 import 'package:easy_wallet/main_views/home_view.dart';
 import 'package:easy_wallet/main_views/settings_view.dart';
 import 'package:easy_wallet/main_views/statistic_view.dart';

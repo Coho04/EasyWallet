@@ -3,7 +3,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 import 'main_views/main_screen.dart';
 
-import 'package:sentry/sentry.dart';
 
 
 class EasyWalletApp extends StatelessWidget {

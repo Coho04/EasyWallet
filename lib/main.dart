@@ -1,5 +1,6 @@
 import 'package:easy_wallet/managers/data_migration_manager.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -7,7 +8,9 @@ import 'easy_wallet_app.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DataMigrationManager().migrateData();
+  if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS)) {
+    await DataMigrationManager().migrateData();
+  }
 
   await SentryFlutter.init(
         (options) {
@@ -24,7 +27,7 @@ Future<void> main() async {
         await processOrderBatch(transaction);
       } catch (exception) {
         transaction.throwable = exception;
-        transaction.status = SpanStatus.internalError();
+        transaction.status = const SpanStatus.internalError();
       } finally {
         await transaction.finish();
       }
@@ -42,15 +45,12 @@ Future<void> main() async {
 }
 
 Future<void> processOrderBatch(ISentrySpan span) async {
-  // span operation: task, span description: operation
   final innerSpan = span.startChild('task', description: 'operation');
-
   try {
-    // Simulating some asynchronous work
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
   } catch (exception) {
     innerSpan.throwable = exception;
-    innerSpan.status = SpanStatus.notFound();
+    innerSpan.status = const SpanStatus.notFound();
   } finally {
     await innerSpan.finish();
   }

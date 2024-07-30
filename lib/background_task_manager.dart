@@ -11,7 +11,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter/material.dart';
 import 'package:workmanager/workmanager.dart';
 
-import '../generated/l10n.dart';
+import 'generated/l10n.dart';
 
 class BackgroundTaskManager {
   static const String groupKey = "com.easy_wallet.SUBSCRIPTION_NOTIFICATIONS";

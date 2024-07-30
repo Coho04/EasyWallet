@@ -19,13 +19,13 @@ tasks.register("clean", Delete) {
 
 
 buildscript {
-    ext.kotlin_version = '2.0.0' // Verwenden Sie hier die gewünschte Kotlin-Version
+    ext.kotlin_version = '1.8.10' // Verwenden Sie hier die gewünschte Kotlin-Version
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.1'
+        classpath 'com.android.tools.build:gradle:8.5.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
