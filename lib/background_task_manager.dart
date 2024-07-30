@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/foundation.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:flutter/material.dart';
 import 'package:workmanager/workmanager.dart';
-
 import 'generated/l10n.dart';
 
 class BackgroundTaskManager {
@@ -23,7 +22,6 @@ class BackgroundTaskManager {
     await _initNotifications();
     await scheduleNotifications();
     if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.android)) {
-      // Register periodic task only on Android
       Workmanager().initialize(callbackDispatcher, isInDebugMode: kDebugMode);
       Workmanager().registerPeriodicTask(
         "1",
@@ -69,8 +67,6 @@ class BackgroundTaskManager {
 
   Future<void> scheduleNotifications() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    final String today = formatter.format(DateTime.now());
 
     final TimeOfDay userNotificationTime = await _getUserNotificationTime();
     final DateTime now = DateTime.now();
@@ -93,14 +89,22 @@ class BackgroundTaskManager {
       if (subscriptions.isEmpty) {
         return;
       }
-
       for (var subscription in subscriptions) {
-        DateTime? eventDate = _calculateNextBillDate(subscription);
-        if (eventDate == null) continue;
+        if (subscription['date'] == null) continue;
+        DateTime eventDate = DateTime.parse(subscription['date']);
+        DateTime today = DateTime.now();
+
+        DateFormat formatter = DateFormat('yyyy-MM');
+        if (subscription['repeatPattern'] == PaymentRate.monthly.value) {
+          eventDate = DateTime(today.year, today.month, eventDate.day);
+        } else if (subscription['repeatPattern'] == PaymentRate.yearly.value) {
+          formatter = DateFormat('yyyy');
+          eventDate = DateTime(today.year, eventDate.month, eventDate.day);
+        } else {
+          continue;
+        }
 
         RememberCycle? cycle = RememberCycle.findByName(subscription['remembercycle']);
-
-        if (cycle == null) continue;
         switch (cycle) {
           case RememberCycle.dayBefore:
             eventDate = eventDate.subtract(const Duration(days: 1));
@@ -116,11 +120,13 @@ class BackgroundTaskManager {
             break;
         }
 
-        if (DateFormat('yyyy-MM-dd').format(eventDate) == today) {
-          final String notificationKey =
-              'notification_${subscription['id']}_$today';
-          final bool alreadyNotified = prefs.getBool(notificationKey) ?? false;
+        DateTime eventDateOnly = DateTime(eventDate.year, eventDate.month, eventDate.day);
+        DateTime todayDateOnly = DateTime(now.year, now.month, now.day);
+        if (eventDateOnly.isBefore(todayDateOnly) || eventDateOnly.isAtSameMomentAs(todayDateOnly)) {
+          final String notificationTimeKey = formatter.format(DateTime.now());
 
+          final String notificationKey = 'notification_${subscription['id']}_$notificationTimeKey';
+          final bool alreadyNotified = prefs.getBool(notificationKey) ?? false;
           if (!alreadyNotified) {
             final String title = S.current.subscriptionReminder;
             final String body = S.current.subscriptionIsDueSoon(subscription['title']);
@@ -132,21 +138,21 @@ class BackgroundTaskManager {
     }
   }
 
-  Future<void> _showNotification(Map<String, dynamic> subscription, String title, String body) async {
+  Future<void> _showNotification(
+      Map<String, dynamic> subscription, String title, String body) async {
     int notificationId =
     DateTime.now().millisecondsSinceEpoch.remainder(100000);
-    print('Notification ID: $notificationId');
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
-      'easy_wallet_channel_id', // Kanal-ID
-      'EasyWallet', // Kanalname
+      'easy_wallet_channel_id',
+      'EasyWallet',
       channelDescription: "EasyWallet App Notify Channel",
       importance: Importance.max,
       priority: Priority.high,
       showWhen: true,
       groupKey: groupKey,
       setAsGroupSummary: false,
-      icon: '@mipmap/ic_launcher', // Icon
+      icon: '@mipmap/ic_launcher',
     );
 
     const DarwinNotificationDetails iosPlatformChannelSpecifics =
@@ -166,31 +172,8 @@ class BackgroundTaskManager {
         payload: 'item x',
       );
     } catch (e) {
-      if (kDebugMode) {
-        print("Error showing notification: $e");
-      }
+      debugPrint("BackgroundTaskManager._showNotification() - Error showing notification: $e");
     }
-  }
-
-  DateTime? _calculateNextBillDate(Map<String, dynamic> subscription) {
-    if (subscription['date'] == null) return null;
-
-    DateTime startBillDate = DateTime.parse(subscription['date']);
-    DateTime today = DateTime.now();
-    Duration interval;
-
-    if (subscription['repeatPattern'] == PaymentRate.monthly.value) {
-      interval = const Duration(days: 30);
-    } else if (subscription['repeatPattern'] == PaymentRate.yearly.value) {
-      interval = const Duration(days: 365);
-    } else {
-      return null;
-    }
-
-    while (startBillDate.isBefore(today)) {
-      startBillDate = startBillDate.add(interval);
-    }
-    return startBillDate;
   }
 
   Future<Database> _openDatabase() async {
