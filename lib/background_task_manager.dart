@@ -135,7 +135,7 @@ class BackgroundTaskManager {
   Future<void> _showNotification(Map<String, dynamic> subscription, String title, String body) async {
     int notificationId =
     DateTime.now().millisecondsSinceEpoch.remainder(100000);
-
+    print('Notification ID: $notificationId');
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
     AndroidNotificationDetails(
       'easy_wallet_channel_id', // Kanal-ID
