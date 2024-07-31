@@ -2,9 +2,16 @@ import 'package:intl/intl.dart';
 
 enum RememberCycle {
   sameDay(value: 'same_day', camelCase: 'sameDay', migration: 'SameDay'),
-  dayBefore(value: 'day_before', camelCase: 'dayBefore', migration: 'OneDayBefore'),
-  twoDaysBefore(value: 'two_days_before', camelCase: 'twoDaysBefore', migration: 'TwoDaysBefore'),
-  weekBefore(value: 'week_before', camelCase: 'weekBefore', migration: 'OneWeekBefore');
+  dayBefore(
+      value: 'day_before', camelCase: 'dayBefore', migration: 'OneDayBefore'),
+  twoDaysBefore(
+      value: 'two_days_before',
+      camelCase: 'twoDaysBefore',
+      migration: 'TwoDaysBefore'),
+  weekBefore(
+      value: 'week_before',
+      camelCase: 'weekBefore',
+      migration: 'OneWeekBefore');
 
   const RememberCycle({
     required this.value,
@@ -25,14 +32,14 @@ enum RememberCycle {
       return RememberCycle.dayBefore;
     }
     return RememberCycle.values.firstWhere(
-          (e) => e.migration == value,
+      (e) => e.migration == value,
       orElse: () => RememberCycle.dayBefore,
     );
   }
 
   static RememberCycle findByName(String name) {
     return RememberCycle.values.firstWhere(
-          (e) => e.name == name,
+      (e) => e.name == name,
       orElse: () => RememberCycle.dayBefore,
     );
   }

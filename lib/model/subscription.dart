@@ -3,6 +3,9 @@ import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as img;
+import 'package:palette_generator/palette_generator.dart';
 
 class Subscription {
   int? id;
@@ -80,65 +83,79 @@ class Subscription {
 
     if (repeatPattern == PaymentRate.monthly.value) {
       while (startBillDate.add(const Duration(days: 31)).isBefore(today)) {
-        startBillDate = DateTime(startBillDate.year, startBillDate.month + 1, startBillDate.day);
+        startBillDate = DateTime(
+            startBillDate.year, startBillDate.month + 1, startBillDate.day);
       }
     } else if (repeatPattern == PaymentRate.yearly.value) {
       while (startBillDate.add(const Duration(days: 366)).isBefore(today)) {
-        startBillDate = DateTime(startBillDate.year + 1, startBillDate.month, startBillDate.day);
+        startBillDate = DateTime(
+            startBillDate.year + 1, startBillDate.month, startBillDate.day);
       }
     } else {
       return null;
     }
-
     return startBillDate;
   }
 
-  DateTime? calculateNextBillDate() {
-    if (date == null) {
-      return null;
+  Future<Color> getDominantColorFromUrl({String customUrl = ""}) async {
+    var response = await http.get(Uri.parse(customUrl.isNotEmpty ? customUrl : url!));
+    if (response.statusCode == 200) {
+      img.Image? image = img.decodeImage(response.bodyBytes);
+      if (image != null) {
+        var paletteGenerator =
+            await PaletteGenerator.fromImageProvider(Image.network(customUrl.isNotEmpty ? customUrl : url!).image);
+        return paletteGenerator.dominantColor?.color ?? Colors.grey;
+      }
     }
-    DateTime today = DateTime.now();
-    DateTime nextBillDate = date!;
+    return Colors.grey;
+  }
 
-    if (repeatPattern == PaymentRate.monthly.value) {
-      while (nextBillDate.isBefore(today)) {
-        nextBillDate = DateTime(nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
-      }
-    } else if (repeatPattern == PaymentRate.yearly.value) {
-      while (nextBillDate.isBefore(today)) {
-        nextBillDate = DateTime(nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
-      }
-    } else {
-      return null;
+  String getFaviconUrl() {
+    return 'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(url!).host}';
+  }
+
+  DateTime getNextBillDate() {
+    if (date == null) return DateTime.now();
+    DateTime nextBillDate = date!;
+    DateTime today = DateTime.now();
+    Duration interval = repeatPattern == PaymentRate.yearly.value
+        ? const Duration(days: 365)
+        : const Duration(days: 30);
+    while (nextBillDate.isBefore(today)) {
+      nextBillDate = nextBillDate.add(interval);
     }
     return nextBillDate;
   }
 
-  Widget buildImage() {
+  Widget buildImage(
+      {double width = 40,
+      double height = 40,
+      BoxFit boxFit = BoxFit.cover,
+      double errorImgSize = 40}) {
     if (url == null) {
-      return const Icon(
+      return Icon(
         CupertinoIcons.exclamationmark_triangle,
         color: CupertinoColors.systemGrey,
-        size: 40,
+        size: errorImgSize,
       );
     } else if (url!.isEmpty) {
-      return const Icon(
+      return Icon(
         Icons.account_balance_wallet_rounded,
         color: CupertinoColors.systemGrey,
-        size: 40,
+        size: errorImgSize,
       );
     } else {
       return CachedNetworkImage(
-        imageUrl:
-        'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(url!).host}',
+        imageUrl: getFaviconUrl(),
         placeholder: (context, url) => const CupertinoActivityIndicator(),
         errorWidget: (context, url, error) => const Icon(
           CupertinoIcons.exclamationmark_triangle,
           color: CupertinoColors.systemGrey,
           size: 40,
         ),
-        width: 40,
-        height: 40,
+        fit: boxFit,
+        width: width,
+        height: height,
       );
     }
   }

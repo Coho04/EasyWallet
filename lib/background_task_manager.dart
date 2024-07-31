@@ -4,6 +4,7 @@ import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -16,7 +17,7 @@ class BackgroundTaskManager {
   static const String groupKey = "com.easy_wallet.SUBSCRIPTION_NOTIFICATIONS";
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
     await _initNotifications();
@@ -34,10 +35,10 @@ class BackgroundTaskManager {
 
   Future<void> _initNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const DarwinInitializationSettings initializationSettingsIOS =
-    DarwinInitializationSettings(
+        DarwinInitializationSettings(
       defaultPresentAlert: true,
       defaultPresentBanner: true,
       defaultPresentSound: true,
@@ -47,7 +48,7 @@ class BackgroundTaskManager {
     );
 
     const InitializationSettings initializationSettings =
-    InitializationSettings(
+        InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
@@ -107,7 +108,8 @@ class BackgroundTaskManager {
           continue;
         }
 
-        RememberCycle? cycle = RememberCycle.findByName(subscription['remembercycle']);
+        RememberCycle? cycle =
+            RememberCycle.findByName(subscription['remembercycle']);
         switch (cycle) {
           case RememberCycle.dayBefore:
             eventDate = eventDate.subtract(const Duration(days: 1));
@@ -123,16 +125,20 @@ class BackgroundTaskManager {
             break;
         }
 
-        DateTime eventDateOnly = DateTime(eventDate.year, eventDate.month, eventDate.day);
+        DateTime eventDateOnly =
+            DateTime(eventDate.year, eventDate.month, eventDate.day);
         DateTime todayDateOnly = DateTime(now.year, now.month, now.day);
-        if (eventDateOnly.isBefore(todayDateOnly) || eventDateOnly.isAtSameMomentAs(todayDateOnly)) {
+        if (eventDateOnly.isBefore(todayDateOnly) ||
+            eventDateOnly.isAtSameMomentAs(todayDateOnly)) {
           final String notificationTimeKey = formatter.format(DateTime.now());
 
-          final String notificationKey = 'notification_${subscription['id']}_$notificationTimeKey';
+          final String notificationKey =
+              'notification_${subscription['id']}_$notificationTimeKey';
           final bool alreadyNotified = prefs.getBool(notificationKey) ?? false;
           if (!alreadyNotified) {
             final String title = S.current.subscriptionReminder;
-            final String body = S.current.subscriptionIsDueSoon(subscription['title']);
+            final String body =
+                S.current.subscriptionIsDueSoon(subscription['title']);
             await _showNotification(subscription, title, body);
             prefs.setBool(notificationKey, true);
           }
@@ -144,9 +150,9 @@ class BackgroundTaskManager {
   Future<void> _showNotification(
       Map<String, dynamic> subscription, String title, String body) async {
     int notificationId =
-    DateTime.now().millisecondsSinceEpoch.remainder(100000);
+        DateTime.now().millisecondsSinceEpoch.remainder(100000);
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
+        AndroidNotificationDetails(
       'easy_wallet_channel_id',
       'EasyWallet',
       channelDescription: "EasyWallet App Notify Channel",
@@ -159,7 +165,7 @@ class BackgroundTaskManager {
     );
 
     const DarwinNotificationDetails iosPlatformChannelSpecifics =
-    DarwinNotificationDetails();
+        DarwinNotificationDetails();
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
@@ -175,7 +181,9 @@ class BackgroundTaskManager {
         payload: 'item x',
       );
     } catch (e) {
-      debugPrint("BackgroundTaskManager._showNotification() - Error showing notification: $e");
+      Sentry.captureException(e);
+      debugPrint(
+          "BackgroundTaskManager._showNotification() - Error showing notification: $e");
     }
   }
 

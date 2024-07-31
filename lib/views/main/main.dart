@@ -18,6 +18,12 @@ class MainView extends StatefulWidget {
 class MainViewState extends State<MainView> {
   int _selectedIndex = 0;
 
+  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+  ];
+
   static const List<Widget> _widgetOptions = <Widget>[
     HomeView(),
     StatisticView(),
@@ -33,11 +39,11 @@ class MainViewState extends State<MainView> {
 
   void _checkAndRequestNotificationPermissions() async {
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+        FlutterLocalNotificationsPlugin();
 
     final IOSFlutterLocalNotificationsPlugin? iosImplementation =
-    flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>();
 
     iosImplementation?.requestPermissions(
       alert: true,
@@ -57,9 +63,13 @@ class MainViewState extends State<MainView> {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (_selectedIndex == index) {
+      _navigatorKeys[index].currentState!.popUntil((route) => route.isFirst);
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -85,6 +95,7 @@ class MainViewState extends State<MainView> {
       ),
       tabBuilder: (context, index) {
         return CupertinoTabView(
+          navigatorKey: _navigatorKeys[index],
           builder: (context) {
             return CupertinoPageScaffold(
               child: _widgetOptions[index],

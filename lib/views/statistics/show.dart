@@ -2,12 +2,13 @@ import 'package:easy_wallet/views/main/statistic.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class ChartDetailPage extends StatelessWidget {
   final String title;
-  final List<ChartData>? chartData;
+  final List<CartesianSeries<ChartData, String>>? chartData;
   final List<PieChartSectionData>? pieChartData;
   final List<Subscription> subscriptions;
 
@@ -26,34 +27,41 @@ class ChartDetailPage extends StatelessWidget {
         middle: Text(title),
       ),
       child: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: _buildChart(),
-            ),
-            Expanded(child: _buildSubscriptionList(context)),
-          ],
-        ),
-      ),
+        child: Center(
+          child: ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: _buildChart(context),
+              ),
+              _buildSubscriptionList(context)
+            ]
+            )
+          )
+        )
     );
   }
 
-  Widget _buildChart() {
+  Widget _buildChart(context) {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     if (chartData != null) {
       return SizedBox(
         height: 300,
         child: SfCartesianChart(
-          primaryXAxis: const CategoryAxis(),
-          series: <CartesianSeries>[
-            ColumnSeries<ChartData, String>(
-              dataSource: chartData!,
-              xValueMapper: (ChartData data, _) => data.label,
-              yValueMapper: (ChartData data, _) => data.value,
-              pointColorMapper: (ChartData data, _) => data.color,
+            primaryXAxis: CategoryAxis(
+              labelStyle: TextStyle(
+                color: isDarkMode ? Colors.white : Colors.black,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ],
-        ),
+            primaryYAxis: NumericAxis(
+              labelStyle: TextStyle(
+                color: isDarkMode ? Colors.white : Colors.black,
+              ),
+            ),
+            series: chartData!),
       );
     } else if (pieChartData != null) {
       return AspectRatio(
@@ -92,11 +100,10 @@ class ChartDetailPage extends StatelessWidget {
           trailing: const SizedBox(
             width: 40,
             height: 40,
-            child:  Icon(CupertinoIcons.right_chevron),
+            child: Icon(CupertinoIcons.right_chevron),
           ),
         );
       }).toList(),
     );
   }
-
 }

@@ -3,9 +3,7 @@ import 'package:easy_wallet/views/components/card_section_component.dart';
 import 'package:easy_wallet/views/subscription/edit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/persistence_controller.dart';
 
@@ -75,96 +73,89 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
             const SizedBox(height: 20),
             CardSection(
               title: Intl.message('generalInformation'),
-              isDarkMode: isDarkMode,
               children: [
                 CardDetailRow(
-                    label: Intl.message('costs'),
-                    value: '${subscription.amount.toStringAsFixed(2)} €',
-                    isDarkMode: isDarkMode),
+                  label: Intl.message('costs'),
+                  value: '${subscription.amount.toStringAsFixed(2)} €',
+                ),
                 CardDetailRow(
-                    label: Intl.message('repetitionRate'),
-                    value: subscription.getRepeatPattern().translate(),
-                    isDarkMode: isDarkMode),
+                  label: Intl.message('repetitionRate'),
+                  value: subscription.getRepeatPattern().translate(),
+                ),
               ],
             ),
             const SizedBox(height: 20),
             CardSection(
               title: Intl.message('invoiceInformation'),
-              isDarkMode: isDarkMode,
               children: [
                 CardDetailRow(
-                    label: Intl.message('nextInvoice'),
-                    value: _formatDate(subscription.calculateNextBillDate()),
-                    isDarkMode: isDarkMode),
+                  label: Intl.message('nextInvoice'),
+                  value: _formatDate(subscription.getNextBillDate()),
+                ),
                 CardDetailRow(
-                    label: Intl.message('previousInvoice'),
-                    value:
-                        _formatDate(subscription.calculatePreviousBillDate()),
-                    isDarkMode: isDarkMode),
+                  label: Intl.message('previousInvoice'),
+                  value: _formatDate(subscription.calculatePreviousBillDate()),
+                ),
                 CardDetailRow(
-                    label: Intl.message('firstDebit'),
-                    value: _formatDate(subscription.date),
-                    isDarkMode: isDarkMode),
+                  label: Intl.message('firstDebit'),
+                  value: _formatDate(subscription.date),
+                ),
                 CardDetailRow(
-                    label: Intl.message('createdOn'),
-                    value: _formatDateTime(subscription.timestamp),
-                    isDarkMode: isDarkMode),
+                  label: Intl.message('createdOn'),
+                  value: _formatDateTime(subscription.timestamp),
+                  softBreak: true,
+                ),
               ],
             ),
             const SizedBox(height: 20),
             CardSection(
               title: Intl.message('additionalInformation'),
-              isDarkMode: isDarkMode,
               children: [
                 CardDetailRow(
-                    label: Intl.message('previousDebits'),
-                    value: subscription.countPayment().toString(),
-                    isDarkMode: isDarkMode),
+                  label: Intl.message('previousDebits'),
+                  value: subscription.countPayment().toString(),
+                ),
                 CardDetailRow(
-                    label: Intl.message('totalCosts'),
-                    value: '${subscription.sumPayment().toStringAsFixed(2)} €',
-                    isDarkMode: isDarkMode),
+                  label: Intl.message('totalCosts'),
+                  value: '${subscription.sumPayment().toStringAsFixed(2)} €',
+                ),
                 if (subscription.notes != null &&
                     subscription.notes!.trim().isNotEmpty)
                   CardDetailRow(
-                      label: Intl.message('notes'),
-                      value: subscription.notes!,
-                      isDarkMode: isDarkMode),
+                    label: Intl.message('notes'),
+                    value: subscription.notes!,
+                  ),
               ],
             ),
             const SizedBox(height: 20),
             CardSection(
               title: Intl.message('actions'),
-              isDarkMode: isDarkMode,
               children: [
-                _buildAction(
-                  subscription.isPinned
+                CardActionButton(
+                  label: subscription.isPinned
                       ? Intl.message('unpinSubscription')
                       : Intl.message('pinSubscription'),
-                  subscription.isPinned
+                  icon: subscription.isPinned
                       ? CupertinoIcons.pin_slash
                       : CupertinoIcons.pin,
-                  () => _togglePin(),
+                  onPressed: () => _togglePin(),
                   color:
                       subscription.isPinned ? CupertinoColors.systemBlue : null,
-                  isDarkMode: isDarkMode,
                 ),
-                _buildAction(
-                  subscription.isPaused
+                CardActionButton(
+                  label: subscription.isPaused
                       ? Intl.message('continueSubscription')
                       : Intl.message('pauseSubscription'),
-                  subscription.isPaused
+                  icon: subscription.isPaused
                       ? CupertinoIcons.play_arrow_solid
                       : CupertinoIcons.pause,
-                  () => _togglePause(),
-                  isDarkMode: isDarkMode,
+                  onPressed: () => _togglePause(),
                 ),
-                _buildAction(
-                  Intl.message('deleteSubscription'),
-                  CupertinoIcons.delete,
-                  () => _deleteItem(),
+                CardActionButton(
+                  label: Intl.message('deleteSubscription'),
+                  icon: CupertinoIcons.delete,
+                  onPressed: () => _deleteItem(),
                   color: CupertinoColors.destructiveRed,
-                  isDarkMode: isDarkMode,
                 ),
               ],
             ),
@@ -177,7 +168,7 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
   Widget _buildHeader(bool isDarkMode) {
     return Row(
       children: [
-        _buildImage(),
+        subscription.buildImage(),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
@@ -192,62 +183,6 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
         ),
       ],
     );
-  }
-
-  Widget _buildAction(String label, IconData icon, VoidCallback onTap,
-      {Color? color, required bool isDarkMode}) {
-    return CupertinoFormRow(
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: onTap,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              label,
-              style: EasyWalletApp.responsiveTextStyle(16, context,
-                  color: color ?? CupertinoColors.systemGrey),
-            ),
-            Icon(
-              icon,
-              color: color ??
-                  (isDarkMode
-                      ? CupertinoColors.systemGrey
-                      : CupertinoColors.black),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImage() {
-    if (subscription.url == null) {
-      return const Icon(
-        CupertinoIcons.exclamationmark_triangle,
-        color: CupertinoColors.systemGrey,
-        size: 40,
-      );
-    } else if (subscription.url!.isEmpty) {
-      return const Icon(
-        Icons.account_balance_wallet_rounded,
-        color: CupertinoColors.systemGrey,
-        size: 40,
-      );
-    } else {
-      return CachedNetworkImage(
-        imageUrl:
-            'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
-        placeholder: (context, url) => const CupertinoActivityIndicator(),
-        errorWidget: (context, url, error) => const Icon(
-          CupertinoIcons.exclamationmark_triangle,
-          color: CupertinoColors.systemGrey,
-          size: 40,
-        ),
-        width: 40,
-        height: 40,
-      );
-    }
   }
 
   void _togglePin() {
@@ -271,7 +206,7 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
         builder: (context) => CupertinoAlertDialog(
           title: Text(Intl.message('hint'),
               style: EasyWalletApp.responsiveTextStyle(16, context)),
-          content: Text(Intl.message('Deletion is not supported on the web'),
+          content: Text(Intl.message('deletionIsNotSupportedOnTheWeb'),
               style: EasyWalletApp.responsiveTextStyle(16, context)),
           actions: [
             CupertinoDialogAction(

@@ -5,16 +5,19 @@ import 'package:intl/intl.dart';
 class CardSection extends StatelessWidget {
   final String title;
   final List<Widget> children;
-  final bool isDarkMode;
+  final String? subtitle;
 
   const CardSection(
       {super.key,
       required this.title,
+      this.subtitle,
       required this.children,
-      required this.isDarkMode});
+      });
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
@@ -45,6 +48,18 @@ class CardSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
+          if (subtitle != null)
+          Text(
+            subtitle!,
+            style: EasyWalletApp.responsiveTextStyle(
+              13,
+              context,
+              bold: false,
+              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+            ),
+          ),
+          if (subtitle != null)
+          const SizedBox(height: 10),
           ...children,
         ],
       ),
@@ -55,14 +70,12 @@ class CardSection extends StatelessWidget {
 class CardDetailRow extends StatelessWidget {
   final String label;
   final dynamic value;
-  final bool isDarkMode;
   final bool softBreak;
 
   const CardDetailRow(
       {super.key,
       required this.label,
       required this.value,
-      required this.isDarkMode,
       this.softBreak = false});
 
   @override
@@ -105,6 +118,8 @@ class CardDetailRow extends StatelessWidget {
   }
 
   Widget _buildValue(BuildContext context) {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     if (value is Future<String>) {
       return FutureBuilder<String>(
         future: value,
@@ -141,7 +156,7 @@ class CardDetailRow extends StatelessWidget {
             );
           } else {
             return Text(
-              Intl.message('No Data'),
+              Intl.message('noData'),
               style: EasyWalletApp.responsiveTextStyle(
                 16,
                 context,
@@ -165,25 +180,24 @@ class CardDetailRow extends StatelessWidget {
   }
 }
 
-
 class CardActionButton extends StatelessWidget {
   final String label;
   final IconData icon;
-  final bool isDarkMode;
   final VoidCallback onPressed;
   final Color? color;
 
-  const CardActionButton(
-      {super.key,
-        required this.label,
-        required this.icon,
-        required this.isDarkMode,
-        required this.onPressed,
-        this.color,
-      });
+  const CardActionButton({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     return CupertinoFormRow(
       child: CupertinoButton(
         padding: EdgeInsets.zero,
@@ -208,7 +222,4 @@ class CardActionButton extends StatelessWidget {
       ),
     );
   }
-
-
-
 }

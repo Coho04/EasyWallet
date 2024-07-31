@@ -2,7 +2,6 @@ import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -34,13 +33,13 @@ class SubscriptionListComponent extends StatelessWidget {
           ),
           color: subscription.isPaused
               ? (isDarkMode
-                  ? CupertinoColors.systemGrey
+                  ? Colors.grey.withOpacity(0.5)
                   : CupertinoColors.systemGrey5)
               : (isDarkMode ? CupertinoColors.darkBackgroundGray : null),
         ),
         child: Row(
           children: [
-            _buildImage(),
+            subscription.buildImage(),
             const SizedBox(width: 16.0),
             Expanded(
               child: Column(
@@ -48,14 +47,14 @@ class SubscriptionListComponent extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        subscription.title,
-                        style: EasyWalletApp.responsiveTextStyle(15, context,
-                            color: isDarkMode
-                                ? CupertinoColors.white
-                                : CupertinoColors.black,
-                            bold: true),
-                      ),
+                     Expanded(child:  Text(
+                       subscription.title,
+                       style: EasyWalletApp.responsiveTextStyle(15, context,
+                           color: isDarkMode
+                               ? CupertinoColors.white
+                               : CupertinoColors.black,
+                           bold: true),
+                     )),
                       if (subscription.isPinned)
                         const Icon(
                           CupertinoIcons.pin_fill,
@@ -65,7 +64,10 @@ class SubscriptionListComponent extends StatelessWidget {
                   ),
                   Text(
                     '${subscription.amount.toStringAsFixed(2)} €',
-                    style: EasyWalletApp.responsiveTextStyle(16, context,  color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey),
+                    style: EasyWalletApp.responsiveTextStyle(16, context,
+                        color: isDarkMode
+                            ? CupertinoColors.systemGrey2
+                            : CupertinoColors.systemGrey),
                   ),
                 ],
               ),
@@ -77,11 +79,17 @@ class SubscriptionListComponent extends StatelessWidget {
                   children: [
                     Text(
                       '${subscription.remainingDays()} ${Intl.message('days')}',
-                      style: EasyWalletApp.responsiveTextStyle(15, context,  color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey),
+                      style: EasyWalletApp.responsiveTextStyle(15, context,
+                          color: isDarkMode
+                              ? CupertinoColors.systemGrey2
+                              : CupertinoColors.systemGrey),
                     ),
                     Text(
                       '(${_convertPrice(subscription)})',
-                      style: EasyWalletApp.responsiveTextStyle(15, context,  color: isDarkMode ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey),
+                      style: EasyWalletApp.responsiveTextStyle(15, context,
+                          color: isDarkMode
+                              ? CupertinoColors.systemGrey2
+                              : CupertinoColors.systemGrey),
                     )
                   ],
                 ),
@@ -123,35 +131,6 @@ class SubscriptionListComponent extends StatelessWidget {
         ).then((_) => onUpdate(subscription));
       },
     );
-  }
-
-  Widget _buildImage() {
-    if (subscription.url == null) {
-      return const Icon(
-        CupertinoIcons.exclamationmark_triangle,
-        color: CupertinoColors.systemGrey,
-        size: 40,
-      );
-    } else if (subscription.url!.isEmpty) {
-      return const Icon(
-        Icons.account_balance_wallet_rounded,
-        color: CupertinoColors.systemGrey,
-        size: 40,
-      );
-    } else {
-      return CachedNetworkImage(
-        imageUrl:
-            'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(subscription.url!).host}',
-        placeholder: (context, url) => const CupertinoActivityIndicator(),
-        errorWidget: (context, url, error) => const Icon(
-          CupertinoIcons.exclamationmark_triangle,
-          color: CupertinoColors.systemGrey,
-          size: 40,
-        ),
-        width: 40,
-        height: 40,
-      );
-    }
   }
 
   String? _convertPrice(Subscription subscription) {

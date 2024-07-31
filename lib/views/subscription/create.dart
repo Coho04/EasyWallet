@@ -210,7 +210,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
       return CachedNetworkImage(
         errorListener: (exception) {
           if (kDebugMode) {
-            print('Image loading failed: $exception');
+            debugPrint('Image loading failed: $exception');
           }
         },
         imageUrl:

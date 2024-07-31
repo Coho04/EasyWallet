@@ -16,7 +16,7 @@ enum PaymentRate {
 
   static PaymentRate findByName(String name) {
     return PaymentRate.values.firstWhere(
-          (e) => e.value == name,
+      (e) => e.value == name,
       orElse: () => PaymentRate.monthly,
     );
   }

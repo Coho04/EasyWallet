@@ -36,6 +36,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Alphabetical Ascending"),
         "alphabeticalDescending":
             MessageLookupByLibrary.simpleMessage("Alphabetical Descending"),
+        "appStats": MessageLookupByLibrary.simpleMessage("App Statistics"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "contactDeveloper":
             MessageLookupByLibrary.simpleMessage("Contact Developer"),
@@ -44,6 +45,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "costAscending": MessageLookupByLibrary.simpleMessage("Cost Ascending"),
         "costDescending":
             MessageLookupByLibrary.simpleMessage("Cost Descending"),
+        "costShare": MessageLookupByLibrary.simpleMessage("Cost share"),
         "costs": MessageLookupByLibrary.simpleMessage("Costs"),
         "couldNotLaunch":
             MessageLookupByLibrary.simpleMessage("Could not launch"),
@@ -57,6 +59,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Days Remaining Descending"),
         "deleteSubscription":
             MessageLookupByLibrary.simpleMessage("Delete this subscription"),
+        "deletionIsNotSupportedOnTheWeb": MessageLookupByLibrary.simpleMessage(
+            "Deletion is not supported on the web"),
         "done": MessageLookupByLibrary.simpleMessage("Done"),
         "editSubscription":
             MessageLookupByLibrary.simpleMessage("Edit subscription"),
@@ -83,6 +87,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "generalInformation":
             MessageLookupByLibrary.simpleMessage("General information"),
         "help": MessageLookupByLibrary.simpleMessage("Help"),
+        "hint": MessageLookupByLibrary.simpleMessage("Hint"),
         "imprint": MessageLookupByLibrary.simpleMessage("Imprint"),
         "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
             "Include cost in notifications"),
@@ -98,6 +103,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Monthly Expenses"),
         "monthlyLimit": MessageLookupByLibrary.simpleMessage("Monthly Limit"),
         "nextInvoice": MessageLookupByLibrary.simpleMessage("Next invoice"),
+        "noData": MessageLookupByLibrary.simpleMessage("No data"),
         "noSubscriptionsAvailable":
             MessageLookupByLibrary.simpleMessage("No subscriptions available"),
         "notes": MessageLookupByLibrary.simpleMessage("Notes"),
@@ -128,6 +134,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Previous invoice"),
         "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
         "rateApp": MessageLookupByLibrary.simpleMessage("Rate the App"),
+        "remainingCosts":
+            MessageLookupByLibrary.simpleMessage("Remaining costs"),
         "remembering": MessageLookupByLibrary.simpleMessage("Remembering"),
         "repetitionRate":
             MessageLookupByLibrary.simpleMessage("Repetition rate"),
@@ -161,6 +169,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "yearlyExpenses":
             MessageLookupByLibrary.simpleMessage("Yearly Expenses"),
         "yearlyVsMonthlyExpenses":
-            MessageLookupByLibrary.simpleMessage("Yearly vs Monthly Expenses")
+            MessageLookupByLibrary.simpleMessage("Yearly vs Monthly Expenses"),
+        "yearlyVsMonthlyExpensesSubtitle": MessageLookupByLibrary.simpleMessage(
+            "Monthly and annual expenditure relative to total expenditure")
       };
 }

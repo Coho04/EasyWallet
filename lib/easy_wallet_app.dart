@@ -3,8 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 
-
-
 class EasyWalletApp extends StatelessWidget {
   const EasyWalletApp({super.key});
 
@@ -35,11 +33,11 @@ class EasyWalletApp extends StatelessWidget {
   }
 
   static TextStyle responsiveTextStyle(
-      double baseSize,
-      BuildContext context, {
-        bool bold = false,
-        Color? color,
-      }) {
+    double baseSize,
+    BuildContext context, {
+    bool bold = false,
+    Color? color,
+  }) {
     return TextStyle(
         fontSize: baseSize / MediaQuery.of(context).textScaleFactor,
         fontWeight: bold ? FontWeight.bold : null,

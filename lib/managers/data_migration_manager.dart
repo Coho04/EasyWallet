@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_wallet/model/subscription.dart';
@@ -39,7 +40,8 @@ class DataMigrationManager {
       }
     } on PlatformException catch (e) {
       if (kDebugMode) {
-        print("Fehler bei der Datenmigration: ${e.message}");
+        Sentry.captureException(e);
+        debugPrint("Fehler bei der Datenmigration: ${e.message}");
       }
     }
   }

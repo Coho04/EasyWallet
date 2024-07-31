@@ -110,5 +110,12 @@
   "issuesOfMonthlySubscriptions": "Ausgaben der Monatlichen Abonnements",
   "issuesOfAnnualSubscriptions": "Ausgaben der Jährlichen Abonnements",
   "Loading...": "Laden...",
-  "overview": "Übersicht"
+  "overview": "Übersicht",
+  "hint": "Hinweis",
+  "noData": "Keine Daten",
+  "appStats": "App Statistiken",
+  "remainingCosts": "Verbleibende Kosten",
+  "costShare": "Kostenanteil",
+  "deletionIsNotSupportedOnTheWeb": "Löschen wird im Web nicht unterstützt",
+  "yearlyVsMonthlyExpensesSubtitle": "Monatliche und jährlichen ausgaben relativ zu den Gesamt ausgaben"
 }

@@ -971,6 +971,76 @@ class S {
       args: [],
     );
   }
+
+  /// `Hint`
+  String get hint {
+    return Intl.message(
+      'Hint',
+      name: 'hint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No data`
+  String get noData {
+    return Intl.message(
+      'No data',
+      name: 'noData',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App Statistics`
+  String get appStats {
+    return Intl.message(
+      'App Statistics',
+      name: 'appStats',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Remaining costs`
+  String get remainingCosts {
+    return Intl.message(
+      'Remaining costs',
+      name: 'remainingCosts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cost share`
+  String get costShare {
+    return Intl.message(
+      'Cost share',
+      name: 'costShare',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Deletion is not supported on the web`
+  String get deletionIsNotSupportedOnTheWeb {
+    return Intl.message(
+      'Deletion is not supported on the web',
+      name: 'deletionIsNotSupportedOnTheWeb',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly and annual expenditure relative to total expenditure`
+  String get yearlyVsMonthlyExpensesSubtitle {
+    return Intl.message(
+      'Monthly and annual expenditure relative to total expenditure',
+      name: 'yearlyVsMonthlyExpensesSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

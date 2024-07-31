@@ -77,17 +77,28 @@ class HomeViewState extends State<HomeView> {
     return filteredSubscriptions;
   }
 
-  DateTime _nextBillDate(Subscription subscription) {
-    if (subscription.date == null) return DateTime.now();
-    DateTime nextBillDate = subscription.date!;
-    DateTime today = DateTime.now();
-    Duration interval = subscription.repeatPattern == PaymentRate.yearly.value
-        ? const Duration(days: 365)
-        : const Duration(days: 30);
-    while (nextBillDate.isBefore(today)) {
-      nextBillDate = nextBillDate.add(interval);
+  double calculateYearlySpent() {
+    final now = DateTime.now();
+    final lastDayOfYear = DateTime(now.year, 12, 31);
+    double yearlySpent = 0.0;
+
+    for (var subscription in sortedSubscriptions) {
+      if (subscription.isPaused) continue;
+      DateTime nextBillDate = subscription.getNextBillDate();
+      if (subscription.repeatPattern == PaymentRate.yearly.value) {
+        if (nextBillDate.isBefore(lastDayOfYear.add(const Duration(days: 1))) &&
+            nextBillDate.year == now.year) {
+          yearlySpent += subscription.amount;
+        }
+      } else if (subscription.repeatPattern == PaymentRate.monthly.value) {
+        while (nextBillDate.isBefore(lastDayOfYear.add(const Duration(days: 1)))) {
+          yearlySpent += subscription.amount;
+          nextBillDate = DateTime(
+              nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
+        }
+      }
     }
-    return nextBillDate;
+    return yearlySpent;
   }
 
   @override
@@ -96,19 +107,11 @@ class HomeViewState extends State<HomeView> {
         Provider.of<SubscriptionProvider>(context).subscriptions;
 
     double monthlySpent = sortedSubscriptions.where((subscription) {
+      if (subscription.isPaused) return false;
       final now = DateTime.now();
       DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
-      DateTime nextBillDate = _nextBillDate(subscription);
-      return nextBillDate.isBefore(lastDayOfMonth) &&
-          nextBillDate.month == now.month;
-    }).fold(0, (sum, subscription) => sum + subscription.amount);
-
-    double yearlySpent = sortedSubscriptions.where((subscription) {
-      final now = DateTime.now();
-      DateTime lastDayOfYear = DateTime(now.year, 12, 31);
-      DateTime nextBillDate = _nextBillDate(subscription);
-      return nextBillDate.isBefore(lastDayOfYear) &&
-          nextBillDate.year == now.year;
+      DateTime nextBillDate = subscription.getNextBillDate();
+      return nextBillDate.isBefore(lastDayOfMonth) && nextBillDate.month == now.month;
     }).fold(0, (sum, subscription) => sum + subscription.amount);
 
     return CupertinoPageScaffold(
@@ -193,7 +196,7 @@ class HomeViewState extends State<HomeView> {
                           color: CupertinoColors.systemGrey),
                     ),
                     Text(
-                      '${yearlySpent.toStringAsFixed(2)} €',
+                      '${calculateYearlySpent().toStringAsFixed(2)} €',
                       style: EasyWalletApp.responsiveTextStyle(16, context,
                           bold: true),
                     ),
@@ -215,7 +218,8 @@ class HomeViewState extends State<HomeView> {
                         onDelete: (deletedSubscription) {
                           setState(() {
                             sortedSubscriptions.remove(deletedSubscription);
-                            sortedSubscriptions = _sortSubscriptions(sortedSubscriptions);
+                            sortedSubscriptions =
+                                _sortSubscriptions(sortedSubscriptions);
                           });
                         },
                       );
@@ -299,4 +303,5 @@ class HomeViewState extends State<HomeView> {
       ),
     );
   }
+
 }

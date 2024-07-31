@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:easy_wallet/model/subscription.dart';
-import 'package:flutter/foundation.dart'; // for kIsWeb
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class PersistenceController {
-  static final PersistenceController instance = PersistenceController._internal();
+  static final PersistenceController instance =
+      PersistenceController._internal();
 
   PersistenceController._internal();
 
@@ -56,7 +57,8 @@ class PersistenceController {
     }
     final db = await database;
     if (subscription.id == null) {
-      await db.insert('subscriptions', subscription.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
+      await db.insert('subscriptions', subscription.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
     } else {
       await db.update(
         'subscriptions',

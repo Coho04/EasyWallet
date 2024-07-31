@@ -36,6 +36,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Alphabetisch aufsteigend"),
         "alphabeticalDescending":
             MessageLookupByLibrary.simpleMessage("Alphabetisch absteigend"),
+        "appStats": MessageLookupByLibrary.simpleMessage("App Statistiken"),
         "cancel": MessageLookupByLibrary.simpleMessage("Abbrechen"),
         "contactDeveloper": MessageLookupByLibrary.simpleMessage(
             "Kontaktieren Sie den Entwickler"),
@@ -45,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Kosten aufsteigend"),
         "costDescending":
             MessageLookupByLibrary.simpleMessage("Kosten absteigend"),
+        "costShare": MessageLookupByLibrary.simpleMessage("Kostenanteil"),
         "costs": MessageLookupByLibrary.simpleMessage("Kosten"),
         "couldNotLaunch": MessageLookupByLibrary.simpleMessage(
             "Konnte nicht gestartet werden"),
@@ -58,6 +60,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Verbleibende Tage absteigend"),
         "deleteSubscription":
             MessageLookupByLibrary.simpleMessage("Dieses Abonnement löschen"),
+        "deletionIsNotSupportedOnTheWeb": MessageLookupByLibrary.simpleMessage(
+            "Löschen wird im Web nicht unterstützt"),
         "done": MessageLookupByLibrary.simpleMessage("Fertig"),
         "editSubscription":
             MessageLookupByLibrary.simpleMessage("Abonnement bearbeiten"),
@@ -84,6 +88,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "generalInformation":
             MessageLookupByLibrary.simpleMessage("Allgemeine Informationen"),
         "help": MessageLookupByLibrary.simpleMessage("Hilfe"),
+        "hint": MessageLookupByLibrary.simpleMessage("Hinweis"),
         "imprint": MessageLookupByLibrary.simpleMessage("Impressum"),
         "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
             "Kosten in Benachrichtigungen anzeigen"),
@@ -100,6 +105,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "monthlyLimit":
             MessageLookupByLibrary.simpleMessage("Monatliches Limit"),
         "nextInvoice": MessageLookupByLibrary.simpleMessage("Nächste Rechnung"),
+        "noData": MessageLookupByLibrary.simpleMessage("Keine Daten"),
         "noSubscriptionsAvailable":
             MessageLookupByLibrary.simpleMessage("Keine Abonnements verfügbar"),
         "notes": MessageLookupByLibrary.simpleMessage("Notizen"),
@@ -131,6 +137,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Vorherige Rechnung"),
         "privacyPolicy": MessageLookupByLibrary.simpleMessage("Datenschutz"),
         "rateApp": MessageLookupByLibrary.simpleMessage("Bewerten Sie die App"),
+        "remainingCosts":
+            MessageLookupByLibrary.simpleMessage("Verbleibende Kosten"),
         "remembering": MessageLookupByLibrary.simpleMessage("Erinnern"),
         "repetitionRate":
             MessageLookupByLibrary.simpleMessage("Wiederholungsrate"),
@@ -165,6 +173,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "yearlyExpenses":
             MessageLookupByLibrary.simpleMessage("Jährliche Ausgaben"),
         "yearlyVsMonthlyExpenses": MessageLookupByLibrary.simpleMessage(
-            "Jährliche vs Monatliche Ausgaben")
+            "Jährliche vs Monatliche Ausgaben"),
+        "yearlyVsMonthlyExpensesSubtitle": MessageLookupByLibrary.simpleMessage(
+            "Monatliche und jährlichen ausgaben relativ zu den Gesamt ausgaben")
       };
 }
