@@ -49,8 +49,8 @@
   "monthlyExpenses": "Monatliche Ausgaben",
   "yearlyExpenses": "Jährliche Ausgaben",
   "yearlyVsMonthlyExpenses": "Jährliche vs Monatliche Ausgaben",
-  "pinnedVsUnpinnedSubscriptions": "Gepinnt vs Nicht Gepinnt Abonnements",
-  "pausedVsActiveSubscriptions": "Pausiert vs Aktive Abonnements",
+  "pinnedVsUnpinned": "Gepinnt vs Nicht Gepinnt",
+  "pausedVsActive": "Pausiert vs Aktiv",
   "monthly": "Monatlich",
   "yearly": "Jährlich",
   "pinned": "Gepinnt",
@@ -67,9 +67,9 @@
   "remembering": "Erinnern",
   "title": "Titel",
   "deleteSubscription": "Dieses Abonnement löschen",
-  "continueSubscription":  "Dieses Abonnement fortsetze",
+  "continueSubscription": "Dieses Abonnement fortsetzen",
   "pauseSubscription": "Dieses Abonnement pausieren",
-  "unpinSubscription":  "Dieses Abonnement lösen",
+  "unpinSubscription": "Dieses Abonnement lösen",
   "pinSubscription": "Dieses Abonnement anheften",
   "actions": "Aktionen",
   "notes": "Notizen",
@@ -87,9 +87,9 @@
   "editSubscription": "Abonnement bearbeiten",
   "outstandingExpenditureMonth": "Offene Ausgaben Monat",
   "openExpenditureYear": "Offene Ausgaben Jahr",
-  "sameDay":  "Am selben Tag",
+  "sameDay": "Am selben Tag",
   "dayBefore": "Einen Tag vorher",
-  "twoDaysBefore":  "Zwei Tage vorher",
+  "twoDaysBefore": "Zwei Tage vorher",
   "weekBefore": "Eine Woche vorher",
   "subscriptionReminder": "Abonnement Erinnerung",
   "subscriptionIsDueSoon": "Ihr Abonnement {title} steht bald an!",
@@ -101,5 +101,14 @@
         "example": "Netflix"
       }
     }
-  }
+  },
+  "numberOfSubscriptions": "Anzahl der Abonnements",
+  "expensesSinceAppInstallation": "Ausgaben seit App Installation",
+  "expenditureThisYear": "Ausgaben dieses Jahres",
+  "expenditureUntilTheEndOfTheYear": "Ausgaben bis Ende des Jahres",
+  "expenditureUntilTheEndOfTheMonth": "Ausgaben bis Ende des Monats",
+  "issuesOfMonthlySubscriptions": "Ausgaben der Monatlichen Abonnements",
+  "issuesOfAnnualSubscriptions": "Ausgaben der Jährlichen Abonnements",
+  "Loading...": "Laden...",
+  "overview": "Übersicht"
 }

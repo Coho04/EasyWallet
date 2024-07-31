@@ -1,7 +1,7 @@
+import 'package:easy_wallet/views/main/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
-import 'main_views/main_screen.dart';
 
 
 
@@ -30,7 +30,7 @@ class EasyWalletApp extends StatelessWidget {
       theme: const CupertinoThemeData(
         primaryColor: CupertinoColors.activeBlue,
       ),
-      home: const MainScreen(),
+      home: const MainView(),
     );
   }
 

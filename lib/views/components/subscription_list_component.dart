@@ -1,18 +1,18 @@
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
-import 'package:easy_wallet/subscription_views/subscription_detail_view.dart';
+import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class SubscriptionItem extends StatelessWidget {
+class SubscriptionListComponent extends StatelessWidget {
   final Subscription subscription;
   final Function(Subscription) onUpdate;
   final Function(Subscription) onDelete;
 
-  const SubscriptionItem(
+  const SubscriptionListComponent(
       {super.key,
       required this.subscription,
       required this.onUpdate,
@@ -90,7 +90,7 @@ class SubscriptionItem extends StatelessWidget {
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (context) => SubscriptionDetailView(
+                        builder: (context) => SubscriptionShowView(
                           subscription: subscription,
                           onUpdate: onUpdate,
                           onDelete: onDelete,
@@ -114,7 +114,7 @@ class SubscriptionItem extends StatelessWidget {
         Navigator.push(
           context,
           CupertinoPageRoute(
-            builder: (context) => SubscriptionDetailView(
+            builder: (context) => SubscriptionShowView(
               subscription: subscription,
               onUpdate: onUpdate,
               onDelete: onDelete,

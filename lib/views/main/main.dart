@@ -1,21 +1,21 @@
 import 'package:easy_wallet/background_task_manager.dart';
-import 'package:easy_wallet/main_views/home_view.dart';
-import 'package:easy_wallet/main_views/settings_view.dart';
-import 'package:easy_wallet/main_views/statistic_view.dart';
+import 'package:easy_wallet/views/main/home.dart';
+import 'package:easy_wallet/views/main/settings.dart';
+import 'package:easy_wallet/views/main/statistic.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../generated/l10n.dart';
+import '../../generated/l10n.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class MainView extends StatefulWidget {
+  const MainView({super.key});
 
   @override
-  MainScreenState createState() => MainScreenState();
+  MainViewState createState() => MainViewState();
 }
 
-class MainScreenState extends State<MainScreen> {
+class MainViewState extends State<MainView> {
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[

@@ -1,5 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class Subscription {
   int? id;
@@ -72,46 +75,72 @@ class Subscription {
     if (date == null || repeatPattern == null) {
       return null;
     }
-    final today = DateTime.now();
-    final startBillDate = date!;
-    DateTime potentialPreviousBillDate = startBillDate;
-    Duration interval;
+    DateTime today = DateTime.now();
+    DateTime startBillDate = date!;
+
     if (repeatPattern == PaymentRate.monthly.value) {
-      interval = const Duration(days: 30);
+      while (startBillDate.add(const Duration(days: 31)).isBefore(today)) {
+        startBillDate = DateTime(startBillDate.year, startBillDate.month + 1, startBillDate.day);
+      }
     } else if (repeatPattern == PaymentRate.yearly.value) {
-      interval = const Duration(days: 365);
+      while (startBillDate.add(const Duration(days: 366)).isBefore(today)) {
+        startBillDate = DateTime(startBillDate.year + 1, startBillDate.month, startBillDate.day);
+      }
     } else {
       return null;
     }
 
-    DateTime? lastBillDate;
-    while (potentialPreviousBillDate.isBefore(today)) {
-      lastBillDate = potentialPreviousBillDate;
-      potentialPreviousBillDate = potentialPreviousBillDate.add(interval);
-    }
-
-    return lastBillDate;
+    return startBillDate;
   }
 
   DateTime? calculateNextBillDate() {
     if (date == null) {
       return null;
     }
-    final today = DateTime.now();
+    DateTime today = DateTime.now();
     DateTime nextBillDate = date!;
-    Duration interval;
+
     if (repeatPattern == PaymentRate.monthly.value) {
-      interval = const Duration(days: 30);
+      while (nextBillDate.isBefore(today)) {
+        nextBillDate = DateTime(nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
+      }
     } else if (repeatPattern == PaymentRate.yearly.value) {
-      interval = const Duration(days: 365);
+      while (nextBillDate.isBefore(today)) {
+        nextBillDate = DateTime(nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
+      }
     } else {
       return null;
     }
-
-    while (nextBillDate.isBefore(today)) {
-      nextBillDate = nextBillDate.add(interval);
-    }
     return nextBillDate;
+  }
+
+  Widget buildImage() {
+    if (url == null) {
+      return const Icon(
+        CupertinoIcons.exclamationmark_triangle,
+        color: CupertinoColors.systemGrey,
+        size: 40,
+      );
+    } else if (url!.isEmpty) {
+      return const Icon(
+        Icons.account_balance_wallet_rounded,
+        color: CupertinoColors.systemGrey,
+        size: 40,
+      );
+    } else {
+      return CachedNetworkImage(
+        imageUrl:
+        'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(url!).host}',
+        placeholder: (context, url) => const CupertinoActivityIndicator(),
+        errorWidget: (context, url, error) => const Icon(
+          CupertinoIcons.exclamationmark_triangle,
+          color: CupertinoColors.systemGrey,
+          size: 40,
+        ),
+        width: 40,
+        height: 40,
+      );
+    }
   }
 
   int countPayment() {

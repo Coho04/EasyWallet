@@ -38,6 +38,9 @@ class BackgroundTaskManager {
 
     const DarwinInitializationSettings initializationSettingsIOS =
     DarwinInitializationSettings(
+      defaultPresentAlert: true,
+      defaultPresentBanner: true,
+      defaultPresentSound: true,
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,

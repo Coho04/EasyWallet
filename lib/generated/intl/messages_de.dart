@@ -39,8 +39,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "cancel": MessageLookupByLibrary.simpleMessage("Abbrechen"),
         "contactDeveloper": MessageLookupByLibrary.simpleMessage(
             "Kontaktieren Sie den Entwickler"),
-        "continueSubscription":
-            MessageLookupByLibrary.simpleMessage("Dieses Abonnement fortsetze"),
+        "continueSubscription": MessageLookupByLibrary.simpleMessage(
+            "Dieses Abonnement fortsetzen"),
         "costAscending":
             MessageLookupByLibrary.simpleMessage("Kosten aufsteigend"),
         "costDescending":
@@ -66,6 +66,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "enterMonthlyLimit":
             MessageLookupByLibrary.simpleMessage("Monatliches Limit eingeben"),
         "error": MessageLookupByLibrary.simpleMessage("Fehler"),
+        "expenditureThisYear":
+            MessageLookupByLibrary.simpleMessage("Ausgaben dieses Jahres"),
+        "expenditureUntilTheEndOfTheMonth":
+            MessageLookupByLibrary.simpleMessage(
+                "Ausgaben bis Ende des Monats"),
+        "expenditureUntilTheEndOfTheYear": MessageLookupByLibrary.simpleMessage(
+            "Ausgaben bis Ende des Jahres"),
+        "expensesSinceAppInstallation": MessageLookupByLibrary.simpleMessage(
+            "Ausgaben seit App Installation"),
         "expensesThisMonth":
             MessageLookupByLibrary.simpleMessage("Ausgaben diesen Monat"),
         "expensesThisYear":
@@ -80,6 +89,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "Kosten in Benachrichtigungen anzeigen"),
         "invoiceInformation":
             MessageLookupByLibrary.simpleMessage("Rechnungsinformationen"),
+        "issuesOfAnnualSubscriptions": MessageLookupByLibrary.simpleMessage(
+            "Ausgaben der Jährlichen Abonnements"),
+        "issuesOfMonthlySubscriptions": MessageLookupByLibrary.simpleMessage(
+            "Ausgaben der Monatlichen Abonnements"),
         "month": MessageLookupByLibrary.simpleMessage("Monat"),
         "monthly": MessageLookupByLibrary.simpleMessage("Monatlich"),
         "monthlyExpenses":
@@ -94,21 +107,24 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Benachrichtigungszeit"),
         "notifications":
             MessageLookupByLibrary.simpleMessage("Benachrichtigungen"),
+        "numberOfSubscriptions":
+            MessageLookupByLibrary.simpleMessage("Anzahl der Abonnements"),
         "openExpenditureYear":
             MessageLookupByLibrary.simpleMessage("Offene Ausgaben Jahr"),
         "outstandingExpenditureMonth":
             MessageLookupByLibrary.simpleMessage("Offene Ausgaben Monat"),
+        "overview": MessageLookupByLibrary.simpleMessage("Übersicht"),
         "pauseSubscription":
             MessageLookupByLibrary.simpleMessage("Dieses Abonnement pausieren"),
         "paused": MessageLookupByLibrary.simpleMessage("Pausiert"),
-        "pausedVsActiveSubscriptions": MessageLookupByLibrary.simpleMessage(
-            "Pausiert vs Aktive Abonnements"),
+        "pausedVsActive":
+            MessageLookupByLibrary.simpleMessage("Pausiert vs Aktiv"),
         "paymentRate": MessageLookupByLibrary.simpleMessage("Bezahlrate"),
         "pinSubscription":
             MessageLookupByLibrary.simpleMessage("Dieses Abonnement anheften"),
         "pinned": MessageLookupByLibrary.simpleMessage("Gepinnt"),
-        "pinnedVsUnpinnedSubscriptions": MessageLookupByLibrary.simpleMessage(
-            "Gepinnt vs Nicht Gepinnt Abonnements"),
+        "pinnedVsUnpinned":
+            MessageLookupByLibrary.simpleMessage("Gepinnt vs Nicht Gepinnt"),
         "previousDebits":
             MessageLookupByLibrary.simpleMessage("Vorherige Lastschriften"),
         "previousInvoice":

@@ -2,9 +2,9 @@ import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/sort_option.dart';
 import 'package:easy_wallet/model/subscription.dart';
-import 'package:easy_wallet/model/subscription_item.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
-import 'package:easy_wallet/subscription_views/subscription_create_view.dart';
+import 'package:easy_wallet/views/components/subscription_list_component.dart';
+import 'package:easy_wallet/views/subscription/create.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -209,14 +209,13 @@ class HomeViewState extends State<HomeView> {
                     padding: const EdgeInsets.only(bottom: 85.0),
                     itemCount: sortedSubscriptions.length,
                     itemBuilder: (context, index) {
-                      return SubscriptionItem(
+                      return SubscriptionListComponent(
                         subscription: sortedSubscriptions[index],
                         onUpdate: _updateSubscription,
                         onDelete: (deletedSubscription) {
                           setState(() {
                             sortedSubscriptions.remove(deletedSubscription);
-                            sortedSubscriptions =
-                                _sortSubscriptions(sortedSubscriptions);
+                            sortedSubscriptions = _sortSubscriptions(sortedSubscriptions);
                           });
                         },
                       );

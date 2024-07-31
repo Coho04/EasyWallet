@@ -450,21 +450,21 @@ class S {
     );
   }
 
-  /// `Pinned vs Unpinned Subscriptions`
-  String get pinnedVsUnpinnedSubscriptions {
+  /// `Pinned vs Unpinned`
+  String get pinnedVsUnpinned {
     return Intl.message(
-      'Pinned vs Unpinned Subscriptions',
-      name: 'pinnedVsUnpinnedSubscriptions',
+      'Pinned vs Unpinned',
+      name: 'pinnedVsUnpinned',
       desc: '',
       args: [],
     );
   }
 
-  /// `Paused vs Active Subscriptions`
-  String get pausedVsActiveSubscriptions {
+  /// `Paused vs Active`
+  String get pausedVsActive {
     return Intl.message(
-      'Paused vs Active Subscriptions',
-      name: 'pausedVsActiveSubscriptions',
+      'Paused vs Active',
+      name: 'pausedVsActive',
       desc: '',
       args: [],
     );
@@ -887,6 +887,88 @@ class S {
       name: 'subscriptionIsDueSoon',
       desc: 'A message that indicates a subscription is due soon.',
       args: [title],
+    );
+  }
+
+  /// `Number of Subscriptions`
+  String get numberOfSubscriptions {
+    return Intl.message(
+      'Number of Subscriptions',
+      name: 'numberOfSubscriptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expenditure since installing the app`
+  String get expensesSinceAppInstallation {
+    return Intl.message(
+      'Expenditure since installing the app',
+      name: 'expensesSinceAppInstallation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expenditure this year`
+  String get expenditureThisYear {
+    return Intl.message(
+      'Expenditure this year',
+      name: 'expenditureThisYear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expenditure until the end of the year`
+  String get expenditureUntilTheEndOfTheYear {
+    return Intl.message(
+      'Expenditure until the end of the year',
+      name: 'expenditureUntilTheEndOfTheYear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expenses until the end of the month`
+  String get expenditureUntilTheEndOfTheMonth {
+    return Intl.message(
+      'Expenses until the end of the month',
+      name: 'expenditureUntilTheEndOfTheMonth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Issues of monthly subscriptions`
+  String get issuesOfMonthlySubscriptions {
+    return Intl.message(
+      'Issues of monthly subscriptions',
+      name: 'issuesOfMonthlySubscriptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Issues of annual subscriptions`
+  String get issuesOfAnnualSubscriptions {
+    return Intl.message(
+      'Issues of annual subscriptions',
+      name: 'issuesOfAnnualSubscriptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  // skipped getter for the 'Loading...' key
+
+  /// `Overview`
+  String get overview {
+    return Intl.message(
+      'Overview',
+      name: 'overview',
+      desc: '',
+      args: [],
     );
   }
 }

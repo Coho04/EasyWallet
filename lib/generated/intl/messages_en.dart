@@ -65,6 +65,15 @@ class MessageLookup extends MessageLookupByLibrary {
         "enterMonthlyLimit":
             MessageLookupByLibrary.simpleMessage("Enter Monthly Limit"),
         "error": MessageLookupByLibrary.simpleMessage("Error"),
+        "expenditureThisYear":
+            MessageLookupByLibrary.simpleMessage("Expenditure this year"),
+        "expenditureUntilTheEndOfTheMonth":
+            MessageLookupByLibrary.simpleMessage(
+                "Expenses until the end of the month"),
+        "expenditureUntilTheEndOfTheYear": MessageLookupByLibrary.simpleMessage(
+            "Expenditure until the end of the year"),
+        "expensesSinceAppInstallation": MessageLookupByLibrary.simpleMessage(
+            "Expenditure since installing the app"),
         "expensesThisMonth":
             MessageLookupByLibrary.simpleMessage("Expenses this Month"),
         "expensesThisYear":
@@ -79,6 +88,10 @@ class MessageLookup extends MessageLookupByLibrary {
             "Include cost in notifications"),
         "invoiceInformation":
             MessageLookupByLibrary.simpleMessage("Invoice information"),
+        "issuesOfAnnualSubscriptions": MessageLookupByLibrary.simpleMessage(
+            "Issues of annual subscriptions"),
+        "issuesOfMonthlySubscriptions": MessageLookupByLibrary.simpleMessage(
+            "Issues of monthly subscriptions"),
         "month": MessageLookupByLibrary.simpleMessage("month"),
         "monthly": MessageLookupByLibrary.simpleMessage("Monthly"),
         "monthlyExpenses":
@@ -91,21 +104,24 @@ class MessageLookup extends MessageLookupByLibrary {
         "notificationTime":
             MessageLookupByLibrary.simpleMessage("Notification Time"),
         "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
+        "numberOfSubscriptions":
+            MessageLookupByLibrary.simpleMessage("Number of Subscriptions"),
         "openExpenditureYear":
             MessageLookupByLibrary.simpleMessage("Open expenditure year"),
         "outstandingExpenditureMonth": MessageLookupByLibrary.simpleMessage(
             "Outstanding expenditure month"),
+        "overview": MessageLookupByLibrary.simpleMessage("Overview"),
         "pauseSubscription":
             MessageLookupByLibrary.simpleMessage("Pause this subscription"),
         "paused": MessageLookupByLibrary.simpleMessage("Paused"),
-        "pausedVsActiveSubscriptions": MessageLookupByLibrary.simpleMessage(
-            "Paused vs Active Subscriptions"),
+        "pausedVsActive":
+            MessageLookupByLibrary.simpleMessage("Paused vs Active"),
         "paymentRate": MessageLookupByLibrary.simpleMessage("Payment rate"),
         "pinSubscription":
             MessageLookupByLibrary.simpleMessage("Pin this subscription"),
         "pinned": MessageLookupByLibrary.simpleMessage("Pinned"),
-        "pinnedVsUnpinnedSubscriptions": MessageLookupByLibrary.simpleMessage(
-            "Pinned vs Unpinned Subscriptions"),
+        "pinnedVsUnpinned":
+            MessageLookupByLibrary.simpleMessage("Pinned vs Unpinned"),
         "previousDebits":
             MessageLookupByLibrary.simpleMessage("Previous debits"),
         "previousInvoice":

@@ -1,29 +1,30 @@
 import 'package:easy_wallet/easy_wallet_app.dart';
+import 'package:easy_wallet/views/components/card_section_component.dart';
+import 'package:easy_wallet/views/subscription/edit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'subscription_edit_view.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/persistence_controller.dart';
 
-class SubscriptionDetailView extends StatefulWidget {
+class SubscriptionShowView extends StatefulWidget {
   final Subscription subscription;
   final ValueChanged<Subscription> onUpdate;
   final ValueChanged<Subscription> onDelete;
 
-  const SubscriptionDetailView(
+  const SubscriptionShowView(
       {super.key,
       required this.subscription,
       required this.onUpdate,
       required this.onDelete});
 
   @override
-  SubscriptionDetailViewState createState() => SubscriptionDetailViewState();
+  SubscriptionShowViewState createState() => SubscriptionShowViewState();
 }
 
-class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
+class SubscriptionShowViewState extends State<SubscriptionShowView> {
   late Subscription subscription;
 
   @override
@@ -72,56 +73,70 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
             const SizedBox(height: 20),
             _buildHeader(isDarkMode),
             const SizedBox(height: 20),
-            _buildCardSection(
-              Intl.message('generalInformation'),
-              [
-                _buildDetailRow(Intl.message('costs'),
-                    '${subscription.amount.toStringAsFixed(2)} €', isDarkMode),
-                _buildDetailRow(Intl.message('repetitionRate'),
-                    subscription.getRepeatPattern().translate(), isDarkMode),
+            CardSection(
+              title: Intl.message('generalInformation'),
+              isDarkMode: isDarkMode,
+              children: [
+                CardDetailRow(
+                    label: Intl.message('costs'),
+                    value: '${subscription.amount.toStringAsFixed(2)} €',
+                    isDarkMode: isDarkMode),
+                CardDetailRow(
+                    label: Intl.message('repetitionRate'),
+                    value: subscription.getRepeatPattern().translate(),
+                    isDarkMode: isDarkMode),
               ],
-              isDarkMode,
             ),
             const SizedBox(height: 20),
-            _buildCardSection(
-              Intl.message('invoiceInformation'),
-              [
-                _buildDetailRow(
-                    Intl.message('nextInvoice'),
-                    _formatDate(subscription.calculateNextBillDate()),
-                    isDarkMode),
-                _buildDetailRow(
-                    Intl.message('previousInvoice'),
-                    _formatDate(subscription.calculatePreviousBillDate()),
-                    isDarkMode),
-                _buildDetailRow(Intl.message('firstDebit'),
-                    _formatDate(subscription.date), isDarkMode),
-                _buildDetailRow(Intl.message('createdOn'),
-                    _formatDateTime(subscription.timestamp), isDarkMode),
+            CardSection(
+              title: Intl.message('invoiceInformation'),
+              isDarkMode: isDarkMode,
+              children: [
+                CardDetailRow(
+                    label: Intl.message('nextInvoice'),
+                    value: _formatDate(subscription.calculateNextBillDate()),
+                    isDarkMode: isDarkMode),
+                CardDetailRow(
+                    label: Intl.message('previousInvoice'),
+                    value:
+                        _formatDate(subscription.calculatePreviousBillDate()),
+                    isDarkMode: isDarkMode),
+                CardDetailRow(
+                    label: Intl.message('firstDebit'),
+                    value: _formatDate(subscription.date),
+                    isDarkMode: isDarkMode),
+                CardDetailRow(
+                    label: Intl.message('createdOn'),
+                    value: _formatDateTime(subscription.timestamp),
+                    isDarkMode: isDarkMode),
               ],
-              isDarkMode,
             ),
             const SizedBox(height: 20),
-            _buildCardSection(
-              Intl.message('additionalInformation'),
-              [
-                _buildDetailRow(Intl.message('previousDebits'),
-                    subscription.countPayment().toString(), isDarkMode),
-                _buildDetailRow(
-                    Intl.message('totalCosts'),
-                    '${subscription.sumPayment().toStringAsFixed(2)} €',
-                    isDarkMode),
+            CardSection(
+              title: Intl.message('additionalInformation'),
+              isDarkMode: isDarkMode,
+              children: [
+                CardDetailRow(
+                    label: Intl.message('previousDebits'),
+                    value: subscription.countPayment().toString(),
+                    isDarkMode: isDarkMode),
+                CardDetailRow(
+                    label: Intl.message('totalCosts'),
+                    value: '${subscription.sumPayment().toStringAsFixed(2)} €',
+                    isDarkMode: isDarkMode),
                 if (subscription.notes != null &&
                     subscription.notes!.trim().isNotEmpty)
-                  _buildDetailRow(
-                      Intl.message('notes'), subscription.notes!, isDarkMode),
+                  CardDetailRow(
+                      label: Intl.message('notes'),
+                      value: subscription.notes!,
+                      isDarkMode: isDarkMode),
               ],
-              isDarkMode,
             ),
             const SizedBox(height: 20),
-            _buildCardSection(
-              Intl.message('actions'),
-              [
+            CardSection(
+              title: Intl.message('actions'),
+              isDarkMode: isDarkMode,
+              children: [
                 _buildAction(
                   subscription.isPinned
                       ? Intl.message('unpinSubscription')
@@ -152,48 +167,9 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
                   isDarkMode: isDarkMode,
                 ),
               ],
-              isDarkMode,
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildCardSection(
-      String title, List<Widget> children, bool isDarkMode) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: isDarkMode
-            ? CupertinoColors.darkBackgroundGray
-            : CupertinoColors.systemGrey6,
-        borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
-          BoxShadow(
-            color: isDarkMode
-                ? CupertinoColors.black
-                : CupertinoColors.systemGrey4,
-            blurRadius: 10.0,
-            spreadRadius: 1.0,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: EasyWalletApp.responsiveTextStyle(
-              16,
-              context,
-              bold: true,
-              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-            ),
-          ),
-          const SizedBox(height: 10),
-          ...children,
-        ],
       ),
     );
   }
@@ -215,30 +191,6 @@ class SubscriptionDetailViewState extends State<SubscriptionDetailView> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value, bool isDarkMode) {
-    return CupertinoFormRow(
-      prefix: Text(
-        label, //TODO Color CHECKEN
-        style: EasyWalletApp.responsiveTextStyle(
-          16,
-          context,
-          bold: true,
-          color: isDarkMode
-              ? CupertinoColors.systemGrey
-              : CupertinoColors.systemGrey,
-        ),
-      ),
-      child: Text(
-        value,
-        style: EasyWalletApp.responsiveTextStyle(
-          16,
-          context,
-          color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-        ),
-      ),
     );
   }
 

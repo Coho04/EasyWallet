@@ -49,8 +49,8 @@
   "monthlyExpenses": "Monthly Expenses",
   "yearlyExpenses": "Yearly Expenses",
   "yearlyVsMonthlyExpenses": "Yearly vs Monthly Expenses",
-  "pinnedVsUnpinnedSubscriptions": "Pinned vs Unpinned Subscriptions",
-  "pausedVsActiveSubscriptions": "Paused vs Active Subscriptions",
+  "pinnedVsUnpinned": "Pinned vs Unpinned",
+  "pausedVsActive": "Paused vs Active",
   "monthly": "Monthly",
   "yearly": "Yearly",
   "pinned": "Pinned",
@@ -101,5 +101,14 @@
         "example": "Netflix"
       }
     }
-  }
+  },
+  "numberOfSubscriptions": "Number of Subscriptions",
+  "expensesSinceAppInstallation": "Expenditure since installing the app",
+  "expenditureThisYear": "Expenditure this year",
+  "expenditureUntilTheEndOfTheYear": "Expenditure until the end of the year",
+  "expenditureUntilTheEndOfTheMonth": "Expenses until the end of the month",
+  "issuesOfMonthlySubscriptions": "Issues of monthly subscriptions",
+  "issuesOfAnnualSubscriptions": "Issues of annual subscriptions",
+  "Loading...": "Loading...",
+  "overview": "Overview"
 }
