@@ -1,0 +1,16 @@
+{
+  "images" : [
+    {
+      "filename" : "icon.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "filename" : "icon 1.pdf",
+      "idiom" : "iphone"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
