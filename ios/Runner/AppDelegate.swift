@@ -21,6 +21,9 @@ import CoreData
     let controller = window?.rootViewController as! FlutterViewController
     let migrationChannel = FlutterMethodChannel(name: "com.example.easywallet/migration",
                                                 binaryMessenger: controller.binaryMessenger)
+    if #available(iOS 10.0, *) {
+        UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
+    }
 
     migrationChannel.setMethodCallHandler { (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
       if call.method == "exportCoreDataToJSON" {
