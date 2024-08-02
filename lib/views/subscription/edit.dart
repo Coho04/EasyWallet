@@ -4,11 +4,13 @@ import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_wallet/persistence_controller.dart';
+import 'package:provider/provider.dart';
 
 class SubscriptionEditView extends StatefulWidget {
   final Subscription subscription;
@@ -92,9 +94,10 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       subscription.notes = _notesController.text.trim();
       subscription.repeatPattern = _paymentRate;
       subscription.rememberCycle = _rememberCycle;
-
       final viewContext = PersistenceController.instance;
       viewContext.saveSubscription(subscription);
+      Provider.of<SubscriptionProvider>(context, listen: false)
+          .updateSubscription(subscription);
       widget.onUpdate(subscription);
       Navigator.of(context).pop();
     }
@@ -507,9 +510,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   }
 
   String _capitalize(String s) {
-    if (s.isEmpty) {
-      return s;
-    }
+    if (s.isEmpty) return s;
     return s[0].toUpperCase() + s.substring(1);
   }
 

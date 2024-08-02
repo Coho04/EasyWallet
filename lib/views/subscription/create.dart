@@ -4,12 +4,14 @@ import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_wallet/persistence_controller.dart';
+import 'package:provider/provider.dart';
 
 class SubscriptionCreateView extends StatefulWidget {
   const SubscriptionCreateView({super.key});
@@ -458,6 +460,8 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
 
       final viewContext = PersistenceController.instance;
       viewContext.saveSubscription(newSubscription);
+      Provider.of<SubscriptionProvider>(context, listen: false)
+          .addSubscription(newSubscription);
       Navigator.of(context).pop();
     }
   }

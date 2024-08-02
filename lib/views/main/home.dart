@@ -217,9 +217,9 @@ class HomeViewState extends State<HomeView> {
                         onUpdate: _updateSubscription,
                         onDelete: (deletedSubscription) {
                           setState(() {
-                            sortedSubscriptions.remove(deletedSubscription);
-                            sortedSubscriptions =
-                                _sortSubscriptions(sortedSubscriptions);
+                            Provider.of<SubscriptionProvider>(context, listen: false)
+                                .deleteSubscription(deletedSubscription);
+                            sortedSubscriptions = _sortSubscriptions(sortedSubscriptions);
                           });
                         },
                       );

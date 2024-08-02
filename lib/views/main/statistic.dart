@@ -1,15 +1,16 @@
 import 'dart:math';
 
 import 'package:easy_wallet/enum/payment_rate.dart';
+import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/views/components/card_section_component.dart';
 import 'package:easy_wallet/views/statistics/show.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:easy_wallet/model/subscription.dart';
-import 'package:easy_wallet/persistence_controller.dart';
 
 import '../../model/chartData.dart';
 import '../components/badge_component.dart';
@@ -25,61 +26,25 @@ class StatisticViewState extends State<StatisticView> {
   double monthlyExpenses = 0.0;
   double yearlyExpenses = 0.0;
   List<Subscription> nextDueSubscriptions = [];
-  List<Subscription> subscriptions = [];
   int pinnedCount = 0;
   int unpinnedCount = 0;
   Map<String, Color> colorCache = {};
   int touchedIndex = -1;
-  late Future<void> _initDataFuture;
   int? _selectedSubscriptionId;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _initDataFuture = _initializeData();
+    _initializeData();
   }
 
   Future<void> _initializeData() async {
-    await _loadStatistics();
+    final subscriptions = context.read<SubscriptionProvider>().subscriptions;
     await prefetchColors(subscriptions);
-  }
-
-  Future<void> _loadStatistics() async {
-    final persistenceController = PersistenceController.instance;
-    final subscriptions = await persistenceController.getAllSubscriptions();
-
-    int pinnedCount = 0;
-    int unpinnedCount = 0;
-    List<Subscription> nextDue = [];
-
-    for (var subscription in subscriptions) {
-      if (subscription.repeatPattern == PaymentRate.monthly.value) {
-      } else if (subscription.repeatPattern == PaymentRate.yearly.value) {}
-
-      subscription.isPinned ? pinnedCount++ : unpinnedCount++;
-      if (subscription.date != null && !subscription.isPaused) {
-        nextDue.add(subscription);
-      }
-    }
-
-    double totalMonthlyExpenses = 0.0;
-    double totalYearlyExpenses = 0.0;
-    for (var subscription in subscriptions) {
-      if (subscription.isPaused) continue;
-      if (subscription.repeatPattern == PaymentRate.monthly.value) {
-        totalMonthlyExpenses += subscription.amount;
-      } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
-        totalYearlyExpenses += subscription.amount;
-      }
-    }
-
+    _calculateStatistics(subscriptions);
     setState(() {
-      this.subscriptions = subscriptions;
-      monthlyExpenses = totalMonthlyExpenses;
-      yearlyExpenses = totalYearlyExpenses;
-      this.pinnedCount = pinnedCount;
-      this.unpinnedCount = unpinnedCount;
-      nextDueSubscriptions = nextDue;
+      _isLoading = false;
     });
   }
 
@@ -100,199 +65,232 @@ class StatisticViewState extends State<StatisticView> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(Intl.message('statistics')),
-      ),
-      child: SafeArea(
-        child: Center(
-          child: FutureBuilder<void>(
-            future: _initDataFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                return SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Wrap(
-                      spacing: 20,
-                      runSpacing: 20,
-                      children: [
-                        CardSection(
-                          title: Intl.message('appStats'),
-                          children: [
-                            CardDetailRow(
-                              label: Intl.message('numberOfSubscriptions'),
-                              value: '${subscriptions.length}',
-                            ),
-                            CardDetailRow(
-                              label:
-                                  Intl.message('expensesSinceAppInstallation'),
-                              value:
-                                  '${calculateExpensesSinceInstallation().toStringAsFixed(2)} €',
-                              softBreak: true,
-                            ),
-                          ],
-                        ),
-                        CardSection(
-                          title: Intl.message('totalExpenses'),
-                          children: [
-                            CardDetailRow(
-                              label: Intl.message('expenditureThisYear'),
-                              value:
-                                  '${calculateTotalSpentThisYear().toStringAsFixed(2)} €',
-                            ),
-                            CardDetailRow(
-                              label:
-                                  Intl.message('issuesOfMonthlySubscriptions'),
-                              value: '${monthlyExpenses.toStringAsFixed(2)} €',
-                              softBreak: true,
-                            ),
-                            CardDetailRow(
-                              label:
-                                  Intl.message('issuesOfAnnualSubscriptions'),
-                              value: '${yearlyExpenses.toStringAsFixed(2)} €',
-                              softBreak: true,
-                            ),
-                          ],
-                        ),
-                        CardSection(
-                          title: Intl.message('remainingCosts'),
-                          children: [
-                            CardDetailRow(
-                              label: Intl.message(
-                                  'expenditureUntilTheEndOfTheMonth'),
-                              value: calculateExpensesToEndOfMonth(),
-                              softBreak: true,
-                            ),
-                            CardDetailRow(
-                              label: Intl.message(
-                                  'expenditureUntilTheEndOfTheYear'),
-                              value: calculateExpensesToEndOfYear(),
-                              softBreak: true,
-                            ),
-                          ],
-                        ),
-                        if (subscriptions.isNotEmpty)
-                          CardSection(
-                            title: Intl.message('costShare'),
-                            children: [
-                              const SizedBox(height: 10),
-                              buildPieChart(subscriptions),
-                              const SizedBox(height: 20),
-                              const Divider(),
-                              CardActionButton(
-                                label: Intl.message('overview'),
-                                icon: CupertinoIcons.right_chevron,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) => ChartDetailPage(
-                                        title: Intl.message('costShare'),
-                                        pieChartData: buildPieChartSections(
-                                            subscriptions),
-                                        subscriptions: subscriptions,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                color: CupertinoColors.activeBlue,
-                              ),
-                            ],
-                          ),
-                        if (subscriptions.isNotEmpty)
-                          CardSection(
-                            title: Intl.message('yearlyVsMonthlyExpenses'),
-                            subtitle:
-                                Intl.message('yearlyVsMonthlyExpensesSubtitle'),
-                            children: [
-                              _buildChart(_makeYearlyToMonthlyData()),
-                              const Divider(),
-                              CardActionButton(
-                                label: Intl.message('overview'),
-                                icon: CupertinoIcons.right_chevron,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) => ChartDetailPage(
-                                        title: Intl.message(
-                                            'yearlyVsMonthlyExpenses'),
-                                        chartData: _makeYearlyToMonthlyData(),
-                                        subscriptions: subscriptions,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                color: CupertinoColors.activeBlue,
-                              ),
-                            ],
-                          ),
-                        if (subscriptions.isNotEmpty)
-                          CardSection(
-                            title: Intl.message('pinnedVsUnpinned'),
-                            children: [
-                              _buildChart(_makePinnedData()),
-                              const Divider(),
-                              CardActionButton(
-                                label: Intl.message('overview'),
-                                icon: CupertinoIcons.right_chevron,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) => ChartDetailPage(
-                                        title: Intl.message('pinnedVsUnpinned'),
-                                        chartData: _makePinnedData(),
-                                        subscriptions: subscriptions,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                color: CupertinoColors.activeBlue,
-                              ),
-                            ],
-                          ),
-                        if (subscriptions.isNotEmpty)
-                          CardSection(
-                            title: Intl.message('pausedVsActive'),
-                            children: [
-                              _buildChart(_makePausedData()),
-                              const Divider(),
-                              CardActionButton(
-                                label: Intl.message('overview'),
-                                icon: CupertinoIcons.right_chevron,
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) => ChartDetailPage(
-                                        title: Intl.message('pausedVsActive'),
-                                        chartData: _makePausedData(),
-                                        subscriptions: subscriptions,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                color: CupertinoColors.activeBlue,
-                              ),
-                            ],
-                          ),
-                      ],
-                    ),
-                  ),
-                );
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
+    return Consumer<SubscriptionProvider>(
+      builder: (context, subscriptionProvider, child) {
+        final subscriptions = subscriptionProvider.subscriptions;
+        return CupertinoPageScaffold(
+          navigationBar: CupertinoNavigationBar(
+            middle: Text(Intl.message('statistics')),
           ),
-        ),
-      ),
+          child: SafeArea(
+            child: Center(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Wrap(
+                          spacing: 20,
+                          runSpacing: 20,
+                          children: [
+                            CardSection(
+                              title: Intl.message('appStats'),
+                              children: [
+                                CardDetailRow(
+                                  label: Intl.message('numberOfSubscriptions'),
+                                  value: '${subscriptions.length}',
+                                ),
+                                CardDetailRow(
+                                  label: Intl.message(
+                                      'expensesSinceAppInstallation'),
+                                  value:
+                                      '${calculateExpensesSinceInstallation(subscriptions).toStringAsFixed(2)} €',
+                                  softBreak: true,
+                                ),
+                              ],
+                            ),
+                            CardSection(
+                              title: Intl.message('totalExpenses'),
+                              children: [
+                                CardDetailRow(
+                                  label: Intl.message('expenditureThisYear'),
+                                  value:
+                                      '${calculateTotalSpentThisYear(subscriptions).toStringAsFixed(2)} €',
+                                ),
+                                CardDetailRow(
+                                  label: Intl.message(
+                                      'issuesOfMonthlySubscriptions'),
+                                  value:
+                                      '${monthlyExpenses.toStringAsFixed(2)} €',
+                                  softBreak: true,
+                                ),
+                                CardDetailRow(
+                                  label: Intl.message(
+                                      'issuesOfAnnualSubscriptions'),
+                                  value:
+                                      '${yearlyExpenses.toStringAsFixed(2)} €',
+                                  softBreak: true,
+                                ),
+                              ],
+                            ),
+                            CardSection(
+                              title: Intl.message('remainingCosts'),
+                              children: [
+                                CardDetailRow(
+                                  label: Intl.message(
+                                      'expenditureUntilTheEndOfTheMonth'),
+                                  value: calculateExpensesToEndOfMonth(
+                                      subscriptions),
+                                  softBreak: true,
+                                ),
+                                CardDetailRow(
+                                  label: Intl.message(
+                                      'expenditureUntilTheEndOfTheYear'),
+                                  value: calculateExpensesToEndOfYear(
+                                      subscriptions),
+                                  softBreak: true,
+                                ),
+                              ],
+                            ),
+                            if (subscriptions.isNotEmpty)
+                              CardSection(
+                                title: Intl.message('costShare'),
+                                children: [
+                                  const SizedBox(height: 10),
+                                  buildPieChart(subscriptions),
+                                  const SizedBox(height: 20),
+                                  const Divider(),
+                                  CardActionButton(
+                                    label: Intl.message('overview'),
+                                    icon: CupertinoIcons.right_chevron,
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                          builder: (context) => ChartDetailPage(
+                                            title: Intl.message('costShare'),
+                                            pieChartData: buildPieChartSections(
+                                                subscriptions),
+                                            subscriptions: subscriptions,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    color: CupertinoColors.activeBlue,
+                                  ),
+                                ],
+                              ),
+                            if (subscriptions.isNotEmpty)
+                              CardSection(
+                                title: Intl.message('yearlyVsMonthlyExpenses'),
+                                subtitle: Intl.message(
+                                    'yearlyVsMonthlyExpensesSubtitle'),
+                                children: [
+                                  _buildChart(
+                                      _makeYearlyToMonthlyData(subscriptions)),
+                                  const Divider(),
+                                  CardActionButton(
+                                    label: Intl.message('overview'),
+                                    icon: CupertinoIcons.right_chevron,
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                          builder: (context) => ChartDetailPage(
+                                            title: Intl.message(
+                                                'yearlyVsMonthlyExpenses'),
+                                            chartData: _makeYearlyToMonthlyData(
+                                                subscriptions),
+                                            subscriptions: subscriptions,
+                                            dataType: 'StackedSeriesBase',
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    color: CupertinoColors.activeBlue,
+                                  ),
+                                ],
+                              ),
+                            if (subscriptions.isNotEmpty)
+                              CardSection(
+                                title: Intl.message('pinnedVsUnpinned'),
+                                children: [
+                                  _buildChart(_makePinnedData(subscriptions)),
+                                  const Divider(),
+                                  CardActionButton(
+                                    label: Intl.message('overview'),
+                                    icon: CupertinoIcons.right_chevron,
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                          builder: (context) => ChartDetailPage(
+                                            title: Intl.message(
+                                                'pinnedVsUnpinned'),
+                                            chartData:
+                                                _makePinnedData(subscriptions),
+                                            subscriptions: subscriptions,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    color: CupertinoColors.activeBlue,
+                                  ),
+                                ],
+                              ),
+                            if (subscriptions.isNotEmpty)
+                              CardSection(
+                                title: Intl.message('pausedVsActive'),
+                                children: [
+                                  _buildChart(_makePausedData(subscriptions)),
+                                  const Divider(),
+                                  CardActionButton(
+                                    label: Intl.message('overview'),
+                                    icon: CupertinoIcons.right_chevron,
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                          builder: (context) => ChartDetailPage(
+                                            title:
+                                                Intl.message('pausedVsActive'),
+                                            chartData:
+                                                _makePausedData(subscriptions),
+                                            subscriptions: subscriptions,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    color: CupertinoColors.activeBlue,
+                                  ),
+                                ],
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+            ),
+          ),
+        );
+      },
     );
+  }
+
+  void _calculateStatistics(List<Subscription> subscriptions) {
+    double totalMonthlyExpenses = 0.0;
+    double totalYearlyExpenses = 0.0;
+    int pinnedCount = 0;
+    int unpinnedCount = 0;
+    List<Subscription> nextDue = [];
+
+    for (var subscription in subscriptions) {
+      if (subscription.repeatPattern == PaymentRate.monthly.value) {
+        totalMonthlyExpenses += subscription.amount;
+      } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
+        totalYearlyExpenses += subscription.amount;
+      }
+
+      subscription.isPinned ? pinnedCount++ : unpinnedCount++;
+      if (subscription.date != null && !subscription.isPaused) {
+        nextDue.add(subscription);
+      }
+    }
+
+    monthlyExpenses = totalMonthlyExpenses;
+    yearlyExpenses = totalYearlyExpenses;
+    this.pinnedCount = pinnedCount;
+    this.unpinnedCount = unpinnedCount;
+    nextDueSubscriptions = nextDue;
   }
 
   Widget buildPieChart(List<Subscription> subscriptions) {
@@ -323,7 +321,7 @@ class StatisticViewState extends State<StatisticView> {
     );
   }
 
-  double calculateTotalSpentThisYear() {
+  double calculateTotalSpentThisYear(List<Subscription> subscriptions) {
     double totalExpenses = 0.0;
     for (var subscription in subscriptions) {
       if (subscription.isPaused) continue;
@@ -378,7 +376,7 @@ class StatisticViewState extends State<StatisticView> {
         random.nextInt(255), random.nextInt(255), random.nextInt(255), 1);
   }
 
-  double calculateExpensesSinceInstallation() {
+  double calculateExpensesSinceInstallation(List<Subscription> subscriptions) {
     var amount = 0.0;
     for (var subscription in subscriptions) {
       int multiplier = subscription.countPayment();
@@ -387,7 +385,8 @@ class StatisticViewState extends State<StatisticView> {
     return amount;
   }
 
-  Future<String> calculateExpensesToEndOfMonth() async {
+  Future<String> calculateExpensesToEndOfMonth(
+      List<Subscription> subscriptions) async {
     double monthlyExpenses = 0.0;
     DateTime today = DateTime.now();
     DateTime endOfMonth = DateTime(today.year, today.month + 1, 0);
@@ -403,7 +402,8 @@ class StatisticViewState extends State<StatisticView> {
     return '${monthlyExpenses.toStringAsFixed(2)} €';
   }
 
-  Future<String> calculateExpensesToEndOfYear() async {
+  Future<String> calculateExpensesToEndOfYear(
+      List<Subscription> subscriptions) async {
     double yearlyExpenses = 0.0;
     DateTime today = DateTime.now();
     DateTime endOfYear = DateTime(today.year, 12, 31);
@@ -489,7 +489,8 @@ class StatisticViewState extends State<StatisticView> {
     );
   }
 
-  List<CartesianSeries<ChartData, String>> _makeYearlyToMonthlyData() {
+  List<CartesianSeries<ChartData, String>> _makeYearlyToMonthlyData(
+      List<Subscription> subscriptions) {
     List<CartesianSeries<ChartData, String>> seriesList = [];
     double totalMonthlyAmount = subscriptions
         .where((subscription) =>
@@ -529,7 +530,8 @@ class StatisticViewState extends State<StatisticView> {
     return seriesList;
   }
 
-  List<CartesianSeries<ChartData, String>> _makePinnedData() {
+  List<CartesianSeries<ChartData, String>> _makePinnedData(
+      List<Subscription> subscriptions) {
     List<CartesianSeries<ChartData, String>> seriesList = [];
     var hasPinned = subscriptions.any((subscription) => subscription.isPinned);
     bool hasUnpinned =
@@ -548,7 +550,8 @@ class StatisticViewState extends State<StatisticView> {
     return seriesList;
   }
 
-  List<CartesianSeries<ChartData, String>> _makePausedData() {
+  List<CartesianSeries<ChartData, String>> _makePausedData(
+      List<Subscription> subscriptions) {
     List<CartesianSeries<ChartData, String>> seriesList = [];
     var hasActive = subscriptions.any((subscription) => !subscription.isPaused);
     var hasPaused = subscriptions.any((subscription) => subscription.isPaused);

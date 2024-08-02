@@ -12,14 +12,15 @@ class ChartDetailPage extends StatefulWidget {
   final List<CartesianSeries<ChartData, String>>? chartData;
   final List<PieChartSectionData>? pieChartData;
   final List<Subscription> subscriptions;
+  final String dataType;
 
-  const ChartDetailPage({
-    super.key,
-    required this.title,
-    this.chartData,
-    this.pieChartData,
-    required this.subscriptions,
-  });
+  const ChartDetailPage(
+      {super.key,
+      required this.title,
+      this.chartData,
+      this.pieChartData,
+      required this.subscriptions,
+      this.dataType = 'StackedColumn100Series'});
 
   @override
   ChartDetailPageState createState() => ChartDetailPageState();
@@ -37,19 +38,17 @@ class ChartDetailPageState extends State<ChartDetailPage> {
         child: SafeArea(
             child: Center(
                 child: ListView(children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: _buildChart(context),
-                  ),
-                  _buildSubscriptionList(context)
-                ]))));
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: _buildChart(context),
+          ),
+          _buildSubscriptionList(context)
+        ]))));
   }
 
   Widget _buildChart(context) {
     final isDarkMode =
-        MediaQuery
-            .of(context)
-            .platformBrightness == Brightness.dark;
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     if (widget.chartData != null) {
       return SizedBox(
         height: 300,
@@ -67,42 +66,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
             ),
           ),
           series: widget.chartData!.map((series) {
-            return StackedColumnSeries<ChartData, String>(
-              dataSource: series.dataSource,
-              xValueMapper: series.xValueMapper,
-              yValueMapper: (ChartData data, _) => data.value,
-              pointColorMapper: (ChartData data, _) {
-                var color = data.color;
-                if (_selectedSubscriptionId != null) {
-                  final isSelected = widget.subscriptions
-                      .firstWhere((sub) => sub.title == data.label)
-                      .id ==
-                      _selectedSubscriptionId;
-                  if (!isSelected) {
-                    color = color.withOpacity(0.5);
-                  }
-                }
-                return color;
-              },
-              name: series.name,
-              onPointTap: (pointDetails) {
-                setState(() {
-                  final tappedData =
-                  series.dataSource?[pointDetails.pointIndex!];
-                  final tappedSubscription = widget.subscriptions
-                      .firstWhere((sub) => sub.title == tappedData?.label);
-
-                  if (_selectedSubscriptionId == tappedSubscription.id) {
-                    _selectedSubscriptionId = null;
-                  } else {
-                    _selectedSubscriptionId = tappedSubscription.id;
-                  }
-                });
-              },
-              borderColor: Colors.black54,
-              borderWidth: 0.01,
-              dataLabelSettings: const DataLabelSettings(isVisible: false),
-            );
+            return buildSeries(series);
           }).toList(),
         ),
       );
@@ -129,19 +93,27 @@ class ChartDetailPageState extends State<ChartDetailPage> {
           onTap: () {
             Navigator.of(context).push(
               CupertinoPageRoute(
-                builder: (context) =>
-                    SubscriptionShowView(
-                      subscription: subscription,
-                      onUpdate: (updatedSubscription) {},
-                      onDelete: (deletedSubscription) {},
-                    ),
+                builder: (context) => SubscriptionShowView(
+                  subscription: subscription,
+                  onUpdate: (updatedSubscription) {},
+                  onDelete: (deletedSubscription) {},
+                ),
               ),
             );
           },
           title: Text(subscription.title),
           additionalInfo: Text('${subscription.amount} €'),
-          leading: subscription.buildImage(width: (_selectedSubscriptionId != null && _selectedSubscriptionId == subscription.id) ? 80 : 40),
-          backgroundColor: (_selectedSubscriptionId != null && _selectedSubscriptionId == subscription.id) ? null : (_selectedSubscriptionId == null) ? null : CupertinoColors.systemGrey.withOpacity(0.3),
+          leading: subscription.buildImage(
+              width: (_selectedSubscriptionId != null &&
+                      _selectedSubscriptionId == subscription.id)
+                  ? 80
+                  : 40),
+          backgroundColor: (_selectedSubscriptionId != null &&
+                  _selectedSubscriptionId == subscription.id)
+              ? null
+              : (_selectedSubscriptionId == null)
+                  ? null
+                  : CupertinoColors.systemGrey.withOpacity(0.3),
           trailing: const SizedBox(
             width: 40,
             height: 40,
@@ -150,5 +122,87 @@ class ChartDetailPageState extends State<ChartDetailPage> {
         );
       }).toList(),
     );
+  }
+
+  StackedSeriesBase buildSeries(series) {
+   if (widget.dataType == 'StackedColumn100Series') {
+     return StackedColumn100Series<ChartData, String>(
+       dataSource: series.dataSource,
+       xValueMapper: series.xValueMapper,
+       yValueMapper: (ChartData data, _) => data.value,
+       pointColorMapper: (ChartData data, _) {
+         var color = data.color;
+         if (_selectedSubscriptionId != null && widget.subscriptions.isNotEmpty) {
+           Iterable<Subscription> filteredSubs = widget.subscriptions.where((sub) => sub.title == data.label);
+           if (filteredSubs.isEmpty) {
+             return color;
+           }
+           int? id = filteredSubs.first.id;
+           if (id != null) {
+             final isSelected = _selectedSubscriptionId == id;
+             if (!isSelected) {
+               color = color.withOpacity(0.5);
+             }
+           }
+         }
+         return color;
+       },
+       name: series.name,
+       onPointTap: (pointDetails) {
+         setState(() {
+           final tappedData =
+           series.dataSource?[pointDetails.pointIndex!];
+           final tappedSubscription = widget.subscriptions
+               .firstWhere((sub) => sub.title == tappedData?.label);
+
+           if (_selectedSubscriptionId == tappedSubscription.id) {
+             _selectedSubscriptionId = null;
+           } else {
+             _selectedSubscriptionId = tappedSubscription.id;
+           }
+         });
+       },
+       borderColor: Colors.black54,
+       borderWidth: 0.01,
+       dataLabelSettings: const DataLabelSettings(isVisible: false),
+     );
+   } else {
+     return StackedColumnSeries<ChartData, String>(
+       dataSource: series.dataSource,
+       xValueMapper: series.xValueMapper,
+       yValueMapper: (ChartData data, _) => data.value,
+       pointColorMapper: (ChartData data, _) {
+         var color = data.color;
+         if (_selectedSubscriptionId != null) {
+           final isSelected = widget.subscriptions
+               .firstWhere((sub) => sub.title == data.label)
+               .id ==
+               _selectedSubscriptionId;
+           if (!isSelected) {
+             color = color.withOpacity(0.5);
+           }
+         }
+         return color;
+       },
+       name: series.name,
+       onPointTap: (pointDetails) {
+         setState(() {
+           final tappedData =
+           series.dataSource?[pointDetails.pointIndex!];
+           final tappedSubscription = widget.subscriptions
+               .firstWhere((sub) => sub.title == tappedData?.label);
+
+           if (_selectedSubscriptionId == tappedSubscription.id) {
+             _selectedSubscriptionId = null;
+           } else {
+             _selectedSubscriptionId = tappedSubscription.id;
+           }
+         });
+       },
+       borderColor: Colors.black54,
+       borderWidth: 0.01,
+       dataLabelSettings: const DataLabelSettings(isVisible: false),
+     );
+   }
   }
 }
