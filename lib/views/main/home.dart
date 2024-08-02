@@ -6,6 +6,7 @@ import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/views/components/subscription_list_component.dart';
 import 'package:easy_wallet/views/subscription/create.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -20,6 +21,7 @@ class HomeViewState extends State<HomeView> {
   String searchText = "";
   SortOption sortOption = SortOption.remainingDaysAscending;
   List<Subscription> sortedSubscriptions = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -28,13 +30,17 @@ class HomeViewState extends State<HomeView> {
   }
 
   Future<void> _loadAndSortSubscriptions() async {
-    await Provider.of<SubscriptionProvider>(context, listen: false)
-        .loadSubscriptions();
-    setState(() {
-      sortedSubscriptions = _sortSubscriptions(
-          Provider.of<SubscriptionProvider>(context, listen: false)
-              .subscriptions);
-    });
+    try {
+      await Provider.of<SubscriptionProvider>(context, listen: false)
+          .loadSubscriptions();
+    } finally {
+      setState(() {
+        sortedSubscriptions = _sortSubscriptions(
+            Provider.of<SubscriptionProvider>(context, listen: false)
+                .subscriptions);
+        _isLoading = false;
+      });
+    }
   }
 
   void _updateSubscription(Subscription updatedSubscription) {
@@ -91,7 +97,8 @@ class HomeViewState extends State<HomeView> {
           yearlySpent += subscription.amount;
         }
       } else if (subscription.repeatPattern == PaymentRate.monthly.value) {
-        while (nextBillDate.isBefore(lastDayOfYear.add(const Duration(days: 1)))) {
+        while (
+            nextBillDate.isBefore(lastDayOfYear.add(const Duration(days: 1)))) {
           yearlySpent += subscription.amount;
           nextBillDate = DateTime(
               nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
@@ -111,7 +118,8 @@ class HomeViewState extends State<HomeView> {
       final now = DateTime.now();
       DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
       DateTime nextBillDate = subscription.getNextBillDate();
-      return nextBillDate.isBefore(lastDayOfMonth) && nextBillDate.month == now.month;
+      return nextBillDate.isBefore(lastDayOfMonth) &&
+          nextBillDate.month == now.month;
     }).fold(0, (sum, subscription) => sum + subscription.amount);
 
     return CupertinoPageScaffold(
@@ -206,25 +214,29 @@ class HomeViewState extends State<HomeView> {
             ),
           ),
           Expanded(
-            child: sortedSubscriptions.isEmpty
-                ? _buildEmptyState()
-                : ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 85.0),
-                    itemCount: sortedSubscriptions.length,
-                    itemBuilder: (context, index) {
-                      return SubscriptionListComponent(
-                        subscription: sortedSubscriptions[index],
-                        onUpdate: _updateSubscription,
-                        onDelete: (deletedSubscription) {
-                          setState(() {
-                            Provider.of<SubscriptionProvider>(context, listen: false)
-                                .deleteSubscription(deletedSubscription);
-                            sortedSubscriptions = _sortSubscriptions(sortedSubscriptions);
-                          });
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : sortedSubscriptions.isEmpty
+                    ? _buildEmptyState()
+                    : ListView.builder(
+                        padding: const EdgeInsets.only(bottom: 85.0),
+                        itemCount: sortedSubscriptions.length,
+                        itemBuilder: (context, index) {
+                          return SubscriptionListComponent(
+                            subscription: sortedSubscriptions[index],
+                            onUpdate: _updateSubscription,
+                            onDelete: (deletedSubscription) {
+                              setState(() {
+                                Provider.of<SubscriptionProvider>(context,
+                                        listen: false)
+                                    .deleteSubscription(deletedSubscription);
+                                sortedSubscriptions =
+                                    _sortSubscriptions(sortedSubscriptions);
+                              });
+                            },
+                          );
                         },
-                      );
-                    },
-                  ),
+                      ),
           ),
         ],
       ),
@@ -303,5 +315,4 @@ class HomeViewState extends State<HomeView> {
       ),
     );
   }
-
 }

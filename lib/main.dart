@@ -1,5 +1,6 @@
 import 'package:easy_wallet/managers/data_migration_manager.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
+import 'package:easy_wallet/views/splash_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,10 +9,16 @@ import 'easy_wallet_app.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS)) {
-    await DataMigrationManager().migrateData();
-  }
+  runApp(const MaterialApp(
+    home: SplashScreen(),
+  ));
+  await Future.wait([
+    initializeSentry(),
+    DataMigrationManager().migrateData(),
+  ]);
+}
 
+Future<void> initializeSentry() async {
   await SentryFlutter.init(
     (options) {
       options.dsn = kDebugMode
@@ -22,7 +29,6 @@ Future<void> main() async {
     },
     appRunner: () async {
       final transaction = Sentry.startTransaction('mainInitialization', 'task');
-
       try {
         await processOrderBatch(transaction);
       } catch (exception) {
@@ -31,7 +37,6 @@ Future<void> main() async {
       } finally {
         await transaction.finish();
       }
-
       runApp(
         MultiProvider(
           providers: [
@@ -42,6 +47,12 @@ Future<void> main() async {
       );
     },
   );
+}
+
+Future<void> migrateData() async {
+  if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS)) {
+    await DataMigrationManager().migrateData();
+  }
 }
 
 Future<void> processOrderBatch(ISentrySpan span) async {
