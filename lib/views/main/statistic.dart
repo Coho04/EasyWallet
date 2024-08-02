@@ -11,6 +11,9 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/persistence_controller.dart';
 
+import '../../model/chartData.dart';
+import '../components/badge_component.dart';
+
 class StatisticView extends StatefulWidget {
   const StatisticView({super.key});
 
@@ -22,12 +25,13 @@ class StatisticViewState extends State<StatisticView> {
   double monthlyExpenses = 0.0;
   double yearlyExpenses = 0.0;
   List<Subscription> nextDueSubscriptions = [];
-  List<Subscription> allSubscriptions = [];
+  List<Subscription> subscriptions = [];
   int pinnedCount = 0;
   int unpinnedCount = 0;
   Map<String, Color> colorCache = {};
   int touchedIndex = -1;
   late Future<void> _initDataFuture;
+  int? _selectedSubscriptionId;
 
   @override
   void initState() {
@@ -37,7 +41,7 @@ class StatisticViewState extends State<StatisticView> {
 
   Future<void> _initializeData() async {
     await _loadStatistics();
-    await prefetchColors(allSubscriptions);
+    await prefetchColors(subscriptions);
   }
 
   Future<void> _loadStatistics() async {
@@ -70,7 +74,7 @@ class StatisticViewState extends State<StatisticView> {
     }
 
     setState(() {
-      allSubscriptions = subscriptions;
+      this.subscriptions = subscriptions;
       monthlyExpenses = totalMonthlyExpenses;
       yearlyExpenses = totalYearlyExpenses;
       this.pinnedCount = pinnedCount;
@@ -83,7 +87,9 @@ class StatisticViewState extends State<StatisticView> {
     final futures = <Future>[];
     for (var subscription in subscriptions) {
       String faviconUrl = subscription.getFaviconUrl();
-      futures.add(subscription.getDominantColorFromUrl(customUrl: faviconUrl).then((color) {
+      futures.add(subscription
+          .getDominantColorFromUrl(customUrl: faviconUrl)
+          .then((color) {
         colorCache[faviconUrl] = color;
       }).catchError((e) {
         colorCache[faviconUrl] = Colors.grey;
@@ -119,7 +125,7 @@ class StatisticViewState extends State<StatisticView> {
                           children: [
                             CardDetailRow(
                               label: Intl.message('numberOfSubscriptions'),
-                              value: '${allSubscriptions.length}',
+                              value: '${subscriptions.length}',
                             ),
                             CardDetailRow(
                               label:
@@ -169,11 +175,13 @@ class StatisticViewState extends State<StatisticView> {
                             ),
                           ],
                         ),
-                        if (allSubscriptions.isNotEmpty)
+                        if (subscriptions.isNotEmpty)
                           CardSection(
                             title: Intl.message('costShare'),
                             children: [
-                              buildPieChart(allSubscriptions),
+                              const SizedBox(height: 10),
+                              buildPieChart(subscriptions),
+                              const SizedBox(height: 20),
                               const Divider(),
                               CardActionButton(
                                 label: Intl.message('overview'),
@@ -185,8 +193,8 @@ class StatisticViewState extends State<StatisticView> {
                                       builder: (context) => ChartDetailPage(
                                         title: Intl.message('costShare'),
                                         pieChartData: buildPieChartSections(
-                                            allSubscriptions),
-                                        subscriptions: allSubscriptions,
+                                            subscriptions),
+                                        subscriptions: subscriptions,
                                       ),
                                     ),
                                   );
@@ -195,7 +203,7 @@ class StatisticViewState extends State<StatisticView> {
                               ),
                             ],
                           ),
-                        if (allSubscriptions.isNotEmpty)
+                        if (subscriptions.isNotEmpty)
                           CardSection(
                             title: Intl.message('yearlyVsMonthlyExpenses'),
                             subtitle:
@@ -214,7 +222,7 @@ class StatisticViewState extends State<StatisticView> {
                                         title: Intl.message(
                                             'yearlyVsMonthlyExpenses'),
                                         chartData: _makeYearlyToMonthlyData(),
-                                        subscriptions: allSubscriptions,
+                                        subscriptions: subscriptions,
                                       ),
                                     ),
                                   );
@@ -223,7 +231,7 @@ class StatisticViewState extends State<StatisticView> {
                               ),
                             ],
                           ),
-                        if (allSubscriptions.isNotEmpty)
+                        if (subscriptions.isNotEmpty)
                           CardSection(
                             title: Intl.message('pinnedVsUnpinned'),
                             children: [
@@ -239,7 +247,7 @@ class StatisticViewState extends State<StatisticView> {
                                       builder: (context) => ChartDetailPage(
                                         title: Intl.message('pinnedVsUnpinned'),
                                         chartData: _makePinnedData(),
-                                        subscriptions: allSubscriptions,
+                                        subscriptions: subscriptions,
                                       ),
                                     ),
                                   );
@@ -248,7 +256,7 @@ class StatisticViewState extends State<StatisticView> {
                               ),
                             ],
                           ),
-                        if (allSubscriptions.isNotEmpty)
+                        if (subscriptions.isNotEmpty)
                           CardSection(
                             title: Intl.message('pausedVsActive'),
                             children: [
@@ -264,7 +272,7 @@ class StatisticViewState extends State<StatisticView> {
                                       builder: (context) => ChartDetailPage(
                                         title: Intl.message('pausedVsActive'),
                                         chartData: _makePausedData(),
-                                        subscriptions: allSubscriptions,
+                                        subscriptions: subscriptions,
                                       ),
                                     ),
                                   );
@@ -317,7 +325,7 @@ class StatisticViewState extends State<StatisticView> {
 
   double calculateTotalSpentThisYear() {
     double totalExpenses = 0.0;
-    for (var subscription in allSubscriptions) {
+    for (var subscription in subscriptions) {
       if (subscription.isPaused) continue;
       if (subscription.repeatPattern == PaymentRate.monthly.value) {
         totalExpenses += subscription.amount * 12;
@@ -351,7 +359,7 @@ class StatisticViewState extends State<StatisticView> {
         title: '${percentage.toStringAsFixed(1)}%',
         titlePositionPercentageOffset: 0.65,
         radius: radius,
-        badgeWidget: _Badge(
+        badgeWidget: BadgeComponent(
             imageUrl: faviconUrl, size: widgetSize, subscription: subscription),
         badgePositionPercentageOffset: 1.25,
         titleStyle: TextStyle(
@@ -372,7 +380,7 @@ class StatisticViewState extends State<StatisticView> {
 
   double calculateExpensesSinceInstallation() {
     var amount = 0.0;
-    for (var subscription in allSubscriptions) {
+    for (var subscription in subscriptions) {
       int multiplier = subscription.countPayment();
       amount += (subscription.amount * multiplier);
     }
@@ -383,7 +391,7 @@ class StatisticViewState extends State<StatisticView> {
     double monthlyExpenses = 0.0;
     DateTime today = DateTime.now();
     DateTime endOfMonth = DateTime(today.year, today.month + 1, 0);
-    for (var subscription in allSubscriptions) {
+    for (var subscription in subscriptions) {
       if (subscription.date == null || subscription.isPaused) continue;
       DateTime? nextDueDate = getNextDueDate(subscription, today);
       if (nextDueDate == null) continue;
@@ -400,7 +408,7 @@ class StatisticViewState extends State<StatisticView> {
     DateTime today = DateTime.now();
     DateTime endOfYear = DateTime(today.year, 12, 31);
 
-    for (var subscription in allSubscriptions) {
+    for (var subscription in subscriptions) {
       if (subscription.isPaused) continue;
       DateTime nextDueDate = subscription.getNextBillDate();
       if (subscription.repeatPattern == PaymentRate.monthly.value) {
@@ -469,6 +477,7 @@ class StatisticViewState extends State<StatisticView> {
                   ),
                 ),
                 primaryYAxis: NumericAxis(
+                  majorGridLines: const MajorGridLines(width: 0),
                   labelStyle: TextStyle(
                     color: isDarkMode ? Colors.white : Colors.black,
                   ),
@@ -482,86 +491,58 @@ class StatisticViewState extends State<StatisticView> {
 
   List<CartesianSeries<ChartData, String>> _makeYearlyToMonthlyData() {
     List<CartesianSeries<ChartData, String>> seriesList = [];
-    double totalMonthlyAmount = allSubscriptions
-        .where((subscription) => subscription.repeatPattern == PaymentRate.monthly.value)
+    double totalMonthlyAmount = subscriptions
+        .where((subscription) =>
+            subscription.repeatPattern == PaymentRate.monthly.value)
         .fold(0.0, (sum, subscription) => sum + subscription.amount * 12);
 
-    double totalYearlyAmount = allSubscriptions
-        .where((subscription) => subscription.repeatPattern == PaymentRate.yearly.value)
+    double totalYearlyAmount = subscriptions
+        .where((subscription) =>
+            subscription.repeatPattern == PaymentRate.yearly.value)
         .fold(0.0, (sum, subscription) => sum + subscription.amount);
 
+    if (totalMonthlyAmount == 0 || totalYearlyAmount == 0) {
+      String placeholderCategory =
+          (totalMonthlyAmount == 0) ? 'monthly' : 'yearly';
+      seriesList.add(
+        buildPlaceholderSeries(placeholderCategory, stackedColumnSeries: true),
+      );
+    }
     double totalAmount = totalMonthlyAmount + totalYearlyAmount;
 
-    for (var subscription in allSubscriptions) {
+    for (var subscription in subscriptions) {
       String category = subscription.repeatPattern == PaymentRate.monthly.value
-          ? Intl.message('monthly')
-          : Intl.message('yearly');
+          ? 'monthly'
+          : 'yearly';
 
-      double actualAmount = subscription.repeatPattern == PaymentRate.monthly.value
-          ? subscription.amount * 12
-          : subscription.amount;
+      double actualAmount =
+          subscription.repeatPattern == PaymentRate.monthly.value
+              ? subscription.amount * 12
+              : subscription.amount;
 
       double percentage = (actualAmount / totalAmount) * 100;
 
-      Color? color = colorCache[subscription.getFaviconUrl()] ?? Colors.grey;
-      seriesList.add(
-        StackedColumnSeries<ChartData, String>(
-          dataSource: [ChartData(subscription.title, percentage, color)],
-          borderColor: Colors.black54,
-          borderWidth: 0.01,
-          dataLabelSettings: const DataLabelSettings(isVisible: false),
-          xValueMapper: (ChartData data, _) => category,
-          yValueMapper: (ChartData data, _) => data.value,
-          pointColorMapper: (ChartData data, _) => data.color,
-          name: subscription.title,
-        ),
-      );
+      seriesList.add(buildStackedColumn100Series(
+          subscription, category, percentage,
+          stackedColumnSeries: true));
     }
     return seriesList;
   }
 
-
   List<CartesianSeries<ChartData, String>> _makePinnedData() {
     List<CartesianSeries<ChartData, String>> seriesList = [];
-    bool hasPinned =
-        allSubscriptions.any((subscription) => subscription.isPinned);
+    var hasPinned = subscriptions.any((subscription) => subscription.isPinned);
     bool hasUnpinned =
-        allSubscriptions.any((subscription) => !subscription.isPinned);
-
+        subscriptions.any((subscription) => !subscription.isPinned);
     if (!hasPinned || !hasUnpinned) {
-      String placeholderCategory =
-          hasUnpinned ? Intl.message('pinned') : Intl.message('unpinned');
       seriesList.add(
-        StackedColumn100Series<ChartData, String>(
-          dataSource: [
-            ChartData(placeholderCategory, 0, CupertinoColors.systemGrey)
-          ],
-          dataLabelSettings: const DataLabelSettings(isVisible: false),
-          xValueMapper: (ChartData data, _) => data.label,
-          yValueMapper: (ChartData data, _) => data.value,
-          pointColorMapper: (ChartData data, _) => data.color,
-          name: placeholderCategory,
-        ),
+        buildPlaceholderSeries(hasUnpinned ? 'pinned' : 'unpinned'),
       );
     }
 
-    for (var subscription in allSubscriptions) {
-      String category = subscription.isPinned
-          ? Intl.message('pinned')
-          : Intl.message('unpinned');
-      Color? color = colorCache[subscription.getFaviconUrl()] ?? Colors.grey;
-      seriesList.add(
-        StackedColumn100Series<ChartData, String>(
-          dataSource: [ChartData(subscription.title, 1, color)],
-          borderColor: Colors.black54,
-          borderWidth: 0.01,
-          dataLabelSettings: const DataLabelSettings(isVisible: false),
-          xValueMapper: (ChartData data, _) => category,
-          yValueMapper: (ChartData data, _) => data.value,
-          pointColorMapper: (ChartData data, _) => data.color,
-          name: subscription.title,
-        ),
-      );
+    for (var subscription in subscriptions) {
+      seriesList.add(buildStackedColumn100Series(
+          subscription, subscription.isPinned ? 'pinned' : 'unpinned', 1));
     }
 
     return seriesList;
@@ -569,105 +550,95 @@ class StatisticViewState extends State<StatisticView> {
 
   List<CartesianSeries<ChartData, String>> _makePausedData() {
     List<CartesianSeries<ChartData, String>> seriesList = [];
-    bool hasActive =
-        allSubscriptions.any((subscription) => !subscription.isPaused);
-    bool hasPaused =
-        allSubscriptions.any((subscription) => subscription.isPaused);
+    var hasActive = subscriptions.any((subscription) => !subscription.isPaused);
+    var hasPaused = subscriptions.any((subscription) => subscription.isPaused);
 
-    if (hasActive && hasPaused) {
-      if (!hasActive) {
-        seriesList.add(
-          StackedColumn100Series<ChartData, String>(
-            dataSource: [
-              ChartData(Intl.message('active'), 0, CupertinoColors.systemGrey)
-            ],
-            dataLabelSettings: const DataLabelSettings(isVisible: false),
-            xValueMapper: (ChartData data, _) => data.label,
-            yValueMapper: (ChartData data, _) => data.value,
-            pointColorMapper: (ChartData data, _) => data.color,
-            name: Intl.message('active'),
-          ),
-        );
-      }
-      if (!hasPaused) {
-        seriesList.add(
-          StackedColumn100Series<ChartData, String>(
-            dataSource: [
-              ChartData(Intl.message('paused'), 0, CupertinoColors.systemGrey)
-            ],
-            dataLabelSettings: const DataLabelSettings(isVisible: false),
-            xValueMapper: (ChartData data, _) => data.label,
-            yValueMapper: (ChartData data, _) => data.value,
-            pointColorMapper: (ChartData data, _) => data.color,
-            name: Intl.message('paused'),
-          ),
-        );
-      }
-    }
-    for (var subscription in allSubscriptions) {
-      String category = subscription.isPaused
-          ? Intl.message('paused')
-          : Intl.message('active');
-      Color? color = colorCache[subscription.getFaviconUrl()] ?? Colors.grey;
+    if (!hasPaused || !hasActive) {
       seriesList.add(
-        StackedColumn100Series<ChartData, String>(
-          dataSource: [
-            ChartData(subscription.title, 1, color)
-          ],
-          borderColor: Colors.black54,
-          borderWidth: 0.01,
-          dataLabelSettings: const DataLabelSettings(isVisible: false),
-          xValueMapper: (ChartData data, _) => category,
-          yValueMapper: (ChartData data, _) => data.value,
-          pointColorMapper: (ChartData data, _) => data.color,
-          name: subscription.title,
-        ),
+        buildPlaceholderSeries(hasActive ? 'active' : 'paused'),
       );
+    }
+
+    for (var subscription in subscriptions) {
+      seriesList.add(buildStackedColumn100Series(
+          subscription, subscription.isPaused ? 'paused' : 'active', 1));
     }
     return seriesList;
   }
-}
 
-class _Badge extends StatelessWidget {
-  final String imageUrl;
-  final double size;
-  final Subscription subscription;
-
-  const _Badge(
-      {required this.imageUrl, required this.size, required this.subscription});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: CupertinoColors.black,
-          width: 2,
-        ),
-        boxShadow: const [
-          BoxShadow(
-            spreadRadius: 4,
-            offset: Offset(0, 0),
-            blurRadius: 3,
-          ),
-        ],
-      ),
-      child: ClipOval(
-        child: subscription.buildImage(
-            width: size, height: size, boxFit: BoxFit.cover, errorImgSize: 30),
-      ),
-    );
+  dynamic buildPlaceholderSeries(category, {bool stackedColumnSeries = false}) {
+    category = Intl.message(category);
+    return stackedColumnSeries
+        ? StackedColumnSeries<ChartData, String>(
+            dataSource: [ChartData(category, 0, CupertinoColors.systemGrey)],
+            dataLabelSettings: const DataLabelSettings(isVisible: false),
+            xValueMapper: (ChartData data, _) => data.label,
+            yValueMapper: (ChartData data, _) => data.value,
+            pointColorMapper: (ChartData data, _) => data.color,
+            name: category,
+          )
+        : StackedColumn100Series<ChartData, String>(
+            dataSource: [ChartData(category, 0, CupertinoColors.systemGrey)],
+            dataLabelSettings: const DataLabelSettings(isVisible: false),
+            xValueMapper: (ChartData data, _) => data.label,
+            yValueMapper: (ChartData data, _) => data.value,
+            pointColorMapper: (ChartData data, _) => data.color,
+            name: category,
+          );
   }
-}
 
-class ChartData {
-  final String label;
-  final dynamic value;
-  final Color color;
-
-  ChartData(this.label, this.value, this.color);
+  dynamic buildStackedColumn100Series(subscription, category, value,
+      {bool stackedColumnSeries = false}) {
+    Color? color = colorCache[subscription.getFaviconUrl()] ?? Colors.grey;
+    bool isSelected = _selectedSubscriptionId == subscription.id;
+    final commonSettings = {
+      'onPointTap': (ChartPointDetails point) {
+        setState(() {
+          if (_selectedSubscriptionId == subscription.id) {
+            _selectedSubscriptionId = null;
+          } else {
+            _selectedSubscriptionId = subscription.id;
+          }
+        });
+      },
+      'dataSource': [ChartData(subscription.title, value, color)],
+      'borderColor': Colors.black54,
+      'borderWidth': isSelected ? 2.0 : 0.5,
+      'opacity': _selectedSubscriptionId == null
+          ? 1.0
+          : isSelected
+              ? 1.0
+              : 0.7,
+      'dataLabelSettings': const DataLabelSettings(isVisible: false),
+      'xValueMapper': (ChartData data, _) => Intl.message(category),
+      'yValueMapper': (ChartData data, _) => data.value as num,
+      'pointColorMapper': (ChartData data, _) => data.color,
+      'name': subscription.title,
+    };
+    return stackedColumnSeries
+        ? StackedColumnSeries<ChartData, String>(
+            onPointTap: commonSettings['onPointTap'],
+            dataSource: commonSettings['dataSource'],
+            borderColor: commonSettings['borderColor'],
+            borderWidth: commonSettings['borderWidth'],
+            opacity: commonSettings['opacity'],
+            dataLabelSettings: commonSettings['dataLabelSettings'],
+            xValueMapper: commonSettings['xValueMapper'],
+            yValueMapper: commonSettings['yValueMapper'],
+            pointColorMapper: commonSettings['pointColorMapper'],
+            name: commonSettings['name'],
+          )
+        : StackedColumn100Series<ChartData, String>(
+            onPointTap: commonSettings['onPointTap'],
+            dataSource: commonSettings['dataSource'],
+            borderColor: commonSettings['borderColor'],
+            borderWidth: commonSettings['borderWidth'],
+            opacity: commonSettings['opacity'],
+            dataLabelSettings: commonSettings['dataLabelSettings'],
+            xValueMapper: commonSettings['xValueMapper'],
+            yValueMapper: commonSettings['yValueMapper'],
+            pointColorMapper: commonSettings['pointColorMapper'],
+            name: commonSettings['name'],
+          );
+  }
 }
