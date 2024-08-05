@@ -39,7 +39,7 @@ enum RememberCycle {
 
   static RememberCycle findByName(String name) {
     return RememberCycle.values.firstWhere(
-      (e) => e.name == name,
+      (e) => e.value == name,
       orElse: () => RememberCycle.dayBefore,
     );
   }

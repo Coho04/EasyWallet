@@ -457,9 +457,6 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         isPinned: false,
         repeating: true,
       );
-
-   //   final viewContext = PersistenceController.instance;
-      //viewContext.saveSubscription(newSubscription);
       Provider.of<SubscriptionProvider>(context, listen: false)
           .addSubscription(newSubscription);
       Navigator.of(context).pop();
