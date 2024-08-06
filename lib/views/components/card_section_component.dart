@@ -126,7 +126,7 @@ class CardDetailRow extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Text(
-              Intl.message('Loading...'),
+              Intl.message('loading'),
               style: EasyWalletApp.responsiveTextStyle(
                 16,
                 context,

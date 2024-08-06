@@ -960,7 +960,15 @@ class S {
     );
   }
 
-  // skipped getter for the 'Loading...' key
+  /// `Loading...`
+  String get loading {
+    return Intl.message(
+      'Loading...',
+      name: 'loading',
+      desc: '',
+      args: [],
+    );
+  }
 
   /// `Overview`
   String get overview {
@@ -1037,6 +1045,46 @@ class S {
     return Intl.message(
       'Monthly and annual expenditure relative to total expenditure',
       name: 'yearlyVsMonthlyExpensesSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please authenticate yourself to view your subscriptions`
+  String get pleaseAuthenticateYourselfToViewYourSubscriptions {
+    return Intl.message(
+      'Please authenticate yourself to view your subscriptions',
+      name: 'pleaseAuthenticateYourselfToViewYourSubscriptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Security`
+  String get security {
+    return Intl.message(
+      'Security',
+      name: 'security',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable authentication protection`
+  String get enableAuthProtection {
+    return Intl.message(
+      'Enable authentication protection',
+      name: 'enableAuthProtection',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please authenticate yourself to change this setting`
+  String get pleaseAuthenticateYourselfToChangeThisSetting {
+    return Intl.message(
+      'Please authenticate yourself to change this setting',
+      name: 'pleaseAuthenticateYourselfToChangeThisSetting',
       desc: '',
       args: [],
     );

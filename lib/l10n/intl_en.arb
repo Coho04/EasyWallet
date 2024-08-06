@@ -109,7 +109,7 @@
   "expenditureUntilTheEndOfTheMonth": "Expenses until the end of the month",
   "issuesOfMonthlySubscriptions": "Issues of monthly subscriptions",
   "issuesOfAnnualSubscriptions": "Issues of annual subscriptions",
-  "Loading...": "Loading...",
+  "loading": "Loading...",
   "overview": "Overview",
   "hint": "Hint",
   "noData": "No data",
@@ -117,5 +117,9 @@
   "remainingCosts": "Remaining costs",
   "costShare": "Cost share",
   "deletionIsNotSupportedOnTheWeb": "Deletion is not supported on the web",
-  "yearlyVsMonthlyExpensesSubtitle": "Monthly and annual expenditure relative to total expenditure"
+  "yearlyVsMonthlyExpensesSubtitle": "Monthly and annual expenditure relative to total expenditure",
+  "pleaseAuthenticateYourselfToViewYourSubscriptions": "Please authenticate yourself to view your subscriptions",
+  "security": "Security",
+  "enableAuthProtection": "Enable authentication protection",
+  "pleaseAuthenticateYourselfToChangeThisSetting": "Please authenticate yourself to change this setting"
 }
