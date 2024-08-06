@@ -65,6 +65,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "done": MessageLookupByLibrary.simpleMessage("Fertig"),
         "editSubscription":
             MessageLookupByLibrary.simpleMessage("Abonnement bearbeiten"),
+        "enableAuthProtection": MessageLookupByLibrary.simpleMessage(
+            "Authentifizierungsschutz aktivieren"),
         "enableNotifications": MessageLookupByLibrary.simpleMessage(
             "Benachrichtigungen aktivieren"),
         "enterMonthlyLimit":
@@ -98,6 +100,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Ausgaben der Jährlichen Abonnements"),
         "issuesOfMonthlySubscriptions": MessageLookupByLibrary.simpleMessage(
             "Ausgaben der Monatlichen Abonnements"),
+        "loading": MessageLookupByLibrary.simpleMessage("Laden..."),
         "month": MessageLookupByLibrary.simpleMessage("Monat"),
         "monthly": MessageLookupByLibrary.simpleMessage("Monatlich"),
         "monthlyExpenses":
@@ -131,6 +134,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "pinned": MessageLookupByLibrary.simpleMessage("Gepinnt"),
         "pinnedVsUnpinned":
             MessageLookupByLibrary.simpleMessage("Gepinnt vs Nicht Gepinnt"),
+        "pleaseAuthenticateYourselfToChangeThisSetting":
+            MessageLookupByLibrary.simpleMessage(
+                "Bitte authentifizieren Sie sich, um diese Einstellung zu ändern"),
+        "pleaseAuthenticateYourselfToViewYourSubscriptions":
+            MessageLookupByLibrary.simpleMessage(
+                "Bitte authentifizieren Sie sich, um Ihre Abonnements anzuzeigen"),
         "previousDebits":
             MessageLookupByLibrary.simpleMessage("Vorherige Lastschriften"),
         "previousInvoice":
@@ -145,6 +154,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "sameDay": MessageLookupByLibrary.simpleMessage("Am selben Tag"),
         "save": MessageLookupByLibrary.simpleMessage("Speichern"),
         "search": MessageLookupByLibrary.simpleMessage("Suche"),
+        "security": MessageLookupByLibrary.simpleMessage("Sicherheit"),
         "selectCurrency":
             MessageLookupByLibrary.simpleMessage("Währung auswählen"),
         "settings": MessageLookupByLibrary.simpleMessage("Einstellungen"),

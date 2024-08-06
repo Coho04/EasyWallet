@@ -64,6 +64,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "done": MessageLookupByLibrary.simpleMessage("Done"),
         "editSubscription":
             MessageLookupByLibrary.simpleMessage("Edit subscription"),
+        "enableAuthProtection": MessageLookupByLibrary.simpleMessage(
+            "Enable authentication protection"),
         "enableNotifications":
             MessageLookupByLibrary.simpleMessage("Enable Notifications"),
         "enterMonthlyLimit":
@@ -97,6 +99,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Issues of annual subscriptions"),
         "issuesOfMonthlySubscriptions": MessageLookupByLibrary.simpleMessage(
             "Issues of monthly subscriptions"),
+        "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
         "month": MessageLookupByLibrary.simpleMessage("month"),
         "monthly": MessageLookupByLibrary.simpleMessage("Monthly"),
         "monthlyExpenses":
@@ -128,6 +131,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "pinned": MessageLookupByLibrary.simpleMessage("Pinned"),
         "pinnedVsUnpinned":
             MessageLookupByLibrary.simpleMessage("Pinned vs Unpinned"),
+        "pleaseAuthenticateYourselfToChangeThisSetting":
+            MessageLookupByLibrary.simpleMessage(
+                "Please authenticate yourself to change this setting"),
+        "pleaseAuthenticateYourselfToViewYourSubscriptions":
+            MessageLookupByLibrary.simpleMessage(
+                "Please authenticate yourself to view your subscriptions"),
         "previousDebits":
             MessageLookupByLibrary.simpleMessage("Previous debits"),
         "previousInvoice":
@@ -142,6 +151,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "sameDay": MessageLookupByLibrary.simpleMessage("Same Day"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "search": MessageLookupByLibrary.simpleMessage("Search"),
+        "security": MessageLookupByLibrary.simpleMessage("Security"),
         "selectCurrency":
             MessageLookupByLibrary.simpleMessage("Select Currency"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
