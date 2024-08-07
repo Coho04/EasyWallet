@@ -1,7 +1,5 @@
-import 'dart:io';
 import 'package:easy_wallet/managers/data_migration_manager.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
-import 'package:easy_wallet/views/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
@@ -13,28 +11,12 @@ import 'easy_wallet_app.dart';
 import 'package:local_auth/local_auth.dart';
 
 void main() async {
-  runApp(const CupertinoApp(
-    home: SplashScreen(),
-  ));
-
   WidgetsFlutterBinding.ensureInitialized();
-
-  bool shouldAuthenticate = await checkAuthenticationSetting();
-
-  if (shouldAuthenticate) {
-    bool isAuthenticated = await authenticateWithBiometrics();
-    if (!isAuthenticated) {
-      exit(0);
-    }
-  }
-
-  await Future.wait([
-    initializeSentry(),
-    DataMigrationManager().migrateData(),
-  ]);
+  initializeSentry();
+  DataMigrationManager().migrateData();
 }
 
-Future<void> initializeSentry() async {
+void initializeSentry() async {
   await SentryFlutter.init(
         (options) {
       options.dsn = kDebugMode
@@ -56,7 +38,7 @@ Future<void> initializeSentry() async {
   );
 }
 
-Future<void> migrateData() async {
+void migrateData() async {
   if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS)) {
     await DataMigrationManager().migrateData();
   }
