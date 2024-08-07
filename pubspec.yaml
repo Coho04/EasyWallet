@@ -39,7 +39,7 @@ dependencies:
   cached_network_image: ^3.2.1
   fl_chart: ^0.68.0
   timezone: ^0.9.4
-  shared_preferences: ^2.0.6
+  shared_preferences: ^2.3.1
   universal_io: ^2.0.4
   syncfusion_flutter_charts: ^26.2.8
   url_launcher: ^6.3.0
