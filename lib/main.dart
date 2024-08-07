@@ -12,7 +12,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'easy_wallet_app.dart';
 import 'package:local_auth/local_auth.dart';
 
-Future<void> main() async {
+void main() async {
+  runApp(const CupertinoApp(
+    home: SplashScreen(),
+  ));
+
   WidgetsFlutterBinding.ensureInitialized();
 
   bool shouldAuthenticate = await checkAuthenticationSetting();
@@ -23,10 +27,6 @@ Future<void> main() async {
       exit(0);
     }
   }
-
-  runApp(const CupertinoApp(
-    home: SplashScreen(),
-  ));
 
   await Future.wait([
     initializeSentry(),
@@ -86,7 +86,7 @@ Future<bool> authenticateWithBiometrics() async {
   try {
     canAuthenticate =
         await auth.canCheckBiometrics || await auth.isDeviceSupported();
-  } on PlatformException catch (e) {
+  } on PlatformException {
     return false;
   }
 
@@ -114,7 +114,7 @@ Future<bool> authenticateWithBiometrics() async {
       ),
     );
     return didAuthenticate;
-  } on PlatformException catch (e) {
+  } on PlatformException {
     return false;
   }
 }
