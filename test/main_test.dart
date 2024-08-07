@@ -19,7 +19,7 @@ void main_test() {
       // Füge hier weitere Mock-Initialisierungen hinzu, falls erforderlich
 
       // Führe die main Funktion aus
-      await main();
+      main();
 
       // Überprüfen, ob die runApp Methode aufgerufen wurde
       expect(find.byType(MultiProvider), findsOneWidget);

@@ -343,9 +343,13 @@ class SettingsViewState extends State<SettingsView> {
               ),
               children: [
                 CupertinoFormRow(
-                  prefix: Text(
-                    Intl.message('enableAuthProtection'),
-                    style: EasyWalletApp.responsiveTextStyle(16, context, color: textColor),
+                  prefix: Expanded(
+                    child: Text(
+                      Intl.message('enableAuthProtection'),
+                      style: EasyWalletApp.responsiveTextStyle(16, context, color: textColor),
+                      softWrap: true,
+                      maxLines: null,
+                    ),
                   ),
                   child: CupertinoSwitch(
                     value: isAuthProtected,
