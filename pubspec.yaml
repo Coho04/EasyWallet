@@ -48,7 +48,7 @@ dependencies:
   sentry_flutter: ^8.5.0
   http: ^0.13.3
   image: ^4.0.15
-  local_auth: ^2.2.0
+  local_auth: ^2.3.0
   palette_generator: ^0.3.3+4
   flutter_localizations:
     sdk: flutter
