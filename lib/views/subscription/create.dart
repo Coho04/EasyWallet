@@ -10,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:easy_wallet/persistence_controller.dart';
 import 'package:provider/provider.dart';
 
 class SubscriptionCreateView extends StatefulWidget {
@@ -55,18 +54,12 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
       navigationBar: CupertinoNavigationBar(
         middle: Text(
           Intl.message('addSubscription'),
-          style: EasyWalletApp.responsiveTextStyle(20, context),
+          style: EasyWalletApp.responsiveTextStyle(24, context),
         ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _saveItem,
-          child: Text(
-            Intl.message('save'),
-            style: EasyWalletApp.responsiveTextStyle(16, context,
-                color: isDarkMode
-                    ? CupertinoColors.white
-                    : CupertinoColors.activeBlue),
-          ),
+          child: const Icon(CupertinoIcons.floppy_disk),
         ),
       ),
       child: SafeArea(
@@ -146,8 +139,11 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
       keyboardType: keyboardType,
       autocorrect: autocorrect,
       onChanged: onChanged,
-      style: TextStyle(
-          color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+      style: EasyWalletApp.responsiveTextStyle(
+        16,
+        context,
+        color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+      ),
       decoration: BoxDecoration(
         color: isDarkMode
             ? CupertinoColors.darkBackgroundGray
@@ -178,9 +174,11 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
           child: CupertinoTextField(
             controller: _titleController,
             placeholder: Intl.message('title'),
-            style: TextStyle(
-                color:
-                    isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+            style: EasyWalletApp.responsiveTextStyle(
+              16,
+              context,
+              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+            ),
             decoration: BoxDecoration(
               color: isDarkMode
                   ? CupertinoColors.darkBackgroundGray

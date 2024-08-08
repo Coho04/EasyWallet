@@ -20,7 +20,6 @@ class HomeView extends StatefulWidget {
 class HomeViewState extends State<HomeView> {
   String searchText = "";
   SortOption sortOption = SortOption.remainingDaysAscending;
-  List<Subscription> sortedSubscriptions = [];
   bool _isLoading = true;
 
   @override
@@ -35,23 +34,21 @@ class HomeViewState extends State<HomeView> {
           .loadSubscriptions();
     } finally {
       setState(() {
-        sortedSubscriptions = _sortSubscriptions(
-            Provider.of<SubscriptionProvider>(context, listen: false)
-                .subscriptions);
         _isLoading = false;
       });
     }
   }
 
-  void _updateSubscription(Subscription updatedSubscription) {
-    setState(() {
-      _loadAndSortSubscriptions();
-    });
-  }
+  // void _updateSubscription(Subscription updatedSubscription) {
+  //   setState(() {
+  //     _loadAndSortSubscriptions();
+  //   });
+  // }
+
 
   List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
     List<Subscription> filteredSubscriptions =
-        subscriptions.where((subscription) {
+    subscriptions.where((subscription) {
       return subscription.title
           .toLowerCase()
           .contains(searchText.toLowerCase());
@@ -83,12 +80,12 @@ class HomeViewState extends State<HomeView> {
     return filteredSubscriptions;
   }
 
-  double calculateYearlySpent() {
+  double calculateYearlySpent(List<Subscription> subscriptions) {
     final now = DateTime.now();
     final lastDayOfYear = DateTime(now.year, 12, 31);
     double yearlySpent = 0.0;
 
-    for (var subscription in sortedSubscriptions) {
+    for (var subscription in subscriptions) {
       if (subscription.isPaused) continue;
       DateTime nextBillDate = subscription.getNextBillDate();
       if (subscription.repeatPattern == PaymentRate.yearly.value) {
@@ -98,7 +95,7 @@ class HomeViewState extends State<HomeView> {
         }
       } else if (subscription.repeatPattern == PaymentRate.monthly.value) {
         while (
-            nextBillDate.isBefore(lastDayOfYear.add(const Duration(days: 1)))) {
+        nextBillDate.isBefore(lastDayOfYear.add(const Duration(days: 1)))) {
           yearlySpent += subscription.amount;
           nextBillDate = DateTime(
               nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
@@ -110,136 +107,140 @@ class HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    final subscriptions =
-        Provider.of<SubscriptionProvider>(context).subscriptions;
+    return Consumer<SubscriptionProvider>(
+      builder: (context, subscriptionProvider, child) {
+        final subscriptions = subscriptionProvider.subscriptions;
+        final sortedSubscriptions = _sortSubscriptions(subscriptions);
 
-    double monthlySpent = sortedSubscriptions.where((subscription) {
-      if (subscription.isPaused) return false;
-      final now = DateTime.now();
-      DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
-      DateTime nextBillDate = subscription.getNextBillDate();
-      return nextBillDate.isBefore(lastDayOfMonth) &&
-          nextBillDate.month == now.month;
-    }).fold(0, (sum, subscription) => sum + subscription.amount);
+        double monthlySpent = sortedSubscriptions.where((subscription) {
+          if (subscription.isPaused) return false;
+          final now = DateTime.now();
+          DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+          DateTime nextBillDate = subscription.getNextBillDate();
+          return nextBillDate.isBefore(lastDayOfMonth) &&
+              nextBillDate.month == now.month;
+        }).fold(0, (sum, subscription) => sum + subscription.amount);
 
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Column(
-          children: [
-            SizedBox(
-              height: 36,
-              child: CupertinoSearchTextField(
-                placeholder: Intl.message('search'),
-                onChanged: (value) {
-                  setState(() {
-                    searchText = value;
-                    sortedSubscriptions = _sortSubscriptions(subscriptions);
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
-        leading: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: () => _showSortOptions(context),
-          child: const Icon(CupertinoIcons.arrow_up_arrow_down,
-              color: CupertinoColors.activeBlue),
-        ),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: () {
-            Navigator.push(
-              context,
-              CupertinoPageRoute(
-                builder: (context) => const SubscriptionCreateView(),
-              ),
-            ).then((value) {
-              _loadAndSortSubscriptions();
-            });
-          },
-          child:
-              const Icon(CupertinoIcons.add, color: CupertinoColors.activeBlue),
-        ),
-      ),
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 100,
-            child: Center(
-              child: Text(
-                Intl.message('subscriptions'),
-                style:
-                    EasyWalletApp.responsiveTextStyle(16, context, bold: true),
-              ),
-            ),
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return CupertinoPageScaffold(
+          navigationBar: CupertinoNavigationBar(
+            middle: Column(
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      Intl.message('outstandingExpenditureMonth'),
-                      style: EasyWalletApp.responsiveTextStyle(15, context,
-                          color: CupertinoColors.systemGrey),
-                    ),
-                    Text(
-                      '${monthlySpent.toStringAsFixed(2)} €',
-                      style: EasyWalletApp.responsiveTextStyle(16, context,
-                          bold: true),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      Intl.message('openExpenditureYear'),
-                      style: EasyWalletApp.responsiveTextStyle(15, context,
-                          color: CupertinoColors.systemGrey),
-                    ),
-                    Text(
-                      '${calculateYearlySpent().toStringAsFixed(2)} €',
-                      style: EasyWalletApp.responsiveTextStyle(16, context,
-                          bold: true),
-                    ),
-                  ],
+                SizedBox(
+                  height: 36,
+                  child: CupertinoSearchTextField(
+                    placeholder: Intl.message('search'),
+                    onChanged: (value) {
+                      setState(() {
+                        searchText = value;
+                        _sortSubscriptions(subscriptions);
+                      });
+                    },
+                  ),
                 ),
               ],
             ),
+            leading: CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () => _showSortOptions(context),
+              child: const Icon(CupertinoIcons.arrow_up_arrow_down,
+                  color: CupertinoColors.activeBlue),
+            ),
+            trailing: CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) => const SubscriptionCreateView(),
+                  ),
+                ).then((value) {
+                  _loadAndSortSubscriptions();
+                });
+              },
+              child: const Icon(CupertinoIcons.add,
+                  color: CupertinoColors.activeBlue),
+            ),
           ),
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : sortedSubscriptions.isEmpty
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 100,
+                child: Center(
+                  child: Text(
+                    Intl.message('subscriptions'),
+                    style: EasyWalletApp.responsiveTextStyle(16, context,
+                        bold: true),
+                  ),
+                ),
+              ),
+              Padding(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          Intl.message('outstandingExpenditureMonth'),
+                          style: EasyWalletApp.responsiveTextStyle(15, context,
+                              color: CupertinoColors.systemGrey),
+                        ),
+                        Text(
+                          '${monthlySpent.toStringAsFixed(2)} €',
+                          style: EasyWalletApp.responsiveTextStyle(16, context,
+                              bold: true),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          Intl.message('openExpenditureYear'),
+                          style: EasyWalletApp.responsiveTextStyle(15, context,
+                              color: CupertinoColors.systemGrey),
+                        ),
+                        Text(
+                          '${calculateYearlySpent(sortedSubscriptions).toStringAsFixed(2)} €',
+                          style: EasyWalletApp.responsiveTextStyle(16, context,
+                              bold: true),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : sortedSubscriptions.isEmpty
                     ? _buildEmptyState()
                     : ListView.builder(
-                        padding: const EdgeInsets.only(bottom: 85.0),
-                        itemCount: sortedSubscriptions.length,
-                        itemBuilder: (context, index) {
-                          return SubscriptionListComponent(
-                            subscription: sortedSubscriptions[index],
-                            onUpdate: _updateSubscription,
-                            onDelete: (deletedSubscription) {
-                              setState(() {
-                                Provider.of<SubscriptionProvider>(context,
-                                        listen: false)
-                                    .deleteSubscription(deletedSubscription);
-                                sortedSubscriptions =
-                                    _sortSubscriptions(sortedSubscriptions);
-                              });
-                            },
-                          );
-                        },
-                      ),
+                  padding: const EdgeInsets.only(bottom: 85.0),
+                  itemCount: sortedSubscriptions.length,
+                  itemBuilder: (context, index) {
+                    return SubscriptionListComponent(
+                      subscription: sortedSubscriptions[index],
+                      onUpdate: (updatedSubscription) {
+                      },
+                      onDelete: (deletedSubscription) {
+                        setState(() {
+                          Provider.of<SubscriptionProvider>(context,
+                              listen: false)
+                              .deleteSubscription(deletedSubscription);
+                          _sortSubscriptions(sortedSubscriptions);
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -296,7 +297,7 @@ class HomeViewState extends State<HomeView> {
               onPressed: () {
                 setState(() {
                   sortOption = option;
-                  sortedSubscriptions = _sortSubscriptions(
+                  _sortSubscriptions(
                       Provider.of<SubscriptionProvider>(context, listen: false)
                           .subscriptions);
                 });

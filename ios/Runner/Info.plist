@@ -70,5 +70,9 @@
 	</array>
 	<key>NSFaceIDUsageDescription</key>
     <string>This app requires Face ID to protect access to your subscriptions.</string>
+    <key>UISupportsDocumentBrowser</key>
+    <true/>
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <true/>
 </dict>
 </plist>

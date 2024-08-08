@@ -9,6 +9,7 @@ class SubscriptionProvider with ChangeNotifier {
 
   Future<void> loadSubscriptions() async {
     _subscriptions = await PersistenceController.instance.getAllSubscriptions();
+    debugPrint('Loaded ${_subscriptions.length} subscriptions');
     notifyListeners();
   }
 

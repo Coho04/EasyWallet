@@ -24,6 +24,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "OK": MessageLookupByLibrary.simpleMessage("OK"),
         "actions": MessageLookupByLibrary.simpleMessage("Aktionen"),
         "active": MessageLookupByLibrary.simpleMessage("Aktiv"),
         "addNewSubscription":
@@ -52,6 +53,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "Konnte nicht gestartet werden"),
         "createdOn": MessageLookupByLibrary.simpleMessage("Erstellt am"),
         "currency": MessageLookupByLibrary.simpleMessage("Währung"),
+        "dataExportedSuccessfully": MessageLookupByLibrary.simpleMessage(
+            "Daten erfolgreich exportiert."),
+        "dataImportedFailed":
+            MessageLookupByLibrary.simpleMessage("Datenimport fehlgeschlagen."),
+        "dataImportedSuccessfully": MessageLookupByLibrary.simpleMessage(
+            "Daten erfolgreich importiert."),
+        "dataManagement":
+            MessageLookupByLibrary.simpleMessage("Datenverwaltung"),
         "dayBefore": MessageLookupByLibrary.simpleMessage("Einen Tag vorher"),
         "days": MessageLookupByLibrary.simpleMessage("Tage"),
         "daysRemainingAscending": MessageLookupByLibrary.simpleMessage(
@@ -85,12 +94,16 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Ausgaben diesen Monat"),
         "expensesThisYear":
             MessageLookupByLibrary.simpleMessage("Ausgaben dieses Jahr"),
+        "export": MessageLookupByLibrary.simpleMessage("Exportieren"),
+        "exportData": MessageLookupByLibrary.simpleMessage("Daten exportieren"),
         "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
         "firstDebit": MessageLookupByLibrary.simpleMessage("Erste Lastschrift"),
         "generalInformation":
             MessageLookupByLibrary.simpleMessage("Allgemeine Informationen"),
         "help": MessageLookupByLibrary.simpleMessage("Hilfe"),
         "hint": MessageLookupByLibrary.simpleMessage("Hinweis"),
+        "import": MessageLookupByLibrary.simpleMessage("Importieren"),
+        "importData": MessageLookupByLibrary.simpleMessage("Daten importieren"),
         "imprint": MessageLookupByLibrary.simpleMessage("Impressum"),
         "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
             "Kosten in Benachrichtigungen anzeigen"),
@@ -128,7 +141,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "paused": MessageLookupByLibrary.simpleMessage("Pausiert"),
         "pausedVsActive":
             MessageLookupByLibrary.simpleMessage("Pausiert vs Aktiv"),
-        "paymentRate": MessageLookupByLibrary.simpleMessage("Bezahlrate"),
+        "paymentRate": MessageLookupByLibrary.simpleMessage("Zyklus"),
         "pinSubscription":
             MessageLookupByLibrary.simpleMessage("Dieses Abonnement anheften"),
         "pinned": MessageLookupByLibrary.simpleMessage("Gepinnt"),
@@ -158,6 +171,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "selectCurrency":
             MessageLookupByLibrary.simpleMessage("Währung auswählen"),
         "settings": MessageLookupByLibrary.simpleMessage("Einstellungen"),
+        "settingsAuthFailed": MessageLookupByLibrary.simpleMessage(
+            "Authentifizierung fehlgeschlagen. Einstellung wurde nicht geändert.."),
         "sortOptions":
             MessageLookupByLibrary.simpleMessage("Sortierungsoptionen"),
         "startDate": MessageLookupByLibrary.simpleMessage("Startdatum"),

@@ -112,14 +112,12 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       navigationBar: CupertinoNavigationBar(
         middle: Text(
           Intl.message('editSubscription'),
-          style: EasyWalletApp.responsiveTextStyle(20, context),
+          style: EasyWalletApp.responsiveTextStyle(24, context),
         ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _saveItem,
-          child: Text(Intl.message('save'),
-              style: EasyWalletApp.responsiveTextStyle(16, context,
-                  color: CupertinoColors.activeBlue)),
+          child: const Icon(CupertinoIcons.floppy_disk),
         ),
       ),
       child: SafeArea(
@@ -197,9 +195,11 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
           child: CupertinoTextField(
             controller: _titleController,
             placeholder: Intl.message('title'),
-            style: TextStyle(
-                color:
-                    isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+            style: EasyWalletApp.responsiveTextStyle(
+              16,
+              context,
+              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+            ),
             decoration: BoxDecoration(
               color: isDarkMode
                   ? CupertinoColors.darkBackgroundGray
@@ -253,8 +253,11 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       placeholder: placeholder,
       keyboardType: keyboardType,
       onChanged: onChanged,
-      style: TextStyle(
-          color: isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+      style: EasyWalletApp.responsiveTextStyle(
+        16,
+        context,
+        color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+      ),
       decoration: BoxDecoration(
         color: isDarkMode
             ? CupertinoColors.darkBackgroundGray
@@ -280,9 +283,11 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
             controller: _amountController,
             placeholder: Intl.message('Costs'),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            style: TextStyle(
-                color:
-                    isDarkMode ? CupertinoColors.white : CupertinoColors.black),
+            style: EasyWalletApp.responsiveTextStyle(
+              16,
+              context,
+              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+            ),
             decoration: BoxDecoration(
               color: isDarkMode
                   ? CupertinoColors.darkBackgroundGray

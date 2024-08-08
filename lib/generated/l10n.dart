@@ -1089,6 +1089,106 @@ class S {
       args: [],
     );
   }
+
+  /// `Data Management`
+  String get dataManagement {
+    return Intl.message(
+      'Data Management',
+      name: 'dataManagement',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export Data`
+  String get exportData {
+    return Intl.message(
+      'Export Data',
+      name: 'exportData',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import Data`
+  String get importData {
+    return Intl.message(
+      'Import Data',
+      name: 'importData',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data exported successfully.`
+  String get dataExportedSuccessfully {
+    return Intl.message(
+      'Data exported successfully.',
+      name: 'dataExportedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data imported successfully.`
+  String get dataImportedSuccessfully {
+    return Intl.message(
+      'Data imported successfully.',
+      name: 'dataImportedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Data imported failed.`
+  String get dataImportedFailed {
+    return Intl.message(
+      'Data imported failed.',
+      name: 'dataImportedFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Authentication failed. Setting was not changed.`
+  String get settingsAuthFailed {
+    return Intl.message(
+      'Authentication failed. Setting was not changed.',
+      name: 'settingsAuthFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export`
+  String get export {
+    return Intl.message(
+      'Export',
+      name: 'export',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import`
+  String get import {
+    return Intl.message(
+      'Import',
+      name: 'import',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `OK`
+  String get OK {
+    return Intl.message(
+      'OK',
+      name: 'OK',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:easy_wallet/views/main/main.dart';
-import 'package:easy_wallet/views/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
