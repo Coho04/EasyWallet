@@ -20,11 +20,11 @@ class EasyWalletApp extends StatefulWidget {
   EasyWalletAppState createState() => EasyWalletAppState();
 
   static TextStyle responsiveTextStyle(
-      double baseSize,
-      BuildContext context, {
-        bool bold = false,
-        Color? color,
-      }) {
+    double baseSize,
+    BuildContext context, {
+    bool bold = false,
+    Color? color,
+  }) {
     return TextStyle(
       fontSize: baseSize / MediaQuery.of(context).textScaleFactor,
       fontWeight: bold ? FontWeight.bold : null,
@@ -33,7 +33,8 @@ class EasyWalletApp extends StatefulWidget {
   }
 }
 
-class EasyWalletAppState extends State<EasyWalletApp> with WidgetsBindingObserver {
+class EasyWalletAppState extends State<EasyWalletApp>
+    with WidgetsBindingObserver {
   bool _isLoading = true;
   bool _shouldAuthenticate = false;
   bool _isAuthenticating = false;
@@ -66,7 +67,9 @@ class EasyWalletAppState extends State<EasyWalletApp> with WidgetsBindingObserve
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (state == AppLifecycleState.resumed && _shouldAuthenticate && !_isAuthenticating) {
+    if (state == AppLifecycleState.resumed &&
+        _shouldAuthenticate &&
+        !_isAuthenticating) {
       _shouldAuthenticate = false;
       _isAuthenticating = true;
       setState(() {
@@ -119,7 +122,7 @@ class EasyWalletAppState extends State<EasyWalletApp> with WidgetsBindingObserve
 
     try {
       final List<BiometricType> availableBiometrics =
-      await auth.getAvailableBiometrics();
+          await auth.getAvailableBiometrics();
       if (availableBiometrics.isEmpty) {
         return false;
       }
@@ -130,7 +133,7 @@ class EasyWalletAppState extends State<EasyWalletApp> with WidgetsBindingObserve
 
       final bool didAuthenticate = await auth.authenticate(
         localizedReason:
-        Intl.message('pleaseAuthenticateYourselfToViewYourSubscriptions'),
+            Intl.message('pleaseAuthenticateYourselfToViewYourSubscriptions'),
         options: const AuthenticationOptions(
           biometricOnly: true,
           useErrorDialogs: true,

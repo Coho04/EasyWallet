@@ -20,6 +20,7 @@ class SettingsViewState extends State<SettingsView> {
   bool notificationsEnabled = true;
   bool includeCostInNotifications = false;
   bool isAuthProtected = false;
+  bool syncWithICloud = false; // Add this line
   DateTime notificationTime = DateTime.now();
   String currency = Currency.USD.name;
   double monthlyLimit = 0.0;
@@ -38,6 +39,7 @@ class SettingsViewState extends State<SettingsView> {
       includeCostInNotifications =
           prefs.getBool('includeCostInNotifications') ?? false;
       isAuthProtected = prefs.getBool('require_authentication') ?? false;
+      syncWithICloud = prefs.getBool('syncWithICloud') ?? false;
       currency = prefs.getString('currency') ?? "USD";
       monthlyLimit = prefs.getDouble('monthlyLimit') ?? 0.0;
       final notificationTimeString = prefs.getString('notificationTime');
@@ -59,6 +61,7 @@ class SettingsViewState extends State<SettingsView> {
     prefs.setBool('notificationsEnabled', notificationsEnabled);
     prefs.setBool('includeCostInNotifications', includeCostInNotifications);
     prefs.setBool('require_authentication', isAuthProtected);
+    prefs.setBool('syncWithICloud', syncWithICloud);
     prefs.setString('currency', currency);
     prefs.setDouble('monthlyLimit', monthlyLimit);
     prefs.setString('notificationTime',
@@ -69,7 +72,7 @@ class SettingsViewState extends State<SettingsView> {
     try {
       final bool authenticated = await auth.authenticate(
         localizedReason:
-            Intl.message('pleaseAuthenticateYourselfToChangeThisSetting'),
+        Intl.message('pleaseAuthenticateYourselfToChangeThisSetting'),
         options: const AuthenticationOptions(
           biometricOnly: true,
           useErrorDialogs: true,
@@ -126,6 +129,18 @@ class SettingsViewState extends State<SettingsView> {
       notificationsEnabled = isEnabled;
     });
     _saveSettings();
+  }
+
+  void _handleICloudToggle(bool isEnabled) {
+    setState(() {
+      syncWithICloud = isEnabled;
+    });
+    _saveSettings();
+  }
+
+  void _syncWithICloud() async {
+    await PersistenceController.instance.syncToICloud();
+    await PersistenceController.instance.syncFromICloud();
   }
 
   Future<void> _openWebPage(String url) async {
@@ -251,7 +266,7 @@ class SettingsViewState extends State<SettingsView> {
 
   Future<void> _enterMonthlyLimit(BuildContext context) async {
     final TextEditingController limitController =
-        TextEditingController(text: monthlyLimit.toString());
+    TextEditingController(text: monthlyLimit.toString());
     await showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) {
@@ -305,18 +320,18 @@ class SettingsViewState extends State<SettingsView> {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     final backgroundColor =
-        isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.white;
+    isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.white;
     final textColor =
-        isDarkMode ? CupertinoColors.white : CupertinoColors.black;
+    isDarkMode ? CupertinoColors.white : CupertinoColors.black;
     final sectionHeaderColor =
-        isDarkMode ? CupertinoColors.inactiveGray : CupertinoColors.systemGrey;
+    isDarkMode ? CupertinoColors.inactiveGray : CupertinoColors.systemGrey;
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text(
           Intl.message('settings'),
           style:
-              EasyWalletApp.responsiveTextStyle(24, context, color: textColor),
+          EasyWalletApp.responsiveTextStyle(24, context, color: textColor),
         ),
         backgroundColor: backgroundColor,
       ),
@@ -454,96 +469,26 @@ class SettingsViewState extends State<SettingsView> {
               ),
               children: [
                 CupertinoFormRow(
-                  padding: const EdgeInsets.all(16),
-                  child: GestureDetector(
-                    onTap: () async {
-                      await PersistenceController.instance.exportSubscriptions();
-                      showCupertinoDialog(
-                        context: context,
-                        builder: (context) {
-                          return CupertinoAlertDialog(
-                            title: Text(
-                              Intl.message('export'),
-                              style: EasyWalletApp.responsiveTextStyle(
-                                  16, context),
-                            ),
-                            content: Text(
-                              Intl.message('dataExportedSuccessfully'),
-                              style: EasyWalletApp.responsiveTextStyle(
-                                  16, context),
-                            ),
-                            actions: <Widget>[
-                              CupertinoDialogAction(
-                                child: Text(
-                                  'OK',
-                                  style: EasyWalletApp.responsiveTextStyle(
-                                      16, context),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        Intl.message('exportData'),
-                        style: EasyWalletApp.responsiveTextStyle(16, context,
-                            color: CupertinoColors.systemBlue),
-                      ),
-                    ),
+                  prefix: Text(
+                    Intl.message('syncWithICloud'),
+                    style: EasyWalletApp.responsiveTextStyle(16, context, color: textColor),
+                  ),
+                  child: CupertinoSwitch(
+                    value: syncWithICloud,
+                    onChanged: _handleICloudToggle,
                   ),
                 ),
+                if (syncWithICloud)
                 CupertinoFormRow(
-                  padding: const EdgeInsets.all(16),
-                  child: GestureDetector(
-                    onTap: () async {
-                      bool successFull = await PersistenceController.instance
-                          .importSubscriptions(context);
-                      showCupertinoDialog(
-                        context: context,
-                        builder: (context) {
-                          return CupertinoAlertDialog(
-                            title: Text(
-                              Intl.message('import'),
-                              style: EasyWalletApp.responsiveTextStyle(
-                                  16, context),
-                            ),
-                            content: Text(successFull ?
-                              Intl.message('dataImportedSuccessfully')
-                              :
-                              Intl.message('dataImportedFailed')
-                              ,
-                              style: EasyWalletApp.responsiveTextStyle(
-                                  16, context),
-                            ),
-                            actions: <Widget>[
-                              CupertinoDialogAction(
-                                child: Text(
-                                  'OK',
-                                  style: EasyWalletApp.responsiveTextStyle(
-                                      16, context),
-                                ),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        Intl.message('importData'),
-                        style: EasyWalletApp.responsiveTextStyle(16, context,
-                            color: CupertinoColors.systemBlue),
-                      ),
+                  prefix: Text(
+                    Intl.message('syncWithICloud'),
+                    style: EasyWalletApp.responsiveTextStyle(16, context, color: textColor),
+                  ),
+                  child: CupertinoButton(
+                    onPressed: _syncWithICloud,
+                    child: Text(
+                      Intl.message('syncNow'),
+                      style: EasyWalletApp.responsiveTextStyle(16, context),
                     ),
                   ),
                 ),

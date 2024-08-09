@@ -39,13 +39,6 @@ class HomeViewState extends State<HomeView> {
     }
   }
 
-  // void _updateSubscription(Subscription updatedSubscription) {
-  //   setState(() {
-  //     _loadAndSortSubscriptions();
-  //   });
-  // }
-
-
   List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
     List<Subscription> filteredSubscriptions =
     subscriptions.where((subscription) {

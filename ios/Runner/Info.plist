@@ -74,5 +74,11 @@
     <true/>
     <key>LSSupportsOpeningDocumentsInPlace</key>
     <true/>
+
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photo library to save backups.</string>
+    <key>UIFileSharingEnabled</key>
+    <true/>
+
 </dict>
 </plist>

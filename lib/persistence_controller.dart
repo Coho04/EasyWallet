@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'package:easy_wallet/model/subscription.dart';
-import 'package:easy_wallet/provider/subscription_provider.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:provider/provider.dart';
+import 'package:icloud_storage/icloud_storage.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'dart:convert';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
+
+import 'package:universal_io/io.dart';
 
 class PersistenceController {
   static final PersistenceController instance =
@@ -18,6 +16,9 @@ class PersistenceController {
   PersistenceController._internal();
 
   Database? _database;
+  String icloudContainerId = 'iCloud.io.github.coho04.easywallet';
+  String relativePath = 'easywallet/subscriptions_backup.json';
+  String localFileName = 'subscriptions_backup.json';
 
   Future<Database> get database async {
     if (kIsWeb) {
@@ -74,6 +75,7 @@ class PersistenceController {
         whereArgs: [subscription.id],
       );
     }
+    await syncToICloud();
   }
 
   Future<void> deleteSubscription(Subscription subscription) async {
@@ -86,6 +88,7 @@ class PersistenceController {
       where: 'id = ?',
       whereArgs: [subscription.id],
     );
+    await syncToICloud();
   }
 
   Future<List<Subscription>> getAllSubscriptions() async {
@@ -94,42 +97,86 @@ class PersistenceController {
     }
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('subscriptions');
-
     return List.generate(maps.length, (i) {
       return Subscription.fromJson(maps[i]);
     });
   }
 
-  Future<void> exportSubscriptions() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('subscriptions');
-    final String json = jsonEncode(maps);
-    final directory = await getApplicationDocumentsDirectory();
-    final File file = File('${directory.path}/subscriptions_backup.json');
-    await file.writeAsString(json);
+  Future<void> syncToICloud() async {
+    try {
+      final List<Subscription> subscriptions = await getAllSubscriptions();
+      final String json = jsonEncode(subscriptions.map((s) => s.toJson()).toList());
+
+      final directory = await getApplicationDocumentsDirectory();
+      final File file = File('${directory.path}/$localFileName');
+      await file.writeAsString(json);
+
+      await ICloudStorage.upload(
+        containerId: icloudContainerId,
+        filePath: file.path,
+        destinationRelativePath: relativePath,
+        onProgress: (stream) {
+          stream.listen(
+                (progress) => debugPrint('Upload File Progress: $progress'),
+            onDone: () => debugPrint('Upload File Done'),
+            onError: (err) => debugPrint('Upload File Error: $err'),
+            cancelOnError: true,
+          );
+        },
+      );
+    } catch (e) {
+      debugPrint("Error syncing to iCloud: $e");
+    }
   }
 
-  Future<bool> importSubscriptions(BuildContext context) async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['json'],
-    );
+  Future<void> syncFromICloud() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final localFilePath = join(directory.path, localFileName);
+    try {
+      await ICloudStorage.download(
+        containerId: icloudContainerId,
+        relativePath: relativePath,
+        destinationFilePath: localFilePath,
+        onProgress: (stream) {
+          stream.listen(
+                (progress) => debugPrint('Download File Progress: $progress'),
+            onDone: () async {
+              debugPrint('Download File Done');
+              await readFile(localFilePath);
+            },
+            onError: (err) => debugPrint('Download File Error: $err'),
+            cancelOnError: true,
+          );
+        },
+      );
+    } catch (e) {
+      debugPrint("Error syncing from iCloud: $e");
+    }
+  }
 
-    if (result != null) {
-      final File file = File(result.files.single.path!);
-      final String json = await file.readAsString();
-      final List<dynamic> data = jsonDecode(json);
-
-      final db = await database;
-      for (var item in data) {
-        await db.insert('subscriptions', Map<String, dynamic>.from(item),
-            conflictAlgorithm: ConflictAlgorithm.replace);
+  Future<void> readFile(String localFilePath) async {
+    try {
+      final File file = File(localFilePath);
+      if (!file.existsSync()) {
+        debugPrint("File does not exist: $localFilePath");
+        return;
       }
 
-      await Provider.of<SubscriptionProvider>(context, listen: false).loadSubscriptions();
-      return true;
-    } else {
-      return false;
+      final String json = await file.readAsString();
+      if (json.isNotEmpty) {
+        final List<dynamic> data = jsonDecode(json);
+        final db = await database;
+        debugPrint("Syncing from iCloud: ${data.length} items");
+        for (var item in data) {
+          await db.insert('subscriptions', Map<String, dynamic>.from(item),
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+        await file.delete();
+      } else {
+        debugPrint("Downloaded file is empty");
+      }
+    } catch (e) {
+      debugPrint("Error reading file from iCloud: $e");
     }
   }
 }

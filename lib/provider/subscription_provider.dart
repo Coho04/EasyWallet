@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/persistence_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SubscriptionProvider with ChangeNotifier {
   List<Subscription> _subscriptions = [];
@@ -8,8 +9,11 @@ class SubscriptionProvider with ChangeNotifier {
   List<Subscription> get subscriptions => _subscriptions;
 
   Future<void> loadSubscriptions() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('syncWithICloud') ?? false) {
+      PersistenceController.instance.syncFromICloud();
+    }
     _subscriptions = await PersistenceController.instance.getAllSubscriptions();
-    debugPrint('Loaded ${_subscriptions.length} subscriptions');
     notifyListeners();
   }
 
