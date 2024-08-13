@@ -46,7 +46,7 @@ dependencies:
   permission_handler: ^11.3.1
   path: ^1.9.0
   sentry_flutter: ^8.5.0
-  http: ^0.13.3
+  http: ^1.2.2
   image: ^4.0.15
   local_auth: ^2.3.0
   palette_generator: ^0.3.3+4
