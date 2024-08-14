@@ -10,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:easy_wallet/persistence_controller.dart';
 import 'package:provider/provider.dart';
 
 class SubscriptionCreateView extends StatefulWidget {

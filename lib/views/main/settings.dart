@@ -73,7 +73,6 @@ class SettingsViewState extends State<SettingsView> {
       );
       return authenticated;
     } on PlatformException catch (e) {
-      print("Fehler während der Authentifizierung: ${e.message}");
       return false;
     }
   }
@@ -84,8 +83,6 @@ class SettingsViewState extends State<SettingsView> {
         isAuthProtected = isEnabled;
       });
       _saveSettings();
-    } else {
-      print('Authentifizierung fehlgeschlagen. Einstellung wurde nicht geändert.');
     }
   }
 

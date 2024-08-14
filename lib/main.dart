@@ -1,3 +1,5 @@
+import 'package:background_fetch/background_fetch.dart';
+import 'package:easy_wallet/managers/background_fetch_manager.dart';
 import 'package:easy_wallet/managers/data_migration_manager.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,10 +12,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'easy_wallet_app.dart';
 import 'package:local_auth/local_auth.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
   initializeSentry();
-  DataMigrationManager().migrateData();
 }
 
 void initializeSentry() async {
@@ -34,8 +36,16 @@ void initializeSentry() async {
           child: const EasyWalletApp(),
         ),
       );
+      final backgroundFetchManager = BackgroundFetchManager();
+      await backgroundFetchManager.init();
     },
   );
+}
+
+void backgroundFetchHeadlessTask(String taskId) async {
+  final manager = BackgroundFetchManager();
+  await manager.init();
+  BackgroundFetch.finish(taskId);
 }
 
 void migrateData() async {

@@ -46,7 +46,6 @@ class DataMigrationManager {
     } on PlatformException catch (e) {
       if (kDebugMode) {
         Sentry.captureException(e);
-        debugPrint("Fehler bei der Datenmigration: ${e.message}");
       }
     }
   }

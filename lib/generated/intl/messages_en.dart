@@ -22,6 +22,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(title) => "Your subscription ${title} is due soon!";
 
+  static String m1(title, price) =>
+      "Your subscription ${title} (${price} €) is due soon!";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "actions": MessageLookupByLibrary.simpleMessage("Actions"),
@@ -159,6 +162,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "startDate": MessageLookupByLibrary.simpleMessage("Start date"),
         "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
         "subscriptionIsDueSoon": m0,
+        "subscriptionIsDueSoonWithPrice": m1,
         "subscriptionReminder":
             MessageLookupByLibrary.simpleMessage("Subscription Reminder"),
         "subscriptions": MessageLookupByLibrary.simpleMessage("Subscriptions"),
