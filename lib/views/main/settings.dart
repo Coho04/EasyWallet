@@ -1,8 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/currency.dart';
-import 'package:easy_wallet/persistence_controller.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +20,7 @@ class SettingsViewState extends State<SettingsView> {
   bool notificationsEnabled = true;
   bool includeCostInNotifications = false;
   bool isAuthProtected = false;
-  bool syncWithICloud = false; // Add this line
+  bool syncWithICloud = false;
   DateTime notificationTime = DateTime.now();
   String currency = Currency.USD.name;
   double monthlyLimit = 0.0;
@@ -72,7 +72,7 @@ class SettingsViewState extends State<SettingsView> {
     try {
       final bool authenticated = await auth.authenticate(
         localizedReason:
-        Intl.message('pleaseAuthenticateYourselfToChangeThisSetting'),
+            Intl.message('pleaseAuthenticateYourselfToChangeThisSetting'),
         options: const AuthenticationOptions(
           biometricOnly: true,
           useErrorDialogs: true,
@@ -80,8 +80,7 @@ class SettingsViewState extends State<SettingsView> {
         ),
       );
       return authenticated;
-    } on PlatformException catch (e) {
-      debugPrint("Fehler während der Authentifizierung: ${e.message}");
+    } on PlatformException {
       return false;
     }
   }
@@ -99,19 +98,17 @@ class SettingsViewState extends State<SettingsView> {
           return CupertinoAlertDialog(
             title: Text(
               Intl.message('settings'),
-              style: EasyWalletApp.responsiveTextStyle(
-                  16, context),
+              style: EasyWalletApp.responsiveTextStyle(16, context),
             ),
-            content: Text(Intl.message('settingsAuthFailed'),
-              style: EasyWalletApp.responsiveTextStyle(
-                  16, context),
+            content: Text(
+              Intl.message('settingsAuthFailed'),
+              style: EasyWalletApp.responsiveTextStyle(16, context),
             ),
             actions: <Widget>[
               CupertinoDialogAction(
                 child: Text(
                   'OK',
-                  style: EasyWalletApp.responsiveTextStyle(
-                      16, context),
+                  style: EasyWalletApp.responsiveTextStyle(16, context),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -136,11 +133,6 @@ class SettingsViewState extends State<SettingsView> {
       syncWithICloud = isEnabled;
     });
     _saveSettings();
-  }
-
-  void _syncWithICloud() async {
-    await PersistenceController.instance.syncToICloud();
-    await PersistenceController.instance.syncFromICloud();
   }
 
   Future<void> _openWebPage(String url) async {
@@ -266,7 +258,7 @@ class SettingsViewState extends State<SettingsView> {
 
   Future<void> _enterMonthlyLimit(BuildContext context) async {
     final TextEditingController limitController =
-    TextEditingController(text: monthlyLimit.toString());
+        TextEditingController(text: monthlyLimit.toString());
     await showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) {
@@ -320,18 +312,18 @@ class SettingsViewState extends State<SettingsView> {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     final backgroundColor =
-    isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.white;
+        isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.white;
     final textColor =
-    isDarkMode ? CupertinoColors.white : CupertinoColors.black;
+        isDarkMode ? CupertinoColors.white : CupertinoColors.black;
     final sectionHeaderColor =
-    isDarkMode ? CupertinoColors.inactiveGray : CupertinoColors.systemGrey;
+        isDarkMode ? CupertinoColors.inactiveGray : CupertinoColors.systemGrey;
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text(
           Intl.message('settings'),
           style:
-          EasyWalletApp.responsiveTextStyle(24, context, color: textColor),
+              EasyWalletApp.responsiveTextStyle(24, context, color: textColor),
         ),
         backgroundColor: backgroundColor,
       ),
@@ -461,39 +453,27 @@ class SettingsViewState extends State<SettingsView> {
                 ),
               ],
             ),
-            CupertinoFormSection.insetGrouped(
-              header: Text(
-                Intl.message('dataManagement'),
-                style: EasyWalletApp.responsiveTextStyle(16, context,
-                    color: sectionHeaderColor),
-              ),
-              children: [
-                CupertinoFormRow(
-                  prefix: Text(
-                    Intl.message('syncWithICloud'),
-                    style: EasyWalletApp.responsiveTextStyle(16, context, color: textColor),
-                  ),
-                  child: CupertinoSwitch(
-                    value: syncWithICloud,
-                    onChanged: _handleICloudToggle,
-                  ),
+            if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS))
+              CupertinoFormSection.insetGrouped(
+                header: Text(
+                  Intl.message('dataManagement'),
+                  style: EasyWalletApp.responsiveTextStyle(16, context,
+                      color: sectionHeaderColor),
                 ),
-                if (syncWithICloud)
-                CupertinoFormRow(
-                  prefix: Text(
-                    Intl.message('syncWithICloud'),
-                    style: EasyWalletApp.responsiveTextStyle(16, context, color: textColor),
-                  ),
-                  child: CupertinoButton(
-                    onPressed: _syncWithICloud,
-                    child: Text(
-                      Intl.message('syncNow'),
-                      style: EasyWalletApp.responsiveTextStyle(16, context),
+                children: [
+                  CupertinoFormRow(
+                    prefix: Text(
+                      Intl.message('syncWithICloud'),
+                      style: EasyWalletApp.responsiveTextStyle(16, context,
+                          color: textColor),
+                    ),
+                    child: CupertinoSwitch(
+                      value: syncWithICloud,
+                      onChanged: _handleICloudToggle,
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             CupertinoFormSection.insetGrouped(
               header: Text(
                 Intl.message('support'),

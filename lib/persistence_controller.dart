@@ -11,7 +11,7 @@ import 'package:universal_io/io.dart';
 
 class PersistenceController {
   static final PersistenceController instance =
-      PersistenceController._internal();
+  PersistenceController._internal();
 
   PersistenceController._internal();
 
@@ -105,7 +105,12 @@ class PersistenceController {
   Future<void> syncToICloud() async {
     try {
       final List<Subscription> subscriptions = await getAllSubscriptions();
-      final String json = jsonEncode(subscriptions.map((s) => s.toJson()).toList());
+      if (subscriptions.isEmpty) {
+        debugPrint("[${DateTime.now()}] No data to sync to iCloud");
+        return;
+      }
+      final String json =
+      jsonEncode(subscriptions.map((s) => s.toJson()).toList());
 
       final directory = await getApplicationDocumentsDirectory();
       final File file = File('${directory.path}/$localFileName');
@@ -117,15 +122,15 @@ class PersistenceController {
         destinationRelativePath: relativePath,
         onProgress: (stream) {
           stream.listen(
-                (progress) => debugPrint('Upload File Progress: $progress'),
-            onDone: () => debugPrint('Upload File Done'),
-            onError: (err) => debugPrint('Upload File Error: $err'),
+                (progress) => debugPrint('[${DateTime.now()}] Upload File Progress: $progress'),
+            onDone: () => debugPrint('[${DateTime.now()}] Upload File Done'),
+            onError: (err) => debugPrint('[${DateTime.now()}] Upload File Error: $err'),
             cancelOnError: true,
           );
         },
       );
     } catch (e) {
-      debugPrint("Error syncing to iCloud: $e");
+      debugPrint("[${DateTime.now()}] Error syncing to iCloud: $e");
     }
   }
 
@@ -138,27 +143,29 @@ class PersistenceController {
         relativePath: relativePath,
         destinationFilePath: localFilePath,
         onProgress: (stream) {
-          stream.listen(
-                (progress) => debugPrint('Download File Progress: $progress'),
+          stream.listen((progress) => debugPrint('[${DateTime.now()}] Download File Progress: $progress'),
             onDone: () async {
-              debugPrint('Download File Done');
-              await readFile(localFilePath);
+              await verifyAndReadFile(localFilePath);
             },
-            onError: (err) => debugPrint('Download File Error: $err'),
+            onError: (err) => debugPrint('[${DateTime.now()}] Download File Error: $err'),
             cancelOnError: true,
           );
         },
       );
     } catch (e) {
-      debugPrint("Error syncing from iCloud: $e");
+      debugPrint("[${DateTime.now()}] Error syncing from iCloud: $e");
     }
   }
 
-  Future<void> readFile(String localFilePath) async {
+  Future<void> verifyAndReadFile(String localFilePath) async {
     try {
       final File file = File(localFilePath);
       if (!file.existsSync()) {
-        debugPrint("File does not exist: $localFilePath");
+        return;
+      }
+
+      final int fileSize = await file.length();
+      if (fileSize == 0) {
         return;
       }
 
@@ -166,17 +173,14 @@ class PersistenceController {
       if (json.isNotEmpty) {
         final List<dynamic> data = jsonDecode(json);
         final db = await database;
-        debugPrint("Syncing from iCloud: ${data.length} items");
         for (var item in data) {
           await db.insert('subscriptions', Map<String, dynamic>.from(item),
               conflictAlgorithm: ConflictAlgorithm.replace);
         }
         await file.delete();
-      } else {
-        debugPrint("Downloaded file is empty");
       }
     } catch (e) {
-      debugPrint("Error reading file from iCloud: $e");
+      debugPrint("[${DateTime.now()}] Error reading file from iCloud: $e");
     }
   }
 }

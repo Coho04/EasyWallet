@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -12,6 +13,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:background_fetch/background_fetch.dart';
 
 import '../generated/l10n.dart';
+import '../persistence_controller.dart';
 
 class BackgroundFetchManager {
   static const String groupKey = "com.easy_wallet.SUBSCRIPTION_NOTIFICATIONS";
@@ -91,6 +93,13 @@ class BackgroundFetchManager {
 
   Future<void> scheduleNotifications() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS)) {
+      if (prefs.getBool('syncWithICloud') ?? false) {
+        await PersistenceController.instance.syncFromICloud();
+        await PersistenceController.instance.syncToICloud();
+      }
+    }
+
 
     final TimeOfDay userNotificationTime = await _getUserNotificationTime();
     final DateTime now = DateTime.now();

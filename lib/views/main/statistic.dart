@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:easy_wallet/model/subscription.dart';
 
-import '../../model/chartData.dart';
+import '../../model/chart_data.dart';
 import '../components/badge_component.dart';
 
 class StatisticView extends StatefulWidget {
