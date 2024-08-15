@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-import '../../model/chartData.dart';
+import '../../model/chart_data.dart';
 
 class ChartDetailPage extends StatefulWidget {
   final String title;

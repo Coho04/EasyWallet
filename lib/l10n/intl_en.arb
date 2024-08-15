@@ -135,5 +135,16 @@
   "pleaseAuthenticateYourselfToViewYourSubscriptions": "Please authenticate yourself to view your subscriptions",
   "security": "Security",
   "enableAuthProtection": "Enable authentication protection",
-  "pleaseAuthenticateYourselfToChangeThisSetting": "Please authenticate yourself to change this setting"
+  "pleaseAuthenticateYourselfToChangeThisSetting": "Please authenticate yourself to change this setting",
+  "dataManagement": "Data Management",
+  "exportData": "Export Data",
+  "importData": "Import Data",
+  "dataExportedSuccessfully": "Data exported successfully.",
+  "dataImportedSuccessfully": "Data imported successfully.",
+  "dataImportedFailed": "Data imported failed.",
+  "settingsAuthFailed": "Authentication failed. Setting was not changed.",
+  "export": "Export",
+  "import": "Import",
+  "OK": "OK"
 }
+

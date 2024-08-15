@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "OK": MessageLookupByLibrary.simpleMessage("OK"),
         "actions": MessageLookupByLibrary.simpleMessage("Actions"),
         "active": MessageLookupByLibrary.simpleMessage("Active"),
         "addNewSubscription":
@@ -54,6 +55,14 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Could not launch"),
         "createdOn": MessageLookupByLibrary.simpleMessage("Created on"),
         "currency": MessageLookupByLibrary.simpleMessage("Currency"),
+        "dataExportedSuccessfully":
+            MessageLookupByLibrary.simpleMessage("Data exported successfully."),
+        "dataImportedFailed":
+            MessageLookupByLibrary.simpleMessage("Data imported failed."),
+        "dataImportedSuccessfully":
+            MessageLookupByLibrary.simpleMessage("Data imported successfully."),
+        "dataManagement":
+            MessageLookupByLibrary.simpleMessage("Data Management"),
         "dayBefore": MessageLookupByLibrary.simpleMessage("One Day Before"),
         "days": MessageLookupByLibrary.simpleMessage("Days"),
         "daysRemainingAscending":
@@ -87,12 +96,16 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Expenses this Month"),
         "expensesThisYear":
             MessageLookupByLibrary.simpleMessage("Expenses this Year"),
+        "export": MessageLookupByLibrary.simpleMessage("Export"),
+        "exportData": MessageLookupByLibrary.simpleMessage("Export Data"),
         "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
         "firstDebit": MessageLookupByLibrary.simpleMessage("First Debit"),
         "generalInformation":
             MessageLookupByLibrary.simpleMessage("General information"),
         "help": MessageLookupByLibrary.simpleMessage("Help"),
         "hint": MessageLookupByLibrary.simpleMessage("Hint"),
+        "import": MessageLookupByLibrary.simpleMessage("Import"),
+        "importData": MessageLookupByLibrary.simpleMessage("Import Data"),
         "imprint": MessageLookupByLibrary.simpleMessage("Imprint"),
         "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
             "Include cost in notifications"),
@@ -158,6 +171,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "selectCurrency":
             MessageLookupByLibrary.simpleMessage("Select Currency"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "settingsAuthFailed": MessageLookupByLibrary.simpleMessage(
+            "Authentication failed. Setting was not changed."),
         "sortOptions": MessageLookupByLibrary.simpleMessage("Sort Options"),
         "startDate": MessageLookupByLibrary.simpleMessage("Start date"),
         "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),

@@ -2,7 +2,7 @@ import Flutter
 import UIKit
 import CoreData
 
-@UIApplicationMain
+@main
 @objc class AppDelegate: FlutterAppDelegate {
   lazy var persistentContainer: NSPersistentContainer = {
     let container = NSPersistentContainer(name: "EasyWallet")

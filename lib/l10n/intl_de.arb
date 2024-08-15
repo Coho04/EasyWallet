@@ -63,7 +63,7 @@
   "costs": "Kosten",
   "addSubscription": "Abonnement hinzufügen",
   "startDate": "Startdatum",
-  "paymentRate": "Bezahlrate",
+  "paymentRate": "Zyklus",
   "remembering": "Erinnern",
   "title": "Titel",
   "deleteSubscription": "Dieses Abonnement löschen",
@@ -135,5 +135,15 @@
   "pleaseAuthenticateYourselfToViewYourSubscriptions": "Bitte authentifizieren Sie sich, um Ihre Abonnements anzuzeigen",
   "security": "Sicherheit",
   "enableAuthProtection": "Authentifizierungsschutz aktivieren",
-  "pleaseAuthenticateYourselfToChangeThisSetting": "Bitte authentifizieren Sie sich, um diese Einstellung zu ändern"
+  "pleaseAuthenticateYourselfToChangeThisSetting": "Bitte authentifizieren Sie sich, um diese Einstellung zu ändern",
+  "dataManagement": "Datenverwaltung",
+  "exportData": "Daten exportieren",
+  "importData": "Daten importieren",
+  "dataExportedSuccessfully": "Daten erfolgreich exportiert.",
+  "dataImportedSuccessfully": "Daten erfolgreich importiert.",
+  "dataImportedFailed": "Datenimport fehlgeschlagen.",
+  "settingsAuthFailed": "Authentifizierung fehlgeschlagen. Einstellung wurde nicht geändert..",
+  "export": "Exportieren",
+  "import": "Importieren",
+  "OK": "OK"
 }
