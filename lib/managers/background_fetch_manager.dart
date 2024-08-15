@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -10,10 +9,11 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:workmanager/workmanager.dart';
-import 'generated/l10n.dart';
+import 'package:background_fetch/background_fetch.dart';
 
-class BackgroundTaskManager {
+import '../generated/l10n.dart';
+
+class BackgroundFetchManager {
   static const String groupKey = "com.easy_wallet.SUBSCRIPTION_NOTIFICATIONS";
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -21,16 +21,7 @@ class BackgroundTaskManager {
 
   Future<void> init() async {
     await _initNotifications();
-    await scheduleNotifications();
-    if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.android)) {
-      Workmanager().initialize(callbackDispatcher, isInDebugMode: kDebugMode);
-      Workmanager().registerPeriodicTask(
-        "1",
-        "easy_wallet",
-        existingWorkPolicy: ExistingWorkPolicy.append,
-        frequency: const Duration(minutes: 15),
-      );
-    }
+    await _configureBackgroundFetch();
   }
 
   Future<void> _initNotifications() async {
@@ -56,17 +47,46 @@ class BackgroundTaskManager {
     tz.initializeTimeZones();
   }
 
-  Future<TimeOfDay> _getUserNotificationTime() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? notificationTimeString = prefs.getString('notificationTime');
-    if (notificationTimeString != null) {
-      final timeParts = notificationTimeString.split(':');
-      return TimeOfDay(
-        hour: int.parse(timeParts[0]),
-        minute: int.parse(timeParts[1]),
-      );
+  Future<void> _configureBackgroundFetch() async {
+    BackgroundFetch.configure(
+      BackgroundFetchConfig(
+        minimumFetchInterval: 15,
+        stopOnTerminate: false,
+        enableHeadless: true,
+        requiresBatteryNotLow: false,
+        requiresCharging: false,
+        requiresStorageNotLow: false,
+        requiresDeviceIdle: false,
+        requiredNetworkType: NetworkType.NONE,
+      ),
+      _onBackgroundFetch,
+      _onBackgroundFetchTimeout,
+    ).then((int status) {
+    }).catchError((e) {
+      Sentry.captureException(e);
+    });
+
+    BackgroundFetch.start().then((int status) {
+    }).catchError((e) {
+      Sentry.captureException(e);
+    });
+  }
+
+  Future<void> _onBackgroundFetch(String taskId) async {
+    await _performFetchTask();
+    BackgroundFetch.finish(taskId);
+  }
+
+  void _onBackgroundFetchTimeout(String taskId) async {
+    BackgroundFetch.finish(taskId);
+  }
+
+  Future<void> _performFetchTask() async {
+    try {
+      await scheduleNotifications();
+    } catch (e) {
+      Sentry.captureException(e);
     }
-    return const TimeOfDay(hour: 9, minute: 0);
   }
 
   Future<void> scheduleNotifications() async {
@@ -136,9 +156,15 @@ class BackgroundTaskManager {
               'notification_${subscription['id']}_$notificationTimeKey';
           final bool alreadyNotified = prefs.getBool(notificationKey) ?? false;
           if (!alreadyNotified) {
-            final String title = S.current.subscriptionReminder;
-            final String body =
+            final bool withPrice =
+                prefs.getBool('includeCostInNotifications') ?? false;
+            String body =
                 S.current.subscriptionIsDueSoon(subscription['title']);
+            if (withPrice) {
+              body = S.current.subscriptionIsDueSoonWithPrice(
+                  subscription['title'], subscription['amount']);
+            }
+            final String title = S.current.subscriptionReminder;
             await _showNotification(subscription, title, body);
             prefs.setBool(notificationKey, true);
           }
@@ -186,8 +212,6 @@ class BackgroundTaskManager {
       );
     } catch (e) {
       Sentry.captureException(e);
-      debugPrint(
-          "BackgroundTaskManager._showNotification() - Error showing notification: $e");
     }
   }
 
@@ -212,14 +236,23 @@ class BackgroundTaskManager {
       version: 1,
     );
   }
+
+  Future<TimeOfDay> _getUserNotificationTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? notificationTimeString = prefs.getString('notificationTime');
+    if (notificationTimeString != null) {
+      final timeParts = notificationTimeString.split(':');
+      return TimeOfDay(
+        hour: int.parse(timeParts[0]),
+        minute: int.parse(timeParts[1]),
+      );
+    }
+    return const TimeOfDay(hour: 9, minute: 0);
+  }
 }
 
-@pragma('vm:entry-point')
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    final manager = BackgroundTaskManager();
-    await manager._initNotifications();
-    await manager.scheduleNotifications();
-    return Future.value(true);
-  });
+void backgroundFetchHeadlessTask(String taskId) async {
+  final manager = BackgroundFetchManager();
+  await manager._performFetchTask();
+  BackgroundFetch.finish(taskId);
 }

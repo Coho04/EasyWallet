@@ -102,6 +102,20 @@
       }
     }
   },
+  "subscriptionIsDueSoonWithPrice": "Ihr Abonnement {title} ({price} €) steht bald an!",
+  "@subscriptionIsDueSoonWithPrice": {
+    "description": "Eine Nachricht, die darauf hinweist, dass ein Abonnement bald fällig ist.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Netflix"
+      },
+      "price": {
+        "type": "double",
+        "example": "5.99"
+      }
+    }
+  },
   "numberOfSubscriptions": "Anzahl der Abonnements",
   "expensesSinceAppInstallation": "Ausgaben seit App Installation",
   "expenditureThisYear": "Ausgaben dieses Jahres",

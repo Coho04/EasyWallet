@@ -1,4 +1,3 @@
-import 'package:easy_wallet/background_task_manager.dart';
 import 'package:easy_wallet/views/main/home.dart';
 import 'package:easy_wallet/views/main/settings.dart';
 import 'package:easy_wallet/views/main/statistic.dart';
@@ -58,8 +57,8 @@ class MainViewState extends State<MainView> {
   }
 
   void _initNotifications() async {
-    final backgroundTaskManager = BackgroundTaskManager();
-    await backgroundTaskManager.init();
+    // final backgroundTaskManager = BackgroundTaskManager();
+    // await backgroundTaskManager.init();
   }
 
   void _onItemTapped(int index) {

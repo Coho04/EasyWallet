@@ -890,6 +890,16 @@ class S {
     );
   }
 
+  /// `Your subscription {title} ({price} €) is due soon!`
+  String subscriptionIsDueSoonWithPrice(String title, double price) {
+    return Intl.message(
+      'Your subscription $title ($price €) is due soon!',
+      name: 'subscriptionIsDueSoonWithPrice',
+      desc: 'A message that indicates a subscription is due soon.',
+      args: [title, price],
+    );
+  }
+
   /// `Number of Subscriptions`
   String get numberOfSubscriptions {
     return Intl.message(

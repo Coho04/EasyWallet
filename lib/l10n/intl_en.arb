@@ -102,6 +102,20 @@
       }
     }
   },
+  "subscriptionIsDueSoonWithPrice": "Your subscription {title} ({price} €) is due soon!",
+  "@subscriptionIsDueSoonWithPrice": {
+    "description": "A message that indicates a subscription is due soon.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Netflix"
+      },
+      "price": {
+        "type": "double",
+        "example": "5.99"
+      }
+    }
+  },
   "numberOfSubscriptions": "Number of Subscriptions",
   "expensesSinceAppInstallation": "Expenditure since installing the app",
   "expenditureThisYear": "Expenditure this year",
