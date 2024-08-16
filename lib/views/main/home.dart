@@ -3,6 +3,7 @@ import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/sort_option.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/views/components/subscription_list_component.dart';
 import 'package:easy_wallet/views/subscription/create.dart';
@@ -33,6 +34,8 @@ class HomeViewState extends State<HomeView> {
     try {
       await Provider.of<SubscriptionProvider>(context, listen: false)
           .loadSubscriptions();
+      await Provider.of<CurrencyProvider>(context, listen: false)
+          .loadCurrency();
     } finally {
       setState(() {
         _isLoading = false;
@@ -115,142 +118,148 @@ class HomeViewState extends State<HomeView> {
               nextBillDate.month == now.month;
         }).fold(0, (sum, subscription) => sum + subscription.amount);
 
-        return CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(
-            middle: Column(
-              children: [
-                SizedBox(
-                  height: 36,
-                  child: CupertinoSearchTextField(
-                    placeholder: Intl.message('search'),
-                    onChanged: (value) {
-                      setState(() {
-                        searchText = value;
-                        _sortSubscriptions(subscriptions);
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-            leading: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () => _showSortOptions(context),
-              child: const Icon(CupertinoIcons.arrow_up_arrow_down,
-                  color: CupertinoColors.activeBlue),
-            ),
-            trailing: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (context) => const SubscriptionCreateView(),
-                  ),
-                ).then((value) {
-                  _loadAndSortSubscriptions();
-                });
-              },
-              child: const Icon(CupertinoIcons.add,
-                  color: CupertinoColors.activeBlue),
-            ),
-          ),
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 100,
-                child: Center(
-                  child: Text(
-                    Intl.message('subscriptions'),
-                    style: EasyWalletApp.responsiveTextStyle(context,
-                        bold: true),
-                  ),
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return Consumer<CurrencyProvider>(
+          builder: (context, currencyProvider, child)
+          {
+            final currency = currencyProvider.currency;
+
+            return CupertinoPageScaffold(
+              navigationBar: CupertinoNavigationBar(
+                middle: Column(
                   children: [
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AutoSizeText(
-                            Intl.message('outstandingExpenditureMonth'),
-                            maxLines: 1,
-                            style: EasyWalletApp.responsiveTextStyle(
-                              context,
-                              color: CupertinoColors.systemGrey,
-                            ),
-                          ),
-                          AutoSizeText(
-                            '${monthlySpent.toStringAsFixed(2)} €',
-                            maxLines: 1,
-                            style: EasyWalletApp.responsiveTextStyle(
-                              context,
-                              bold: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          AutoSizeText(
-                            Intl.message('openExpenditureYear'),
-                            maxLines: 1,
-                            style: EasyWalletApp.responsiveTextStyle(
-                              context,
-                              color: CupertinoColors.systemGrey,
-                            ),
-                          ),
-                          AutoSizeText(
-                            '${calculateYearlySpent(sortedSubscriptions).toStringAsFixed(2)} €',
-                            maxLines: 1,
-                            style: EasyWalletApp.responsiveTextStyle(
-                              context,
-                              bold: true,
-                            ),
-                          ),
-                        ],
+                    SizedBox(
+                      height: 36,
+                      child: CupertinoSearchTextField(
+                        placeholder: Intl.message('search'),
+                        onChanged: (value) {
+                          setState(() {
+                            searchText = value;
+                            _sortSubscriptions(subscriptions);
+                          });
+                        },
                       ),
                     ),
                   ],
                 ),
+                leading: CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () => _showSortOptions(context),
+                  child: const Icon(CupertinoIcons.arrow_up_arrow_down,
+                      color: CupertinoColors.activeBlue),
+                ),
+                trailing: CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) => const SubscriptionCreateView(),
+                      ),
+                    ).then((value) {
+                      _loadAndSortSubscriptions();
+                    });
+                  },
+                  child: const Icon(CupertinoIcons.add,
+                      color: CupertinoColors.activeBlue),
+                ),
               ),
-              Expanded(
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : sortedSubscriptions.isEmpty
+              child: Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 100,
+                    child: Center(
+                      child: Text(
+                        Intl.message('subscriptions'),
+                        style: EasyWalletApp.responsiveTextStyle(context,
+                            bold: true),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AutoSizeText(
+                                Intl.message('outstandingExpenditureMonth'),
+                                maxLines: 1,
+                                style: EasyWalletApp.responsiveTextStyle(
+                                  context,
+                                  color: CupertinoColors.systemGrey,
+                                ),
+                              ),
+                              AutoSizeText(
+                                '${monthlySpent.toStringAsFixed(2)} ${currency.symbol}',
+                                maxLines: 1,
+                                style: EasyWalletApp.responsiveTextStyle(
+                                  context,
+                                  bold: true,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              AutoSizeText(
+                                Intl.message('openExpenditureYear'),
+                                maxLines: 1,
+                                style: EasyWalletApp.responsiveTextStyle(
+                                  context,
+                                  color: CupertinoColors.systemGrey,
+                                ),
+                              ),
+                              AutoSizeText(
+                                '${calculateYearlySpent(sortedSubscriptions).toStringAsFixed(2)} ${currency.symbol}',
+                                maxLines: 1,
+                                style: EasyWalletApp.responsiveTextStyle(
+                                  context,
+                                  bold: true,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : sortedSubscriptions.isEmpty
                         ? _buildEmptyState()
                         : ListView.builder(
-                            padding: const EdgeInsets.only(bottom: 85.0),
-                            itemCount: sortedSubscriptions.length,
-                            itemBuilder: (context, index) {
-                              return SubscriptionListComponent(
-                                subscription: sortedSubscriptions[index],
-                                onUpdate: (updatedSubscription) {},
-                                onDelete: (deletedSubscription) {
-                                  setState(() {
-                                    Provider.of<SubscriptionProvider>(context,
-                                            listen: false)
-                                        .deleteSubscription(
-                                            deletedSubscription);
-                                    _sortSubscriptions(sortedSubscriptions);
-                                  });
-                                },
-                              );
-                            },
-                          ),
+                      padding: const EdgeInsets.only(bottom: 85.0),
+                      itemCount: sortedSubscriptions.length,
+                      itemBuilder: (context, index) {
+                        return SubscriptionListComponent(
+                          subscription: sortedSubscriptions[index],
+                          onUpdate: (updatedSubscription) {},
+                          onDelete: (deletedSubscription) {
+                            setState(() {
+                              Provider.of<SubscriptionProvider>(context,
+                                  listen: false)
+                                  .deleteSubscription(
+                                  deletedSubscription);
+                              _sortSubscriptions(sortedSubscriptions);
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
+            );
+          });
       },
     );
   }

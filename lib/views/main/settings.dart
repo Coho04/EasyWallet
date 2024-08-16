@@ -1,11 +1,13 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/currency.dart';
+import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/views/components/card_section_component.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -67,6 +69,9 @@ class SettingsViewState extends State<SettingsView> {
     prefs.setDouble('monthlyLimit', monthlyLimit);
     prefs.setString('notificationTime',
         '${notificationTime.hour}:${notificationTime.minute}');
+
+    await Provider.of<CurrencyProvider>(context, listen: false)
+        .loadCurrency();
   }
 
   Future<bool> _authenticate() async {
