@@ -13,7 +13,7 @@
   },
   "notifications": "Benachrichtigungen",
   "enableNotifications": "Benachrichtigungen aktivieren",
-  "includeCostInNotifications": "Kosten in Benachrichtigungen anzeigen",
+  "includeCostInNotifications": "Kosten in Benachrichtigungen",
   "notificationTime": "Benachrichtigungszeit",
   "currency": "Währung",
   "monthlyLimit": "Monatliches Limit",
@@ -74,7 +74,7 @@
   "actions": "Aktionen",
   "notes": "Notizen",
   "totalCosts": "Gesamt kosten",
-  "previousDebits": "Vorherige Lastschriften",
+  "previousDebits": "Vorherige Zahlungen",
   "additionalInformation": "Zusätzliche Informationen",
   "createdOn": "Erstellt am",
   "firstDebit": "Erste Lastschrift",
@@ -134,7 +134,7 @@
   "yearlyVsMonthlyExpensesSubtitle": "Monatliche und jährlichen ausgaben relativ zu den Gesamt ausgaben",
   "pleaseAuthenticateYourselfToViewYourSubscriptions": "Bitte authentifizieren Sie sich, um Ihre Abonnements anzuzeigen",
   "security": "Sicherheit",
-  "enableAuthProtection": "Authentifizierungsschutz aktivieren",
+  "enableAuthProtection": "Biometric aktivieren",
   "pleaseAuthenticateYourselfToChangeThisSetting": "Bitte authentifizieren Sie sich, um diese Einstellung zu ändern",
   "dataManagement": "Datenverwaltung",
   "exportData": "Daten exportieren",
@@ -145,5 +145,6 @@
   "settingsAuthFailed": "Authentifizierung fehlgeschlagen. Einstellung wurde nicht geändert..",
   "export": "Exportieren",
   "import": "Importieren",
-  "OK": "OK"
+  "OK": "OK",
+  "syncWithICloud": "Mit iCloud synchronisieren"
 }

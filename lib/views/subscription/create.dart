@@ -54,7 +54,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
       navigationBar: CupertinoNavigationBar(
         middle: Text(
           Intl.message('addSubscription'),
-          style: EasyWalletApp.responsiveTextStyle(24, context),
+          style: EasyWalletApp.responsiveTextStyle(context),
         ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
@@ -140,7 +140,6 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
       autocorrect: autocorrect,
       onChanged: onChanged,
       style: EasyWalletApp.responsiveTextStyle(
-        16,
         context,
         color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
       ),
@@ -154,8 +153,8 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         border: Border.all(
           color: isValid
               ? (isDarkMode
-                  ? CupertinoColors.systemGrey
-                  : CupertinoColors.systemGrey6)
+              ? CupertinoColors.systemGrey
+              : CupertinoColors.systemGrey4)
               : CupertinoColors.systemRed,
           width: 1.0,
         ),
@@ -175,7 +174,6 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
             controller: _titleController,
             placeholder: Intl.message('title'),
             style: EasyWalletApp.responsiveTextStyle(
-              16,
               context,
               color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
             ),
@@ -242,7 +240,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         const SizedBox(width: 8),
         Text(
           _currency,
-          style: EasyWalletApp.responsiveTextStyle(16, context,
+          style: EasyWalletApp.responsiveTextStyle(context,
               color:
                   isDarkMode ? CupertinoColors.white : CupertinoColors.black),
         ),
@@ -257,41 +255,47 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         padding: const EdgeInsets.only(right: 16.0),
         child: Text(
           label,
-          style: EasyWalletApp.responsiveTextStyle(16, context,
+          style: EasyWalletApp.responsiveTextStyle(context,
               color:
                   isDarkMode ? CupertinoColors.white : CupertinoColors.black),
         ),
       ),
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          decoration: BoxDecoration(
-            color: isDarkMode
-                ? CupertinoColors.darkBackgroundGray
-                : CupertinoColors.systemGrey6,
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(
-                color: isDarkMode
-                    ? CupertinoColors.systemGrey
-                    : CupertinoColors.systemGrey4),
+        child: FittedBox(
+          child: Container(
+            constraints: const BoxConstraints(
+              minWidth: 180,
+              maxWidth: double.infinity,
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? CupertinoColors.darkBackgroundGray
+                  : CupertinoColors.systemGrey6,
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(
+                  color: isDarkMode
+                      ? CupertinoColors.systemGrey
+                      : CupertinoColors.systemGrey4),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  DateFormat('dd.MM.yyyy').format(date),
+                  style: EasyWalletApp.responsiveTextStyle(context,
+                      color: CupertinoColors.inactiveGray),
+                ),
+                const Icon(
+                  CupertinoIcons.calendar,
+                  size: 20,
+                  color: CupertinoColors.inactiveGray,
+                ),
+              ],
+            ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                DateFormat('dd.MM.yyyy').format(date),
-                style: EasyWalletApp.responsiveTextStyle(16, context,
-                    color: CupertinoColors.inactiveGray),
-              ),
-              const Icon(
-                CupertinoIcons.calendar,
-                size: 20,
-                color: CupertinoColors.inactiveGray,
-              ),
-            ],
-          ),
-        ),
+        )
       ),
     );
   }
@@ -303,41 +307,47 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         padding: const EdgeInsets.only(right: 16.0),
         child: Text(
           label,
-          style: EasyWalletApp.responsiveTextStyle(16, context,
+          style: EasyWalletApp.responsiveTextStyle(context,
               color:
                   isDarkMode ? CupertinoColors.white : CupertinoColors.black),
         ),
       ),
       child: GestureDetector(
         onTap: () => _showOptions(context, options, onChanged),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          decoration: BoxDecoration(
-            color: isDarkMode
-                ? CupertinoColors.darkBackgroundGray
-                : CupertinoColors.systemGrey6,
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(
-                color: isDarkMode
-                    ? CupertinoColors.systemGrey
-                    : CupertinoColors.systemGrey4),
+        child: FittedBox(
+          child: Container(
+            constraints: const BoxConstraints(
+              minWidth: 180,
+              maxWidth: double.infinity,
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: isDarkMode
+                  ? CupertinoColors.darkBackgroundGray
+                  : CupertinoColors.systemGrey6,
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(
+                  color: isDarkMode
+                      ? CupertinoColors.systemGrey
+                      : CupertinoColors.systemGrey4),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _capitalize(_translateEnum(currentValue, options)),
+                  style: EasyWalletApp.responsiveTextStyle(context,
+                      color: CupertinoColors.inactiveGray),
+                ),
+                const Icon(
+                  CupertinoIcons.chevron_down,
+                  size: 20,
+                  color: CupertinoColors.inactiveGray,
+                ),
+              ],
+            ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _capitalize(_translateEnum(currentValue, options)),
-                style: EasyWalletApp.responsiveTextStyle(16, context,
-                    color: CupertinoColors.inactiveGray),
-              ),
-              const Icon(
-                CupertinoIcons.chevron_down,
-                size: 20,
-                color: CupertinoColors.inactiveGray,
-              ),
-            ],
-          ),
-        ),
+        )
       ),
     );
   }
@@ -378,7 +388,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
               CupertinoButton(
                 child: Text(
                   'OK',
-                  style: EasyWalletApp.responsiveTextStyle(20, context,
+                  style: EasyWalletApp.responsiveTextStyle(context,
                       color: CupertinoColors.activeBlue),
                 ),
                 onPressed: () {
@@ -409,7 +419,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                 : (option as RememberCycle).value;
             return CupertinoActionSheetAction(
               child: Text(_capitalize(_translateEnum(value, options)),
-                  style: EasyWalletApp.responsiveTextStyle(20, context,
+                  style: EasyWalletApp.responsiveTextStyle(context,
                       color: CupertinoColors.activeBlue)),
               onPressed: () {
                 onChanged(value);
@@ -419,7 +429,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
           }).toList(),
           cancelButton: CupertinoActionSheetAction(
             child: Text(Intl.message('cancel'),
-                style: EasyWalletApp.responsiveTextStyle(20, context,
+                style: EasyWalletApp.responsiveTextStyle(context,
                     color: CupertinoColors.activeBlue)),
             onPressed: () {
               Navigator.pop(context);

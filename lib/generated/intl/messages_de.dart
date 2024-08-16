@@ -77,8 +77,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "done": MessageLookupByLibrary.simpleMessage("Fertig"),
         "editSubscription":
             MessageLookupByLibrary.simpleMessage("Abonnement bearbeiten"),
-        "enableAuthProtection": MessageLookupByLibrary.simpleMessage(
-            "Authentifizierungsschutz aktivieren"),
+        "enableAuthProtection":
+            MessageLookupByLibrary.simpleMessage("Biometric aktivieren"),
         "enableNotifications": MessageLookupByLibrary.simpleMessage(
             "Benachrichtigungen aktivieren"),
         "enterMonthlyLimit":
@@ -109,7 +109,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "importData": MessageLookupByLibrary.simpleMessage("Daten importieren"),
         "imprint": MessageLookupByLibrary.simpleMessage("Impressum"),
         "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
-            "Kosten in Benachrichtigungen anzeigen"),
+            "Kosten in Benachrichtigungen"),
         "invoiceInformation":
             MessageLookupByLibrary.simpleMessage("Rechnungsinformationen"),
         "issuesOfAnnualSubscriptions": MessageLookupByLibrary.simpleMessage(
@@ -157,7 +157,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 "Bitte authentifizieren Sie sich, um Ihre Abonnements anzuzeigen"),
         "previousDebits":
-            MessageLookupByLibrary.simpleMessage("Vorherige Lastschriften"),
+            MessageLookupByLibrary.simpleMessage("Vorherige Zahlungen"),
         "previousInvoice":
             MessageLookupByLibrary.simpleMessage("Vorherige Rechnung"),
         "privacyPolicy": MessageLookupByLibrary.simpleMessage("Datenschutz"),
@@ -186,6 +186,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Abonnement Erinnerung"),
         "subscriptions": MessageLookupByLibrary.simpleMessage("Abonnements"),
         "support": MessageLookupByLibrary.simpleMessage("Support"),
+        "syncWithICloud":
+            MessageLookupByLibrary.simpleMessage("Mit iCloud synchronisieren"),
         "tipJar": MessageLookupByLibrary.simpleMessage("Trinkgeld Kasse"),
         "title": MessageLookupByLibrary.simpleMessage("Titel"),
         "totalCosts": MessageLookupByLibrary.simpleMessage("Gesamt kosten"),

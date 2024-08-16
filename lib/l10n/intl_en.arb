@@ -134,7 +134,7 @@
   "yearlyVsMonthlyExpensesSubtitle": "Monthly and annual expenditure relative to total expenditure",
   "pleaseAuthenticateYourselfToViewYourSubscriptions": "Please authenticate yourself to view your subscriptions",
   "security": "Security",
-  "enableAuthProtection": "Enable authentication protection",
+  "enableAuthProtection": "Enable Biometric",
   "pleaseAuthenticateYourselfToChangeThisSetting": "Please authenticate yourself to change this setting",
   "dataManagement": "Data Management",
   "exportData": "Export Data",
@@ -145,6 +145,7 @@
   "settingsAuthFailed": "Authentication failed. Setting was not changed.",
   "export": "Export",
   "import": "Import",
-  "OK": "OK"
+  "OK": "OK",
+  "syncWithICloud": "Sync with iCloud"
 }
 

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/sort_option.dart';
@@ -41,7 +42,7 @@ class HomeViewState extends State<HomeView> {
 
   List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
     List<Subscription> filteredSubscriptions =
-    subscriptions.where((subscription) {
+        subscriptions.where((subscription) {
       return subscription.title
           .toLowerCase()
           .contains(searchText.toLowerCase());
@@ -88,7 +89,7 @@ class HomeViewState extends State<HomeView> {
         }
       } else if (subscription.repeatPattern == PaymentRate.monthly.value) {
         while (
-        nextBillDate.isBefore(lastDayOfYear.add(const Duration(days: 1)))) {
+            nextBillDate.isBefore(lastDayOfYear.add(const Duration(days: 1)))) {
           yearlySpent += subscription.amount;
           nextBillDate = DateTime(
               nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
@@ -161,46 +162,63 @@ class HomeViewState extends State<HomeView> {
                 child: Center(
                   child: Text(
                     Intl.message('subscriptions'),
-                    style: EasyWalletApp.responsiveTextStyle(16, context,
+                    style: EasyWalletApp.responsiveTextStyle(context,
                         bold: true),
                   ),
                 ),
               ),
               Padding(
                 padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          Intl.message('outstandingExpenditureMonth'),
-                          style: EasyWalletApp.responsiveTextStyle(15, context,
-                              color: CupertinoColors.systemGrey),
-                        ),
-                        Text(
-                          '${monthlySpent.toStringAsFixed(2)} €',
-                          style: EasyWalletApp.responsiveTextStyle(16, context,
-                              bold: true),
-                        ),
-                      ],
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoSizeText(
+                            Intl.message('outstandingExpenditureMonth'),
+                            maxLines: 1,
+                            style: EasyWalletApp.responsiveTextStyle(
+                              context,
+                              color: CupertinoColors.systemGrey,
+                            ),
+                          ),
+                          AutoSizeText(
+                            '${monthlySpent.toStringAsFixed(2)} €',
+                            maxLines: 1,
+                            style: EasyWalletApp.responsiveTextStyle(
+                              context,
+                              bold: true,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          Intl.message('openExpenditureYear'),
-                          style: EasyWalletApp.responsiveTextStyle(15, context,
-                              color: CupertinoColors.systemGrey),
-                        ),
-                        Text(
-                          '${calculateYearlySpent(sortedSubscriptions).toStringAsFixed(2)} €',
-                          style: EasyWalletApp.responsiveTextStyle(16, context,
-                              bold: true),
-                        ),
-                      ],
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          AutoSizeText(
+                            Intl.message('openExpenditureYear'),
+                            maxLines: 1,
+                            style: EasyWalletApp.responsiveTextStyle(
+                              context,
+                              color: CupertinoColors.systemGrey,
+                            ),
+                          ),
+                          AutoSizeText(
+                            '${calculateYearlySpent(sortedSubscriptions).toStringAsFixed(2)} €',
+                            maxLines: 1,
+                            style: EasyWalletApp.responsiveTextStyle(
+                              context,
+                              bold: true,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -209,26 +227,26 @@ class HomeViewState extends State<HomeView> {
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : sortedSubscriptions.isEmpty
-                    ? _buildEmptyState()
-                    : ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 85.0),
-                  itemCount: sortedSubscriptions.length,
-                  itemBuilder: (context, index) {
-                    return SubscriptionListComponent(
-                      subscription: sortedSubscriptions[index],
-                      onUpdate: (updatedSubscription) {
-                      },
-                      onDelete: (deletedSubscription) {
-                        setState(() {
-                          Provider.of<SubscriptionProvider>(context,
-                              listen: false)
-                              .deleteSubscription(deletedSubscription);
-                          _sortSubscriptions(sortedSubscriptions);
-                        });
-                      },
-                    );
-                  },
-                ),
+                        ? _buildEmptyState()
+                        : ListView.builder(
+                            padding: const EdgeInsets.only(bottom: 85.0),
+                            itemCount: sortedSubscriptions.length,
+                            itemBuilder: (context, index) {
+                              return SubscriptionListComponent(
+                                subscription: sortedSubscriptions[index],
+                                onUpdate: (updatedSubscription) {},
+                                onDelete: (deletedSubscription) {
+                                  setState(() {
+                                    Provider.of<SubscriptionProvider>(context,
+                                            listen: false)
+                                        .deleteSubscription(
+                                            deletedSubscription);
+                                    _sortSubscriptions(sortedSubscriptions);
+                                  });
+                                },
+                              );
+                            },
+                          ),
               ),
             ],
           ),
@@ -244,7 +262,7 @@ class HomeViewState extends State<HomeView> {
         children: [
           Text(
             Intl.message('noSubscriptionsAvailable'),
-            style: EasyWalletApp.responsiveTextStyle(16, context,
+            style: EasyWalletApp.responsiveTextStyle(context,
                 color: CupertinoColors.systemGrey),
           ),
           const SizedBox(height: 16),
@@ -261,7 +279,7 @@ class HomeViewState extends State<HomeView> {
             },
             child: Text(
               Intl.message('addNewSubscription'),
-              style: EasyWalletApp.responsiveTextStyle(16, context,
+              style: EasyWalletApp.responsiveTextStyle(context,
                   bold: true, color: CupertinoColors.white),
             ),
           ),
@@ -276,7 +294,7 @@ class HomeViewState extends State<HomeView> {
       builder: (context) => CupertinoActionSheet(
         title: Text(
           Intl.message('sortOptions'),
-          style: EasyWalletApp.responsiveTextStyle(16, context,
+          style: EasyWalletApp.responsiveTextStyle(context,
               color: CupertinoColors.systemGrey),
         ),
         actions: <Widget>[
@@ -284,7 +302,7 @@ class HomeViewState extends State<HomeView> {
             CupertinoActionSheetAction(
               child: Text(
                 option.translate(),
-                style: EasyWalletApp.responsiveTextStyle(16, context,
+                style: EasyWalletApp.responsiveTextStyle(context,
                     color: CupertinoColors.activeBlue),
               ),
               onPressed: () {
@@ -300,7 +318,7 @@ class HomeViewState extends State<HomeView> {
         ],
         cancelButton: CupertinoActionSheetAction(
           child: Text(Intl.message('cancel'),
-              style: EasyWalletApp.responsiveTextStyle(16, context,
+              style: EasyWalletApp.responsiveTextStyle(context,
                   color: CupertinoColors.systemGrey)),
           onPressed: () {
             Navigator.pop(context);

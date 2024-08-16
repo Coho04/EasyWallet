@@ -20,13 +20,11 @@ class EasyWalletApp extends StatefulWidget {
   EasyWalletAppState createState() => EasyWalletAppState();
 
   static TextStyle responsiveTextStyle(
-    double baseSize,
     BuildContext context, {
     bool bold = false,
     Color? color,
   }) {
     return TextStyle(
-      fontSize: baseSize / MediaQuery.of(context).textScaleFactor,
       fontWeight: bold ? FontWeight.bold : null,
       color: color,
     );

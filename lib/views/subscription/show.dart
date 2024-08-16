@@ -33,14 +33,12 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
-
     return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.systemGroupedBackground.resolveFrom(context),
       navigationBar: CupertinoNavigationBar(
         middle: Text(
           Intl.message('subscriptions'),
-          style: EasyWalletApp.responsiveTextStyle(24, context),
+          style: EasyWalletApp.responsiveTextStyle(context),
         ),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
@@ -64,12 +62,14 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
         ),
       ),
       child: SafeArea(
+        minimum: const EdgeInsets.only(bottom: 20),
         top: true,
+        bottom: true,
         child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.only(right: 16.0, left: 16.0, bottom: 20),
           children: <Widget>[
             const SizedBox(height: 20),
-            _buildHeader(isDarkMode),
+            _buildHeader(),
             const SizedBox(height: 20),
             CardSection(
               title: Intl.message('generalInformation'),
@@ -90,19 +90,19 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
               children: [
                 CardDetailRow(
                   label: Intl.message('nextInvoice'),
-                  value: _formatDate(subscription.getNextBillDate()),
+                  value: _formatDateTime(subscription.getNextBillDate()),
                 ),
                 CardDetailRow(
                   label: Intl.message('previousInvoice'),
-                  value: _formatDate(subscription.calculatePreviousBillDate()),
+                  value: _formatDateTime(subscription.calculatePreviousBillDate()),
                 ),
                 CardDetailRow(
                   label: Intl.message('firstDebit'),
-                  value: _formatDate(subscription.date),
+                  value: _formatDateTime(subscription.date),
                 ),
                 CardDetailRow(
                   label: Intl.message('createdOn'),
-                  value: _formatDateTime(subscription.timestamp),
+                  value: _formatDateTime(subscription.timestamp, withTime: true),
                   softBreak: true,
                 ),
               ],
@@ -165,7 +165,9 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
     );
   }
 
-  Widget _buildHeader(bool isDarkMode) {
+  Widget _buildHeader() {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Row(
       children: [
         subscription.buildImage(),
@@ -174,7 +176,6 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
           child: Text(
             subscription.title,
             style: EasyWalletApp.responsiveTextStyle(
-              24,
               context,
               bold: true,
               color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
@@ -205,13 +206,13 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
         context: context,
         builder: (context) => CupertinoAlertDialog(
           title: Text(Intl.message('hint'),
-              style: EasyWalletApp.responsiveTextStyle(16, context)),
+              style: EasyWalletApp.responsiveTextStyle(context)),
           content: Text(Intl.message('deletionIsNotSupportedOnTheWeb'),
-              style: EasyWalletApp.responsiveTextStyle(16, context)),
+              style: EasyWalletApp.responsiveTextStyle(context)),
           actions: [
             CupertinoDialogAction(
               child: Text('OK',
-                  style: EasyWalletApp.responsiveTextStyle(16, context)),
+                  style: EasyWalletApp.responsiveTextStyle(context)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -233,13 +234,9 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
     widget.onUpdate(subscription);
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return Intl.message('unknown');
-    return DateFormat.yMMMd().format(date);
-  }
-
-  String _formatDateTime(DateTime? dateTime) {
+  String _formatDateTime(DateTime? dateTime, {bool withTime = false}) {
     if (dateTime == null) return Intl.message('unknown');
-    return DateFormat('EEEE, dd.MM.yyyy HH:mm').format(dateTime);
+    if(!withTime) return DateFormat.yMMMd().format(dateTime);
+    return DateFormat('HH:mm  d. MMM. y').format(dateTime);
   }
 }

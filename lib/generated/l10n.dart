@@ -1080,10 +1080,10 @@ class S {
     );
   }
 
-  /// `Enable authentication protection`
+  /// `Enable Biometric`
   String get enableAuthProtection {
     return Intl.message(
-      'Enable authentication protection',
+      'Enable Biometric',
       name: 'enableAuthProtection',
       desc: '',
       args: [],
@@ -1195,6 +1195,16 @@ class S {
     return Intl.message(
       'OK',
       name: 'OK',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sync with iCloud`
+  String get syncWithICloud {
+    return Intl.message(
+      'Sync with iCloud',
+      name: 'syncWithICloud',
       desc: '',
       args: [],
     );
