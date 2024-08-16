@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:flutter/foundation.dart';
 import 'package:icloud_storage/icloud_storage.dart';
@@ -6,8 +7,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'dart:convert';
-
-import 'package:universal_io/io.dart';
 
 class PersistenceController {
   static final PersistenceController instance =

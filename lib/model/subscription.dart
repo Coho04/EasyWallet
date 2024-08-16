@@ -127,38 +127,41 @@ class Subscription {
     return nextBillDate;
   }
 
-  Widget buildImage(
-      {double width = 40,
-      double height = 40,
-      BoxFit boxFit = BoxFit.cover,
-      double errorImgSize = 40}) {
-    if (url == null) {
-      return Icon(
-        CupertinoIcons.exclamationmark_triangle,
-        color: CupertinoColors.systemGrey,
-        size: errorImgSize,
-      );
-    } else if (url!.isEmpty) {
-      return Icon(
-        Icons.account_balance_wallet_rounded,
-        color: CupertinoColors.systemGrey,
-        size: errorImgSize,
+  Widget buildImage({
+    double width = 40,
+    double height = 40,
+    BoxFit boxFit = BoxFit.cover,
+    double errorImgSize = 40,
+    double borderRadius = 8.0, // Add this to define the border radius
+  }) {
+    if (url == null || url!.isEmpty) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: Icon(
+          url == null ? CupertinoIcons.exclamationmark_triangle : Icons.account_balance_wallet_rounded,
+          color: CupertinoColors.systemGrey,
+          size: errorImgSize,
+        ),
       );
     } else {
-      return CachedNetworkImage(
-        imageUrl: getFaviconUrl(),
-        placeholder: (context, url) => const CupertinoActivityIndicator(),
-        errorWidget: (context, url, error) => const Icon(
-          CupertinoIcons.exclamationmark_triangle,
-          color: CupertinoColors.systemGrey,
-          size: 40,
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: CachedNetworkImage(
+          imageUrl: getFaviconUrl(),
+          placeholder: (context, url) => const CupertinoActivityIndicator(),
+          errorWidget: (context, url, error) => const Icon(
+            CupertinoIcons.exclamationmark_triangle,
+            color: CupertinoColors.systemGrey,
+            size: 40,
+          ),
+          fit: boxFit,
+          width: width,
+          height: height,
         ),
-        fit: boxFit,
-        width: width,
-        height: height,
       );
     }
   }
+
 
   int countPayment() {
     if (date == null) {

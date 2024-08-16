@@ -76,8 +76,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "done": MessageLookupByLibrary.simpleMessage("Done"),
         "editSubscription":
             MessageLookupByLibrary.simpleMessage("Edit subscription"),
-        "enableAuthProtection": MessageLookupByLibrary.simpleMessage(
-            "Enable authentication protection"),
+        "enableAuthProtection":
+            MessageLookupByLibrary.simpleMessage("Enable Biometric"),
         "enableNotifications":
             MessageLookupByLibrary.simpleMessage("Enable Notifications"),
         "enterMonthlyLimit":
@@ -182,6 +182,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Subscription Reminder"),
         "subscriptions": MessageLookupByLibrary.simpleMessage("Subscriptions"),
         "support": MessageLookupByLibrary.simpleMessage("Support"),
+        "syncWithICloud":
+            MessageLookupByLibrary.simpleMessage("Sync with iCloud"),
         "tipJar": MessageLookupByLibrary.simpleMessage("Tip Jar"),
         "title": MessageLookupByLibrary.simpleMessage("Title"),
         "totalCosts": MessageLookupByLibrary.simpleMessage("Total costs"),

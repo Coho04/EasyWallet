@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/currency.dart';
+import 'package:easy_wallet/views/components/card_section_component.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -96,19 +97,22 @@ class SettingsViewState extends State<SettingsView> {
         context: context,
         builder: (context) {
           return CupertinoAlertDialog(
-            title: Text(
+            title: AutoSizeText(
+              maxLines: 1,
               Intl.message('settings'),
-              style: EasyWalletApp.responsiveTextStyle(16, context),
+              style: EasyWalletApp.responsiveTextStyle(context),
             ),
-            content: Text(
+            content: AutoSizeText(
+              maxLines: 1,
               Intl.message('settingsAuthFailed'),
-              style: EasyWalletApp.responsiveTextStyle(16, context),
+              style: EasyWalletApp.responsiveTextStyle(context),
             ),
             actions: <Widget>[
               CupertinoDialogAction(
-                child: Text(
+                child: AutoSizeText(
+                  maxLines: 1,
                   'OK',
-                  style: EasyWalletApp.responsiveTextStyle(16, context),
+                  style: EasyWalletApp.responsiveTextStyle(context),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -143,19 +147,22 @@ class SettingsViewState extends State<SettingsView> {
         context: context,
         builder: (context) {
           return CupertinoAlertDialog(
-            title: Text(
+            title: AutoSizeText(
+              maxLines: 1,
               Intl.message('error'),
-              style: EasyWalletApp.responsiveTextStyle(16, context),
+              style: EasyWalletApp.responsiveTextStyle(context),
             ),
-            content: Text(
+            content: AutoSizeText(
+              maxLines: 1,
               '${Intl.message('couldNotLaunch')} $url',
-              style: EasyWalletApp.responsiveTextStyle(16, context),
+              style: EasyWalletApp.responsiveTextStyle(context),
             ),
             actions: <Widget>[
               CupertinoDialogAction(
-                child: Text(
+                child: AutoSizeText(
+                  maxLines: 1,
                   'OK',
-                  style: EasyWalletApp.responsiveTextStyle(16, context),
+                  style: EasyWalletApp.responsiveTextStyle(context),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -169,7 +176,12 @@ class SettingsViewState extends State<SettingsView> {
   }
 
   void _rateApp() {
-    _openWebPage("https://apps.apple.com/app/6478509715");
+    if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS)) {
+      _openWebPage("https://apps.apple.com/app/6478509715");
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      _openWebPage(
+          "https://play.google.com/store/apps/details?id=io.github.coho04.easy_wallet&hl=en-US&ah=J1tEPS0kySDuv5GU5zVvWM_C_Ds");
+    }
   }
 
   Future<void> _selectNotificationTime(BuildContext context) async {
@@ -196,9 +208,10 @@ class SettingsViewState extends State<SettingsView> {
                 ),
               ),
               CupertinoButton(
-                child: Text(
+                child: AutoSizeText(
+                  maxLines: 1,
                   Intl.message('done'),
-                  style: EasyWalletApp.responsiveTextStyle(16, context),
+                  style: EasyWalletApp.responsiveTextStyle(context),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -223,15 +236,17 @@ class SettingsViewState extends State<SettingsView> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
-          title: Text(
+          title: AutoSizeText(
+            maxLines: 1,
             Intl.message('selectCurrency'),
-            style: EasyWalletApp.responsiveTextStyle(16, context),
+            style: EasyWalletApp.responsiveTextStyle(context),
           ),
           actions: currencies.map((String value) {
             return CupertinoActionSheetAction(
-              child: Text(
+              child: AutoSizeText(
+                maxLines: 1,
                 value,
-                style: EasyWalletApp.responsiveTextStyle(16, context),
+                style: EasyWalletApp.responsiveTextStyle(context),
               ),
               onPressed: () {
                 setState(() {
@@ -243,9 +258,10 @@ class SettingsViewState extends State<SettingsView> {
             );
           }).toList(),
           cancelButton: CupertinoActionSheetAction(
-            child: Text(
+            child: AutoSizeText(
+              maxLines: 1,
               Intl.message('cancel'),
-              style: EasyWalletApp.responsiveTextStyle(16, context),
+              style: EasyWalletApp.responsiveTextStyle(context),
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -263,9 +279,10 @@ class SettingsViewState extends State<SettingsView> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
-          title: Text(
+          title: AutoSizeText(
+            maxLines: 1,
             Intl.message('enterMonthlyLimit'),
-            style: EasyWalletApp.responsiveTextStyle(16, context),
+            style: EasyWalletApp.responsiveTextStyle(context),
           ),
           message: CupertinoTextField(
             controller: limitController,
@@ -274,9 +291,10 @@ class SettingsViewState extends State<SettingsView> {
           ),
           actions: <CupertinoActionSheetAction>[
             CupertinoActionSheetAction(
-              child: Text(
+              child: AutoSizeText(
+                maxLines: 1,
                 Intl.message('save'),
-                style: EasyWalletApp.responsiveTextStyle(16, context),
+                style: EasyWalletApp.responsiveTextStyle(context),
               ),
               onPressed: () {
                 setState(() {
@@ -288,9 +306,10 @@ class SettingsViewState extends State<SettingsView> {
             ),
           ],
           cancelButton: CupertinoActionSheetAction(
-            child: Text(
+            child: AutoSizeText(
+              maxLines: 1,
               Intl.message('cancel'),
-              style: EasyWalletApp.responsiveTextStyle(16, context),
+              style: EasyWalletApp.responsiveTextStyle(context),
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -311,284 +330,283 @@ class SettingsViewState extends State<SettingsView> {
   Widget build(BuildContext context) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
-    final backgroundColor =
-        isDarkMode ? CupertinoColors.darkBackgroundGray : CupertinoColors.white;
+    final backgroundColor = isDarkMode
+        ? CupertinoColors.darkBackgroundGray
+        : CupertinoColors.systemBackground;
     final textColor =
         isDarkMode ? CupertinoColors.white : CupertinoColors.black;
-    final sectionHeaderColor =
-        isDarkMode ? CupertinoColors.inactiveGray : CupertinoColors.systemGrey;
 
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(
-          Intl.message('settings'),
-          style:
-              EasyWalletApp.responsiveTextStyle(24, context, color: textColor),
+        navigationBar: CupertinoNavigationBar(
+          middle: AutoSizeText(
+            maxLines: 1,
+            Intl.message('settings'),
+            style: EasyWalletApp.responsiveTextStyle(context,
+                color: textColor),
+          ),
+          backgroundColor: backgroundColor,
         ),
-        backgroundColor: backgroundColor,
-      ),
-      child: Container(
-        color: backgroundColor,
-        child: ListView(
-          children: [
-            CupertinoFormSection.insetGrouped(
-              header: Text(
-                Intl.message('notifications'),
-                style: EasyWalletApp.responsiveTextStyle(16, context,
-                    color: sectionHeaderColor),
-              ),
-              children: [
-                CupertinoFormRow(
-                  prefix: Text(
-                    Intl.message('enableNotifications'),
-                    style: EasyWalletApp.responsiveTextStyle(16, context,
-                        color: textColor),
-                  ),
-                  child: CupertinoSwitch(
-                    value: notificationsEnabled,
-                    onChanged: _handleNotificationsToggle,
-                  ),
-                ),
-                CupertinoFormRow(
-                  prefix: Flexible(
-                    child: Text(
-                      Intl.message('includeCostInNotifications'),
-                      style: EasyWalletApp.responsiveTextStyle(16, context,
-                          color: textColor),
-                      softWrap: true,
-                    ),
-                  ),
-                  child: CupertinoSwitch(
-                    value: includeCostInNotifications,
-                    onChanged: (value) {
-                      setState(() {
-                        includeCostInNotifications = value;
-                      });
-                      _saveSettings();
-                    },
-                  ),
-                ),
-                CupertinoFormRow(
-                  padding: const EdgeInsets.all(16),
-                  prefix: Text(
-                    Intl.message('notificationTime'),
-                    style: EasyWalletApp.responsiveTextStyle(16, context,
-                        color: textColor),
-                  ),
-                  child: GestureDetector(
-                    onTap: () => _selectNotificationTime(context),
-                    child: Text(
-                      _formatTime(notificationTime),
-                      style: EasyWalletApp.responsiveTextStyle(16, context,
-                          color: CupertinoColors.systemBlue),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            CupertinoFormSection.insetGrouped(
-              header: Text(
-                Intl.message('security'),
-                style: EasyWalletApp.responsiveTextStyle(16, context,
-                    color: sectionHeaderColor),
-              ),
-              children: [
-                CupertinoFormRow(
-                  prefix: Expanded(
-                    flex: 4,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: AutoSizeText(
-                        Intl.message('enableAuthProtection'),
-                        style: EasyWalletApp.responsiveTextStyle(16, context,
-                            color: textColor),
-                      ),
-                    ),
-                  ),
-                  child: CupertinoSwitch(
-                    value: isAuthProtected,
-                    onChanged: _handleAuthProtectionToggle,
-                  ),
-                ),
-              ],
-            ),
-            CupertinoFormSection.insetGrouped(
-              header: Text(
-                Intl.message('settings'),
-                style: EasyWalletApp.responsiveTextStyle(20, context,
-                    color: sectionHeaderColor),
-              ),
-              children: [
-                CupertinoFormRow(
-                  padding: const EdgeInsets.all(16),
-                  prefix: Text(
-                    Intl.message('currency'),
-                    style: EasyWalletApp.responsiveTextStyle(16, context,
-                        color: textColor),
-                  ),
-                  child: GestureDetector(
-                    onTap: () => _selectCurrency(context),
-                    child: Text(
-                      currency,
-                      style: EasyWalletApp.responsiveTextStyle(16, context,
-                          color: CupertinoColors.systemBlue),
-                    ),
-                  ),
-                ),
-                CupertinoFormRow(
-                  padding: const EdgeInsets.all(16),
-                  prefix: Text(
-                    Intl.message('monthlyLimit'),
-                    style: EasyWalletApp.responsiveTextStyle(16, context,
-                        color: textColor),
-                  ),
-                  child: GestureDetector(
-                    onTap: () => _enterMonthlyLimit(context),
-                    child: Text(
-                      '$monthlyLimit $currency',
-                      style: EasyWalletApp.responsiveTextStyle(16, context,
-                          color: CupertinoColors.systemBlue),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS))
-              CupertinoFormSection.insetGrouped(
-                header: Text(
-                  Intl.message('dataManagement'),
-                  style: EasyWalletApp.responsiveTextStyle(16, context,
-                      color: sectionHeaderColor),
-                ),
+        backgroundColor:
+            CupertinoColors.systemGroupedBackground.resolveFrom(context),
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              CardSection(
+                title: Intl.message('notifications'),
                 children: [
                   CupertinoFormRow(
-                    prefix: Text(
-                      Intl.message('syncWithICloud'),
-                      style: EasyWalletApp.responsiveTextStyle(16, context,
+                    prefix: AutoSizeText(
+                      maxLines: 1,
+                      Intl.message('enableNotifications'),
+                      style: EasyWalletApp.responsiveTextStyle(context,
                           color: textColor),
                     ),
                     child: CupertinoSwitch(
-                      value: syncWithICloud,
-                      onChanged: _handleICloudToggle,
+                      value: notificationsEnabled,
+                      onChanged: _handleNotificationsToggle,
+                    ),
+                  ),
+                  CupertinoFormRow(
+                    prefix: Flexible(
+                      child: AutoSizeText(
+                        maxLines: 2,
+                        Intl.message('includeCostInNotifications'),
+                        style: EasyWalletApp.responsiveTextStyle(context,
+                            color: textColor),
+                        softWrap: true,
+                      ),
+                    ),
+                    child: CupertinoSwitch(
+                      value: includeCostInNotifications,
+                      onChanged: (value) {
+                        setState(() {
+                          includeCostInNotifications = value;
+                        });
+                        _saveSettings();
+                      },
+                    ),
+                  ),
+                  CupertinoFormRow(
+                    padding: const EdgeInsets.all(16),
+                    prefix: AutoSizeText(
+                      maxLines: 1,
+                      Intl.message('notificationTime'),
+                      style: EasyWalletApp.responsiveTextStyle(context,
+                          color: textColor),
+                    ),
+                    child: GestureDetector(
+                      onTap: () => _selectNotificationTime(context),
+                      child: AutoSizeText(
+                        maxLines: 1,
+                        _formatTime(notificationTime),
+                        style: EasyWalletApp.responsiveTextStyle(context,
+                            color: CupertinoColors.systemBlue),
+                      ),
                     ),
                   ),
                 ],
               ),
-            CupertinoFormSection.insetGrouped(
-              header: Text(
-                Intl.message('support'),
-                style: EasyWalletApp.responsiveTextStyle(16, context,
-                    color: sectionHeaderColor),
+              const SizedBox(height: 20),
+              CardSection(
+                title: Intl.message('security'),
+                children: [
+                  CupertinoFormRow(
+                    prefix: Expanded(
+                      flex: 4,
+                      child: AutoSizeText(
+                        Intl.message('enableAuthProtection'),
+                        style: EasyWalletApp.responsiveTextStyle(context,
+                            color: textColor),
+                      ),
+                    ),
+                    child: CupertinoSwitch(
+                      value: isAuthProtected,
+                      onChanged: _handleAuthProtectionToggle,
+                    ),
+                  ),
+                ],
               ),
-              children: [
-                CupertinoFormRow(
-                  padding: const EdgeInsets.all(16),
-                  child: GestureDetector(
-                    onTap: () =>
-                        _openWebPage("https://golden-developer.de/imprint"),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        Intl.message('imprint'),
-                        style: EasyWalletApp.responsiveTextStyle(16, context,
+              const SizedBox(height: 20),
+              CardSection(
+                title: Intl.message('settings'),
+                children: [
+                  CupertinoFormRow(
+                    padding: const EdgeInsets.all(16),
+                    prefix: AutoSizeText(
+                      maxLines: 1,
+                      Intl.message('currency'),
+                      style: EasyWalletApp.responsiveTextStyle(context,
+                          color: textColor),
+                    ),
+                    child: GestureDetector(
+                      onTap: () => _selectCurrency(context),
+                      child: AutoSizeText(
+                        maxLines: 1,
+                        currency,
+                        style: EasyWalletApp.responsiveTextStyle(context,
                             color: CupertinoColors.systemBlue),
                       ),
                     ),
                   ),
-                ),
-                CupertinoFormRow(
-                  padding: const EdgeInsets.all(16),
-                  child: GestureDetector(
-                    onTap: () =>
-                        _openWebPage("https://golden-developer.de/privacy"),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        Intl.message('privacyPolicy'),
-                        style: EasyWalletApp.responsiveTextStyle(16, context,
+                  CupertinoFormRow(
+                    padding: const EdgeInsets.all(16),
+                    prefix: AutoSizeText(
+                      maxLines: 1,
+                      Intl.message('monthlyLimit'),
+                      style: EasyWalletApp.responsiveTextStyle(context,
+                          color: textColor),
+                    ),
+                    child: GestureDetector(
+                      onTap: () => _enterMonthlyLimit(context),
+                      child: AutoSizeText(
+                        maxLines: 1,
+                        '$monthlyLimit $currency',
+                        style: EasyWalletApp.responsiveTextStyle(context,
                             color: CupertinoColors.systemBlue),
                       ),
                     ),
                   ),
+                ],
+              ),
+              if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS))
+                const SizedBox(height: 20),
+              if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS))
+                CardSection(
+                  title: Intl.message('dataManagement'),
+                  children: [
+                    CupertinoFormRow(
+                      prefix: AutoSizeText(
+                        maxLines: 1,
+                        Intl.message('syncWithICloud'),
+                        style: EasyWalletApp.responsiveTextStyle(context,
+                            color: textColor),
+                      ),
+                      child: CupertinoSwitch(
+                        value: syncWithICloud,
+                        onChanged: _handleICloudToggle,
+                      ),
+                    ),
+                  ],
                 ),
-                CupertinoFormRow(
-                  padding: const EdgeInsets.all(16),
-                  child: GestureDetector(
-                    onTap: () =>
-                        _openWebPage("https://support.golden-developer.de"),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        Intl.message('help'),
-                        style: EasyWalletApp.responsiveTextStyle(16, context,
-                            color: CupertinoColors.systemBlue),
+              const SizedBox(height: 20),
+              CardSection(
+                title: Intl.message('support'),
+                children: [
+                  CupertinoFormRow(
+                    padding: const EdgeInsets.all(16),
+                    child: GestureDetector(
+                      onTap: () =>
+                          _openWebPage("https://golden-developer.de/imprint"),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: AutoSizeText(
+                          maxLines: 1,
+                          Intl.message('imprint'),
+                          style: EasyWalletApp.responsiveTextStyle(context,
+                              color: CupertinoColors.systemBlue),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                CupertinoFormRow(
-                  padding: const EdgeInsets.all(16),
-                  child: GestureDetector(
-                    onTap: _rateApp,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        Intl.message('feedback'),
-                        style: EasyWalletApp.responsiveTextStyle(16, context,
-                            color: CupertinoColors.systemBlue),
+                  CupertinoFormRow(
+                    padding: const EdgeInsets.all(16),
+                    child: GestureDetector(
+                      onTap: () =>
+                          _openWebPage("https://golden-developer.de/privacy"),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: AutoSizeText(
+                          maxLines: 1,
+                          Intl.message('privacyPolicy'),
+                          style: EasyWalletApp.responsiveTextStyle(context,
+                              color: CupertinoColors.systemBlue),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                CupertinoFormRow(
-                  padding: const EdgeInsets.all(16),
-                  child: GestureDetector(
-                    onTap: () =>
-                        _openWebPage("https://support.golden-developer.de"),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        Intl.message('contactDeveloper'),
-                        style: EasyWalletApp.responsiveTextStyle(16, context,
-                            color: CupertinoColors.systemBlue),
+                  CupertinoFormRow(
+                    padding: const EdgeInsets.all(16),
+                    child: GestureDetector(
+                      onTap: () =>
+                          _openWebPage("https://support.golden-developer.de"),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: AutoSizeText(
+                          maxLines: 1,
+                          Intl.message('help'),
+                          style: EasyWalletApp.responsiveTextStyle(context,
+                              color: CupertinoColors.systemBlue),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                CupertinoFormRow(
-                  padding: const EdgeInsets.all(16),
-                  child: GestureDetector(
-                    onTap: () =>
-                        _openWebPage("https://donate.golden-developer.de"),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        Intl.message('tipJar'),
-                        style: EasyWalletApp.responsiveTextStyle(16, context,
-                            color: CupertinoColors.systemBlue),
+                  CupertinoFormRow(
+                    padding: const EdgeInsets.all(16),
+                    child: GestureDetector(
+                      onTap: _rateApp,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: AutoSizeText(
+                          maxLines: 1,
+                          Intl.message('feedback'),
+                          style: EasyWalletApp.responsiveTextStyle(context,
+                              color: CupertinoColors.systemBlue),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                CupertinoFormRow(
-                  padding: const EdgeInsets.all(16),
-                  child: GestureDetector(
-                    onTap: _rateApp,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        Intl.message('rateApp'),
-                        style: EasyWalletApp.responsiveTextStyle(16, context,
-                            color: CupertinoColors.systemBlue),
+                  CupertinoFormRow(
+                    padding: const EdgeInsets.all(16),
+                    child: GestureDetector(
+                      onTap: () =>
+                          _openWebPage("https://support.golden-developer.de"),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: AutoSizeText(
+                          maxLines: 1,
+                          Intl.message('contactDeveloper'),
+                          style: EasyWalletApp.responsiveTextStyle(context,
+                              color: CupertinoColors.systemBlue),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+                  CupertinoFormRow(
+                    padding: const EdgeInsets.all(16),
+                    child: GestureDetector(
+                      onTap: () =>
+                          _openWebPage("https://donate.golden-developer.de"),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: AutoSizeText(
+                          maxLines: 1,
+                          Intl.message('tipJar'),
+                          style: EasyWalletApp.responsiveTextStyle(context,
+                              color: CupertinoColors.systemBlue),
+                        ),
+                      ),
+                    ),
+                  ),
+                  CupertinoFormRow(
+                    padding: const EdgeInsets.all(16),
+                    child: GestureDetector(
+                      onTap: _rateApp,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: AutoSizeText(
+                          maxLines: 1,
+                          Intl.message('rateApp'),
+                          style: EasyWalletApp.responsiveTextStyle(context,
+                              color: CupertinoColors.systemBlue),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ));
   }
 }

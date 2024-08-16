@@ -69,6 +69,8 @@ class StatisticViewState extends State<StatisticView> {
       builder: (context, subscriptionProvider, child) {
         final subscriptions = subscriptionProvider.subscriptions;
         return CupertinoPageScaffold(
+          backgroundColor:
+              CupertinoColors.systemGroupedBackground.resolveFrom(context),
           navigationBar: CupertinoNavigationBar(
             middle: Text(Intl.message('statistics')),
           ),
@@ -146,10 +148,11 @@ class StatisticViewState extends State<StatisticView> {
                               CardSection(
                                 title: Intl.message('costShare'),
                                 children: [
-                                  const SizedBox(height: 10),
-                                  buildPieChart(subscriptions),
-                                  const SizedBox(height: 20),
-                                  const Divider(),
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, bottom: 40),
+                                    child: buildPieChart(subscriptions),
+                                  ),
                                   CardActionButton(
                                     label: Intl.message('overview'),
                                     icon: CupertinoIcons.right_chevron,
@@ -178,7 +181,6 @@ class StatisticViewState extends State<StatisticView> {
                                 children: [
                                   _buildChart(
                                       _makeYearlyToMonthlyData(subscriptions)),
-                                  const Divider(),
                                   CardActionButton(
                                     label: Intl.message('overview'),
                                     icon: CupertinoIcons.right_chevron,
@@ -206,7 +208,6 @@ class StatisticViewState extends State<StatisticView> {
                                 title: Intl.message('pinnedVsUnpinned'),
                                 children: [
                                   _buildChart(_makePinnedData(subscriptions)),
-                                  const Divider(),
                                   CardActionButton(
                                     label: Intl.message('overview'),
                                     icon: CupertinoIcons.right_chevron,
@@ -233,7 +234,6 @@ class StatisticViewState extends State<StatisticView> {
                                 title: Intl.message('pausedVsActive'),
                                 children: [
                                   _buildChart(_makePausedData(subscriptions)),
-                                  const Divider(),
                                   CardActionButton(
                                     label: Intl.message('overview'),
                                     icon: CupertinoIcons.right_chevron,
@@ -594,6 +594,8 @@ class StatisticViewState extends State<StatisticView> {
       {bool stackedColumnSeries = false}) {
     Color? color = colorCache[subscription.getFaviconUrl()] ?? Colors.grey;
     bool isSelected = _selectedSubscriptionId == subscription.id;
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     final commonSettings = {
       'onPointTap': (ChartPointDetails point) {
         setState(() {
@@ -605,7 +607,7 @@ class StatisticViewState extends State<StatisticView> {
         });
       },
       'dataSource': [ChartData(subscription.title, value, color)],
-      'borderColor': Colors.black54,
+      'borderColor': isDarkMode ? Colors.white : Colors.black,
       'borderWidth': isSelected ? 2.0 : 0.5,
       'opacity': _selectedSubscriptionId == null
           ? 1.0

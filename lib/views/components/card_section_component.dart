@@ -1,5 +1,6 @@
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CardSection extends StatelessWidget {
@@ -7,12 +8,12 @@ class CardSection extends StatelessWidget {
   final List<Widget> children;
   final String? subtitle;
 
-  const CardSection(
-      {super.key,
-      required this.title,
-      this.subtitle,
-      required this.children,
-      });
+  const CardSection({
+    super.key,
+    required this.title,
+    this.subtitle,
+    required this.children,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +24,12 @@ class CardSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDarkMode
             ? CupertinoColors.darkBackgroundGray
-            : CupertinoColors.systemGrey6,
+            : CupertinoColors.white,
         borderRadius: BorderRadius.circular(12.0),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: isDarkMode
-                ? CupertinoColors.black
-                : CupertinoColors.systemGrey4,
-            blurRadius: 10.0,
+            color: CupertinoColors.systemGrey,
+            blurRadius: 5.0,
             spreadRadius: 1.0,
           ),
         ],
@@ -41,7 +40,6 @@ class CardSection extends StatelessWidget {
           Text(
             title,
             style: EasyWalletApp.responsiveTextStyle(
-              16,
               context,
               bold: true,
               color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
@@ -49,18 +47,24 @@ class CardSection extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           if (subtitle != null)
-          Text(
-            subtitle!,
-            style: EasyWalletApp.responsiveTextStyle(
-              13,
-              context,
-              bold: false,
-              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+            Text(
+              subtitle!,
+              style: EasyWalletApp.responsiveTextStyle(
+                context,
+                bold: false,
+                color:
+                    isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+              ),
             ),
-          ),
-          if (subtitle != null)
-          const SizedBox(height: 10),
-          ...children,
+          if (subtitle != null) const SizedBox(height: 10),
+          ...List.generate(children.length, (index) {
+            return Column(
+              children: [
+                if (index > 0) const Divider(),
+                children[index],
+              ],
+            );
+          }),
         ],
       ),
     );
@@ -87,16 +91,18 @@ class CardDetailRow extends StatelessWidget {
   }
 
   Widget _buildPrefix(BuildContext context) {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     if (softBreak) {
       return Expanded(
         flex: 2,
         child: Text(
           label,
           style: EasyWalletApp.responsiveTextStyle(
-            16,
             context,
-            bold: true,
-            color: CupertinoColors.systemGrey,
+            color: isDarkMode
+                ? CupertinoColors.systemGrey4
+                : CupertinoColors.systemGrey,
           ),
           softWrap: true,
           overflow: TextOverflow.visible,
@@ -106,10 +112,10 @@ class CardDetailRow extends StatelessWidget {
       return Text(
         label,
         style: EasyWalletApp.responsiveTextStyle(
-          16,
           context,
-          bold: true,
-          color: CupertinoColors.systemGrey,
+          color: isDarkMode
+              ? CupertinoColors.systemGrey3
+              : CupertinoColors.systemGrey,
         ),
         softWrap: true,
         overflow: TextOverflow.visible,
@@ -128,7 +134,6 @@ class CardDetailRow extends StatelessWidget {
             return Text(
               Intl.message('loading'),
               style: EasyWalletApp.responsiveTextStyle(
-                16,
                 context,
                 color:
                     isDarkMode ? CupertinoColors.white : CupertinoColors.black,
@@ -138,7 +143,6 @@ class CardDetailRow extends StatelessWidget {
             return Text(
               'Error: ${snapshot.error}',
               style: EasyWalletApp.responsiveTextStyle(
-                16,
                 context,
                 color:
                     isDarkMode ? CupertinoColors.white : CupertinoColors.black,
@@ -148,7 +152,6 @@ class CardDetailRow extends StatelessWidget {
             return Text(
               snapshot.data!,
               style: EasyWalletApp.responsiveTextStyle(
-                16,
                 context,
                 color:
                     isDarkMode ? CupertinoColors.white : CupertinoColors.black,
@@ -158,7 +161,6 @@ class CardDetailRow extends StatelessWidget {
             return Text(
               Intl.message('noData'),
               style: EasyWalletApp.responsiveTextStyle(
-                16,
                 context,
                 color:
                     isDarkMode ? CupertinoColors.white : CupertinoColors.black,
@@ -171,7 +173,6 @@ class CardDetailRow extends StatelessWidget {
       return Text(
         value.toString(),
         style: EasyWalletApp.responsiveTextStyle(
-          16,
           context,
           color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
         ),
@@ -207,8 +208,11 @@ class CardActionButton extends StatelessWidget {
           children: [
             Text(
               label,
-              style: EasyWalletApp.responsiveTextStyle(16, context,
-                  color: color ?? CupertinoColors.systemGrey),
+              style: EasyWalletApp.responsiveTextStyle(context,
+                  color: color ??
+                      (isDarkMode
+                          ? CupertinoColors.systemGrey4
+                          : CupertinoColors.systemGrey)),
             ),
             Icon(
               icon,
