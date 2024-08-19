@@ -1,7 +1,9 @@
+import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -125,84 +127,84 @@ class ChartDetailPageState extends State<ChartDetailPage> {
   }
 
   StackedSeriesBase buildSeries(series) {
-   if (widget.dataType == 'StackedColumn100Series') {
-     return StackedColumn100Series<ChartData, String>(
-       dataSource: series.dataSource,
-       xValueMapper: series.xValueMapper,
-       yValueMapper: (ChartData data, _) => data.value,
-       pointColorMapper: (ChartData data, _) {
-         var color = data.color;
-         if (_selectedSubscriptionId != null && widget.subscriptions.isNotEmpty) {
-           Iterable<Subscription> filteredSubs = widget.subscriptions.where((sub) => sub.title == data.label);
-           if (filteredSubs.isEmpty) {
-             return color;
-           }
-           int? id = filteredSubs.first.id;
-           if (id != null) {
-             final isSelected = _selectedSubscriptionId == id;
-             if (!isSelected) {
-               color = color.withOpacity(0.5);
-             }
-           }
-         }
-         return color;
-       },
-       name: series.name,
-       onPointTap: (pointDetails) {
-         setState(() {
-           final tappedData =
-           series.dataSource?[pointDetails.pointIndex!];
-           final tappedSubscription = widget.subscriptions
-               .firstWhere((sub) => sub.title == tappedData?.label);
+    if (widget.dataType == 'StackedColumn100Series') {
+      return StackedColumn100Series<ChartData, String>(
+        dataSource: series.dataSource,
+        xValueMapper: series.xValueMapper,
+        yValueMapper: (ChartData data, _) => data.value,
+        pointColorMapper: (ChartData data, _) {
+          var color = data.color;
+          if (_selectedSubscriptionId != null &&
+              widget.subscriptions.isNotEmpty) {
+            Iterable<Subscription> filteredSubs =
+                widget.subscriptions.where((sub) => sub.title == data.label);
+            if (filteredSubs.isEmpty) {
+              return color;
+            }
+            int? id = filteredSubs.first.id;
+            if (id != null) {
+              final isSelected = _selectedSubscriptionId == id;
+              if (!isSelected) {
+                color = color.withOpacity(0.5);
+              }
+            }
+          }
+          return color;
+        },
+        name: series.name,
+        onPointTap: (pointDetails) {
+          setState(() {
+            final tappedData = series.dataSource?[pointDetails.pointIndex!];
+            final tappedSubscription = widget.subscriptions
+                .firstWhere((sub) => sub.title == tappedData?.label);
 
-           if (_selectedSubscriptionId == tappedSubscription.id) {
-             _selectedSubscriptionId = null;
-           } else {
-             _selectedSubscriptionId = tappedSubscription.id;
-           }
-         });
-       },
-       borderColor: Colors.black54,
-       borderWidth: 0.01,
-       dataLabelSettings: const DataLabelSettings(isVisible: false),
-     );
-   } else {
-     return StackedColumnSeries<ChartData, String>(
-       dataSource: series.dataSource,
-       xValueMapper: series.xValueMapper,
-       yValueMapper: (ChartData data, _) => data.value,
-       pointColorMapper: (ChartData data, _) {
-         var color = data.color;
-         if (_selectedSubscriptionId != null) {
-           final isSelected = widget.subscriptions
-               .firstWhere((sub) => sub.title == data.label)
-               .id ==
-               _selectedSubscriptionId;
-           if (!isSelected) {
-             color = color.withOpacity(0.5);
-           }
-         }
-         return color;
-       },
-       name: series.name,
-       onPointTap: (pointDetails) {
-         setState(() {
-           final tappedData =
-           series.dataSource?[pointDetails.pointIndex!];
-           final tappedSubscription = widget.subscriptions
-               .firstWhere((sub) => sub.title == tappedData?.label);
+            if (_selectedSubscriptionId == tappedSubscription.id) {
+              _selectedSubscriptionId = null;
+            } else {
+              _selectedSubscriptionId = tappedSubscription.id;
+            }
+          });
+        },
+        borderColor: Colors.black54,
+        borderWidth: 0.01,
+        dataLabelSettings: const DataLabelSettings(isVisible: false),
+      );
+    } else {
+      return StackedColumnSeries<ChartData, String>(
+        dataSource: series.dataSource,
+        xValueMapper: series.xValueMapper,
+        yValueMapper: (ChartData data, _) => data.value,
+        pointColorMapper: (ChartData data, _) {
+          var color = data.color;
+          if (_selectedSubscriptionId != null) {
+            final isSelected = widget.subscriptions
+                    .firstWhere((sub) => sub.title == data.label)
+                    .id ==
+                _selectedSubscriptionId;
+            if (!isSelected) {
+              color = color.withOpacity(0.5);
+            }
+          }
+          return color;
+        },
+        name: series.name,
+        onPointTap: (pointDetails) {
+          setState(() {
+            final tappedData = series.dataSource?[pointDetails.pointIndex!];
+            final tappedSubscription = widget.subscriptions
+                .firstWhere((sub) => sub.title == tappedData?.label);
 
-           if (_selectedSubscriptionId == tappedSubscription.id) {
-             _selectedSubscriptionId = null;
-           } else {
-             _selectedSubscriptionId = tappedSubscription.id;
-           }
-         });
-       },
-       borderColor: Colors.black54,
-       borderWidth: 0.01,
-       dataLabelSettings: const DataLabelSettings(isVisible: false),
-     );
-   }
+            if (_selectedSubscriptionId == tappedSubscription.id) {
+              _selectedSubscriptionId = null;
+            } else {
+              _selectedSubscriptionId = tappedSubscription.id;
+            }
+          });
+        },
+        borderColor: Colors.black54,
+        borderWidth: 0.01,
+        dataLabelSettings: const DataLabelSettings(isVisible: false),
+      );
+    }
   }
 }
