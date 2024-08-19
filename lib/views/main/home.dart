@@ -122,7 +122,6 @@ class HomeViewState extends State<HomeView> {
           builder: (context, currencyProvider, child)
           {
             final currency = currencyProvider.currency;
-
             return CupertinoPageScaffold(
               navigationBar: CupertinoNavigationBar(
                 middle: Column(
@@ -241,6 +240,7 @@ class HomeViewState extends State<HomeView> {
                       itemCount: sortedSubscriptions.length,
                       itemBuilder: (context, index) {
                         return SubscriptionListComponent(
+                          currency: currency,
                           subscription: sortedSubscriptions[index],
                           onUpdate: (updatedSubscription) {},
                           onDelete: (deletedSubscription) {

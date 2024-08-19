@@ -5,8 +5,8 @@ import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
-import 'package:easy_wallet/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -36,19 +36,10 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   bool _titleValid = true;
   bool _amountValid = true;
 
-  String _currency = Currency.USD.symbol;
-
-  Future<void> _loadCurrency() async {
-    final currency = await Settings.getCurrency();
-    setState(() {
-      _currency = currency.symbol;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    _loadCurrency();
     _titleController = TextEditingController(text: widget.subscription.title);
     _urlController = TextEditingController(text: widget.subscription.url ?? '');
     _amountController =
@@ -108,83 +99,87 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   Widget build(BuildContext context) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: AutoSizeText(
-          Intl.message('editSubscription'),
-          maxLines: 1,
-          style: EasyWalletApp.responsiveTextStyle(context),
+    return Consumer<CurrencyProvider>(
+        builder: (context, currencyProvider, child) {
+      final currency = currencyProvider.currency;
+      return CupertinoPageScaffold(
+        navigationBar: CupertinoNavigationBar(
+          middle: AutoSizeText(
+            Intl.message('editSubscription'),
+            maxLines: 1,
+            style: EasyWalletApp.responsiveTextStyle(context),
+          ),
+          trailing: CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: _saveItem,
+            child: const Icon(CupertinoIcons.floppy_disk),
+          ),
         ),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: _saveItem,
-          child: const Icon(CupertinoIcons.floppy_disk),
-        ),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            child: ListView(
-              children: [
-                _buildHeader(isDarkMode),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  _urlController,
-                  'URL',
-                  isDarkMode: isDarkMode,
-                  keyboardType: TextInputType.url,
-                  onChanged: (value) {
-                    if (!value.startsWith('https://')) {
-                      _urlController.text =
-                          'https://${value.replaceFirst('https://', '')}';
-                      _urlController.selection = TextSelection.fromPosition(
-                          TextPosition(offset: _urlController.text.length));
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildAmountField(isDarkMode),
-                const SizedBox(height: 16),
-                _buildDatePickerField(
-                  Intl.message('startDate'),
-                  _date,
-                  _pickDate,
-                  isDarkMode,
-                ),
-                const SizedBox(height: 16),
-                _buildDropdownField(
-                  Intl.message('paymentRate'),
-                  _paymentRate,
-                  PaymentRate.values,
-                  (value) {
-                    setState(() {
-                      _paymentRate = value!;
-                    });
-                  },
-                  isDarkMode,
-                ),
-                const SizedBox(height: 16),
-                _buildDropdownField(
-                  Intl.message('remembering'),
-                  _rememberCycle,
-                  RememberCycle.values,
-                  (value) {
-                    setState(() {
-                      _rememberCycle = value!;
-                    });
-                  },
-                  isDarkMode,
-                ),
-                const SizedBox(height: 16),
-                _buildTextField(_notesController, Intl.message('notes'),
-                    maxLines: 5, isDarkMode: isDarkMode),
-              ],
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              child: ListView(
+                children: [
+                  _buildHeader(isDarkMode),
+                  const SizedBox(height: 16),
+                  _buildTextField(
+                    _urlController,
+                    'URL',
+                    isDarkMode: isDarkMode,
+                    keyboardType: TextInputType.url,
+                    onChanged: (value) {
+                      if (!value.startsWith('https://')) {
+                        _urlController.text =
+                            'https://${value.replaceFirst('https://', '')}';
+                        _urlController.selection = TextSelection.fromPosition(
+                            TextPosition(offset: _urlController.text.length));
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  _buildAmountField(isDarkMode, currency),
+                  const SizedBox(height: 16),
+                  _buildDatePickerField(
+                    Intl.message('startDate'),
+                    _date,
+                    _pickDate,
+                    isDarkMode,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildDropdownField(
+                    Intl.message('paymentRate'),
+                    _paymentRate,
+                    PaymentRate.values,
+                    (value) {
+                      setState(() {
+                        _paymentRate = value!;
+                      });
+                    },
+                    isDarkMode,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildDropdownField(
+                    Intl.message('remembering'),
+                    _rememberCycle,
+                    RememberCycle.values,
+                    (value) {
+                      setState(() {
+                        _rememberCycle = value!;
+                      });
+                    },
+                    isDarkMode,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextField(_notesController, Intl.message('notes'),
+                      maxLines: 5, isDarkMode: isDarkMode),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildHeader(bool isDarkMode) {
@@ -274,7 +269,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
     );
   }
 
-  Widget _buildAmountField(bool isDarkMode) {
+  Widget _buildAmountField(bool isDarkMode, Currency currency) {
     return Row(
       children: [
         Expanded(
@@ -305,7 +300,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
         const SizedBox(width: 8),
         AutoSizeText(
           maxLines: 1,
-          _currency,
+          currency.symbol,
           style: EasyWalletApp.responsiveTextStyle(
             context,
             color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,

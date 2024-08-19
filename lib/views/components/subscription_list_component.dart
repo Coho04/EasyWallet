@@ -1,4 +1,5 @@
 import 'package:easy_wallet/easy_wallet_app.dart';
+import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,12 +9,14 @@ import 'package:intl/intl.dart';
 
 class SubscriptionListComponent extends StatelessWidget {
   final Subscription subscription;
+  final Currency currency;
   final Function(Subscription) onUpdate;
   final Function(Subscription) onDelete;
 
   const SubscriptionListComponent(
       {super.key,
       required this.subscription,
+      required this.currency,
       required this.onUpdate,
       required this.onDelete});
 
@@ -63,7 +66,7 @@ class SubscriptionListComponent extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    '${subscription.amount.toStringAsFixed(2)} €',
+                    '${subscription.amount.toStringAsFixed(2)} ${currency.symbol}',
                     style: EasyWalletApp.responsiveTextStyle(context,
                         color: isDarkMode
                             ? CupertinoColors.systemGrey2
@@ -137,7 +140,7 @@ class SubscriptionListComponent extends StatelessWidget {
     String priceString = subscription.convertPrice()?.toStringAsFixed(2) ??
         Intl.message('unknown');
     return subscription.repeatPattern == PaymentRate.monthly.value
-        ? '$priceString €/${Intl.message('year')}'
-        : '$priceString €/${Intl.message('month')}';
+        ? '$priceString ${currency.symbol}/${Intl.message('year')}'
+        : '$priceString ${currency.symbol}/${Intl.message('month')}';
   }
 }

@@ -241,15 +241,13 @@ class SettingsViewState extends State<SettingsView> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
-          title: AutoSizeText(
-            maxLines: 1,
+          title: Text(
             Intl.message('selectCurrency'),
             style: EasyWalletApp.responsiveTextStyle(context),
           ),
           actions: currencies.map((String value) {
             return CupertinoActionSheetAction(
-              child: AutoSizeText(
-                maxLines: 1,
+              child: Text(
                 value,
                 style: EasyWalletApp.responsiveTextStyle(context),
               ),
@@ -263,8 +261,7 @@ class SettingsViewState extends State<SettingsView> {
             );
           }).toList(),
           cancelButton: CupertinoActionSheetAction(
-            child: AutoSizeText(
-              maxLines: 1,
+            child: Text(
               Intl.message('cancel'),
               style: EasyWalletApp.responsiveTextStyle(context),
             ),
@@ -284,8 +281,7 @@ class SettingsViewState extends State<SettingsView> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoActionSheet(
-          title: AutoSizeText(
-            maxLines: 1,
+          title: Text(
             Intl.message('enterMonthlyLimit'),
             style: EasyWalletApp.responsiveTextStyle(context),
           ),
@@ -296,8 +292,7 @@ class SettingsViewState extends State<SettingsView> {
           ),
           actions: <CupertinoActionSheetAction>[
             CupertinoActionSheetAction(
-              child: AutoSizeText(
-                maxLines: 1,
+              child: Text(
                 Intl.message('save'),
                 style: EasyWalletApp.responsiveTextStyle(context),
               ),
@@ -311,8 +306,7 @@ class SettingsViewState extends State<SettingsView> {
             ),
           ],
           cancelButton: CupertinoActionSheetAction(
-            child: AutoSizeText(
-              maxLines: 1,
+            child: Text(
               Intl.message('cancel'),
               style: EasyWalletApp.responsiveTextStyle(context),
             ),

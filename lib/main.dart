@@ -1,6 +1,7 @@
 import 'package:background_fetch/background_fetch.dart';
 import 'package:easy_wallet/managers/background_fetch_manager.dart';
 import 'package:easy_wallet/managers/data_migration_manager.dart';
+import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -32,6 +33,7 @@ void initializeSentry() async {
         MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
+            ChangeNotifierProvider(create: (_) => CurrencyProvider()),
           ],
           child: const EasyWalletApp(),
         ),
