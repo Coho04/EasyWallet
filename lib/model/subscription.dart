@@ -56,13 +56,27 @@ class Subscription {
   int remainingDays() {
     if (date == null) return 0;
     DateTime nextBillDate = date!;
+    // Entferne die Zeitkomponente von 'today', um nur mit dem Datum zu arbeiten
     DateTime today = DateTime.now();
-    Duration interval =
-        Duration(days: repeatPattern == PaymentRate.yearly.value ? 365 : 30);
-    while (nextBillDate.isBefore(today)) {
-      nextBillDate = nextBillDate.add(interval);
+    DateTime todayDateOnly = DateTime(today.year, today.month, today.day);
+
+    // Stelle sicher, dass der nächste Abrechnungstermin in der Zukunft liegt
+    if (repeatPattern == PaymentRate.yearly.value) {
+      while (nextBillDate.isBefore(todayDateOnly) || nextBillDate.isAtSameMomentAs(todayDateOnly)) {
+        nextBillDate = DateTime(nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
+      }
+    } else if (repeatPattern == PaymentRate.monthly.value) {
+      while (nextBillDate.isBefore(todayDateOnly) || nextBillDate.isAtSameMomentAs(todayDateOnly)) {
+        nextBillDate = DateTime(nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
+        // Korrektur für den Fall, dass der Tag im nächsten Monat nicht existiert
+        while (!DateTime(nextBillDate.year, nextBillDate.month, nextBillDate.day).isValidDate()) {
+          nextBillDate = DateTime(nextBillDate.year, nextBillDate.month, nextBillDate.day - 1);
+        }
+      }
     }
-    return nextBillDate.difference(today).inDays;
+
+    // Berechne die Differenz in Tagen
+    return nextBillDate.difference(todayDateOnly).inDays;
   }
 
   double? convertPrice() {
@@ -98,12 +112,15 @@ class Subscription {
   }
 
   Future<Color> getDominantColorFromUrl({String customUrl = ""}) async {
-    var response = await http.get(Uri.parse(customUrl.isNotEmpty ? customUrl : url!));
+    var response =
+    await http.get(Uri.parse(customUrl.isNotEmpty ? customUrl : url!));
     if (response.statusCode == 200) {
       img.Image? image = img.decodeImage(response.bodyBytes);
       if (image != null) {
-        var paletteGenerator =
-            await PaletteGenerator.fromImageProvider(Image.network(customUrl.isNotEmpty ? customUrl : url!).image);
+        var paletteGenerator = await PaletteGenerator.fromImageProvider(
+            Image
+                .network(customUrl.isNotEmpty ? customUrl : url!)
+                .image);
         return paletteGenerator.dominantColor?.color ?? Colors.grey;
       }
     }
@@ -111,18 +128,36 @@ class Subscription {
   }
 
   String getFaviconUrl() {
-    return 'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(url!).host}';
+    return 'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri
+        .parse(url!)
+        .host}';
   }
 
   DateTime getNextBillDate() {
-    if (date == null) return DateTime.now();
+    if (date == null) {
+      return DateTime.now();
+    }
     DateTime nextBillDate = date!;
     DateTime today = DateTime.now();
-    Duration interval = repeatPattern == PaymentRate.yearly.value
-        ? const Duration(days: 365)
-        : const Duration(days: 30);
-    while (nextBillDate.isBefore(today)) {
-      nextBillDate = nextBillDate.add(interval);
+
+    if (repeatPattern == PaymentRate.yearly.value) {
+      while (!nextBillDate.isAfter(today)) {
+        nextBillDate = DateTime(
+            nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
+      }
+    } else if (repeatPattern == PaymentRate.monthly.value) {
+      while (!nextBillDate.isAfter(today)) {
+        int newMonth = nextBillDate.month + 1;
+        int newYear = nextBillDate.year;
+        if (newMonth > 12) {
+          newMonth = 1;
+          newYear++;
+        }
+        nextBillDate = DateTime(newYear, newMonth, nextBillDate.day);
+        while (nextBillDate.month != newMonth) {
+          nextBillDate = DateTime(newYear, newMonth, nextBillDate.day - 1);
+        }
+      }
     }
     return nextBillDate;
   }
@@ -132,13 +167,15 @@ class Subscription {
     double height = 40,
     BoxFit boxFit = BoxFit.cover,
     double errorImgSize = 40,
-    double borderRadius = 8.0, // Add this to define the border radius
+    double borderRadius = 8.0,
   }) {
     if (url == null || url!.isEmpty) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: Icon(
-          url == null ? CupertinoIcons.exclamationmark_triangle : Icons.account_balance_wallet_rounded,
+          url == null
+              ? CupertinoIcons.exclamationmark_triangle
+              : Icons.account_balance_wallet_rounded,
           color: CupertinoColors.systemGrey,
           size: errorImgSize,
         ),
@@ -149,7 +186,8 @@ class Subscription {
         child: CachedNetworkImage(
           imageUrl: getFaviconUrl(),
           placeholder: (context, url) => const CupertinoActivityIndicator(),
-          errorWidget: (context, url, error) => const Icon(
+          errorWidget: (context, url, error) =>
+          const Icon(
             CupertinoIcons.exclamationmark_triangle,
             color: CupertinoColors.systemGrey,
             size: 40,
@@ -161,7 +199,6 @@ class Subscription {
       );
     }
   }
-
 
   int countPayment() {
     if (date == null) {
@@ -217,13 +254,16 @@ class Subscription {
       isPaused: json['isPaused'] == 1,
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],
-      rememberCycle: RememberCycle.findByName(
-              json['rememberCycle'] ?? RememberCycle.sameDay.value)
+      rememberCycle: RememberCycle
+          .findByName(
+          json['rememberCycle'] ?? RememberCycle.sameDay.value)
           .value,
       repeating: json['repeating'] == 1,
-      repeatPattern: PaymentRate.findByName(json['repeatPattern']).value,
+      repeatPattern: PaymentRate
+          .findByName(json['repeatPattern'])
+          .value,
       timestamp:
-          json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
+      json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
       title: json['title'],
       url: json['url'],
     );
@@ -238,14 +278,30 @@ class Subscription {
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],
       rememberCycle:
-          RememberCycle.migrate(json['remembercycle'].toString()).value,
+      RememberCycle
+          .migrate(json['remembercycle'].toString())
+          .value,
       repeating: json['repeating'] == 1,
       repeatPattern:
-          PaymentRate.findByName(json['repeatPattern'].toString()).value,
+      PaymentRate
+          .findByName(json['repeatPattern'].toString())
+          .value,
       timestamp:
-          json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
+      json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
       title: json['title'],
       url: json['url'],
     );
+  }
+}
+
+
+extension on DateTime {
+  bool isValidDate() {
+    try {
+      DateTime(this.year, this.month, this.day);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

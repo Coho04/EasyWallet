@@ -100,7 +100,6 @@ class BackgroundFetchManager {
       }
     }
 
-
     final TimeOfDay userNotificationTime = await _getUserNotificationTime();
     final DateTime now = DateTime.now();
     final DateTime notificationDateTime = DateTime(
@@ -122,65 +121,64 @@ class BackgroundFetchManager {
       if (subscriptions.isEmpty) {
         return;
       }
+
       for (var subscription in subscriptions) {
         if (subscription['date'] == null) continue;
-        DateTime eventDate = DateTime.parse(subscription['date']);
-        DateTime today = DateTime.now();
+        DateTime startDate = DateTime.parse(subscription['date']);
+        DateTime nextBillDate = getNextBillDate(startDate, subscription['repeatPattern']);
 
-        DateFormat formatter = DateFormat('yyyy-MM');
-        if (subscription['repeatPattern'] == PaymentRate.monthly.value) {
-          eventDate = DateTime(today.year, today.month, eventDate.day);
-        } else if (subscription['repeatPattern'] == PaymentRate.yearly.value) {
-          formatter = DateFormat('yyyy');
-          eventDate = DateTime(today.year, eventDate.month, eventDate.day);
-        } else {
-          continue;
-        }
-
-        RememberCycle? cycle =
-            RememberCycle.findByName(subscription['remembercycle']);
+        RememberCycle? cycle = RememberCycle.findByName(subscription['remembercycle']);
+        DateTime notifyDate = nextBillDate;
         switch (cycle) {
           case RememberCycle.dayBefore:
-            eventDate = eventDate.subtract(const Duration(days: 1));
+            notifyDate = nextBillDate.subtract(const Duration(days: 1));
             break;
           case RememberCycle.twoDaysBefore:
-            eventDate = eventDate.subtract(const Duration(days: 2));
+            notifyDate = nextBillDate.subtract(const Duration(days: 2));
             break;
           case RememberCycle.weekBefore:
-            eventDate = eventDate.subtract(const Duration(days: 7));
+            notifyDate = nextBillDate.subtract(const Duration(days: 7));
             break;
           case RememberCycle.sameDay:
           default:
             break;
         }
 
-        DateTime eventDateOnly =
-            DateTime(eventDate.year, eventDate.month, eventDate.day);
-        DateTime todayDateOnly = DateTime(now.year, now.month, now.day);
-        if (eventDateOnly.isBefore(todayDateOnly) ||
-            eventDateOnly.isAtSameMomentAs(todayDateOnly)) {
-          final String notificationTimeKey = formatter.format(DateTime.now());
+        if (notifyDate.isBefore(now) || notifyDate.isAtSameMomentAs(now)) {
+          continue;
+        }
 
-          final String notificationKey =
-              'notification_${subscription['id']}_$notificationTimeKey';
-          final bool alreadyNotified = prefs.getBool(notificationKey) ?? false;
-          if (!alreadyNotified) {
-            final bool withPrice =
-                prefs.getBool('includeCostInNotifications') ?? false;
-            String body =
-                S.current.subscriptionIsDueSoon(subscription['title']);
-            if (withPrice) {
-              body = S.current.subscriptionIsDueSoonWithPrice(
-                  subscription['title'], subscription['amount']);
-            }
-            final String title = S.current.subscriptionReminder;
-            await _showNotification(subscription, title, body);
-            prefs.setBool(notificationKey, true);
+        String notificationTimeKey = DateFormat('yyyy-MM-dd').format(notifyDate);
+        String notificationKey = 'notification_${subscription['id']}_$notificationTimeKey';
+        bool alreadyNotified = prefs.getBool(notificationKey) ?? false;
+        if (!alreadyNotified) {
+          String body = S.current.subscriptionIsDueSoon(subscription['title']);
+          if (prefs.getBool('includeCostInNotifications') ?? false) {
+            body = S.current.subscriptionIsDueSoonWithPrice(subscription['title'], subscription['amount']);
           }
+          String title = S.current.subscriptionReminder;
+          await _showNotification(subscription, title, body);
+          prefs.setBool(notificationKey, true);
         }
       }
     }
   }
+
+  DateTime getNextBillDate(DateTime startDate, String repeatPattern) {
+    DateTime nextBillDate = startDate;
+    DateTime today = DateTime.now();
+    if (repeatPattern == PaymentRate.yearly.value) {
+      while (nextBillDate.isBefore(today)) {
+        nextBillDate = DateTime(nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
+      }
+    } else if (repeatPattern == PaymentRate.monthly.value) {
+      while (nextBillDate.isBefore(today)) {
+        nextBillDate = DateTime(nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
+      }
+    }
+    return nextBillDate;
+  }
+
 
   Future<void> _showNotification(
       Map<String, dynamic> subscription, String title, String body) async {

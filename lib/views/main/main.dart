@@ -33,7 +33,6 @@ class MainViewState extends State<MainView> {
   void initState() {
     super.initState();
     _checkAndRequestNotificationPermissions();
-    _initNotifications();
   }
 
   void _checkAndRequestNotificationPermissions() async {
@@ -54,11 +53,6 @@ class MainViewState extends State<MainView> {
     if (!status.isGranted) {
       await Permission.notification.request();
     }
-  }
-
-  void _initNotifications() async {
-    // final backgroundTaskManager = BackgroundTaskManager();
-    // await backgroundTaskManager.init();
   }
 
   void _onItemTapped(int index) {
