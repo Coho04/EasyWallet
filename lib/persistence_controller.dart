@@ -9,7 +9,7 @@ import 'package:path/path.dart';
 import 'dart:convert';
 
 class PersistenceController {
-  static final PersistenceController instance =
+  static PersistenceController instance =
   PersistenceController._internal();
 
   PersistenceController._internal();

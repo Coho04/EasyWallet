@@ -63,13 +63,11 @@ class BackgroundFetchManager {
       ),
       _onBackgroundFetch,
       _onBackgroundFetchTimeout,
-    ).then((int status) {
-    }).catchError((e) {
+    ).then((int status) {}).catchError((e) {
       Sentry.captureException(e);
     });
 
-    BackgroundFetch.start().then((int status) {
-    }).catchError((e) {
+    BackgroundFetch.start().then((int status) {}).catchError((e) {
       Sentry.captureException(e);
     });
   }
@@ -125,9 +123,11 @@ class BackgroundFetchManager {
       for (var subscription in subscriptions) {
         if (subscription['date'] == null) continue;
         DateTime startDate = DateTime.parse(subscription['date']);
-        DateTime nextBillDate = getNextBillDate(startDate, subscription['repeatPattern']);
+        DateTime nextBillDate =
+            getNextBillDate(startDate, subscription['repeatPattern']);
 
-        RememberCycle? cycle = RememberCycle.findByName(subscription['remembercycle']);
+        RememberCycle? cycle =
+            RememberCycle.findByName(subscription['remembercycle']);
         DateTime notifyDate = nextBillDate;
         switch (cycle) {
           case RememberCycle.dayBefore:
@@ -148,13 +148,16 @@ class BackgroundFetchManager {
           continue;
         }
 
-        String notificationTimeKey = DateFormat('yyyy-MM-dd').format(notifyDate);
-        String notificationKey = 'notification_${subscription['id']}_$notificationTimeKey';
+        String notificationTimeKey =
+            DateFormat('yyyy-MM-dd').format(notifyDate);
+        String notificationKey =
+            'notification_${subscription['id']}_$notificationTimeKey';
         bool alreadyNotified = prefs.getBool(notificationKey) ?? false;
         if (!alreadyNotified) {
           String body = S.current.subscriptionIsDueSoon(subscription['title']);
           if (prefs.getBool('includeCostInNotifications') ?? false) {
-            body = S.current.subscriptionIsDueSoonWithPrice(subscription['title'], subscription['amount']);
+            body = S.current.subscriptionIsDueSoonWithPrice(
+                subscription['title'], subscription['amount']);
           }
           String title = S.current.subscriptionReminder;
           await _showNotification(subscription, title, body);
@@ -169,16 +172,17 @@ class BackgroundFetchManager {
     DateTime today = DateTime.now();
     if (repeatPattern == PaymentRate.yearly.value) {
       while (nextBillDate.isBefore(today)) {
-        nextBillDate = DateTime(nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
+        nextBillDate = DateTime(
+            nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
       }
     } else if (repeatPattern == PaymentRate.monthly.value) {
       while (nextBillDate.isBefore(today)) {
-        nextBillDate = DateTime(nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
+        nextBillDate = DateTime(
+            nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
       }
     }
     return nextBillDate;
   }
-
 
   Future<void> _showNotification(
       Map<String, dynamic> subscription, String title, String body) async {

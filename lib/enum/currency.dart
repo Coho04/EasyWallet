@@ -52,7 +52,7 @@ enum Currency {
   }
 
   static Currency findByName(String name) {
-    return Currency.values.firstWhere((e) => e.name == name);
+    return Currency.values.firstWhere((e) => e.name == name, orElse: () => Currency.eur);
   }
 
   @override

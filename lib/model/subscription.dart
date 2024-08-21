@@ -56,11 +56,9 @@ class Subscription {
   int remainingDays() {
     if (date == null) return 0;
     DateTime nextBillDate = date!;
-    // Entferne die Zeitkomponente von 'today', um nur mit dem Datum zu arbeiten
     DateTime today = DateTime.now();
     DateTime todayDateOnly = DateTime(today.year, today.month, today.day);
 
-    // Stelle sicher, dass der nächste Abrechnungstermin in der Zukunft liegt
     if (repeatPattern == PaymentRate.yearly.value) {
       while (nextBillDate.isBefore(todayDateOnly) || nextBillDate.isAtSameMomentAs(todayDateOnly)) {
         nextBillDate = DateTime(nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
@@ -68,14 +66,11 @@ class Subscription {
     } else if (repeatPattern == PaymentRate.monthly.value) {
       while (nextBillDate.isBefore(todayDateOnly) || nextBillDate.isAtSameMomentAs(todayDateOnly)) {
         nextBillDate = DateTime(nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
-        // Korrektur für den Fall, dass der Tag im nächsten Monat nicht existiert
         while (!DateTime(nextBillDate.year, nextBillDate.month, nextBillDate.day).isValidDate()) {
           nextBillDate = DateTime(nextBillDate.year, nextBillDate.month, nextBillDate.day - 1);
         }
       }
     }
-
-    // Berechne die Differenz in Tagen
     return nextBillDate.difference(todayDateOnly).inDays;
   }
 

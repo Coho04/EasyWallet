@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/main/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -21,18 +19,6 @@ class EasyWalletApp extends StatefulWidget {
   @override
   EasyWalletAppState createState() => EasyWalletAppState();
 
-  // static TextStyle responsiveTextStyle(
-  //   BuildContext context, {
-  //   bool bold = false,
-  //   Color? color,
-  // }) {
-  //   return TextStyle(
-  //     fontSize: AutoText.textScaleFactor(context),
-  //     fontWeight: bold ? FontWeight.bold : null,
-  //     color: color,
-  //   );
-  // }
-
   static TextStyle responsiveTextStyle(
       BuildContext context, {
       double baseSize = 16,
@@ -40,33 +26,10 @@ class EasyWalletApp extends StatefulWidget {
         Color? color,
       }) {
     return TextStyle(
-      // fontSize: baseSize / AutoText.textScaleFactor(context),
       fontWeight: bold ? FontWeight.bold : null,
       color: color,
     );
   }
-
-  // static AutoSizeText responsiveText(
-  //   BuildContext context,
-  //   String text, {
-  //   bool bold = false,
-  //   Color? color,
-  //   int maxLines = 1,
-  //   double minFontSize = 12,
-  //   double maxFontSize = 15,
-  // }) {
-  //   return AutoSizeText(
-  //     text,
-  //     maxLines: maxLines,
-  //     minFontSize: minFontSize,
-  //     maxFontSize: maxFontSize,
-  //     style: responsiveTextStyle(
-  //       context,
-  //       bold: bold,
-  //       color: color,
-  //     ),
-  //   );
-  // }
 }
 
 class EasyWalletAppState extends State<EasyWalletApp>
