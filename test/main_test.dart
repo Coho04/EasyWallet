@@ -1,28 +1,29 @@
-import 'package:easy_wallet/main.dart';
-import 'package:easy_wallet/managers/data_migration_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mockito/mockito.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:provider/provider.dart';
+import 'package:easy_wallet/main.dart';
 
-class MockSentryFlutter extends Mock implements SentryFlutter {}
-class MockDataMigrationManager extends Mock implements DataMigrationManager {}
+class MockSpan extends Mock implements ISentrySpan {}
 
-void main_test() {
-  group('App Initialization', () {
-    testWidgets('Initializes app correctly on iOS', (tester) async {
-      // Setzen einer Mock-Umgebung für Tests
-      final mockSentryFlutter = MockSentryFlutter();
-      final mockDataMigrationManager = MockDataMigrationManager();
+void main() {
+  group('checkAuthenticationSetting', () {
+    test('returns true if authentication setting is true', () async {
+      SharedPreferences.setMockInitialValues({'require_authentication': true});
+      final result = await checkAuthenticationSetting();
+      expect(result, true);
+    });
 
-      when(mockDataMigrationManager.migrateData()).thenAnswer((_) async {});
-      // Füge hier weitere Mock-Initialisierungen hinzu, falls erforderlich
+    test('returns false if authentication setting is false', () async {
+      SharedPreferences.setMockInitialValues({'require_authentication': false});
+      final result = await checkAuthenticationSetting();
+      expect(result, false);
+    });
 
-      // Führe die main Funktion aus
-      main();
-
-      // Überprüfen, ob die runApp Methode aufgerufen wurde
-      expect(find.byType(MultiProvider), findsOneWidget);
+    test('returns false if authentication setting is not set', () async {
+      SharedPreferences.setMockInitialValues({});
+      final result = await checkAuthenticationSetting();
+      expect(result, false);
     });
   });
 }

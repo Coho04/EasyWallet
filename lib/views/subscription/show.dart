@@ -1,4 +1,6 @@
 import 'package:easy_wallet/easy_wallet_app.dart';
+import 'package:easy_wallet/enum/currency.dart';
+import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/views/components/card_section_component.dart';
 import 'package:easy_wallet/views/subscription/edit.dart';
@@ -110,6 +112,7 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
                   ),
                   CardDetailRow(
                     label: Intl.message('createdOn'),
+                    maxLines: 1,
                     value:
                         _formatDateTime(subscription.timestamp, withTime: true),
                     softBreak: true,
@@ -123,6 +126,10 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
                   CardDetailRow(
                     label: Intl.message('previousDebits'),
                     value: subscription.countPayment().toString(),
+                  ),
+                  CardDetailRow(
+                    label: Intl.message('convertedCosts'),
+                    value: '(${_convertPrice(currency)})',
                   ),
                   CardDetailRow(
                     label: Intl.message('totalCosts'),
@@ -249,6 +256,18 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
   String _formatDateTime(DateTime? dateTime, {bool withTime = false}) {
     if (dateTime == null) return Intl.message('unknown');
     if (!withTime) return DateFormat.yMMMd().format(dateTime);
-    return DateFormat('HH:mm  d. MMM. y').format(dateTime);
+    String time = DateFormat.Hm().format(dateTime);
+    String date = DateFormat.yMMMd().format(dateTime);
+    int maxLength = 18;
+    String paddedTime = time.padLeft(maxLength);
+    return '$paddedTime\n$date';
+  }
+
+  String? _convertPrice(Currency currency) {
+    String priceString = subscription.convertPrice()?.toStringAsFixed(2) ??
+        Intl.message('unknown');
+    return subscription.repeatPattern == PaymentRate.monthly.value
+        ? '$priceString ${currency.symbol}/${Intl.message('year')}'
+        : '$priceString ${currency.symbol}/${Intl.message('month')}';
   }
 }

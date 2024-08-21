@@ -1,6 +1,6 @@
-import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
+import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easy_wallet/model/subscription.dart';
@@ -50,14 +50,16 @@ class SubscriptionListComponent extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                     Expanded(child:  Text(
-                       subscription.title,
-                       style: EasyWalletApp.responsiveTextStyle(context,
-                           color: isDarkMode
-                               ? CupertinoColors.white
-                               : CupertinoColors.black,
-                           bold: true),
-                     )),
+                      Expanded(
+                        child: AutoText(
+                            text: subscription.title,
+                            maxLines: 3,
+                            softWrap: true,
+                            color: isDarkMode
+                                ? CupertinoColors.white
+                                : CupertinoColors.black,
+                            bold: true),
+                      ),
                       if (subscription.isPinned)
                         const Icon(
                           CupertinoIcons.pin_fill,
@@ -65,13 +67,13 @@ class SubscriptionListComponent extends StatelessWidget {
                         ),
                     ],
                   ),
-                  Text(
-                    '${subscription.amount.toStringAsFixed(2)} ${currency.symbol}',
-                    style: EasyWalletApp.responsiveTextStyle(context,
-                        color: isDarkMode
-                            ? CupertinoColors.systemGrey2
-                            : CupertinoColors.systemGrey),
-                  ),
+                  AutoText(
+                      text:
+                          '${subscription.amount.toStringAsFixed(2)} ${currency.symbol}',
+                      maxLines: 1,
+                      color: isDarkMode
+                          ? CupertinoColors.systemGrey2
+                          : CupertinoColors.systemGrey),
                 ],
               ),
             ),
@@ -80,20 +82,17 @@ class SubscriptionListComponent extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    Text(
-                      '${subscription.remainingDays()} ${Intl.message('days')}',
-                      style: EasyWalletApp.responsiveTextStyle(context,
-                          color: isDarkMode
-                              ? CupertinoColors.systemGrey2
-                              : CupertinoColors.systemGrey),
-                    ),
-                    Text(
-                      '(${_convertPrice(subscription)})',
-                      style: EasyWalletApp.responsiveTextStyle(context,
-                          color: isDarkMode
-                              ? CupertinoColors.systemGrey2
-                              : CupertinoColors.systemGrey),
-                    )
+                    AutoText(
+                        text:
+                            '${subscription.remainingDays()} ${Intl.message('days')}',
+                        color: isDarkMode
+                            ? CupertinoColors.systemGrey2
+                            : CupertinoColors.systemGrey),
+                    AutoText(
+                        text: '(${_convertPrice(subscription)})',
+                        color: isDarkMode
+                            ? CupertinoColors.systemGrey2
+                            : CupertinoColors.systemGrey),
                   ],
                 ),
                 CupertinoButton(

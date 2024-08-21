@@ -1,4 +1,4 @@
-import 'package:easy_wallet/easy_wallet_app.dart';
+import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -37,24 +37,17 @@ class CardSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: EasyWalletApp.responsiveTextStyle(
-              context,
-              bold: true,
-              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-            ),
+          AutoText(
+            text: title,
+            bold: true,
+            color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
           ),
           const SizedBox(height: 10),
           if (subtitle != null)
-            Text(
-              subtitle!,
-              style: EasyWalletApp.responsiveTextStyle(
-                context,
-                bold: false,
-                color:
-                    isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-              ),
+            AutoText(
+              text: subtitle!,
+              bold: false,
+              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
             ),
           if (subtitle != null) const SizedBox(height: 10),
           ...List.generate(children.length, (index) {
@@ -75,16 +68,19 @@ class CardDetailRow extends StatelessWidget {
   final String label;
   final dynamic value;
   final bool softBreak;
+  final int maxLines;
 
   const CardDetailRow(
       {super.key,
       required this.label,
       required this.value,
-      this.softBreak = false});
+      this.softBreak = false,
+      this.maxLines = 1});
 
   @override
   Widget build(BuildContext context) {
     return CupertinoFormRow(
+      padding: EdgeInsets.zero,
       prefix: _buildPrefix(context),
       child: _buildValue(context),
     );
@@ -93,34 +89,16 @@ class CardDetailRow extends StatelessWidget {
   Widget _buildPrefix(BuildContext context) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
-    if (softBreak) {
-      return Expanded(
-        flex: 2,
-        child: Text(
-          label,
-          style: EasyWalletApp.responsiveTextStyle(
-            context,
-            color: isDarkMode
-                ? CupertinoColors.systemGrey4
-                : CupertinoColors.systemGrey,
-          ),
-          softWrap: true,
-          overflow: TextOverflow.visible,
-        ),
-      );
-    } else {
-      return Text(
-        label,
-        style: EasyWalletApp.responsiveTextStyle(
-          context,
+    return Flexible(
+        flex: maxLines,
+        child: AutoText(
+          text: label,
+          maxLines: maxLines,
+          softWrap: softBreak,
           color: isDarkMode
-              ? CupertinoColors.systemGrey3
+              ? CupertinoColors.systemGrey2
               : CupertinoColors.systemGrey,
-        ),
-        softWrap: true,
-        overflow: TextOverflow.visible,
-      );
-    }
+        ));
   }
 
   Widget _buildValue(BuildContext context) {
@@ -130,52 +108,33 @@ class CardDetailRow extends StatelessWidget {
       return FutureBuilder<String>(
         future: value,
         builder: (context, snapshot) {
+          String text = Intl.message('loading');
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text(
-              Intl.message('loading'),
-              style: EasyWalletApp.responsiveTextStyle(
-                context,
-                color:
-                    isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-              ),
-            );
+            text = Intl.message('loading');
           } else if (snapshot.hasError) {
-            return Text(
-              'Error: ${snapshot.error}',
-              style: EasyWalletApp.responsiveTextStyle(
-                context,
-                color:
-                    isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-              ),
+            return AutoText(
+              text: 'Error: ${snapshot.error}',
+              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
             );
           } else if (snapshot.hasData) {
-            return Text(
-              snapshot.data!,
-              style: EasyWalletApp.responsiveTextStyle(
-                context,
-                color:
-                    isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-              ),
-            );
+            text = snapshot.data!;
           } else {
-            return Text(
-              Intl.message('noData'),
-              style: EasyWalletApp.responsiveTextStyle(
-                context,
-                color:
-                    isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-              ),
-            );
+            text = Intl.message('noData');
           }
+          return AutoText(
+            text: text,
+            maxLines: maxLines,
+            softWrap: softBreak,
+            color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+          );
         },
       );
     } else {
-      return Text(
-        value.toString(),
-        style: EasyWalletApp.responsiveTextStyle(
-          context,
-          color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-        ),
+      return  AutoText(
+        text: value.toString(),
+        maxLines: 2,
+        softWrap: softBreak,
+        color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
       );
     }
   }
@@ -206,14 +165,12 @@ class CardActionButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              label,
-              style: EasyWalletApp.responsiveTextStyle(context,
-                  color: color ??
-                      (isDarkMode
-                          ? CupertinoColors.systemGrey4
-                          : CupertinoColors.systemGrey)),
-            ),
+            AutoText(
+                text: label,
+                color: color ??
+                    (isDarkMode
+                        ? CupertinoColors.systemGrey4
+                        : CupertinoColors.systemGrey)),
             Icon(
               icon,
               color: color ??

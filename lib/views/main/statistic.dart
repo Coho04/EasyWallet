@@ -94,11 +94,13 @@ class StatisticViewState extends State<StatisticView> {
                                 title: Intl.message('appStats'),
                                 children: [
                                   CardDetailRow(
+                                    maxLines: 2,
                                     label:
                                         Intl.message('numberOfSubscriptions'),
                                     value: '${subscriptions.length}',
                                   ),
                                   CardDetailRow(
+                                    maxLines: 2,
                                     label: Intl.message(
                                         'expensesSinceAppInstallation'),
                                     value:
@@ -112,12 +114,14 @@ class StatisticViewState extends State<StatisticView> {
                                 children: [
                                   CardDetailRow(
                                     label: Intl.message('expenditureThisYear'),
+                                    maxLines: 1,
                                     value:
                                         '${calculateTotalSpentThisYear(subscriptions).toStringAsFixed(2)} ${currency.symbol}',
                                   ),
                                   CardDetailRow(
                                     label: Intl.message(
                                         'issuesOfMonthlySubscriptions'),
+                                    maxLines: 2,
                                     value:
                                         '${monthlyExpenses.toStringAsFixed(2)} ${currency.symbol}',
                                     softBreak: true,
@@ -125,6 +129,7 @@ class StatisticViewState extends State<StatisticView> {
                                   CardDetailRow(
                                     label: Intl.message(
                                         'issuesOfAnnualSubscriptions'),
+                                    maxLines: 2,
                                     value:
                                         '${yearlyExpenses.toStringAsFixed(2)} ${currency.symbol}',
                                     softBreak: true,
@@ -137,6 +142,7 @@ class StatisticViewState extends State<StatisticView> {
                                   CardDetailRow(
                                     label: Intl.message(
                                         'expenditureUntilTheEndOfTheMonth'),
+                                    maxLines: 2,
                                     value: calculateExpensesToEndOfMonth(
                                         subscriptions, currency),
                                     softBreak: true,
@@ -144,6 +150,7 @@ class StatisticViewState extends State<StatisticView> {
                                   CardDetailRow(
                                     label: Intl.message(
                                         'expenditureUntilTheEndOfTheYear'),
+                                    maxLines: 2,
                                     value: calculateExpensesToEndOfYear(
                                         subscriptions, currency),
                                     softBreak: true,

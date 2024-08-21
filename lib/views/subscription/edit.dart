@@ -1,12 +1,15 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
-import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
+import 'package:easy_wallet/views/components/form_fields/amount_field.dart';
+import 'package:easy_wallet/views/components/form_fields/date_picker_field.dart';
+import 'package:easy_wallet/views/components/form_fields/dropdown_field.dart';
+import 'package:easy_wallet/views/components/form_fields/text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -35,7 +38,6 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
 
   bool _titleValid = true;
   bool _amountValid = true;
-
 
   @override
   void initState() {
@@ -123,9 +125,9 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                 children: [
                   _buildHeader(isDarkMode),
                   const SizedBox(height: 16),
-                  _buildTextField(
-                    _urlController,
-                    'URL',
+                  EasyWalletTextField(
+                    controller: _urlController,
+                    placeholder: 'URL',
                     isDarkMode: isDarkMode,
                     keyboardType: TextInputType.url,
                     onChanged: (value) {
@@ -138,41 +140,48 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  _buildAmountField(isDarkMode, currency),
-                  const SizedBox(height: 16),
-                  _buildDatePickerField(
-                    Intl.message('startDate'),
-                    _date,
-                    _pickDate,
-                    isDarkMode,
+                  AmountField(
+                      isDarkMode: isDarkMode,
+                      currency: currency,
+                      controller: _amountController,
+                      isValid: _amountValid,
                   ),
                   const SizedBox(height: 16),
-                  _buildDropdownField(
-                    Intl.message('paymentRate'),
-                    _paymentRate,
-                    PaymentRate.values,
-                    (value) {
+                  EasyWalletDatePickerField(
+                      label: Intl.message('startDate'),
+                      date: _date,
+                      onTap: _pickDate,
+                      isDarkMode: isDarkMode),
+                  const SizedBox(height: 16),
+                  EasyWalletDropdownField(
+                    label: Intl.message('paymentRate'),
+                    currentValue: _paymentRate,
+                    options: PaymentRate.values,
+                    onChanged: (value) {
                       setState(() {
                         _paymentRate = value!;
                       });
                     },
-                    isDarkMode,
+                    isDarkMode: isDarkMode,
                   ),
                   const SizedBox(height: 16),
-                  _buildDropdownField(
-                    Intl.message('remembering'),
-                    _rememberCycle,
-                    RememberCycle.values,
-                    (value) {
+                  EasyWalletDropdownField(
+                    label: Intl.message('remembering'),
+                    currentValue: _rememberCycle,
+                    options: RememberCycle.values,
+                    onChanged: (value) {
                       setState(() {
                         _rememberCycle = value!;
                       });
                     },
-                    isDarkMode,
+                    isDarkMode: isDarkMode,
                   ),
                   const SizedBox(height: 16),
-                  _buildTextField(_notesController, Intl.message('notes'),
-                      maxLines: 5, isDarkMode: isDarkMode),
+                  EasyWalletTextField(
+                      controller: _notesController,
+                      placeholder: Intl.message('notes'),
+                      maxLines: 5,
+                      isDarkMode: isDarkMode),
                 ],
               ),
             ),
@@ -238,198 +247,6 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
     }
   }
 
-  Widget _buildTextField(TextEditingController controller, String placeholder,
-      {TextInputType keyboardType = TextInputType.text,
-      int maxLines = 1,
-      required bool isDarkMode,
-      ValueChanged<String>? onChanged}) {
-    return CupertinoTextField(
-      controller: controller,
-      placeholder: placeholder,
-      keyboardType: keyboardType,
-      onChanged: onChanged,
-      style: EasyWalletApp.responsiveTextStyle(
-        context,
-        color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-      ),
-      decoration: BoxDecoration(
-        color: isDarkMode
-            ? CupertinoColors.darkBackgroundGray
-            : CupertinoColors.systemGrey6,
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(
-          color: isDarkMode
-              ? CupertinoColors.systemGrey
-              : CupertinoColors.systemGrey4,
-          width: 1.0,
-        ),
-      ),
-      maxLines: maxLines,
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-    );
-  }
-
-  Widget _buildAmountField(bool isDarkMode, Currency currency) {
-    return Row(
-      children: [
-        Expanded(
-          child: CupertinoTextField(
-            controller: _amountController,
-            placeholder: Intl.message('Costs'),
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            style: EasyWalletApp.responsiveTextStyle(
-              context,
-              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-            ),
-            decoration: BoxDecoration(
-              color: isDarkMode
-                  ? CupertinoColors.darkBackgroundGray
-                  : CupertinoColors.systemGrey6,
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(
-                color: _amountValid
-                    ? (isDarkMode
-                        ? CupertinoColors.systemGrey
-                        : CupertinoColors.systemGrey4)
-                    : CupertinoColors.destructiveRed,
-              ),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          ),
-        ),
-        const SizedBox(width: 8),
-        AutoSizeText(
-          maxLines: 1,
-          currency.symbol,
-          style: EasyWalletApp.responsiveTextStyle(
-            context,
-            color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDropdownField<T>(String label, String currentValue,
-      List<T> options, ValueChanged<String?> onChanged, bool isDarkMode) {
-    return CupertinoFormRow(
-      prefix: Padding(
-        padding: const EdgeInsets.only(right: 16.0),
-        child: AutoSizeText(
-          maxLines: 1,
-          label,
-          style: EasyWalletApp.responsiveTextStyle(
-            context,
-            color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-          ),
-        ),
-      ),
-      child: GestureDetector(
-          onTap: () => _showOptions(context, options, onChanged, isDarkMode),
-          child: FittedBox(
-            child: Container(
-              constraints: const BoxConstraints(
-                minWidth: 180,
-                maxWidth: double.infinity,
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              decoration: BoxDecoration(
-                color: isDarkMode
-                    ? CupertinoColors.darkBackgroundGray
-                    : CupertinoColors.systemGrey6,
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(
-                    color: isDarkMode
-                        ? CupertinoColors.systemGrey
-                        : CupertinoColors.systemGrey4),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    _capitalize(_translateEnum(currentValue, options)),
-                    style: EasyWalletApp.responsiveTextStyle(
-                      context,
-                      color: isDarkMode
-                          ? CupertinoColors.white
-                          : CupertinoColors.inactiveGray,
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Icon(
-                    CupertinoIcons.chevron_down,
-                    size: 20,
-                    color: isDarkMode
-                        ? CupertinoColors.white
-                        : CupertinoColors.inactiveGray,
-                  ),
-                ],
-              ),
-            ),
-          )),
-    );
-  }
-
-  Widget _buildDatePickerField(
-      String label, DateTime date, VoidCallback onTap, bool isDarkMode) {
-    return CupertinoFormRow(
-      prefix: Padding(
-        padding: const EdgeInsets.only(right: 16.0),
-        child: AutoSizeText(
-          maxLines: 1,
-          label,
-          style: EasyWalletApp.responsiveTextStyle(
-            context,
-            color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-          ),
-        ),
-      ),
-      child: GestureDetector(
-          onTap: onTap,
-          child: FittedBox(
-            child: Container(
-              constraints: const BoxConstraints(
-                minWidth: 180,
-                maxWidth: double.infinity,
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              decoration: BoxDecoration(
-                color: isDarkMode
-                    ? CupertinoColors.darkBackgroundGray
-                    : CupertinoColors.systemGrey6,
-                borderRadius: BorderRadius.circular(8.0),
-                border: Border.all(
-                    color: isDarkMode
-                        ? CupertinoColors.systemGrey
-                        : CupertinoColors.systemGrey4),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AutoSizeText(
-                    maxLines: 1,
-                    DateFormat('dd.MM.yyyy').format(date),
-                    style: EasyWalletApp.responsiveTextStyle(
-                      context,
-                      color: isDarkMode
-                          ? CupertinoColors.white
-                          : CupertinoColors.inactiveGray,
-                    ),
-                  ),
-                  Icon(
-                    CupertinoIcons.calendar,
-                    size: 20,
-                    color: isDarkMode
-                        ? CupertinoColors.white
-                        : CupertinoColors.inactiveGray,
-                  ),
-                ],
-              ),
-            ),
-          )),
-    );
-  }
-
   Future<void> _pickDate() async {
     final DateTime? pickedDate = await showCupertinoModalPopup(
       context: context,
@@ -475,60 +292,5 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
         _date = pickedDate;
       });
     }
-  }
-
-  Future<void> _showOptions<T>(BuildContext context, List<T> options,
-      ValueChanged<String?> onChanged, bool isDarkMode) async {
-    await showCupertinoModalPopup<String>(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoActionSheet(
-          actions: options.map((option) {
-            final String value = (option is PaymentRate)
-                ? option.value
-                : (option as RememberCycle).value;
-            return CupertinoActionSheetAction(
-              child: Text(
-                _capitalize(_translateEnum(value, options)),
-                style: EasyWalletApp.responsiveTextStyle(context,
-                    color: CupertinoColors.activeBlue),
-              ),
-              onPressed: () {
-                onChanged(value);
-                Navigator.pop(context);
-              },
-            );
-          }).toList(),
-          cancelButton: CupertinoActionSheetAction(
-            child: Text(
-              Intl.message('cancel'),
-              style: EasyWalletApp.responsiveTextStyle(
-                context,
-                color: CupertinoColors.activeBlue,
-              ),
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  String _capitalize(String s) {
-    if (s.isEmpty) return s;
-    return s[0].toUpperCase() + s.substring(1);
-  }
-
-  String _translateEnum<T>(String value, List<T> options) {
-    for (var option in options) {
-      if (option is PaymentRate && option.value == value) {
-        return option.translate();
-      } else if (option is RememberCycle && option.value == value) {
-        return option.translate();
-      }
-    }
-    return value;
   }
 }

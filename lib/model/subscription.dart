@@ -298,7 +298,7 @@ class Subscription {
 extension on DateTime {
   bool isValidDate() {
     try {
-      DateTime(this.year, this.month, this.day);
+      DateTime(year, month, day);
       return true;
     } catch (e) {
       return false;
