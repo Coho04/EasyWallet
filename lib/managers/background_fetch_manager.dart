@@ -122,24 +122,24 @@ class BackgroundFetchManager {
 
       for (var subscription in subscriptions) {
         if (subscription['date'] == null) continue;
-        DateTime startDate = DateTime.parse(subscription['date']);
-        DateTime nextBillDate =
+        var startDate = DateTime.parse(subscription['date']);
+        var nextBillDate =
             getNextBillDate(startDate, subscription['repeatPattern']);
 
-        RememberCycle? cycle =
-            RememberCycle.findByName(subscription['remembercycle']);
-        DateTime notifyDate = nextBillDate;
+        var cycle = RememberCycle.findByName(subscription['remembercycle']);
+        var notifyDate = nextBillDate;
         switch (cycle) {
           case RememberCycle.dayBefore:
-            notifyDate = nextBillDate.subtract(const Duration(days: 1));
-            break;
-          case RememberCycle.twoDaysBefore:
             notifyDate = nextBillDate.subtract(const Duration(days: 2));
             break;
+          case RememberCycle.twoDaysBefore:
+            notifyDate = nextBillDate.subtract(const Duration(days: 3));
+            break;
           case RememberCycle.weekBefore:
-            notifyDate = nextBillDate.subtract(const Duration(days: 7));
+            notifyDate = nextBillDate.subtract(const Duration(days: 8));
             break;
           case RememberCycle.sameDay:
+            notifyDate = nextBillDate.subtract(const Duration(days: 1));
           default:
             break;
         }
@@ -148,18 +148,17 @@ class BackgroundFetchManager {
           continue;
         }
 
-        String notificationTimeKey =
-            DateFormat('yyyy-MM-dd').format(notifyDate);
-        String notificationKey =
+        var notificationTimeKey = DateFormat('yyyy-MM-dd').format(notifyDate);
+        var notificationKey =
             'notification_${subscription['id']}_$notificationTimeKey';
-        bool alreadyNotified = prefs.getBool(notificationKey) ?? false;
+        var alreadyNotified = prefs.getBool(notificationKey) ?? false;
         if (!alreadyNotified) {
-          String body = S.current.subscriptionIsDueSoon(subscription['title']);
+          var body = S.current.subscriptionIsDueSoon(subscription['title']);
           if (prefs.getBool('includeCostInNotifications') ?? false) {
             body = S.current.subscriptionIsDueSoonWithPrice(
                 subscription['title'], subscription['amount']);
           }
-          String title = S.current.subscriptionReminder;
+          var title = S.current.subscriptionReminder;
           await _showNotification(subscription, title, body);
           prefs.setBool(notificationKey, true);
         }
@@ -168,8 +167,8 @@ class BackgroundFetchManager {
   }
 
   DateTime getNextBillDate(DateTime startDate, String repeatPattern) {
-    DateTime nextBillDate = startDate;
-    DateTime today = DateTime.now();
+    var nextBillDate = startDate;
+    var today = DateTime.now();
     if (repeatPattern == PaymentRate.yearly.value) {
       while (nextBillDate.isBefore(today)) {
         nextBillDate = DateTime(
@@ -186,8 +185,7 @@ class BackgroundFetchManager {
 
   Future<void> _showNotification(
       Map<String, dynamic> subscription, String title, String body) async {
-    int notificationId =
-        DateTime.now().millisecondsSinceEpoch.remainder(100000);
+    var id = DateTime.now().millisecondsSinceEpoch.remainder(100000);
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
       'easy_wallet_channel_id',
@@ -215,7 +213,7 @@ class BackgroundFetchManager {
 
     try {
       await flutterLocalNotificationsPlugin.show(
-        notificationId,
+        id,
         title,
         body,
         platformChannelSpecifics,
