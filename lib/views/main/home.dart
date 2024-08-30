@@ -43,7 +43,7 @@ class HomeViewState extends State<HomeView> {
     }
   }
 
-  List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
+ /* List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
     List<Subscription> filteredSubscriptions =
         subscriptions.where((subscription) {
       return subscription.title
@@ -75,7 +75,41 @@ class HomeViewState extends State<HomeView> {
       }
     });
     return filteredSubscriptions;
+  }*/
+
+  List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
+    List<Subscription> filteredSubscriptions = subscriptions.where((subscription) {
+      return subscription.title.toLowerCase().contains(searchText.toLowerCase());
+    }).toList();
+
+    filteredSubscriptions.sort((a, b) {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+
+      if (a.isPaused && !b.isPaused) return 1;
+      if (!a.isPaused && b.isPaused) return -1;
+
+      switch (sortOption) {
+        case SortOption.alphabeticalAscending:
+          return a.title.compareTo(b.title);
+        case SortOption.alphabeticalDescending:
+          return b.title.compareTo(a.title);
+        case SortOption.costAscending:
+          return a.amount.compareTo(b.amount);
+        case SortOption.costDescending:
+          return b.amount.compareTo(a.amount);
+        case SortOption.remainingDaysAscending:
+          return a.remainingDays().compareTo(b.remainingDays());
+        case SortOption.remainingDaysDescending:
+          return b.remainingDays().compareTo(a.remainingDays());
+        default:
+          return 0;
+      }
+    });
+
+    return filteredSubscriptions;
   }
+
 
   double calculateYearlySpent(List<Subscription> subscriptions) {
     final now = DateTime.now();
@@ -108,7 +142,6 @@ class HomeViewState extends State<HomeView> {
       builder: (context, subscriptionProvider, child) {
         final subscriptions = subscriptionProvider.subscriptions;
         final sortedSubscriptions = _sortSubscriptions(subscriptions);
-
         double monthlySpent = sortedSubscriptions.where((subscription) {
           if (subscription.isPaused) return false;
           final now = DateTime.now();
@@ -227,7 +260,11 @@ class HomeViewState extends State<HomeView> {
                                 return SubscriptionListComponent(
                                   currency: currency,
                                   subscription: sortedSubscriptions[index],
-                                  onUpdate: (updatedSubscription) {},
+                                  onUpdate: (updatedSubscription) {
+                                    setState(() {
+                                      _sortSubscriptions(Provider.of<SubscriptionProvider>(context, listen: false).subscriptions);
+                                    });
+                                  },
                                   onDelete: (deletedSubscription) {
                                     setState(() {
                                       Provider.of<SubscriptionProvider>(context,

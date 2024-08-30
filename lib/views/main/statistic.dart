@@ -123,7 +123,7 @@ class StatisticViewState extends State<StatisticView> {
                                         'issuesOfMonthlySubscriptions'),
                                     maxLines: 2,
                                     value:
-                                        '${monthlyExpenses.toStringAsFixed(2)} ${currency.symbol}',
+                                        '${calculateMonthlyExpenses(subscriptions).toStringAsFixed(2)} ${currency.symbol}',
                                     softBreak: true,
                                   ),
                                   CardDetailRow(
@@ -340,6 +340,16 @@ class StatisticViewState extends State<StatisticView> {
         ),
       ),
     );
+  }
+
+  double calculateMonthlyExpenses(List<Subscription> subscriptions) {
+    var totalMonthlyExpenses = 0.0;
+    for (var subscription in subscriptions) {
+      if (subscription.repeatPattern == PaymentRate.monthly.value) {
+        totalMonthlyExpenses += subscription.amount;
+      }
+    }
+    return totalMonthlyExpenses;
   }
 
   double calculateTotalSpentThisYear(List<Subscription> subscriptions) {

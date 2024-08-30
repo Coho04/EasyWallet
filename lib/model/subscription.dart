@@ -201,17 +201,17 @@ class Subscription {
     }
     final today = DateTime.now();
     DateTime nextBillDate = date!;
-    Duration interval;
-    if (repeatPattern == PaymentRate.yearly.value) {
-      interval = const Duration(days: 365);
-    } else {
-      interval = const Duration(days: 30);
-    }
-
     int count = 0;
-    while (nextBillDate.isBefore(today)) {
-      nextBillDate = nextBillDate.add(interval);
-      count++;
+    if (repeatPattern == PaymentRate.yearly.value) {
+      while (nextBillDate.isBefore(today)) {
+        nextBillDate = DateTime(nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
+        count++;
+      }
+    } else if (repeatPattern == PaymentRate.monthly.value) {
+      while (nextBillDate.isBefore(today)) {
+        nextBillDate = DateTime(nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
+        count++;
+      }
     }
     return count;
   }

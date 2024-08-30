@@ -147,6 +147,9 @@
   "import": "Import",
   "OK": "OK",
   "syncWithICloud": "Sync with iCloud",
-  "convertedCosts": "Converted costs"
+  "convertedCosts": "Converted costs",
+  "D": "D",
+  "Y": "Y",
+  "M": "M"
 }
 

@@ -84,7 +84,7 @@ class SubscriptionListComponent extends StatelessWidget {
                   children: [
                     AutoText(
                         text:
-                            '${subscription.remainingDays()} ${Intl.message('days')}',
+                            '${subscription.remainingDays()} ${Intl.message('D')}',
                         color: isDarkMode
                             ? CupertinoColors.systemGrey2
                             : CupertinoColors.systemGrey),
@@ -139,7 +139,7 @@ class SubscriptionListComponent extends StatelessWidget {
     String priceString = subscription.convertPrice()?.toStringAsFixed(2) ??
         Intl.message('unknown');
     return subscription.repeatPattern == PaymentRate.monthly.value
-        ? '$priceString ${currency.symbol}/${Intl.message('year')}'
-        : '$priceString ${currency.symbol}/${Intl.message('month')}';
+        ? '$priceString ${currency.symbol}/${Intl.message('Y')}'
+        : '$priceString ${currency.symbol}/${Intl.message('M')}';
   }
 }

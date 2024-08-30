@@ -147,5 +147,8 @@
   "import": "Importieren",
   "OK": "OK",
   "syncWithICloud": "Mit iCloud synchronisieren",
-  "convertedCosts": "Umgerechnete Kosten"
+  "convertedCosts": "Umgerechnete Kosten",
+  "D": "T",
+  "Y": "J",
+  "M": "M"
 }

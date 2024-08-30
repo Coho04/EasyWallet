@@ -264,7 +264,8 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
       );
       Provider.of<SubscriptionProvider>(context, listen: false)
           .addSubscription(newSubscription);
-      Navigator.of(context).pop();
+
+      Navigator.of(context).pop(true);
     }
   }
 }

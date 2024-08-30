@@ -93,7 +93,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       Provider.of<SubscriptionProvider>(context, listen: false)
           .updateSubscription(subscription);
       widget.onUpdate(subscription);
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     }
   }
 
