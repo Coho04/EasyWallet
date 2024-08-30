@@ -46,6 +46,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Kontaktieren Sie den Entwickler"),
         "continueSubscription": MessageLookupByLibrary.simpleMessage(
             "Dieses Abonnement fortsetzen"),
+        "convertedCosts":
+            MessageLookupByLibrary.simpleMessage("Umgerechnete Kosten"),
         "costAscending":
             MessageLookupByLibrary.simpleMessage("Kosten aufsteigend"),
         "costDescending":

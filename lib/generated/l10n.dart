@@ -1210,7 +1210,15 @@ class S {
     );
   }
 
-  // skipped getter for the 'convertedCosts ' key
+  /// `Converted costs`
+  String get convertedCosts {
+    return Intl.message(
+      'Converted costs',
+      name: 'convertedCosts',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

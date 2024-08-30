@@ -8,7 +8,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:intl/intl.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:background_fetch/background_fetch.dart';
 
@@ -123,23 +122,20 @@ class BackgroundFetchManager {
       for (var subscription in subscriptions) {
         if (subscription['date'] == null) continue;
         var startDate = DateTime.parse(subscription['date']);
-        var nextBillDate =
-            getNextBillDate(startDate, subscription['repeatPattern']);
-
+        var nextBillDate = getNextBillDate(startDate, subscription['repeatPattern']);
         var cycle = RememberCycle.findByName(subscription['remembercycle']);
         var notifyDate = nextBillDate;
         switch (cycle) {
           case RememberCycle.dayBefore:
-            notifyDate = nextBillDate.subtract(const Duration(days: 2));
+            notifyDate = nextBillDate.subtract(const Duration(days: 1));
             break;
           case RememberCycle.twoDaysBefore:
-            notifyDate = nextBillDate.subtract(const Duration(days: 3));
+            notifyDate = nextBillDate.subtract(const Duration(days: 2));
             break;
           case RememberCycle.weekBefore:
-            notifyDate = nextBillDate.subtract(const Duration(days: 8));
+            notifyDate = nextBillDate.subtract(const Duration(days: 7));
             break;
           case RememberCycle.sameDay:
-            notifyDate = nextBillDate.subtract(const Duration(days: 1));
           default:
             break;
         }
@@ -148,10 +144,17 @@ class BackgroundFetchManager {
           continue;
         }
 
-        var notificationTimeKey = DateFormat('yyyy-MM-dd').format(notifyDate);
-        var notificationKey =
-            'notification_${subscription['id']}_$notificationTimeKey';
-        var alreadyNotified = prefs.getBool(notificationKey) ?? false;
+        var notificationKey = 'notification_${subscription['id']}';
+        var lastNotifiedTime = prefs.getString(notificationKey);
+        var alreadyNotified = false;
+        if (lastNotifiedTime != null) {
+          DateTime lastNotificationDateTime = DateTime.parse(lastNotifiedTime);
+          if (notifyDate.year == lastNotificationDateTime.year &&
+              notifyDate.month == lastNotificationDateTime.month &&
+              notifyDate.day == lastNotificationDateTime.day) {
+            alreadyNotified = true;
+          }
+        }
         if (!alreadyNotified) {
           var body = S.current.subscriptionIsDueSoon(subscription['title']);
           if (prefs.getBool('includeCostInNotifications') ?? false) {
@@ -160,7 +163,7 @@ class BackgroundFetchManager {
           }
           var title = S.current.subscriptionReminder;
           await _showNotification(subscription, title, body);
-          prefs.setBool(notificationKey, true);
+          prefs.setString(notificationKey, notifyDate.toString());
         }
       }
     }

@@ -46,6 +46,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Contact Developer"),
         "continueSubscription":
             MessageLookupByLibrary.simpleMessage("Continue this subscription"),
+        "convertedCosts":
+            MessageLookupByLibrary.simpleMessage("Converted costs"),
         "costAscending": MessageLookupByLibrary.simpleMessage("Cost Ascending"),
         "costDescending":
             MessageLookupByLibrary.simpleMessage("Cost Descending"),
