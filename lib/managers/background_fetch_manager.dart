@@ -154,6 +154,11 @@ class BackgroundFetchManager {
               notifyDate.day == lastNotificationDateTime.day) {
             alreadyNotified = true;
           }
+        } else {
+          if (notifyDate.isBefore(DateTime.now())) {
+            alreadyNotified = true;
+            prefs.setString(notificationKey, notifyDate.toString());
+          }
         }
         if (!alreadyNotified) {
           var body = S.current.subscriptionIsDueSoon(subscription['title']);
