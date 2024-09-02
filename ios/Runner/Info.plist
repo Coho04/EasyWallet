@@ -17,49 +17,49 @@
 	<string>EasyWallet</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-	    <dict>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
             <key>CFBundleTypeRole</key>
             <string>Editor</string>
             <key>CFBundleURLName</key>
             <string>GoogleSignInIOS</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>1080526043884-uvf1g98assgkb6et168nlt9bv226afro.apps.googleusercontent.com</string>
+                <string>com.googleusercontent.apps.1080526043884uvf1g98assgkb6et168nlt9bv226afro</string>
             </array>
         </dict>
         <dict>
-                <key>CFBundleTypeRole</key>
-                <string>Editor</string>
-                <key>CFBundleURLName</key>
-                <string>GoogleSignInReverseIOS</string>
-                <key>CFBundleURLSchemes</key>
-                <array>
-                    <string>com.googleusercontent.apps.1080526043884-uvf1g98assgkb6et168nlt9bv226afro</string>
-                </array>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>GoogleSignInReverseIOS</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.1080526043884uvf1g98assgkb6et168nlt9bv226afro.reverse</string>
+            </array>
         </dict>
         <dict>
-          <key>CFBundleTypeRole</key>
-          <string>Editor</string>
-          <key>CFBundleURLName</key>
-          <string>GoogleSignInWeb</string>
-          <key>CFBundleURLSchemes</key>
-          <array>
-              <string>1080526043884-b1ectocrn53qqil0dihs6sr86s0qndeo.apps.googleusercontent.com</string>
-          </array>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>GoogleSignInWeb</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.1080526043884b1ectocrn53qqil0dihs6sr86s0qndeo</string>
+            </array>
         </dict>
-         <dict>
-                  <key>CFBundleTypeRole</key>
-                  <string>Editor</string>
-                  <key>CFBundleURLName</key>
-                  <string>GoogleSignInReverseWeb</string>
-                  <key>CFBundleURLSchemes</key>
-                  <array>
-                      <string>com.googleusercontent.apps.1080526043884-b1ectocrn53qqil0dihs6sr86s0qndeo</string>
-                  </array>
-                </dict>
-	</array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>GoogleSignInReverseWeb</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.1080526043884b1ectocrn53qqil0dihs6sr86s0qndeo.reverse</string>
+            </array>
+        </dict>
+    </array>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
