@@ -12,7 +12,10 @@ class SubscriptionProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS)) {
       if (prefs.getBool('syncWithICloud') ?? false) {
-        PersistenceController.instance.syncFromICloud();
+        await PersistenceController.instance.syncFromICloud();
+      }
+      if (prefs.getBool('syncWithGoogleDrive') ?? false) {
+        await PersistenceController.instance.syncFromGoogleDrive();
       }
     }
     _subscriptions = await PersistenceController.instance.getAllSubscriptions();

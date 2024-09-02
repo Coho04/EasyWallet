@@ -95,6 +95,10 @@ class BackgroundFetchManager {
         await PersistenceController.instance.syncFromICloud();
         await PersistenceController.instance.syncToICloud();
       }
+      if (prefs.getBool('syncWithGoogleDrive') ?? false) {
+        await PersistenceController.instance.syncFromGoogleDrive();
+        await PersistenceController.instance.syncToGoogleDrive();
+      }
     }
 
     final TimeOfDay userNotificationTime = await _getUserNotificationTime();
@@ -122,7 +126,8 @@ class BackgroundFetchManager {
       for (var subscription in subscriptions) {
         if (subscription['date'] == null) continue;
         var startDate = DateTime.parse(subscription['date']);
-        var nextBillDate = getNextBillDate(startDate, subscription['repeatPattern']);
+        var nextBillDate =
+            getNextBillDate(startDate, subscription['repeatPattern']);
         var cycle = RememberCycle.findByName(subscription['remembercycle']);
         var notifyDate = nextBillDate;
         switch (cycle) {

@@ -1249,6 +1249,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Google Drive login failed`
+  String get googleDriveLoginFailed {
+    return Intl.message(
+      'Google Drive login failed',
+      name: 'googleDriveLoginFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Google Drive login successful`
+  String get googleDriveLoginSuccess {
+    return Intl.message(
+      'Google Drive login successful',
+      name: 'googleDriveLoginSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Google Drive logout successful`
+  String get googleDriveLogoutSuccess {
+    return Intl.message(
+      'Google Drive logout successful',
+      name: 'googleDriveLogoutSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Successfully`
+  String get successfully {
+    return Intl.message(
+      'Successfully',
+      name: 'successfully',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

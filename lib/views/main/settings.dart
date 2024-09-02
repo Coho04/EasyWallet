@@ -1,5 +1,6 @@
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/currency.dart';
+import 'package:easy_wallet/persistence_controller.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/components/card_section_component.dart';
@@ -24,6 +25,7 @@ class SettingsViewState extends State<SettingsView> {
   bool includeCostInNotifications = false;
   bool isAuthProtected = false;
   bool syncWithICloud = false;
+  bool syncWithGoogleDrive = false;
   DateTime notificationTime = DateTime.now();
   String currency = Currency.usd.name;
   double monthlyLimit = 0.0;
@@ -43,6 +45,7 @@ class SettingsViewState extends State<SettingsView> {
           prefs.getBool('includeCostInNotifications') ?? false;
       isAuthProtected = prefs.getBool('require_authentication') ?? false;
       syncWithICloud = prefs.getBool('syncWithICloud') ?? false;
+      syncWithGoogleDrive = prefs.getBool('syncWithGoogleDrive') ?? false;
       currency = prefs.getString('currency') ?? "USD";
       monthlyLimit = prefs.getDouble('monthlyLimit') ?? 0.0;
       final notificationTimeString = prefs.getString('notificationTime');
@@ -65,6 +68,7 @@ class SettingsViewState extends State<SettingsView> {
     prefs.setBool('includeCostInNotifications', includeCostInNotifications);
     prefs.setBool('require_authentication', isAuthProtected);
     prefs.setBool('syncWithICloud', syncWithICloud);
+    prefs.setBool('syncWithGoogleDrive', syncWithGoogleDrive);
     prefs.setString('currency', currency);
     prefs.setDouble('monthlyLimit', monthlyLimit);
     prefs.setString('notificationTime',
@@ -88,6 +92,10 @@ class SettingsViewState extends State<SettingsView> {
     } on PlatformException {
       return false;
     }
+  }
+
+  bool syncWithCloud() {
+    return !kIsWeb;
   }
 
   Future<void> _handleAuthProtectionToggle(bool isEnabled) async {
@@ -129,13 +137,6 @@ class SettingsViewState extends State<SettingsView> {
   void _handleNotificationsToggle(bool isEnabled) {
     setState(() {
       notificationsEnabled = isEnabled;
-    });
-    _saveSettings();
-  }
-
-  void _handleICloudToggle(bool isEnabled) {
-    setState(() {
-      syncWithICloud = isEnabled;
     });
     _saveSettings();
   }
@@ -341,12 +342,11 @@ class SettingsViewState extends State<SettingsView> {
                 children: [
                   CupertinoFormRow(
                     prefix: Flexible(
-                      flex: 2,
-                      child: AutoText(
-                          text: Intl.message('enableNotifications'),
-                          maxLines: 2,
-                          color: textColor)
-                    ),
+                        flex: 2,
+                        child: AutoText(
+                            text: Intl.message('enableNotifications'),
+                            maxLines: 2,
+                            color: textColor)),
                     child: CupertinoSwitch(
                       value: notificationsEnabled,
                       onChanged: _handleNotificationsToggle,
@@ -438,24 +438,13 @@ class SettingsViewState extends State<SettingsView> {
                   ),
                 ],
               ),
-              if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS))
-                const SizedBox(height: 20),
-              if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS))
-                CardSection(
-                  title: Intl.message('dataManagement'),
-                  children: [
-                    CupertinoFormRow(
-                      prefix: AutoText(
-                          maxLines: 1,
-                          text: Intl.message('syncWithICloud'),
-                          color: textColor),
-                      child: CupertinoSwitch(
-                        value: syncWithICloud,
-                        onChanged: _handleICloudToggle,
-                      ),
-                    ),
-                  ],
-                ),
+              const SizedBox(height: 20),
+              CardSection(
+                title: Intl.message('dataManagement'),
+                children: [
+                  ..._buildPlatformSpecificSyncOptions(textColor: textColor),
+                ],
+              ),
               const SizedBox(height: 20),
               CardSection(
                 title: Intl.message('support'),
@@ -477,6 +466,104 @@ class SettingsViewState extends State<SettingsView> {
             ],
           ),
         ));
+  }
+
+  List<Widget> _buildPlatformSpecificSyncOptions({required Color textColor}) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return [
+        CupertinoFormRow(
+          padding: const EdgeInsets.all(16),
+          prefix:
+              AutoText(maxLines: 1, text: 'Sync with iCloud', color: textColor),
+          child: CupertinoSwitch(
+            value: syncWithICloud,
+            onChanged: (bool value) {
+              setState(() {
+                syncWithICloud = value;
+                syncWithGoogleDrive = value ? false : syncWithGoogleDrive;
+              });
+              _saveSettings();
+            },
+          ),
+        ),
+        CupertinoFormRow(
+          prefix: AutoText(
+              maxLines: 1, text: 'Sync with Google Drive', color: textColor),
+          child: CupertinoSwitch(
+            value: syncWithGoogleDrive,
+            onChanged: (bool value) {
+              handleGoogleSignIn(context, value);
+              setState(() {
+                syncWithGoogleDrive = value;
+                syncWithICloud = value ? false : syncWithICloud;
+              });
+              _saveSettings();
+            },
+          ),
+        ),
+      ];
+    } else {
+      return [
+        CupertinoFormRow(
+          prefix: AutoText(
+              maxLines: 1, text: 'Sync with Google Drive', color: textColor),
+          child: CupertinoSwitch(
+            value: syncWithGoogleDrive,
+            onChanged: (bool value) {
+              handleGoogleSignIn(context, value);
+              setState(() {
+                syncWithGoogleDrive = value;
+              });
+              _saveSettings();
+            },
+          ),
+        ),
+      ];
+    }
+  }
+
+  void handleGoogleSignIn(BuildContext context, bool enable) async {
+    if (enable) {
+      try {
+        final account =
+            await PersistenceController.instance.googleSignIn.signIn();
+        if (account != null) {
+          if (await PersistenceController.instance.googleSignIn.isSignedIn()) {
+            await PersistenceController.instance.syncFromGoogleDrive();
+            await PersistenceController.instance.syncToGoogleDrive();
+            displayMessage(title: Intl.message("successfully"), message: Intl.message("googleDriveLoginSuccess"));
+          } else {
+            displayMessage(title: Intl.message("error"), message: Intl.message('googleDriveLoginFailed'));
+          }
+        }
+      } catch (error) {
+        displayMessage(title: Intl.message("error"), message: Intl.message("googleDriveLoginFailed"));
+      }
+    } else {
+      await PersistenceController.instance.googleSignIn.signOut();
+      displayMessage(title: Intl.message("successfully"), message: Intl.message("googleDriveLogoutSuccess"));
+    }
+  }
+
+  void displayMessage({required String title, required String message}) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <CupertinoDialogAction>[
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildLinkActionButton(String text, String url) {

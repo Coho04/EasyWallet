@@ -108,6 +108,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "firstDebit": MessageLookupByLibrary.simpleMessage("Erste Lastschrift"),
         "generalInformation":
             MessageLookupByLibrary.simpleMessage("Allgemeine Informationen"),
+        "googleDriveLoginFailed": MessageLookupByLibrary.simpleMessage(
+            "Google Drive Anmeldung fehlgeschlagen"),
+        "googleDriveLoginSuccess": MessageLookupByLibrary.simpleMessage(
+            "Google Drive Anmeldung erfolgreich"),
+        "googleDriveLogoutSuccess": MessageLookupByLibrary.simpleMessage(
+            "Google Drive Abmeldung erfolgreich"),
         "help": MessageLookupByLibrary.simpleMessage("Hilfe"),
         "hint": MessageLookupByLibrary.simpleMessage("Hinweis"),
         "import": MessageLookupByLibrary.simpleMessage("Importieren"),
@@ -190,6 +196,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "subscriptionReminder":
             MessageLookupByLibrary.simpleMessage("Abonnement Erinnerung"),
         "subscriptions": MessageLookupByLibrary.simpleMessage("Abonnements"),
+        "successfully": MessageLookupByLibrary.simpleMessage("Erfolgreich"),
         "support": MessageLookupByLibrary.simpleMessage("Support"),
         "syncWithICloud":
             MessageLookupByLibrary.simpleMessage("Mit iCloud synchronisieren"),

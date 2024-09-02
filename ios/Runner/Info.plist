@@ -17,6 +17,49 @@
 	<string>EasyWallet</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+	    <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>GoogleSignInIOS</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>1080526043884-uvf1g98assgkb6et168nlt9bv226afro.apps.googleusercontent.com</string>
+            </array>
+        </dict>
+        <dict>
+                <key>CFBundleTypeRole</key>
+                <string>Editor</string>
+                <key>CFBundleURLName</key>
+                <string>GoogleSignInReverseIOS</string>
+                <key>CFBundleURLSchemes</key>
+                <array>
+                    <string>com.googleusercontent.apps.1080526043884-uvf1g98assgkb6et168nlt9bv226afro</string>
+                </array>
+        </dict>
+        <dict>
+          <key>CFBundleTypeRole</key>
+          <string>Editor</string>
+          <key>CFBundleURLName</key>
+          <string>GoogleSignInWeb</string>
+          <key>CFBundleURLSchemes</key>
+          <array>
+              <string>1080526043884-b1ectocrn53qqil0dihs6sr86s0qndeo.apps.googleusercontent.com</string>
+          </array>
+        </dict>
+         <dict>
+                  <key>CFBundleTypeRole</key>
+                  <string>Editor</string>
+                  <key>CFBundleURLName</key>
+                  <string>GoogleSignInReverseWeb</string>
+                  <key>CFBundleURLSchemes</key>
+                  <array>
+                      <string>com.googleusercontent.apps.1080526043884-b1ectocrn53qqil0dihs6sr86s0qndeo</string>
+                  </array>
+                </dict>
+	</array>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -70,16 +113,14 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSFaceIDUsageDescription</key>
-    <string>This app requires Face ID to protect access to your subscriptions.</string>
-    <key>UISupportsDocumentBrowser</key>
-    <true/>
-    <key>LSSupportsOpeningDocumentsInPlace</key>
-    <true/>
-
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>We need access to your photo library to save backups.</string>
-    <key>UIFileSharingEnabled</key>
-    <true/>
-
+	<string>This app requires Face ID to protect access to your subscriptions.</string>
+	<key>UISupportsDocumentBrowser</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to save backups.</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 </dict>
 </plist>
