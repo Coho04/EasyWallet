@@ -11,6 +11,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../persistence_controller.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -31,6 +34,10 @@ class HomeViewState extends State<HomeView> {
   }
 
   Future<void> _loadAndSortSubscriptions() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('syncWithGoogleDrive') ?? false) {
+      await PersistenceController.instance.syncFromGoogleDrive();
+    }
     try {
       await Provider.of<SubscriptionProvider>(context, listen: false)
           .loadSubscriptions();
@@ -43,43 +50,12 @@ class HomeViewState extends State<HomeView> {
     }
   }
 
- /* List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
+  List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
     List<Subscription> filteredSubscriptions =
         subscriptions.where((subscription) {
       return subscription.title
           .toLowerCase()
           .contains(searchText.toLowerCase());
-    }).toList();
-
-    filteredSubscriptions.sort((a, b) {
-      if (a.isPinned && !b.isPinned) return -1;
-      if (!a.isPinned && b.isPinned) return 1;
-      if (a.isPaused && !b.isPaused) return 1;
-      if (!a.isPaused && b.isPaused) return -1;
-
-      switch (sortOption) {
-        case SortOption.alphabeticalAscending:
-          return a.title.compareTo(b.title);
-        case SortOption.alphabeticalDescending:
-          return b.title.compareTo(a.title);
-        case SortOption.costAscending:
-          return a.amount.compareTo(b.amount);
-        case SortOption.costDescending:
-          return b.amount.compareTo(a.amount);
-        case SortOption.remainingDaysAscending:
-          return a.remainingDays().compareTo(b.remainingDays());
-        case SortOption.remainingDaysDescending:
-          return b.remainingDays().compareTo(a.remainingDays());
-        default:
-          return 0;
-      }
-    });
-    return filteredSubscriptions;
-  }*/
-
-  List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
-    List<Subscription> filteredSubscriptions = subscriptions.where((subscription) {
-      return subscription.title.toLowerCase().contains(searchText.toLowerCase());
     }).toList();
 
     filteredSubscriptions.sort((a, b) {
@@ -109,7 +85,6 @@ class HomeViewState extends State<HomeView> {
 
     return filteredSubscriptions;
   }
-
 
   double calculateYearlySpent(List<Subscription> subscriptions) {
     final now = DateTime.now();
@@ -262,7 +237,11 @@ class HomeViewState extends State<HomeView> {
                                   subscription: sortedSubscriptions[index],
                                   onUpdate: (updatedSubscription) {
                                     setState(() {
-                                      _sortSubscriptions(Provider.of<SubscriptionProvider>(context, listen: false).subscriptions);
+                                      _sortSubscriptions(
+                                          Provider.of<SubscriptionProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .subscriptions);
                                     });
                                   },
                                   onDelete: (deletedSubscription) {

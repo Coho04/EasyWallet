@@ -32,8 +32,6 @@ class AutoText extends StatelessWidget {
     return AutoSizeText(
       text,
       maxLines: maxLines,
-      // minFontSize: minFontSize,
-      // maxFontSize: maxFontSize,
       softWrap: softWrap,
       overflow: overflow,
       textScaleFactor: textScaleFactor(context),

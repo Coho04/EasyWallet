@@ -150,5 +150,9 @@
   "convertedCosts": "Umgerechnete Kosten",
   "D": "T",
   "Y": "J",
-  "M": "M"
+  "M": "M",
+  "googleDriveLoginFailed": "Google Drive Anmeldung fehlgeschlagen",
+  "googleDriveLoginSuccess": "Google Drive Anmeldung erfolgreich",
+  "googleDriveLogoutSuccess": "Google Drive Abmeldung erfolgreich",
+  "successfully": "Erfolgreich"
 }

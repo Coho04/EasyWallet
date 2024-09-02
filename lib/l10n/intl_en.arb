@@ -150,6 +150,10 @@
   "convertedCosts": "Converted costs",
   "D": "D",
   "Y": "Y",
-  "M": "M"
+  "M": "M",
+  "googleDriveLoginFailed": "Google Drive login failed",
+  "googleDriveLoginSuccess": "Google Drive login successful",
+  "googleDriveLogoutSuccess": "Google Drive logout successful",
+  "successfully": "Successfully"
 }
 
