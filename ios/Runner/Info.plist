@@ -23,30 +23,10 @@
             <key>CFBundleTypeRole</key>
             <string>Editor</string>
             <key>CFBundleURLName</key>
-            <string>GoogleSignInIOS</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>com.googleusercontent.apps.1080526043884uvf1g98assgkb6et168nlt9bv226afro</string>
-            </array>
-        </dict>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>CFBundleURLName</key>
             <string>GoogleSignInReverseIOS</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>com.googleusercontent.apps.1080526043884uvf1g98assgkb6et168nlt9bv226afro.reverse</string>
-            </array>
-        </dict>
-        <dict>
-            <key>CFBundleTypeRole</key>
-            <string>Editor</string>
-            <key>CFBundleURLName</key>
-            <string>GoogleSignInWeb</string>
-            <key>CFBundleURLSchemes</key>
-            <array>
-                <string>com.googleusercontent.apps.1080526043884b1ectocrn53qqil0dihs6sr86s0qndeo</string>
+                <string>com.googleusercontent.apps.1080526043884-uvf1g98assgkb6et168nlt9bv226afro</string>
             </array>
         </dict>
         <dict>
@@ -56,7 +36,7 @@
             <string>GoogleSignInReverseWeb</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>com.googleusercontent.apps.1080526043884b1ectocrn53qqil0dihs6sr86s0qndeo.reverse</string>
+                <string>com.googleusercontent.apps.1080526043884-b1ectocrn53qqil0dihs6sr86s0qndeo</string>
             </array>
         </dict>
     </array>
@@ -65,7 +45,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>easy_wallet</string>
+	<string>EasyWallet</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

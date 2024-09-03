@@ -1,4 +1,4 @@
-# easy_wallet
+# EasyWallet
 
 EasyWallet is a app designed to help users manage their subscriptions and notify them about upcoming payments.
 
