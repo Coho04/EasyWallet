@@ -1,38 +1,111 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="$FLUTTER_BASE_HREF">
-
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="EasyWallet is a app designed to help users manage their subscriptions and notify them about upcoming payments.">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="easy_wallet">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>easy_wallet</title>
-  <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyWallet - Verwalte deine Abonnements</title>
+    <link rel="icon" type="image/png" href="Icon.png"/>
+    <link rel="apple-touch-icon" href="//Icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <script src="flutter_bootstrap.js" async></script>
+<body class="bg-gray-100 text-gray-800">
+<header class="bg-white shadow-md p-4 sticky top-0 z-50">
+    <div class="container mx-auto flex items-center justify-between">
+        <img src="icons/Icon.png" alt="EasyWallet Logo" class="h-12">
+        <nav class="space-x-4 text-lg">
+            <a href="#beta" class="text-blue-600 hover:text-blue-700">Beta</a>
+            <a href="#features" class="text-blue-600 hover:text-blue-700">Features</a>
+            <a href="#download" class="text-blue-600 hover:text-blue-700">Download</a>
+            <a href="#support" class="text-blue-600 hover:text-blue-700">Support</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="hero bg-blue-700 text-white text-center py-16">
+        <h1 class="text-4xl font-bold mb-3">Verwalte deine Abonnements mühelos</h1>
+        <p class="text-xl mb-5">Nie wieder von unerwarteten Abbuchungen überrascht werden – mit EasyWallet behältst du den Überblick.</p>
+        <a href="#" class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 px-8 rounded-lg shadow">Jetzt herunterladen</a>
+    </section>
+
+    <section id="features" class="bg-gray-50 py-12">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-10">Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="feature bg-white shadow p-4 rounded">
+                <img src="images/manuel.png" alt="Manuelle Eingabe" class="h-32 w-full object-contain">
+                <h3 class="font-semibold mt-2">Manuelle Eingabe</h3>
+                <p>Füge deine Abonnements manuell hinzu und behalte die Kontrolle.</p>
+            </div>
+            <div class="feature bg-white shadow p-4 rounded">
+                <img src="images/notifications.png" alt="Benachrichtigungen" class="h-32 w-full object-contain">
+                <h3 class="font-semibold mt-2">Benachrichtigungen</h3>
+                <p>Erhalte Benachrichtigungen über bevorstehende Zahlungen.</p>
+            </div>
+            <div class="feature bg-white shadow p-4 rounded">
+                <img src="images/overview.jpg" alt="Übersicht" class="h-32 w-full object-contain">
+                <h3 class="font-semibold mt-2">Übersicht</h3>
+                <p>Alle deine Abonnements übersichtlich an einem Ort.</p>
+            </div>
+            <div class="feature bg-white shadow p-4 rounded">
+                <img src="images/cloud_sync.jpeg" alt="Cloud Synchronisation" class="h-32 w-full object-contain">
+                <h3 class="font-semibold mt-2">Cloud Synchronisation</h3>
+                <p>Sichere deine Daten und synchronisiere sie über alle deine Geräte hinweg.</p>
+            </div>
+            <div class="feature bg-white shadow p-4 rounded">
+                <img src="images/fingerprint.png" alt="Biometrische Absperrung" class="h-32 w-full object-contain">
+                <h3 class="font-semibold mt-2">Biometrische Absperrung (sofern vorhanden)</h3>
+                <p>Schütze deine finanziellen Informationen mit modernster biometrischer Sicherheit.</p>
+            </div>
+            <div class="feature bg-white shadow p-4 rounded">
+                <img src="images/payment_overview.png" alt="Ausgabenübersicht durch Abos" class="h-32 w-full object-contain">
+                <h3 class="font-semibold mt-2">Ausgabenübersicht durch Abos</h3>
+                <p>Erhalte detaillierte Einblicke in deine monatlichen Ausgaben durch Abonnements und optimiere dein Budget.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="download" class="bg-gray-200 text-center p-8">
+        <h2 class="text-xl font-bold mb-4">Lade EasyWallet jetzt herunter</h2>
+        <p class="text-gray-600 mb-6">Wähle deine Plattform und starte die Verwaltung deiner Abonnements mit EasyWallet. Verfügbar für iOS und Android.</p>
+        <div class="flex justify-center space-x-4">
+            <a href="https://example.com/ios" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded transition duration-300 ease-in-out">
+                <div class="flex items-center">
+                    <img src="icons/apple-icon.png" alt="iOS Icon" class="h-6 mr-2">
+                    Download für iOS
+                </div>
+            </a>
+            <a href="https://example.com/android" class="bg-blue-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded transition duration-300 ease-in-out">
+                <div class="flex items-center">
+                    <img src="icons/android-icon.png" alt="Android Icon" class="h-6 mr-2">
+                    Download für Android
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <section id="beta" class="bg-gray-100 text-center py-12">
+
+        <h2 class="text-3xl font-bold mb-4">Beta-Programm beitreten</h2>
+        <p class="text-lg text-gray-600 mb-8">Werden Sie Teil unseres Beta-Programms und erhalten Sie frühen Zugriff auf neue Features und Updates. Ihre Rückmeldungen helfen uns, EasyWallet weiter zu verbessern.</p>
+        <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg">Jetzt beitreten</a>
+    </section>
+
+
+    <section id="support" class="bg-gray-200 text-center py-12">
+        <h2 class="text-3xl font-bold mb-4">Support</h2>
+        <p class="text-lg text-gray-600 mb-8">Haben Sie Fragen oder benötigen Hilfe? Unser Support-Team ist bereit, Ihnen zu helfen. Besuchen Sie unser Hilfezentrum oder kontaktieren Sie uns direkt.</p>
+        <a href="#" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg">Hilfezentrum besuchen</a>
+        <a href="mailto:support@easywallet.com" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg mt-4">Support kontaktieren</a>
+    </section>
+
+
+</main>
+
+<footer class="bg-white shadow mt-8 p-4 text-center">
+    <p>© 2024 EasyWallet. Alle Rechte vorbehalten.</p>
+    <p><a href="https://Golden-Developer.de/privacy" class="text-blue-500 hover:text-blue-600">Datenschutz</a> | <a href="https://golden-developer.de/terms-of-use" class="text-blue-500 hover:text-blue-600">Nutzungsbedingungen</a></p>
+</footer>
 </body>
 </html>
