@@ -20,11 +20,11 @@ class EasyWalletApp extends StatefulWidget {
   EasyWalletAppState createState() => EasyWalletAppState();
 
   static TextStyle responsiveTextStyle(
-      BuildContext context, {
-      double baseSize = 16,
-        bool bold = false,
-        Color? color,
-      }) {
+    BuildContext context, {
+    double baseSize = 16,
+    bool bold = false,
+    Color? color,
+  }) {
     return TextStyle(
       fontWeight: bold ? FontWeight.bold : null,
       color: color,
@@ -147,6 +147,10 @@ class EasyWalletAppState extends State<EasyWalletApp>
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return CupertinoApp(
       title: 'EasyWallet',
       localizationsDelegates: const [
