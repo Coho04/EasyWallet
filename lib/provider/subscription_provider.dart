@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/persistence_controller.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SubscriptionProvider with ChangeNotifier {
   List<Subscription> _subscriptions = [];
@@ -9,31 +8,20 @@ class SubscriptionProvider with ChangeNotifier {
   List<Subscription> get subscriptions => _subscriptions;
 
   Future<void> loadSubscriptions() async {
-    final prefs = await SharedPreferences.getInstance();
     if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS)) {
-      if (prefs.getBool('syncWithICloud') ?? false) {
-        await PersistenceController.instance.syncFromICloud();
-      }
-      if (prefs.getBool('syncWithGoogleDrive') ?? false) {
-        await PersistenceController.instance.syncFromGoogleDrive();
-      }
+      await PersistenceController.instance.syncWithCloud();
     }
-    _subscriptions = await PersistenceController.instance.getAllSubscriptions();
+    _subscriptions = await Subscription.all();
     notifyListeners();
   }
 
-  Future<void> addSubscription(Subscription subscription) async {
-    await PersistenceController.instance.saveSubscription(subscription);
-    await loadSubscriptions();
-  }
-
-  Future<void> updateSubscription(Subscription subscription) async {
-    await PersistenceController.instance.saveSubscription(subscription);
+  Future<void> saveSubscription(Subscription subscription) async {
+    await subscription.save();
     await loadSubscriptions();
   }
 
   Future<void> deleteSubscription(Subscription subscription) async {
-    await PersistenceController.instance.deleteSubscription(subscription);
+    await subscription.delete();
     await loadSubscriptions();
   }
 }

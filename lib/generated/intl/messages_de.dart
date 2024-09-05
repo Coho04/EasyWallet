@@ -33,6 +33,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "Y": MessageLookupByLibrary.simpleMessage("J"),
         "actions": MessageLookupByLibrary.simpleMessage("Aktionen"),
         "active": MessageLookupByLibrary.simpleMessage("Aktiv"),
+        "addNewCategory":
+            MessageLookupByLibrary.simpleMessage("Neue Kategorie hinzufügen"),
         "addNewSubscription":
             MessageLookupByLibrary.simpleMessage("Neues Abonnement hinzufügen"),
         "addSubscription":
@@ -45,6 +47,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Alphabetisch absteigend"),
         "appStats": MessageLookupByLibrary.simpleMessage("App Statistiken"),
         "cancel": MessageLookupByLibrary.simpleMessage("Abbrechen"),
+        "categories": MessageLookupByLibrary.simpleMessage("Kategorien"),
         "contactDeveloper": MessageLookupByLibrary.simpleMessage(
             "Kontaktieren Sie den Entwickler"),
         "continueSubscription": MessageLookupByLibrary.simpleMessage(
@@ -75,11 +78,13 @@ class MessageLookup extends MessageLookupByLibrary {
             "Verbleibende Tage aufsteigend"),
         "daysRemainingDescending": MessageLookupByLibrary.simpleMessage(
             "Verbleibende Tage absteigend"),
+        "delete": MessageLookupByLibrary.simpleMessage("Löschen"),
         "deleteSubscription":
             MessageLookupByLibrary.simpleMessage("Dieses Abonnement löschen"),
         "deletionIsNotSupportedOnTheWeb": MessageLookupByLibrary.simpleMessage(
             "Löschen wird im Web nicht unterstützt"),
         "done": MessageLookupByLibrary.simpleMessage("Fertig"),
+        "edit": MessageLookupByLibrary.simpleMessage("Bearbeiten"),
         "editSubscription":
             MessageLookupByLibrary.simpleMessage("Abonnement bearbeiten"),
         "enableAuthProtection":
@@ -135,6 +140,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "monthlyLimit":
             MessageLookupByLibrary.simpleMessage("Monatliches Limit"),
         "nextInvoice": MessageLookupByLibrary.simpleMessage("Nächste Rechnung"),
+        "noCategoriesAvailable":
+            MessageLookupByLibrary.simpleMessage("Keine Kategorien verfügbar"),
         "noData": MessageLookupByLibrary.simpleMessage("Keine Daten"),
         "noSubscriptionsAvailable":
             MessageLookupByLibrary.simpleMessage("Keine Abonnements verfügbar"),

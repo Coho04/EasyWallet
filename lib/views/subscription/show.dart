@@ -2,6 +2,7 @@ import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
+import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/views/components/card_section_component.dart';
 import 'package:easy_wallet/views/subscription/edit.dart';
 import 'package:flutter/cupertino.dart';
@@ -240,16 +241,16 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
         ),
       );
     } else {
-      final persistenceController = PersistenceController.instance;
-      await persistenceController.deleteSubscription(subscription);
+      Provider.of<SubscriptionProvider>(context, listen: false)
+          .deleteSubscription(subscription);
       widget.onDelete(subscription);
       Navigator.of(context).pop();
     }
   }
 
   void _saveItem() async {
-    final persistenceController = PersistenceController.instance;
-    await persistenceController.saveSubscription(subscription);
+    Provider.of<SubscriptionProvider>(context, listen: false)
+        .saveSubscription(subscription);
     widget.onUpdate(subscription);
   }
 

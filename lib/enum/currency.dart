@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 enum Currency {
   usd("US Dollar", "\$"),
   eur("Euro", "€"),

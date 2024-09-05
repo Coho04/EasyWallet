@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
+import 'package:easy_wallet/persistence_controller.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:palette_generator/palette_generator.dart';
+import 'package:sqflite/sqflite.dart';
 
 class Subscription {
   int? id;
@@ -286,6 +289,49 @@ class Subscription {
       title: json['title'],
       url: json['url'],
     );
+  }
+
+  Future<void> save() async {
+    if (kIsWeb) {
+      throw UnsupportedError("Database is not supported on the web");
+    }
+    final db = await PersistenceController.instance.database;
+    if (id == null) {
+      await db.insert('subscriptions', toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    } else {
+      await db.update(
+        'subscriptions',
+        toJson(),
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    }
+    await PersistenceController.instance.syncWithCloud();
+  }
+
+  Future<void> delete() async {
+    if (kIsWeb) {
+      throw UnsupportedError("Database is not supported on the web");
+    }
+    final db = await PersistenceController.instance.database;
+    await db.delete(
+      'subscriptions',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    await PersistenceController.instance.syncWithCloud();
+  }
+
+  static Future<List<Subscription>> all() async {
+    if (kIsWeb) {
+      throw UnsupportedError("Database is not supported on the web");
+    }
+    final db = await PersistenceController.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query('subscriptions');
+    return List.generate(maps.length, (i) {
+      return Subscription.fromJson(maps[i]);
+    });
   }
 }
 

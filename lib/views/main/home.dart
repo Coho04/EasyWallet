@@ -36,7 +36,8 @@ class HomeViewState extends State<HomeView> {
   Future<void> _loadAndSortSubscriptions() async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool('syncWithGoogleDrive') ?? false) {
-      await PersistenceController.instance.syncFromGoogleDrive();
+      var cloud = await PersistenceController.instance.googleDrive;
+      await cloud.syncFrom();
     }
     try {
       await Provider.of<SubscriptionProvider>(context, listen: false)

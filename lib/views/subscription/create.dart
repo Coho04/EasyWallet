@@ -263,7 +263,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         repeating: true,
       );
       Provider.of<SubscriptionProvider>(context, listen: false)
-          .addSubscription(newSubscription);
+          .saveSubscription(newSubscription);
 
       Navigator.of(context).pop(true);
     }

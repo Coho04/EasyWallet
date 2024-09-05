@@ -90,16 +90,7 @@ class BackgroundFetchManager {
 
   Future<void> scheduleNotifications() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS)) {
-      if (prefs.getBool('syncWithICloud') ?? false) {
-        await PersistenceController.instance.syncFromICloud();
-        await PersistenceController.instance.syncToICloud();
-      }
-      if (prefs.getBool('syncWithGoogleDrive') ?? false) {
-        await PersistenceController.instance.syncFromGoogleDrive();
-        await PersistenceController.instance.syncToGoogleDrive();
-      }
-    }
+    await PersistenceController.instance.syncWithCloud();
 
     final TimeOfDay userNotificationTime = await _getUserNotificationTime();
     final DateTime now = DateTime.now();

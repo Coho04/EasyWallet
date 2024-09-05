@@ -13,7 +13,6 @@ import 'package:easy_wallet/views/components/form_fields/text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:easy_wallet/persistence_controller.dart';
 import 'package:provider/provider.dart';
 
 class SubscriptionEditView extends StatefulWidget {
@@ -88,10 +87,8 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       subscription.notes = _notesController.text.trim();
       subscription.repeatPattern = _paymentRate;
       subscription.rememberCycle = _rememberCycle;
-      final viewContext = PersistenceController.instance;
-      viewContext.saveSubscription(subscription);
       Provider.of<SubscriptionProvider>(context, listen: false)
-          .updateSubscription(subscription);
+          .saveSubscription(subscription);
       widget.onUpdate(subscription);
       Navigator.of(context).pop(true);
     }

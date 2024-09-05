@@ -1,3 +1,4 @@
+import 'package:easy_wallet/views/categories/index.dart';
 import 'package:easy_wallet/views/main/home.dart';
 import 'package:easy_wallet/views/main/settings.dart';
 import 'package:easy_wallet/views/main/statistic.dart';
@@ -21,10 +22,12 @@ class MainViewState extends State<MainView> {
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
   ];
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeView(),
+    CategoryIndexView(),
     StatisticView(),
     SettingsView(),
   ];
@@ -73,6 +76,10 @@ class MainViewState extends State<MainView> {
           BottomNavigationBarItem(
             icon: const Icon(CupertinoIcons.creditcard_fill),
             label: S.of(context).subscriptions,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(CupertinoIcons.rectangle_3_offgrid_fill),
+            label: S.of(context).categories,
           ),
           BottomNavigationBarItem(
             icon: const Icon(CupertinoIcons.chart_bar_fill),

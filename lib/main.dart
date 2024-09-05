@@ -1,6 +1,6 @@
 import 'package:background_fetch/background_fetch.dart';
 import 'package:easy_wallet/managers/background_fetch_manager.dart';
-import 'package:easy_wallet/managers/data_migration_manager.dart';
+import 'package:easy_wallet/provider/category_provider.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,6 +33,7 @@ void initializeSentry() async {
         MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
+            ChangeNotifierProvider(create: (_) => CategoryProvider()),
             ChangeNotifierProvider(create: (_) => CurrencyProvider()),
           ],
           child: const EasyWalletApp(),
@@ -48,12 +49,6 @@ void backgroundFetchHeadlessTask(String taskId) async {
   final manager = BackgroundFetchManager();
   await manager.init();
   BackgroundFetch.finish(taskId);
-}
-
-void migrateData() async {
-  if (!kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS)) {
-    await DataMigrationManager().migrateData();
-  }
 }
 
 Future<void> processOrderBatch(ISentrySpan span) async {

@@ -2,8 +2,12 @@
   "@@locale": "de",
   "subscriptions": "Abonnements",
   "statistics": "Statistiken",
+  "categories": "Kategorien",
   "@subscriptions": {
     "description": "Label for the subscriptions tab"
+  },
+  "@categories": {
+    "description": "Label for the categories tab"
   },
   "@statistics": {
     "description": "Label for the statistics tab"
@@ -154,5 +158,9 @@
   "googleDriveLoginFailed": "Google Drive Anmeldung fehlgeschlagen",
   "googleDriveLoginSuccess": "Google Drive Anmeldung erfolgreich",
   "googleDriveLogoutSuccess": "Google Drive Abmeldung erfolgreich",
-  "successfully": "Erfolgreich"
+  "successfully": "Erfolgreich",
+  "noCategoriesAvailable": "Keine Kategorien verfügbar",
+  "addNewCategory": "Neue Kategorie hinzufügen",
+  "edit": "Bearbeiten",
+  "delete": "Löschen"
 }
