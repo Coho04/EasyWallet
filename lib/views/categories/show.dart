@@ -44,14 +44,8 @@ class CategoryShowViewState extends State<CategoryShowView> {
           CupertinoColors.systemGroupedBackground.resolveFrom(context),
       navigationBar: CupertinoNavigationBar(
         middle: Text(
-          Intl.message('subscriptions'),
+          category.title,
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-        ),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: () {},
-          child: const Icon(CupertinoIcons.pencil,
-              color: CupertinoColors.activeBlue),
         ),
       ),
       child: SafeArea(
@@ -129,15 +123,15 @@ class CategoryShowViewState extends State<CategoryShowView> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: const Text("Edit Category"),
+          title: Text(Intl.message("editCategory")),
           content: Column(
             children: <Widget>[
               CupertinoTextField(
                 controller: titleController,
-                placeholder: "Category Title",
+                placeholder: Intl.message("categoryTitle"),
               ),
-              Container(
-                height: 50,
+              SizedBox(
+                height: 80,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -147,13 +141,25 @@ class CategoryShowViewState extends State<CategoryShowView> {
                             await _pickColor(currentColor) ?? currentColor;
                         setState(() {});
                       },
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: currentColor,
-                          shape: BoxShape.circle,
-                        ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: currentColor,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            Intl.message('chooseColor'),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: CupertinoColors.activeBlue,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -226,11 +232,13 @@ class CategoryShowViewState extends State<CategoryShowView> {
   }
 
   Future<List<Widget>> _buildSubscriptions() async {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
     var currency =
         Provider.of<CurrencyProvider>(context, listen: false).currency;
     var subscriptions = await category.getSubscriptions();
     if (subscriptions.isEmpty) {
-      return [Text(Intl.message('noSubscriptions'))];
+      return [Text(Intl.message('noEntriesFound'))];
     }
     return subscriptions.map((subscription) {
       return CupertinoListTile(
@@ -248,7 +256,9 @@ class CategoryShowViewState extends State<CategoryShowView> {
         title: Text(subscription.title),
         additionalInfo: Text('${subscription.amount} ${currency.symbol}'),
         leading: subscription.buildImage(errorImgSize: 30),
-        backgroundColor: CupertinoColors.white,
+        backgroundColor: isDarkMode
+            ? CupertinoColors.darkBackgroundGray
+            : CupertinoColors.white,
         trailing: const SizedBox(
           width: 40,
           height: 40,
@@ -259,25 +269,40 @@ class CategoryShowViewState extends State<CategoryShowView> {
   }
 
   Future<Color?> _pickColor(Color currentColor) async {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
+
     Color? pickedColor;
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Pick a color'),
+          backgroundColor: isDarkMode
+              ? CupertinoColors.darkBackgroundGray
+              : CupertinoColors.white,
+          title: Text(Intl.message('pickAColor')),
+          titleTextStyle: TextStyle(
+            color: isDarkMode
+                ? CupertinoColors.white
+                : CupertinoColors.black,
+          ),
           content: SingleChildScrollView(
             child: ColorPicker(
               pickerColor: currentColor,
               onColorChanged: (Color color) {
                 pickedColor = color;
               },
-              showLabel: true,
+              showLabel: false,
+              labelTextStyle: TextStyle(
+                color:
+                    isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+              ),
               pickerAreaHeightPercent: 0.8,
             ),
           ),
           actions: <Widget>[
             CupertinoButton(
-              child: const Text('Done'),
+              child: Text(Intl.message('done')),
               onPressed: () {
                 Navigator.of(context).pop();
               },

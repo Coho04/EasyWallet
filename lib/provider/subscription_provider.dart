@@ -15,9 +15,10 @@ class SubscriptionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> saveSubscription(Subscription subscription) async {
-    await subscription.save();
+  Future<Subscription> saveSubscription(Subscription subscription) async {
+    var sub = await subscription.save();
     await loadSubscriptions();
+    return sub;
   }
 
   Future<void> deleteSubscription(Subscription subscription) async {

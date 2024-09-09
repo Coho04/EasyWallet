@@ -33,6 +33,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "Y": MessageLookupByLibrary.simpleMessage("J"),
         "actions": MessageLookupByLibrary.simpleMessage("Aktionen"),
         "active": MessageLookupByLibrary.simpleMessage("Aktiv"),
+        "add": MessageLookupByLibrary.simpleMessage("Hinzufügen"),
         "addNewCategory":
             MessageLookupByLibrary.simpleMessage("Neue Kategorie hinzufügen"),
         "addNewSubscription":
@@ -48,6 +49,12 @@ class MessageLookup extends MessageLookupByLibrary {
         "appStats": MessageLookupByLibrary.simpleMessage("App Statistiken"),
         "cancel": MessageLookupByLibrary.simpleMessage("Abbrechen"),
         "categories": MessageLookupByLibrary.simpleMessage("Kategorien"),
+        "categoryTitle":
+            MessageLookupByLibrary.simpleMessage("Kategorie Titel"),
+        "chooseAColor":
+            MessageLookupByLibrary.simpleMessage("Wählen Sie eine Farbe"),
+        "chooseColor": MessageLookupByLibrary.simpleMessage("Farbe wählen"),
+        "confirm": MessageLookupByLibrary.simpleMessage("Bestätigen"),
         "contactDeveloper": MessageLookupByLibrary.simpleMessage(
             "Kontaktieren Sie den Entwickler"),
         "continueSubscription": MessageLookupByLibrary.simpleMessage(
@@ -83,8 +90,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Dieses Abonnement löschen"),
         "deletionIsNotSupportedOnTheWeb": MessageLookupByLibrary.simpleMessage(
             "Löschen wird im Web nicht unterstützt"),
+        "displayCategories":
+            MessageLookupByLibrary.simpleMessage("Kategorien anzeigen"),
         "done": MessageLookupByLibrary.simpleMessage("Fertig"),
         "edit": MessageLookupByLibrary.simpleMessage("Bearbeiten"),
+        "editCategory":
+            MessageLookupByLibrary.simpleMessage("Kategorie bearbeiten"),
         "editSubscription":
             MessageLookupByLibrary.simpleMessage("Abonnement bearbeiten"),
         "enableAuthProtection":
@@ -143,6 +154,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "noCategoriesAvailable":
             MessageLookupByLibrary.simpleMessage("Keine Kategorien verfügbar"),
         "noData": MessageLookupByLibrary.simpleMessage("Keine Daten"),
+        "noEntriesFound":
+            MessageLookupByLibrary.simpleMessage("Keine Einträge gefunden"),
         "noSubscriptionsAvailable":
             MessageLookupByLibrary.simpleMessage("Keine Abonnements verfügbar"),
         "notes": MessageLookupByLibrary.simpleMessage("Notizen"),
@@ -163,6 +176,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "pausedVsActive":
             MessageLookupByLibrary.simpleMessage("Pausiert vs Aktiv"),
         "paymentRate": MessageLookupByLibrary.simpleMessage("Zyklus"),
+        "pickAColor":
+            MessageLookupByLibrary.simpleMessage("Wählen Sie eine Farbe"),
         "pinSubscription":
             MessageLookupByLibrary.simpleMessage("Dieses Abonnement anheften"),
         "pinned": MessageLookupByLibrary.simpleMessage("Gepinnt"),
@@ -189,6 +204,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "save": MessageLookupByLibrary.simpleMessage("Speichern"),
         "search": MessageLookupByLibrary.simpleMessage("Suche"),
         "security": MessageLookupByLibrary.simpleMessage("Sicherheit"),
+        "select": MessageLookupByLibrary.simpleMessage("Auswählen"),
         "selectCurrency":
             MessageLookupByLibrary.simpleMessage("Währung auswählen"),
         "settings": MessageLookupByLibrary.simpleMessage("Einstellungen"),

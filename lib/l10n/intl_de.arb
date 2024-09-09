@@ -162,5 +162,15 @@
   "noCategoriesAvailable": "Keine Kategorien verfügbar",
   "addNewCategory": "Neue Kategorie hinzufügen",
   "edit": "Bearbeiten",
-  "delete": "Löschen"
+  "delete": "Löschen",
+  "noEntriesFound": "Keine Einträge gefunden",
+  "pickAColor": "Wählen Sie eine Farbe",
+  "displayCategories": "Kategorien anzeigen",
+  "chooseAColor": "Wählen Sie eine Farbe",
+  "chooseColor": "Farbe wählen",
+  "confirm": "Bestätigen",
+  "select": "Auswählen",
+  "add": "Hinzufügen",
+  "categoryTitle": "Kategorie Titel",
+  "editCategory": "Kategorie bearbeiten"
 }

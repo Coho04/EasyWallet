@@ -21,7 +21,7 @@ void main() {
 
 void initializeSentry() async {
   await SentryFlutter.init(
-        (options) {
+    (options) {
       options.dsn = kDebugMode
           ? ''
           : 'https://b2c887d934a80f2a6aaa9a3cf4aa9d48@o4504089255804929.ingest.us.sentry.io/4507566119321600';
@@ -85,7 +85,7 @@ Future<bool> authenticateWithBiometrics() async {
 
   try {
     final List<BiometricType> availableBiometrics =
-    await auth.getAvailableBiometrics();
+        await auth.getAvailableBiometrics();
     if (availableBiometrics.isEmpty) {
       return false;
     }
@@ -95,7 +95,8 @@ Future<bool> authenticateWithBiometrics() async {
     }
 
     final bool didAuthenticate = await auth.authenticate(
-      localizedReason: Intl.message('pleaseAuthenticateYourselfToViewYourSubscriptions'),
+      localizedReason:
+          Intl.message('pleaseAuthenticateYourselfToViewYourSubscriptions'),
       options: const AuthenticationOptions(
         biometricOnly: true,
         useErrorDialogs: true,

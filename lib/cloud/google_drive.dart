@@ -40,14 +40,9 @@ class GoogleDrive extends Cloud {
     final driveApi = drive.DriveApi(authenticateClient);
     const folderName = 'EasyWallet';
 
-    // Ensure the folder exists
     String folderId = await getOrCreateFolder(driveApi, folderName);
-
-    // Sync Subscriptions
     await uploadDataToDrive(
         driveApi, folderId, 'subscriptions.json', jsonEncode(subscriptions.map((s) => s.toJson()).toList()));
-
-    // Sync Categories
     await uploadDataToDrive(
         driveApi, folderId, 'categories.json', jsonEncode(categories.map((c) => c.toJson()).toList()));
 
@@ -119,11 +114,7 @@ class GoogleDrive extends Cloud {
       } else {
         folderId = folderQuery.files!.first.id!;
       }
-
-      // Handle Subscriptions
       await downloadAndProcessFile(driveApi, folderId, 'subscriptions.json');
-
-      // Handle Categories
       await downloadAndProcessFile(driveApi, folderId, 'categories.json');
 
       authenticateClient.close();

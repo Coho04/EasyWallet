@@ -162,6 +162,15 @@
   "noCategoriesAvailable": "No categories available",
   "addNewCategory": "Add New Category",
   "edit": "Edit",
-  "delete": "Delete"
+  "delete": "Delete",
+  "noEntriesFound": "No entries found",
+  "pickAColor": "Pick a color",
+  "displayCategories": "Display categories",
+  "chooseAColor": "Choose a color",
+  "chooseColor": "Choose color",
+  "confirm": "Confirm",
+  "select": "Select",
+  "add": "Add",
+  "categoryTitle": "Category Title",
+  "editCategory": "Edit Category"
 }
-

@@ -48,7 +48,7 @@ class PersistenceController {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, 'easywallet.db');
 
-    return await openDatabase(path, version: 2, onCreate: (db, version) {
+    return await openDatabase(path, version: 3, onCreate: (db, version) {
       db.execute('''
         CREATE TABLE IF NOT EXISTS categories(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,6 +56,16 @@ class PersistenceController {
           color TEXT NOT NULL
         )
         ''');
+
+      db.execute('''
+      CREATE TABLE IF NOT EXISTS subscription_categories(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subscription_id INTEGER NOT NULL,
+        category_id INTEGER NOT NULL,
+        FOREIGN KEY (subscription_id) REFERENCES subscriptions(id) ON DELETE CASCADE,
+        FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+      )
+      ''');
 
       return db.execute(
         '''
@@ -72,13 +82,11 @@ class PersistenceController {
             repeatPattern TEXT DEFAULT NULL,
             timestamp TEXT DEFAULT NULL,
             url TEXT DEFAULT NULL,
-            category_id INTEGER DEFAULT NULL,
-            FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
           )
           ''',
       );
     }, onUpgrade: (Database db, int oldVersion, int newVersion) async {
-      if (oldVersion < 2) {
+      if (oldVersion < 3) {
         db.execute('''
           CREATE TABLE IF NOT EXISTS categories(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -86,10 +94,16 @@ class PersistenceController {
             color TEXT NOT NULL
           );
           ''');
+
         db.execute('''
-          ALTER TABLE subscriptions ADD COLUMN category_id INTEGER;
-          ALTER TABLE subscriptions ADD FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL;
-          ''');
+      CREATE TABLE IF NOT EXISTS subscription_categories(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subscription_id INTEGER NOT NULL,
+        category_id INTEGER NOT NULL,
+        FOREIGN KEY (subscription_id) REFERENCES subscriptions(id) ON DELETE CASCADE,
+        FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+      )
+      ''');
       }
     });
   }

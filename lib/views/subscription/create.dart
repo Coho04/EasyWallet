@@ -14,7 +14,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_wallet/model/category.dart' as category;
+import '../../provider/category_provider.dart';
+import '../components/form_fields/multi_select_dialog_field.dart';
 
 class SubscriptionCreateView extends StatefulWidget {
   const SubscriptionCreateView({super.key});
@@ -31,6 +36,8 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   DateTime _selectedDate = DateTime.now();
   String _selectedPayRate = PaymentRate.monthly.value;
   String _selectedRememberCycle = RememberCycle.sameDay.value;
+
+  List<category.Category> _selectedCategories = [];
 
   bool _isTitleValid = true;
   bool _isAmountValid = true;
@@ -126,6 +133,56 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                       placeholder: Intl.message('notes'),
                       maxLines: 5,
                       isDarkMode: isDarkMode),
+                  const SizedBox(height: 16),
+                  Text(
+                    Intl.message('categories'),
+                    style: TextStyle(
+                      color: isDarkMode
+                          ? CupertinoColors.white
+                          : CupertinoColors.black,
+                    ),
+                  ),
+                  Consumer<CategoryProvider>(
+                      builder: (context, categoryProvider, child) {
+                    var categories = categoryProvider.categories;
+                    return Material(
+                        child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: MultiSelectDialogField(
+                        decoration: BoxDecoration(
+                          color: isDarkMode
+                              ? CupertinoColors.darkBackgroundGray
+                              : CupertinoColors.systemGrey6,
+                          borderRadius: BorderRadius.circular(8.0),
+                          border: Border.all(
+                              color: isDarkMode
+                                  ? CupertinoColors.systemGrey
+                                  : CupertinoColors.systemGrey4),
+                        ),
+                        selectedColor: CupertinoColors.activeBlue,
+                        searchable: true,
+                        separateSelectedItems: true,
+                        selectedItemsTextStyle: TextStyle(
+                          color: isDarkMode
+                              ? CupertinoColors.white
+                              : CupertinoColors.white,
+                        ),
+                        buttonText: Text(Intl.message('select')),
+                        title: Text(Intl.message('categories')),
+                        checkColor: CupertinoColors.white,
+                        cancelText: Text(Intl.message('cancel')),
+                        closeSearchIcon: const Icon(CupertinoIcons.clear),
+                        confirmText: Text(Intl.message('confirm')),
+                        items: categories
+                            .map((e) => MultiSelectItem(e, e.title))
+                            .toList(),
+                        listType: MultiSelectListType.CHIP,
+                        onConfirm: (values) {
+                          _selectedCategories = values;
+                        },
+                      ),
+                    ));
+                  }),
                 ],
               ),
             ),
@@ -237,7 +294,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     }
   }
 
-  void _saveItem() {
+  Future<void> _saveItem() async {
     final title = _titleController.text.trim();
     final amount = double.tryParse(_amountController.text.replaceAll(',', '.'));
     final url = _urlController.text;
@@ -249,7 +306,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     });
 
     if (_isTitleValid && _isAmountValid) {
-      final newSubscription = Subscription(
+      var newSubscription = Subscription(
         title: title,
         amount: amount!,
         date: _selectedDate,
@@ -262,8 +319,10 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         isPinned: false,
         repeating: true,
       );
-      Provider.of<SubscriptionProvider>(context, listen: false)
-          .saveSubscription(newSubscription);
+      newSubscription =
+          await Provider.of<SubscriptionProvider>(context, listen: false)
+              .saveSubscription(newSubscription);
+      newSubscription.assignCategories(_selectedCategories);
 
       Navigator.of(context).pop(true);
     }

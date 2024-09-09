@@ -24,6 +24,7 @@ class SettingsViewState extends State<SettingsView> {
   bool notificationsEnabled = true;
   bool includeCostInNotifications = false;
   bool isAuthProtected = false;
+  bool displayCategories = true;
   bool syncWithICloud = false;
   bool syncWithGoogleDrive = false;
   DateTime notificationTime = DateTime.now();
@@ -46,6 +47,7 @@ class SettingsViewState extends State<SettingsView> {
       isAuthProtected = prefs.getBool('require_authentication') ?? false;
       syncWithICloud = prefs.getBool('syncWithICloud') ?? false;
       syncWithGoogleDrive = prefs.getBool('syncWithGoogleDrive') ?? false;
+      displayCategories = prefs.getBool('displayCategories') ?? false;
       currency = Currency.findByName(prefs.getString('currency') ?? 'USD');
       monthlyLimit = prefs.getDouble('monthlyLimit') ?? 0.0;
       final notificationTimeString = prefs.getString('notificationTime');
@@ -71,6 +73,7 @@ class SettingsViewState extends State<SettingsView> {
     prefs.setBool('syncWithGoogleDrive', syncWithGoogleDrive);
     prefs.setString('currency', currency.name);
     prefs.setDouble('monthlyLimit', monthlyLimit);
+    prefs.setBool('displayCategories', displayCategories);
     prefs.setString('notificationTime',
         '${notificationTime.hour}:${notificationTime.minute}');
 
@@ -434,6 +437,22 @@ class SettingsViewState extends State<SettingsView> {
                           maxLines: 1,
                           text: '$monthlyLimit ${currency.symbol}',
                           color: CupertinoColors.systemBlue),
+                    ),
+                  ),
+                  CupertinoFormRow(
+                    padding: const EdgeInsets.all(16),
+                    prefix: AutoText(
+                        maxLines: 1,
+                        text: Intl.message('displayCategories'),
+                        color: textColor),
+                    child: CupertinoSwitch(
+                      value: displayCategories,
+                      onChanged: (value) {
+                        setState(() {
+                          displayCategories = value;
+                        });
+                        _saveSettings();
+                      },
                     ),
                   ),
                 ],

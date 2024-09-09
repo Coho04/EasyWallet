@@ -25,10 +25,24 @@ class Category {
 
   Future<List<Subscription>> getSubscriptions() async {
     final db = await PersistenceController.instance.database;
-    final List<Map<String, dynamic>> maps = await db.query('subscriptions', where: 'category_id = ?', whereArgs: [id]);
-    return List.generate(maps.length, (i) {
-      return Subscription.fromJson(maps[i]);
-    });
+    final idResults = await db.query(
+        'subscription_categories',
+        columns: ['subscription_id'],
+        where: 'category_id = ?',
+        whereArgs: [id]
+    );
+    var ids = idResults.map((result) => result['subscription_id']).toList();
+    if (ids.isEmpty) {
+      return [];
+    }
+
+    var placeholders = List<String>.generate(ids.length, (_) => '?').join(', ');
+    final List<Map<String, dynamic>> maps = await db.query(
+        'subscriptions',
+        where: 'id IN ($placeholders)',
+        whereArgs: ids
+    );
+    return maps.map((map) => Subscription.fromJson(map)).toList();
   }
 
   factory Category.fromJson(Map<String, dynamic> json) {
@@ -80,5 +94,9 @@ class Category {
     });
   }
 
+  @override
+  String toString() {
+    return title;
+  }
 }
 

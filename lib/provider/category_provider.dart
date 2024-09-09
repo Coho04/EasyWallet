@@ -24,4 +24,8 @@ class CategoryProvider with ChangeNotifier {
     await category.delete();
     await loadCategories();
   }
+
+  void callNotifyListeners() {
+    notifyListeners();
+  }
 }

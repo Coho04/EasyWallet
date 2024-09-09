@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class CategoryIndexView extends StatefulWidget {
   const CategoryIndexView({super.key});
@@ -18,6 +19,7 @@ class CategoryIndexView extends StatefulWidget {
 class CategoryIndexViewState extends State<CategoryIndexView> {
   String searchText = "";
   bool _isLoading = true;
+  bool _isAscending = true;
 
   @override
   void initState() {
@@ -29,8 +31,8 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
   Widget build(BuildContext context) {
     return Consumer<CategoryProvider>(
         builder: (context, categoryProvider, child) {
-          final categories = categoryProvider.categories;
-          final sortedCategories = _sortCategories(categories);
+      final categories = categoryProvider.categories;
+      final sortedCategories = _sortCategories(categories);
       return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           middle: Column(
@@ -51,7 +53,7 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
           ),
           leading: CupertinoButton(
             padding: EdgeInsets.zero,
-            onPressed: () => /*_showSortOptions(context)*/ '',
+            onPressed: _toggleSortDirection,
             child: const Icon(CupertinoIcons.arrow_up_arrow_down,
                 color: CupertinoColors.activeBlue),
           ),
@@ -75,31 +77,6 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(width: 10),
-                  // Flexible(
-                  //   child: Column(
-                  //     crossAxisAlignment: CrossAxisAlignment.end,
-                  //     children: [
-                  //       AutoText(
-                  //         text: Intl.message('openExpenditureYear'),
-                  //         color: CupertinoColors.systemGrey,
-                  //         maxLines: 2,
-                  //       ),
-                  //       AutoText(
-                  //           text:
-                  //           '${calculateYearlySpent(sortedSubscriptions).toStringAsFixed(2)} ${currency.symbol}',
-                  //           bold: true),
-                  //     ],
-                  //   ),
-                  // ),y
-                ],
-              ),
-            ),
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -113,10 +90,10 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
                               category: sortedCategories[index],
                               onUpdate: (updatedCategories) {
                                 setState(() {
-                                  _sortCategories(
-                                      Provider.of<CategoryProvider>(context,
-                                              listen: false)
-                                          .categories);
+                                  _sortCategories(Provider.of<CategoryProvider>(
+                                          context,
+                                          listen: false)
+                                      .categories);
                                 });
                               },
                               onDelete: (deletedCategory) {
@@ -142,7 +119,7 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
       await Provider.of<CategoryProvider>(context, listen: false)
           .loadCategories();
     } catch (e) {
-      print('Error loading categories: $e');
+      Sentry.captureException(e);
     } finally {
       setState(() {
         _isLoading = false;
@@ -179,89 +156,146 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
   void _showAddCategoryDialog(BuildContext context) {
     TextEditingController titleController = TextEditingController();
     Color pickerColor = CupertinoColors.activeBlue;
-
-    void changeColor(Color color) {
-      pickerColor = color;
-    }
-
-    showCupertinoDialog(
+    showCupertinoModalPopup(
       context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Text(Intl.message('addNewCategory')),
-        content: Column(
-          children: [
-            const SizedBox(height: 20),
-            CupertinoTextField(
-              controller: titleController,
-              placeholder: Intl.message('title'),
-            ),
-            const SizedBox(height: 20),
-            CupertinoButton(
-              child: Text('Farbe wählen'),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Wähle eine Farbe'),
-                    content: SingleChildScrollView(
-                      child: ColorPicker(
-                        pickerColor: pickerColor,
-                        onColorChanged: changeColor,
-                        showLabel: true,
-                        pickerAreaHeightPercent: 0.8,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text(Intl.message('addNewCategory')),
+          content: Column(
+            children: [
+              const SizedBox(height: 20),
+              CupertinoTextField(
+                controller: titleController,
+                placeholder: Intl.message('title'),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 80,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () async {
+                        pickerColor =
+                            await _pickColor(pickerColor) ?? pickerColor;
+                        setState(() {});
+                      },
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: pickerColor,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            Intl.message('chooseColor'),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: CupertinoColors.activeBlue,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    actions: <Widget>[
-                      TextButton(
-                        child: const Text('Fertig'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
-                );
+                  ],
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            CupertinoDialogAction(
+              child: Text(Intl.message('cancel')),
+              onPressed: () => Navigator.pop(context),
+            ),
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              onPressed: () {
+                if (titleController.text.isNotEmpty) {
+                  Provider.of<CategoryProvider>(context, listen: false)
+                      .saveCategory(
+                    Category(
+                      title: titleController.text,
+                      color: pickerColor,
+                    ),
+                  );
+                  Navigator.pop(context);
+                }
               },
+              child: Text(Intl.message('add')),
             ),
           ],
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: Text(Intl.message('cancel')),
-            onPressed: () => Navigator.pop(context),
-          ),
-          CupertinoDialogAction(
-            child: Text('Hinzufügen'),
-            isDefaultAction: true,
-            onPressed: () {
-              if (titleController.text.isNotEmpty) {
-                Provider.of<CategoryProvider>(context, listen: false).saveCategory(
-                  Category(
-                    title: titleController.text,
-                    color: pickerColor,
-                  ),
-                );
-                Navigator.pop(context);
-              }
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
+  Future<Color?> _pickColor(Color currentColor) async {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
+
+    Color? pickedColor;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: isDarkMode
+              ? CupertinoColors.darkBackgroundGray
+              : CupertinoColors.white,
+          title: Text(Intl.message('pickAColor')),
+          titleTextStyle: TextStyle(
+            color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+          ),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: currentColor,
+              onColorChanged: (Color color) {
+                pickedColor = color;
+              },
+              showLabel: false,
+              labelTextStyle: TextStyle(
+                color:
+                    isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+              ),
+              pickerAreaHeightPercent: 0.8,
+            ),
+          ),
+          actions: <Widget>[
+            CupertinoButton(
+              child: Text(Intl.message('done')),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return pickedColor;
+  }
 
   List<Category> _sortCategories(List<Category> categories) {
-    List<Category> filteredCategories =
-    categories.where((category) {
-      return category.title
-          .toLowerCase()
-          .contains(searchText.toLowerCase());
+    List<Category> filteredCategories = categories.where((category) {
+      return searchText.isEmpty ||
+          category.title.toLowerCase().contains(searchText.toLowerCase());
     }).toList();
 
     filteredCategories.sort((a, b) {
-      return a.title.toLowerCase().compareTo(b.title.toLowerCase());
+      if (_isAscending) {
+        return a.title.toLowerCase().compareTo(b.title.toLowerCase());
+      } else {
+        return b.title.toLowerCase().compareTo(a.title.toLowerCase());
+      }
     });
     return filteredCategories;
+  }
+
+  void _toggleSortDirection() {
+    setState(() {
+      _isAscending = !_isAscending;
+    });
   }
 }
