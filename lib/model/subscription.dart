@@ -1,11 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
+import 'package:easy_wallet/persistence_controller.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
 import 'package:palette_generator/palette_generator.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:easy_wallet/model/category.dart' as category;
 
 class Subscription {
   int? id;
@@ -60,14 +64,21 @@ class Subscription {
     DateTime todayDateOnly = DateTime(today.year, today.month, today.day);
 
     if (repeatPattern == PaymentRate.yearly.value) {
-      while (nextBillDate.isBefore(todayDateOnly) || nextBillDate.isAtSameMomentAs(todayDateOnly)) {
-        nextBillDate = DateTime(nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
+      while (nextBillDate.isBefore(todayDateOnly) ||
+          nextBillDate.isAtSameMomentAs(todayDateOnly)) {
+        nextBillDate = DateTime(
+            nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
       }
     } else if (repeatPattern == PaymentRate.monthly.value) {
-      while (nextBillDate.isBefore(todayDateOnly) || nextBillDate.isAtSameMomentAs(todayDateOnly)) {
-        nextBillDate = DateTime(nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
-        while (!DateTime(nextBillDate.year, nextBillDate.month, nextBillDate.day).isValidDate()) {
-          nextBillDate = DateTime(nextBillDate.year, nextBillDate.month, nextBillDate.day - 1);
+      while (nextBillDate.isBefore(todayDateOnly) ||
+          nextBillDate.isAtSameMomentAs(todayDateOnly)) {
+        nextBillDate = DateTime(
+            nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
+        while (
+            !DateTime(nextBillDate.year, nextBillDate.month, nextBillDate.day)
+                .isValidDate()) {
+          nextBillDate = DateTime(
+              nextBillDate.year, nextBillDate.month, nextBillDate.day - 1);
         }
       }
     }
@@ -108,14 +119,12 @@ class Subscription {
 
   Future<Color> getDominantColorFromUrl({String customUrl = ""}) async {
     var response =
-    await http.get(Uri.parse(customUrl.isNotEmpty ? customUrl : url!));
+        await http.get(Uri.parse(customUrl.isNotEmpty ? customUrl : url!));
     if (response.statusCode == 200) {
       img.Image? image = img.decodeImage(response.bodyBytes);
       if (image != null) {
         var paletteGenerator = await PaletteGenerator.fromImageProvider(
-            Image
-                .network(customUrl.isNotEmpty ? customUrl : url!)
-                .image);
+            Image.network(customUrl.isNotEmpty ? customUrl : url!).image);
         return paletteGenerator.dominantColor?.color ?? Colors.grey;
       }
     }
@@ -123,9 +132,7 @@ class Subscription {
   }
 
   String getFaviconUrl() {
-    return 'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri
-        .parse(url!)
-        .host}';
+    return 'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(url!).host}';
   }
 
   DateTime getNextBillDate() {
@@ -181,8 +188,7 @@ class Subscription {
         child: CachedNetworkImage(
           imageUrl: getFaviconUrl(),
           placeholder: (context, url) => const CupertinoActivityIndicator(),
-          errorWidget: (context, url, error) =>
-          const Icon(
+          errorWidget: (context, url, error) => const Icon(
             CupertinoIcons.exclamationmark_triangle,
             color: CupertinoColors.systemGrey,
             size: 40,
@@ -195,6 +201,38 @@ class Subscription {
     }
   }
 
+  Future<bool> hasCategories() async {
+    final db = await PersistenceController.instance.database;
+    var result = await db.rawQuery(
+        'SELECT EXISTS(SELECT 1 FROM subscription_categories WHERE subscription_id = ?)',
+        [id]);
+    int exists = Sqflite.firstIntValue(result) ?? 0;
+    return exists == 1;
+  }
+
+  Future<void> assignCategories(List<category.Category> categories) async {
+    print('Assigning categories to subscription, categories: $categories');
+    final db = await PersistenceController.instance.database;
+    var categoryIds = categories.map((category) => category.id).toList();
+    await db.transaction((txn) async {
+      await txn.delete('subscription_categories',
+          where: 'subscription_id = ?', whereArgs: [id]);
+      for (var categoryId in categoryIds) {
+        await txn.insert('subscription_categories', {'subscription_id': id, 'category_id': categoryId});
+      }
+    }).catchError((error) {
+      print('Error assigning categories to subscription: $error');
+    });
+  }
+
+  Future<List<category.Category>> get categories async {
+    final db = await PersistenceController.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query('categories', where: 'id IN (SELECT category_id FROM subscription_categories WHERE subscription_id = ?)', whereArgs: [id]);
+    return List.generate(maps.length, (i) {
+      return category.Category.fromJson(maps[i]);
+    });
+  }
+
   int countPayment() {
     if (date == null) {
       return 0;
@@ -204,12 +242,14 @@ class Subscription {
     int count = 0;
     if (repeatPattern == PaymentRate.yearly.value) {
       while (nextBillDate.isBefore(today)) {
-        nextBillDate = DateTime(nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
+        nextBillDate = DateTime(
+            nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
         count++;
       }
     } else if (repeatPattern == PaymentRate.monthly.value) {
       while (nextBillDate.isBefore(today)) {
-        nextBillDate = DateTime(nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
+        nextBillDate = DateTime(
+            nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
         count++;
       }
     }
@@ -249,16 +289,13 @@ class Subscription {
       isPaused: json['isPaused'] == 1,
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],
-      rememberCycle: RememberCycle
-          .findByName(
-          json['rememberCycle'] ?? RememberCycle.sameDay.value)
+      rememberCycle: RememberCycle.findByName(
+              json['rememberCycle'] ?? RememberCycle.sameDay.value)
           .value,
       repeating: json['repeating'] == 1,
-      repeatPattern: PaymentRate
-          .findByName(json['repeatPattern'])
-          .value,
+      repeatPattern: PaymentRate.findByName(json['repeatPattern']).value,
       timestamp:
-      json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
+          json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
       title: json['title'],
       url: json['url'],
     );
@@ -273,22 +310,57 @@ class Subscription {
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],
       rememberCycle:
-      RememberCycle
-          .migrate(json['remembercycle'].toString())
-          .value,
+          RememberCycle.migrate(json['remembercycle'].toString()).value,
       repeating: json['repeating'] == 1,
       repeatPattern:
-      PaymentRate
-          .findByName(json['repeatPattern'].toString())
-          .value,
+          PaymentRate.findByName(json['repeatPattern'].toString()).value,
       timestamp:
-      json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
+          json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
       title: json['title'],
       url: json['url'],
     );
   }
-}
 
+  Future<Subscription> save() async {
+    final db = await PersistenceController.instance.database;
+    if (id == null) {
+      id = await db.insert('subscriptions', toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
+    } else {
+      await db.update(
+        'subscriptions',
+        toJson(),
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    }
+    await PersistenceController.instance.syncWithCloud();
+    return this;
+  }
+
+  Future<void> delete() async {
+    if (kIsWeb) {
+      throw UnsupportedError("Database is not supported on the web");
+    }
+    final db = await PersistenceController.instance.database;
+    await db.delete(
+      'subscriptions',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    await PersistenceController.instance.syncWithCloud();
+  }
+
+  static Future<List<Subscription>> all() async {
+    if (kIsWeb) {
+      throw UnsupportedError("Database is not supported on the web");
+    }
+    final db = await PersistenceController.instance.database;
+    final List<Map<String, dynamic>> maps = await db.query('subscriptions');
+    return List.generate(maps.length, (i) {
+      return Subscription.fromJson(maps[i]);
+    });
+  }
+}
 
 extension on DateTime {
   bool isValidDate() {

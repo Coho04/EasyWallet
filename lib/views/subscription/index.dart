@@ -2,6 +2,7 @@ import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/sort_option.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/provider/category_provider.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
@@ -15,14 +16,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../persistence_controller.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class SubscriptionIndexView extends StatefulWidget {
+  const SubscriptionIndexView({super.key});
 
   @override
-  HomeViewState createState() => HomeViewState();
+  SubscriptionIndexViewState createState() => SubscriptionIndexViewState();
 }
 
-class HomeViewState extends State<HomeView> {
+class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
   String searchText = "";
   SortOption sortOption = SortOption.remainingDaysAscending;
   bool _isLoading = true;
@@ -30,19 +31,22 @@ class HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    _loadAndSortSubscriptions();
+    _loadAndSortSubscriptions(context);
   }
 
-  Future<void> _loadAndSortSubscriptions() async {
+  Future<void> _loadAndSortSubscriptions(context) async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool('syncWithGoogleDrive') ?? false) {
-      await PersistenceController.instance.syncFromGoogleDrive();
+      var cloud = await PersistenceController.instance.googleDrive;
+      await cloud.syncFrom();
     }
     try {
       await Provider.of<SubscriptionProvider>(context, listen: false)
           .loadSubscriptions();
       await Provider.of<CurrencyProvider>(context, listen: false)
           .loadCurrency();
+      await Provider.of<CategoryProvider>(context, listen: false)
+          .loadCategories();
     } finally {
       setState(() {
         _isLoading = false;
@@ -162,7 +166,7 @@ class HomeViewState extends State<HomeView> {
                       builder: (context) => const SubscriptionCreateView(),
                     ),
                   ).then((value) {
-                    _loadAndSortSubscriptions();
+                    _loadAndSortSubscriptions(context);
                   });
                 },
                 child: const Icon(CupertinoIcons.add,
@@ -283,7 +287,7 @@ class HomeViewState extends State<HomeView> {
                   builder: (context) => const SubscriptionCreateView(),
                 ),
               ).then((value) {
-                _loadAndSortSubscriptions();
+                _loadAndSortSubscriptions(context);
               });
             },
             child: AutoText(

@@ -7,12 +7,14 @@ class CardSection extends StatelessWidget {
   final String title;
   final List<Widget> children;
   final String? subtitle;
+  final double itemPadding;
 
   const CardSection({
     super.key,
     required this.title,
     this.subtitle,
     required this.children,
+    this.itemPadding = 0.0,
   });
 
   @override

@@ -70,6 +70,16 @@ class S {
     );
   }
 
+  /// `Categories`
+  String get categories {
+    return Intl.message(
+      'Categories',
+      name: 'categories',
+      desc: 'Label for the categories tab',
+      args: [],
+    );
+  }
+
   /// `Notifications`
   String get notifications {
     return Intl.message(
@@ -1285,6 +1295,146 @@ class S {
     return Intl.message(
       'Successfully',
       name: 'successfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No categories available`
+  String get noCategoriesAvailable {
+    return Intl.message(
+      'No categories available',
+      name: 'noCategoriesAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add New Category`
+  String get addNewCategory {
+    return Intl.message(
+      'Add New Category',
+      name: 'addNewCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit`
+  String get edit {
+    return Intl.message(
+      'Edit',
+      name: 'edit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete`
+  String get delete {
+    return Intl.message(
+      'Delete',
+      name: 'delete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No entries found`
+  String get noEntriesFound {
+    return Intl.message(
+      'No entries found',
+      name: 'noEntriesFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pick a color`
+  String get pickAColor {
+    return Intl.message(
+      'Pick a color',
+      name: 'pickAColor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Display categories`
+  String get displayCategories {
+    return Intl.message(
+      'Display categories',
+      name: 'displayCategories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose a color`
+  String get chooseAColor {
+    return Intl.message(
+      'Choose a color',
+      name: 'chooseAColor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose color`
+  String get chooseColor {
+    return Intl.message(
+      'Choose color',
+      name: 'chooseColor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm`
+  String get confirm {
+    return Intl.message(
+      'Confirm',
+      name: 'confirm',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select`
+  String get select {
+    return Intl.message(
+      'Select',
+      name: 'select',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add`
+  String get add {
+    return Intl.message(
+      'Add',
+      name: 'add',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category Title`
+  String get categoryTitle {
+    return Intl.message(
+      'Category Title',
+      name: 'categoryTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Category`
+  String get editCategory {
+    return Intl.message(
+      'Edit Category',
+      name: 'editCategory',
       desc: '',
       args: [],
     );

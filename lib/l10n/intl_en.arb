@@ -2,8 +2,12 @@
   "@@locale": "en",
   "subscriptions": "Subscriptions",
   "statistics": "Statistics",
+  "categories": "Categories",
   "@subscriptions": {
     "description": "Label for the subscriptions tab"
+  },
+  "@categories": {
+    "description": "Label for the categories tab"
   },
   "@statistics": {
     "description": "Label for the statistics tab"
@@ -154,6 +158,19 @@
   "googleDriveLoginFailed": "Google Drive login failed",
   "googleDriveLoginSuccess": "Google Drive login successful",
   "googleDriveLogoutSuccess": "Google Drive logout successful",
-  "successfully": "Successfully"
+  "successfully": "Successfully",
+  "noCategoriesAvailable": "No categories available",
+  "addNewCategory": "Add New Category",
+  "edit": "Edit",
+  "delete": "Delete",
+  "noEntriesFound": "No entries found",
+  "pickAColor": "Pick a color",
+  "displayCategories": "Display categories",
+  "chooseAColor": "Choose a color",
+  "chooseColor": "Choose color",
+  "confirm": "Confirm",
+  "select": "Select",
+  "add": "Add",
+  "categoryTitle": "Category Title",
+  "editCategory": "Edit Category"
 }
-

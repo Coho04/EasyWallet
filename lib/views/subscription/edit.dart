@@ -13,15 +13,24 @@ import 'package:easy_wallet/views/components/form_fields/text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:easy_wallet/persistence_controller.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:provider/provider.dart';
+
+import '../../model/category.dart';
+import '../../provider/category_provider.dart';
+import '../components/form_fields/multi_select_dialog_field.dart';
 
 class SubscriptionEditView extends StatefulWidget {
   final Subscription subscription;
   final ValueChanged<Subscription> onUpdate;
+  List<Category> selectedCategories;
 
-  const SubscriptionEditView(
-      {super.key, required this.subscription, required this.onUpdate});
+  SubscriptionEditView(
+      {super.key,
+      required this.subscription,
+      required this.onUpdate,
+      required this.selectedCategories});
 
   @override
   SubscriptionEditViewState createState() => SubscriptionEditViewState();
@@ -73,9 +82,9 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
     return _titleValid && _amountValid;
   }
 
-  void _saveItem() {
+  void _saveItem() async {
     if (_validateForm()) {
-      final subscription = widget.subscription;
+      var subscription = widget.subscription;
       subscription.title = _titleController.text.trim();
       if (_urlController.text == 'https://') {
         subscription.url = '';
@@ -88,11 +97,10 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       subscription.notes = _notesController.text.trim();
       subscription.repeatPattern = _paymentRate;
       subscription.rememberCycle = _rememberCycle;
-      final viewContext = PersistenceController.instance;
-      viewContext.saveSubscription(subscription);
-      Provider.of<SubscriptionProvider>(context, listen: false)
-          .updateSubscription(subscription);
-      widget.onUpdate(subscription);
+      subscription =
+          await Provider.of<SubscriptionProvider>(context, listen: false)
+              .saveSubscription(subscription);
+      subscription.assignCategories(widget.selectedCategories);
       Navigator.of(context).pop(true);
     }
   }
@@ -141,10 +149,10 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                   ),
                   const SizedBox(height: 16),
                   AmountField(
-                      isDarkMode: isDarkMode,
-                      currency: currency,
-                      controller: _amountController,
-                      isValid: _amountValid,
+                    isDarkMode: isDarkMode,
+                    currency: currency,
+                    controller: _amountController,
+                    isValid: _amountValid,
                   ),
                   const SizedBox(height: 16),
                   EasyWalletDatePickerField(
@@ -182,6 +190,26 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                       placeholder: Intl.message('notes'),
                       maxLines: 5,
                       isDarkMode: isDarkMode),
+                  const SizedBox(height: 16),
+                  Text(
+                    Intl.message('categories'),
+                    style: TextStyle(
+                      color: isDarkMode
+                          ? CupertinoColors.white
+                          : CupertinoColors.black,
+                    ),
+                  ),
+                  Consumer<CategoryProvider>(
+                      builder: (context, categoryProvider, child) {
+                    return Material(
+                        color:
+                            CupertinoTheme.of(context).scaffoldBackgroundColor,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: buildMultiSelectDialogField(
+                              categoryProvider.categories),
+                        ));
+                  }),
                 ],
               ),
             ),
@@ -292,5 +320,57 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
         _date = pickedDate;
       });
     }
+  }
+
+  Widget buildMultiSelectDialogField(List<Category> categories) {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
+    var textColor = isDarkMode ? CupertinoColors.white : CupertinoColors.black;
+
+    List<MultiSelectItem<String>> items = categories.map((category) {
+      return MultiSelectItem<String>(category.title, category.title);
+    }).toList();
+
+    var textStyle = TextStyle(color: textColor);
+
+    return MultiSelectDialogField<String>(
+      backgroundColor: CupertinoTheme.of(context).barBackgroundColor,
+      searchTextStyle: textStyle,
+      searchHintStyle: textStyle,
+      itemsTextStyle: textStyle,
+      selectedItemsTextStyle: textStyle,
+      unselectedColor: isDarkMode
+          ? CupertinoColors.darkBackgroundGray
+          : CupertinoColors.systemGrey6,
+      decoration: BoxDecoration(
+        color: CupertinoTheme.of(context).barBackgroundColor,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(
+            color: isDarkMode
+                ? CupertinoColors.systemGrey
+                : CupertinoColors.systemGrey4),
+      ),
+      selectedColor: CupertinoColors.activeBlue,
+      searchable: true,
+      separateSelectedItems: true,
+      buttonText: Text(Intl.message('select'), style: textStyle),
+      title: Text(Intl.message('categories'), style: textStyle),
+      checkColor: CupertinoColors.white,
+      cancelText: Text(Intl.message('cancel'),
+          style: const TextStyle(color: CupertinoColors.activeBlue)),
+      closeSearchIcon: const Icon(CupertinoIcons.clear),
+      confirmText: Text(Intl.message('confirm'),
+          style: const TextStyle(color: CupertinoColors.activeBlue)),
+      initialValue: widget.selectedCategories.map((e) => e.title).toList(),
+      items: items,
+      listType: MultiSelectListType.CHIP,
+      onConfirm: (List<String> values) {
+        widget.selectedCategories.clear();
+        List<Category> newCategories = categories
+            .where((element) => values.contains(element.title))
+            .toList();
+        widget.selectedCategories.addAll(newCategories);
+      },
+    );
   }
 }

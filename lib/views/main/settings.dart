@@ -24,10 +24,11 @@ class SettingsViewState extends State<SettingsView> {
   bool notificationsEnabled = true;
   bool includeCostInNotifications = false;
   bool isAuthProtected = false;
+  bool displayCategories = true;
   bool syncWithICloud = false;
   bool syncWithGoogleDrive = false;
   DateTime notificationTime = DateTime.now();
-  String currency = Currency.usd.name;
+  Currency currency = Currency.usd;
   double monthlyLimit = 0.0;
   final LocalAuthentication auth = LocalAuthentication();
 
@@ -46,7 +47,8 @@ class SettingsViewState extends State<SettingsView> {
       isAuthProtected = prefs.getBool('require_authentication') ?? false;
       syncWithICloud = prefs.getBool('syncWithICloud') ?? false;
       syncWithGoogleDrive = prefs.getBool('syncWithGoogleDrive') ?? false;
-      currency = prefs.getString('currency') ?? "USD";
+      displayCategories = prefs.getBool('displayCategories') ?? false;
+      currency = Currency.findByName(prefs.getString('currency') ?? 'USD');
       monthlyLimit = prefs.getDouble('monthlyLimit') ?? 0.0;
       final notificationTimeString = prefs.getString('notificationTime');
       if (notificationTimeString != null) {
@@ -69,8 +71,9 @@ class SettingsViewState extends State<SettingsView> {
     prefs.setBool('require_authentication', isAuthProtected);
     prefs.setBool('syncWithICloud', syncWithICloud);
     prefs.setBool('syncWithGoogleDrive', syncWithGoogleDrive);
-    prefs.setString('currency', currency);
+    prefs.setString('currency', currency.name);
     prefs.setDouble('monthlyLimit', monthlyLimit);
+    prefs.setBool('displayCategories', displayCategories);
     prefs.setString('notificationTime',
         '${notificationTime.hour}:${notificationTime.minute}');
 
@@ -244,7 +247,7 @@ class SettingsViewState extends State<SettingsView> {
               ),
               onPressed: () {
                 setState(() {
-                  currency = value;
+                  currency = Currency.findByName(value);
                 });
                 _saveSettings();
                 Navigator.pop(context);
@@ -418,7 +421,7 @@ class SettingsViewState extends State<SettingsView> {
                       onTap: () => _selectCurrency(context),
                       child: AutoText(
                           maxLines: 1,
-                          text: currency,
+                          text: currency.name,
                           color: CupertinoColors.systemBlue),
                     ),
                   ),
@@ -432,8 +435,24 @@ class SettingsViewState extends State<SettingsView> {
                       onTap: () => _enterMonthlyLimit(context),
                       child: AutoText(
                           maxLines: 1,
-                          text: '$monthlyLimit $currency',
+                          text: '$monthlyLimit ${currency.symbol}',
                           color: CupertinoColors.systemBlue),
+                    ),
+                  ),
+                  CupertinoFormRow(
+                    padding: const EdgeInsets.all(16),
+                    prefix: AutoText(
+                        maxLines: 1,
+                        text: Intl.message('displayCategories'),
+                        color: textColor),
+                    child: CupertinoSwitch(
+                      value: displayCategories,
+                      onChanged: (value) {
+                        setState(() {
+                          displayCategories = value;
+                        });
+                        _saveSettings();
+                      },
                     ),
                   ),
                 ],
@@ -523,25 +542,32 @@ class SettingsViewState extends State<SettingsView> {
   }
 
   void handleGoogleSignIn(BuildContext context, bool enable) async {
+    var googleCloud = await PersistenceController.instance.googleDrive;
     if (enable) {
       try {
-        final account =
-            await PersistenceController.instance.googleSignIn.signIn();
+        final account = await googleCloud.googleSignIn.signIn();
         if (account != null) {
-          if (await PersistenceController.instance.googleSignIn.isSignedIn()) {
-            await PersistenceController.instance.syncFromGoogleDrive();
-            await PersistenceController.instance.syncToGoogleDrive();
-            displayMessage(title: Intl.message("successfully"), message: Intl.message("googleDriveLoginSuccess"));
+          if (await googleCloud.googleSignIn.isSignedIn()) {
+            PersistenceController.instance.syncWithCloud();
+            displayMessage(
+                title: Intl.message("successfully"),
+                message: Intl.message("googleDriveLoginSuccess"));
           } else {
-            displayMessage(title: Intl.message("error"), message: Intl.message('googleDriveLoginFailed'));
+            displayMessage(
+                title: Intl.message("error"),
+                message: Intl.message('googleDriveLoginFailed'));
           }
         }
       } catch (error) {
-        displayMessage(title: Intl.message("error"), message: Intl.message("googleDriveLoginFailed"));
+        displayMessage(
+            title: Intl.message("error"),
+            message: Intl.message("googleDriveLoginFailed"));
       }
     } else {
-      await PersistenceController.instance.googleSignIn.signOut();
-      displayMessage(title: Intl.message("successfully"), message: Intl.message("googleDriveLogoutSuccess"));
+      await googleCloud.googleSignIn.signOut();
+      displayMessage(
+          title: Intl.message("successfully"),
+          message: Intl.message("googleDriveLogoutSuccess"));
     }
   }
 

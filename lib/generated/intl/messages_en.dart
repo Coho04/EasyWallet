@@ -33,6 +33,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "Y": MessageLookupByLibrary.simpleMessage("Y"),
         "actions": MessageLookupByLibrary.simpleMessage("Actions"),
         "active": MessageLookupByLibrary.simpleMessage("Active"),
+        "add": MessageLookupByLibrary.simpleMessage("Add"),
+        "addNewCategory":
+            MessageLookupByLibrary.simpleMessage("Add New Category"),
         "addNewSubscription":
             MessageLookupByLibrary.simpleMessage("Add New Subscription"),
         "addSubscription":
@@ -45,6 +48,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Alphabetical Descending"),
         "appStats": MessageLookupByLibrary.simpleMessage("App Statistics"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "categories": MessageLookupByLibrary.simpleMessage("Categories"),
+        "categoryTitle": MessageLookupByLibrary.simpleMessage("Category Title"),
+        "chooseAColor": MessageLookupByLibrary.simpleMessage("Choose a color"),
+        "chooseColor": MessageLookupByLibrary.simpleMessage("Choose color"),
+        "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
         "contactDeveloper":
             MessageLookupByLibrary.simpleMessage("Contact Developer"),
         "continueSubscription":
@@ -74,11 +82,16 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Days Remaining Ascending"),
         "daysRemainingDescending":
             MessageLookupByLibrary.simpleMessage("Days Remaining Descending"),
+        "delete": MessageLookupByLibrary.simpleMessage("Delete"),
         "deleteSubscription":
             MessageLookupByLibrary.simpleMessage("Delete this subscription"),
         "deletionIsNotSupportedOnTheWeb": MessageLookupByLibrary.simpleMessage(
             "Deletion is not supported on the web"),
+        "displayCategories":
+            MessageLookupByLibrary.simpleMessage("Display categories"),
         "done": MessageLookupByLibrary.simpleMessage("Done"),
+        "edit": MessageLookupByLibrary.simpleMessage("Edit"),
+        "editCategory": MessageLookupByLibrary.simpleMessage("Edit Category"),
         "editSubscription":
             MessageLookupByLibrary.simpleMessage("Edit subscription"),
         "enableAuthProtection":
@@ -133,7 +146,11 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Monthly Expenses"),
         "monthlyLimit": MessageLookupByLibrary.simpleMessage("Monthly Limit"),
         "nextInvoice": MessageLookupByLibrary.simpleMessage("Next invoice"),
+        "noCategoriesAvailable":
+            MessageLookupByLibrary.simpleMessage("No categories available"),
         "noData": MessageLookupByLibrary.simpleMessage("No data"),
+        "noEntriesFound":
+            MessageLookupByLibrary.simpleMessage("No entries found"),
         "noSubscriptionsAvailable":
             MessageLookupByLibrary.simpleMessage("No subscriptions available"),
         "notes": MessageLookupByLibrary.simpleMessage("Notes"),
@@ -153,6 +170,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "pausedVsActive":
             MessageLookupByLibrary.simpleMessage("Paused vs Active"),
         "paymentRate": MessageLookupByLibrary.simpleMessage("Payment rate"),
+        "pickAColor": MessageLookupByLibrary.simpleMessage("Pick a color"),
         "pinSubscription":
             MessageLookupByLibrary.simpleMessage("Pin this subscription"),
         "pinned": MessageLookupByLibrary.simpleMessage("Pinned"),
@@ -179,6 +197,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "save": MessageLookupByLibrary.simpleMessage("Save"),
         "search": MessageLookupByLibrary.simpleMessage("Search"),
         "security": MessageLookupByLibrary.simpleMessage("Security"),
+        "select": MessageLookupByLibrary.simpleMessage("Select"),
         "selectCurrency":
             MessageLookupByLibrary.simpleMessage("Select Currency"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),

@@ -1,11 +1,13 @@
 import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
+import 'package:easy_wallet/model/category.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SubscriptionListComponent extends StatelessWidget {
   final Subscription subscription;
@@ -13,12 +15,13 @@ class SubscriptionListComponent extends StatelessWidget {
   final Function(Subscription) onUpdate;
   final Function(Subscription) onDelete;
 
-  const SubscriptionListComponent(
-      {super.key,
-      required this.subscription,
-      required this.currency,
-      required this.onUpdate,
-      required this.onDelete});
+  const SubscriptionListComponent({
+    super.key,
+    required this.subscription,
+    required this.currency,
+    required this.onUpdate,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +29,18 @@ class SubscriptionListComponent extends StatelessWidget {
         MediaQuery.of(context).platformBrightness == Brightness.dark;
 
     return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => SubscriptionShowView(
+              subscription: subscription,
+              onUpdate: onUpdate,
+              onDelete: onDelete,
+            ),
+          ),
+        ).then((_) => onUpdate(subscription));
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         decoration: BoxDecoration(
@@ -38,62 +53,60 @@ class SubscriptionListComponent extends StatelessWidget {
               ? (isDarkMode
                   ? Colors.grey.withOpacity(0.5)
                   : CupertinoColors.systemGrey5)
-              : (isDarkMode ? CupertinoColors.darkBackgroundGray : null),
+              : (CupertinoTheme.of(context).barBackgroundColor),
         ),
-        child: Row(
+        child: Column(
           children: [
-            subscription.buildImage(),
-            const SizedBox(width: 16.0),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AutoText(
-                            text: subscription.title,
-                            maxLines: 3,
-                            softWrap: true,
-                            color: isDarkMode
-                                ? CupertinoColors.white
-                                : CupertinoColors.black,
-                            bold: true),
-                      ),
-                      if (subscription.isPinned)
-                        const Icon(
-                          CupertinoIcons.pin_fill,
-                          color: CupertinoColors.systemGrey,
-                        ),
-                    ],
-                  ),
-                  AutoText(
-                      text:
-                          '${subscription.amount.toStringAsFixed(2)} ${currency.symbol}',
-                      maxLines: 1,
-                      color: isDarkMode
-                          ? CupertinoColors.systemGrey2
-                          : CupertinoColors.systemGrey),
-                ],
-              ),
-            ),
-            const SizedBox(width: 16.0),
             Row(
               children: [
-                Column(
-                  children: [
-                    AutoText(
+                subscription.buildImage(),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AutoText(
+                              text: subscription.title,
+                              maxLines: 3,
+                              softWrap: true,
+                              color: isDarkMode
+                                  ? CupertinoColors.white
+                                  : CupertinoColors.black,
+                              bold: true,
+                            ),
+                          ),
+                          if (subscription.isPinned)
+                            const Icon(
+                              CupertinoIcons.pin_fill,
+                              color: CupertinoColors.systemGrey,
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      AutoText(
                         text:
                             '${subscription.remainingDays()} ${Intl.message('D')}',
                         color: isDarkMode
                             ? CupertinoColors.systemGrey2
-                            : CupertinoColors.systemGrey),
-                    AutoText(
-                        text: '(${_convertPrice(subscription)})',
+                            : CupertinoColors.systemGrey,
+                      ),
+                      AutoText(
+                        text: _convertPrice(subscription),
                         color: isDarkMode
                             ? CupertinoColors.systemGrey2
-                            : CupertinoColors.systemGrey),
-                  ],
+                            : CupertinoColors.systemGrey,
+                      ),
+                    ],
+                  ),
                 ),
                 CupertinoButton(
                   onPressed: () {
@@ -108,38 +121,74 @@ class SubscriptionListComponent extends StatelessWidget {
                       ),
                     ).then((_) => onUpdate(subscription));
                   },
-                  child: Icon(
+                  child: const Icon(
                     CupertinoIcons.right_chevron,
-                    color: isDarkMode
-                        ? CupertinoColors.systemGrey2
-                        : CupertinoColors.systemGrey,
+                    color: CupertinoColors.systemGrey,
                   ),
                 ),
               ],
             ),
+            FutureBuilder<Widget?>(
+              future: buildCategories(subscription, context),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return const Center(child: CircularProgressIndicator());
+                  case ConnectionState.done:
+                    if (snapshot.hasError) {
+                      return Center(child: Text("Error: ${snapshot.error}"));
+                    }
+                    if (snapshot.hasData) {
+                      return snapshot.data ?? const SizedBox();
+                    }
+                    return const SizedBox();
+                  default:
+                    return const SizedBox();
+                }
+              },
+            ),
           ],
         ),
       ),
-      onTap: () {
-        Navigator.push(
-          context,
-          CupertinoPageRoute(
-            builder: (context) => SubscriptionShowView(
-              subscription: subscription,
-              onUpdate: onUpdate,
-              onDelete: onDelete,
-            ),
-          ),
-        ).then((_) => onUpdate(subscription));
-      },
     );
   }
 
-  String? _convertPrice(Subscription subscription) {
-    String priceString = subscription.convertPrice()?.toStringAsFixed(2) ??
-        Intl.message('unknown');
-    return subscription.repeatPattern == PaymentRate.monthly.value
+  String _convertPrice(Subscription subscription) {
+    String priceString = subscription.amount.toStringAsFixed(2);
+    return subscription.repeatPattern == PaymentRate.yearly.value
         ? '$priceString ${currency.symbol}/${Intl.message('Y')}'
         : '$priceString ${currency.symbol}/${Intl.message('M')}';
+  }
+
+  Future<Widget?> buildCategories(Subscription subscription, context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('displayCategories') == false) {
+      return null;
+    }
+
+    bool has = await subscription.hasCategories();
+    if (!has) return null;
+
+    List<Category> categories = await subscription.categories;
+    return Material(
+      color: CupertinoTheme.of(context).barBackgroundColor,
+      child: SizedBox(
+        width: double.infinity,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Wrap(
+            spacing: 8.0,
+            children: categories
+                .map((category) => Chip(
+                      label: Text(category.title,
+                          style: const TextStyle(color: CupertinoColors.white, fontSize: 12)),
+                      padding: const EdgeInsets.all(2),
+                      backgroundColor: category.color,
+                    ))
+                .toList(),
+          ),
+        ),
+      ),
+    );
   }
 }
