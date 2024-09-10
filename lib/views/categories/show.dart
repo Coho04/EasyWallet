@@ -247,8 +247,6 @@ class CategoryShowViewState extends State<CategoryShowView> {
             CupertinoPageRoute(
               builder: (context) => SubscriptionShowView(
                 subscription: subscription,
-                onUpdate: (updatedSubscription) {},
-                onDelete: (deletedSubscription) {},
               ),
             ),
           );

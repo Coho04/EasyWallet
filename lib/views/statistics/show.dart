@@ -95,8 +95,6 @@ class ChartDetailPageState extends State<ChartDetailPage> {
               CupertinoPageRoute(
                 builder: (context) => SubscriptionShowView(
                   subscription: subscription,
-                  onUpdate: (updatedSubscription) {},
-                  onDelete: (deletedSubscription) {},
                 ),
               ),
             );

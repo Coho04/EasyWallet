@@ -62,7 +62,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
           ),
           trailing: CupertinoButton(
             padding: EdgeInsets.zero,
-            onPressed: _saveItem,
+            onPressed: () => _saveItem(context),
             child: const Icon(CupertinoIcons.floppy_disk),
           ),
         ),
@@ -294,7 +294,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     }
   }
 
-  Future<void> _saveItem() async {
+  Future<void> _saveItem(context) async {
     final title = _titleController.text.trim();
     final amount = double.tryParse(_amountController.text.replaceAll(',', '.'));
     final url = _urlController.text;

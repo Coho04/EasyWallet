@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/persistence_controller.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
+import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:easy_wallet/model/category.dart' as category;
@@ -211,7 +213,6 @@ class Subscription {
   }
 
   Future<void> assignCategories(List<category.Category> categories) async {
-    print('Assigning categories to subscription, categories: $categories');
     final db = await PersistenceController.instance.database;
     var categoryIds = categories.map((category) => category.id).toList();
     await db.transaction((txn) async {
@@ -221,7 +222,7 @@ class Subscription {
         await txn.insert('subscription_categories', {'subscription_id': id, 'category_id': categoryId});
       }
     }).catchError((error) {
-      print('Error assigning categories to subscription: $error');
+      debugPrint('Error assigning categories to subscription: $error');
     });
   }
 
@@ -359,6 +360,14 @@ class Subscription {
     return List.generate(maps.length, (i) {
       return Subscription.fromJson(maps[i]);
     });
+  }
+
+
+  String displayConvertedPrice(Currency currency) {
+    String priceString = amount.toStringAsFixed(2);
+    return repeatPattern == PaymentRate.yearly.value
+        ? '$priceString ${currency.symbol}/${Intl.message('Y')}'
+        : '$priceString ${currency.symbol}/${Intl.message('M')}';
   }
 }
 

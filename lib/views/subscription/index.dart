@@ -239,24 +239,6 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
                                 return SubscriptionListComponent(
                                   currency: currency,
                                   subscription: sortedSubscriptions[index],
-                                  onUpdate: (updatedSubscription) {
-                                    setState(() {
-                                      _sortSubscriptions(
-                                          Provider.of<SubscriptionProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .subscriptions);
-                                    });
-                                  },
-                                  onDelete: (deletedSubscription) {
-                                    setState(() {
-                                      Provider.of<SubscriptionProvider>(context,
-                                              listen: false)
-                                          .deleteSubscription(
-                                              deletedSubscription);
-                                      _sortSubscriptions(sortedSubscriptions);
-                                    });
-                                  },
                                 );
                               },
                             ),

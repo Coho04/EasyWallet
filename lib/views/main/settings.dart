@@ -64,7 +64,7 @@ class SettingsViewState extends State<SettingsView> {
     });
   }
 
-  Future<void> _saveSettings() async {
+  Future<void> _saveSettings(context) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('notificationsEnabled', notificationsEnabled);
     prefs.setBool('includeCostInNotifications', includeCostInNotifications);
@@ -101,12 +101,12 @@ class SettingsViewState extends State<SettingsView> {
     return !kIsWeb;
   }
 
-  Future<void> _handleAuthProtectionToggle(bool isEnabled) async {
+  Future<void> _handleAuthProtectionToggle(bool isEnabled, context) async {
     if (await _authenticate()) {
       setState(() {
         isAuthProtected = isEnabled;
       });
-      _saveSettings();
+      _saveSettings(context);
     } else {
       showCupertinoDialog(
         context: context,
@@ -141,10 +141,10 @@ class SettingsViewState extends State<SettingsView> {
     setState(() {
       notificationsEnabled = isEnabled;
     });
-    _saveSettings();
+    _saveSettings(context);
   }
 
-  Future<void> _openWebPage(String url) async {
+  Future<void> _openWebPage(String url, context) async {
     if (await canLaunchUrlString(url)) {
       await launchUrlString(url);
     } else {
@@ -184,7 +184,7 @@ class SettingsViewState extends State<SettingsView> {
     return '';
   }
 
-  Future<void> _selectNotificationTime(BuildContext context) async {
+  Future<void> _selectNotificationTime(context) async {
     final DateTime? picked = await showCupertinoModalPopup<DateTime>(
       context: context,
       builder: (BuildContext context) {
@@ -203,7 +203,7 @@ class SettingsViewState extends State<SettingsView> {
                     setState(() {
                       notificationTime = newDateTime;
                     });
-                    _saveSettings();
+                    _saveSettings(context);
                   },
                 ),
               ),
@@ -225,7 +225,7 @@ class SettingsViewState extends State<SettingsView> {
       setState(() {
         notificationTime = picked;
       });
-      _saveSettings();
+      _saveSettings(context);
     }
   }
 
@@ -249,7 +249,7 @@ class SettingsViewState extends State<SettingsView> {
                 setState(() {
                   currency = Currency.findByName(value);
                 });
-                _saveSettings();
+                _saveSettings(context);
                 Navigator.pop(context);
               },
             );
@@ -294,7 +294,7 @@ class SettingsViewState extends State<SettingsView> {
                 setState(() {
                   monthlyLimit = double.tryParse(limitController.text) ?? 0.0;
                 });
-                _saveSettings();
+                _saveSettings(context);
                 Navigator.pop(context);
               },
             ),
@@ -369,7 +369,7 @@ class SettingsViewState extends State<SettingsView> {
                         setState(() {
                           includeCostInNotifications = value;
                         });
-                        _saveSettings();
+                        _saveSettings(context);
                       },
                     ),
                   ),
@@ -402,7 +402,9 @@ class SettingsViewState extends State<SettingsView> {
                     ),
                     child: CupertinoSwitch(
                       value: isAuthProtected,
-                      onChanged: _handleAuthProtectionToggle,
+                      onChanged: (value) {
+                        _handleAuthProtectionToggle(value, context);
+                      },
                     ),
                   ),
                 ],
@@ -451,7 +453,7 @@ class SettingsViewState extends State<SettingsView> {
                         setState(() {
                           displayCategories = value;
                         });
-                        _saveSettings();
+                        _saveSettings(context);
                       },
                     ),
                   ),
@@ -501,7 +503,7 @@ class SettingsViewState extends State<SettingsView> {
                 syncWithICloud = value;
                 syncWithGoogleDrive = value ? false : syncWithGoogleDrive;
               });
-              _saveSettings();
+              _saveSettings(context);
             },
           ),
         ),
@@ -516,7 +518,7 @@ class SettingsViewState extends State<SettingsView> {
                 syncWithGoogleDrive = value;
                 syncWithICloud = value ? false : syncWithICloud;
               });
-              _saveSettings();
+              _saveSettings(context);
             },
           ),
         ),
@@ -533,7 +535,7 @@ class SettingsViewState extends State<SettingsView> {
               setState(() {
                 syncWithGoogleDrive = value;
               });
-              _saveSettings();
+              _saveSettings(context);
             },
           ),
         ),
@@ -596,7 +598,7 @@ class SettingsViewState extends State<SettingsView> {
     return CupertinoFormRow(
       padding: const EdgeInsets.all(16),
       child: GestureDetector(
-        onTap: () => _openWebPage(url),
+        onTap: () => _openWebPage(url, context),
         child: Align(
           alignment: Alignment.centerLeft,
           child: AutoText(

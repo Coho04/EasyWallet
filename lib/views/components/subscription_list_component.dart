@@ -1,5 +1,4 @@
 import 'package:easy_wallet/enum/currency.dart';
-import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/model/category.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
@@ -9,57 +8,78 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SubscriptionListComponent extends StatelessWidget {
+class SubscriptionListComponent extends StatefulWidget {
   final Subscription subscription;
   final Currency currency;
-  final Function(Subscription) onUpdate;
-  final Function(Subscription) onDelete;
 
-  const SubscriptionListComponent({
-    super.key,
-    required this.subscription,
-    required this.currency,
-    required this.onUpdate,
-    required this.onDelete,
-  });
+  const SubscriptionListComponent(
+      {super.key, required this.subscription, required this.currency});
+
+  @override
+  SubscriptionListComponentState createState() =>
+      SubscriptionListComponentState();
+}
+
+class SubscriptionListComponentState extends State<SubscriptionListComponent> {
+  bool? displayCategories;
+  List<Category>? categories;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    displayCategories = prefs.getBool('displayCategories') ?? true;
+
+    if (displayCategories!) {
+      bool hasCategories = await widget.subscription.hasCategories();
+      if (hasCategories) {
+        categories = await widget.subscription.categories;
+      }
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDarkMode =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
+        MediaQuery
+            .of(context)
+            .platformBrightness == Brightness.dark;
 
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           CupertinoPageRoute(
-            builder: (context) => SubscriptionShowView(
-              subscription: subscription,
-              onUpdate: onUpdate,
-              onDelete: onDelete,
-            ),
+            builder: (context) =>
+                SubscriptionShowView(
+                  subscription: widget.subscription,
+                ),
           ),
-        ).then((_) => onUpdate(subscription));
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         decoration: BoxDecoration(
-          border: const Border(
-            bottom: BorderSide(
-              color: CupertinoColors.separator,
+            border: const Border(
+              bottom: BorderSide(color: CupertinoColors.separator),
             ),
-          ),
-          color: subscription.isPaused
-              ? (isDarkMode
-                  ? Colors.grey.withOpacity(0.5)
-                  : CupertinoColors.systemGrey5)
-              : (CupertinoTheme.of(context).barBackgroundColor),
-        ),
+            color: widget.subscription.isPaused
+                ? (isDarkMode
+                ? Colors.grey.withOpacity(0.5)
+                : CupertinoColors.systemGrey5)
+                : (CupertinoTheme
+                .of(context)
+                .barBackgroundColor)),
         child: Column(
           children: [
             Row(
               children: [
-                subscription.buildImage(),
+                widget.subscription.buildImage(),
                 const SizedBox(width: 16.0),
                 Expanded(
                   child: Column(
@@ -69,7 +89,7 @@ class SubscriptionListComponent extends StatelessWidget {
                         children: [
                           Expanded(
                             child: AutoText(
-                              text: subscription.title,
+                              text: widget.subscription.title,
                               maxLines: 3,
                               softWrap: true,
                               color: isDarkMode
@@ -78,7 +98,7 @@ class SubscriptionListComponent extends StatelessWidget {
                               bold: true,
                             ),
                           ),
-                          if (subscription.isPinned)
+                          if (widget.subscription.isPinned)
                             const Icon(
                               CupertinoIcons.pin_fill,
                               color: CupertinoColors.systemGrey,
@@ -94,13 +114,15 @@ class SubscriptionListComponent extends StatelessWidget {
                     children: [
                       AutoText(
                         text:
-                            '${subscription.remainingDays()} ${Intl.message('D')}',
+                        '${widget.subscription.remainingDays()} ${Intl.message(
+                            'D')}',
                         color: isDarkMode
                             ? CupertinoColors.systemGrey2
                             : CupertinoColors.systemGrey,
                       ),
                       AutoText(
-                        text: _convertPrice(subscription),
+                        text: widget.subscription
+                            .displayConvertedPrice(widget.currency),
                         color: isDarkMode
                             ? CupertinoColors.systemGrey2
                             : CupertinoColors.systemGrey,
@@ -113,13 +135,12 @@ class SubscriptionListComponent extends StatelessWidget {
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (context) => SubscriptionShowView(
-                          subscription: subscription,
-                          onUpdate: onUpdate,
-                          onDelete: onDelete,
-                        ),
+                        builder: (context) =>
+                            SubscriptionShowView(
+                                subscription: widget.subscription
+                            ),
                       ),
-                    ).then((_) => onUpdate(subscription));
+                    );
                   },
                   child: const Icon(
                     CupertinoIcons.right_chevron,
@@ -128,67 +149,37 @@ class SubscriptionListComponent extends StatelessWidget {
                 ),
               ],
             ),
-            FutureBuilder<Widget?>(
-              future: buildCategories(subscription, context),
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return const Center(child: CircularProgressIndicator());
-                  case ConnectionState.done:
-                    if (snapshot.hasError) {
-                      return Center(child: Text("Error: ${snapshot.error}"));
-                    }
-                    if (snapshot.hasData) {
-                      return snapshot.data ?? const SizedBox();
-                    }
-                    return const SizedBox();
-                  default:
-                    return const SizedBox();
-                }
-              },
-            ),
+            displayCategories ?? false ? buildCategories() : const SizedBox()
           ],
         ),
       ),
     );
   }
 
-  String _convertPrice(Subscription subscription) {
-    String priceString = subscription.amount.toStringAsFixed(2);
-    return subscription.repeatPattern == PaymentRate.yearly.value
-        ? '$priceString ${currency.symbol}/${Intl.message('Y')}'
-        : '$priceString ${currency.symbol}/${Intl.message('M')}';
-  }
-
-  Future<Widget?> buildCategories(Subscription subscription, context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool('displayCategories') == false) {
-      return null;
-    }
-
-    bool has = await subscription.hasCategories();
-    if (!has) return null;
-
-    List<Category> categories = await subscription.categories;
+  Widget buildCategories() {
+    if (categories == null) return const SizedBox();
     return Material(
-      color: CupertinoTheme.of(context).barBackgroundColor,
+      color: CupertinoTheme
+          .of(context)
+          .barBackgroundColor,
       child: SizedBox(
         width: double.infinity,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Wrap(
-            spacing: 8.0,
-            children: categories
-                .map((category) => Chip(
+              spacing: 8.0,
+              children: categories!
+                  .map((category) =>
+                  Chip(
                       label: Text(category.title,
-                          style: const TextStyle(color: CupertinoColors.white, fontSize: 12)),
+                          style: const TextStyle(
+                              color: CupertinoColors.white, fontSize: 12)),
                       padding: const EdgeInsets.all(2),
-                      backgroundColor: category.color,
-                    ))
-                .toList(),
-          ),
+                backgroundColor: category.color,
+              ))
+              .toList(),
         ),
       ),
-    );
+    ),);
   }
 }

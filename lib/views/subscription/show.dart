@@ -1,6 +1,4 @@
 import 'package:easy_wallet/easy_wallet_app.dart';
-import 'package:easy_wallet/enum/currency.dart';
-import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/views/components/card_section_component.dart';
@@ -15,14 +13,11 @@ import 'package:easy_wallet/model/category.dart' as category;
 
 class SubscriptionShowView extends StatefulWidget {
   final Subscription subscription;
-  final ValueChanged<Subscription> onUpdate;
-  final ValueChanged<Subscription> onDelete;
 
-  const SubscriptionShowView(
-      {super.key,
-      required this.subscription,
-      required this.onUpdate,
-      required this.onDelete});
+  const SubscriptionShowView({
+    super.key,
+    required this.subscription,
+  });
 
   @override
   SubscriptionShowViewState createState() => SubscriptionShowViewState();
@@ -30,6 +25,7 @@ class SubscriptionShowView extends StatefulWidget {
 
 class SubscriptionShowViewState extends State<SubscriptionShowView> {
   late Subscription subscription;
+  List<category.Category>? categories;
 
   @override
   void initState() {
@@ -55,7 +51,7 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
             trailing: CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: () {
-                openEditView();
+                openEditView(context);
               },
               child: const Icon(CupertinoIcons.pencil),
             ),
@@ -71,26 +67,7 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
                 const SizedBox(height: 20),
                 _buildHeader(),
                 const SizedBox(height: 5),
-                FutureBuilder<Widget?>(
-                  future: buildCategories(
-                      subscription,
-                      CupertinoColors.systemGroupedBackground
-                          .resolveFrom(context)),
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        return const Center(child: CircularProgressIndicator());
-                      case ConnectionState.done:
-                        if (snapshot.hasError) {
-                          return Center(
-                              child: Text("Error: ${snapshot.error}"));
-                        }
-                        return snapshot.data ?? const SizedBox();
-                      default:
-                        return const SizedBox();
-                    }
-                  },
-                ),
+                buildCategories(),
                 const SizedBox(height: 20),
                 CardSection(
                   title: Intl.message('generalInformation'),
@@ -142,7 +119,8 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
                     ),
                     CardDetailRow(
                       label: Intl.message('convertedCosts'),
-                      value: '(${_convertPrice(currency)})',
+                      value:
+                          '(${widget.subscription.displayConvertedPrice(currency)})',
                     ),
                     CardDetailRow(
                       label: Intl.message('totalCosts'),
@@ -168,7 +146,7 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
                       icon: subscription.isPinned
                           ? CupertinoIcons.pin_slash
                           : CupertinoIcons.pin,
-                      onPressed: () => _togglePin(),
+                      onPressed: () => _toggleStates(),
                       color: subscription.isPinned
                           ? CupertinoColors.systemBlue
                           : null,
@@ -180,7 +158,7 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
                       icon: subscription.isPaused
                           ? CupertinoIcons.play_arrow_solid
                           : CupertinoIcons.pause,
-                      onPressed: () => _togglePause(),
+                      onPressed: () => _toggleStates(pause: true),
                     ),
                     CardActionButton(
                       label: Intl.message('deleteSubscription'),
@@ -219,18 +197,16 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
     );
   }
 
-  void _togglePin() {
+  void _toggleStates({bool pause = false}) {
     setState(() {
-      subscription.isPinned = !subscription.isPinned;
+      if (pause) {
+        subscription.isPaused = !subscription.isPaused;
+      } else {
+        subscription.isPinned = !subscription.isPinned;
+      }
     });
-    _saveItem();
-  }
-
-  void _togglePause() {
-    setState(() {
-      subscription.isPaused = !subscription.isPaused;
-    });
-    _saveItem();
+    Provider.of<SubscriptionProvider>(context, listen: false)
+        .saveSubscription(subscription);
   }
 
   Future<void> _deleteItem() async {
@@ -256,15 +232,8 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
     } else {
       Provider.of<SubscriptionProvider>(context, listen: false)
           .deleteSubscription(subscription);
-      widget.onDelete(subscription);
       Navigator.of(context).pop();
     }
-  }
-
-  void _saveItem() async {
-    Provider.of<SubscriptionProvider>(context, listen: false)
-        .saveSubscription(subscription);
-    widget.onUpdate(subscription);
   }
 
   String _formatDateTime(DateTime? dateTime, {bool withTime = false}) {
@@ -277,7 +246,7 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
     return '$paddedTime\n$date';
   }
 
-  void openEditView() async {
+  void openEditView(context) async {
     var selectedCategories = await subscription.categories;
     Navigator.push(
       context,
@@ -285,54 +254,33 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
         builder: (context) => SubscriptionEditView(
           selectedCategories: selectedCategories,
           subscription: subscription,
-          onUpdate: (updatedSubscription) {
-            setState(() {
-              subscription = updatedSubscription;
-            });
-            widget.onUpdate(updatedSubscription);
-          },
         ),
       ),
     );
   }
 
-  Future<Widget?> buildCategories(
-      Subscription subscription, Color bgColor) async {
-    bool has = await subscription.hasCategories();
-    if (has) {
-      List<category.Category> categories = await subscription.categories;
-      return Material(
-        color: bgColor,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Wrap(
-            spacing: 4.0,
-            children: categories
-                .map((category) => Chip(
-                      label: Text(
-                        category.title,
-                        style: const TextStyle(
-                          color: CupertinoColors.white,
-                          fontSize: 11,
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(0),
-                      backgroundColor: category.color,
-                    ))
-                .toList(),
-          ),
+  Widget buildCategories() {
+    final bgColor = CupertinoTheme.of(context).barBackgroundColor;
+    if (categories == null || categories!.isEmpty) return const SizedBox();
+    return Material(
+      color: bgColor,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Wrap(
+          spacing: 4.0,
+          children: categories!
+              .map((category) => Chip(
+                    label: Text(
+                      category.title,
+                      style: const TextStyle(
+                          color: CupertinoColors.white, fontSize: 11),
+                    ),
+                    padding: const EdgeInsets.all(0),
+                    backgroundColor: category.color,
+                  ))
+              .toList(),
         ),
-      );
-    } else {
-      return null;
-    }
-  }
-
-  String? _convertPrice(Currency currency) {
-    String priceString = subscription.convertPrice()?.toStringAsFixed(2) ??
-        Intl.message('unknown');
-    return subscription.repeatPattern == PaymentRate.monthly.value
-        ? '$priceString ${currency.symbol}/${Intl.message('year')}'
-        : '$priceString ${currency.symbol}/${Intl.message('month')}';
+      ),
+    );
   }
 }

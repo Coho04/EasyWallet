@@ -23,13 +23,11 @@ import '../components/form_fields/multi_select_dialog_field.dart';
 
 class SubscriptionEditView extends StatefulWidget {
   final Subscription subscription;
-  final ValueChanged<Subscription> onUpdate;
   List<Category> selectedCategories;
 
   SubscriptionEditView(
       {super.key,
       required this.subscription,
-      required this.onUpdate,
       required this.selectedCategories});
 
   @override
@@ -82,7 +80,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
     return _titleValid && _amountValid;
   }
 
-  void _saveItem() async {
+  void _saveItem(context) async {
     if (_validateForm()) {
       var subscription = widget.subscription;
       subscription.title = _titleController.text.trim();
@@ -121,7 +119,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
           ),
           trailing: CupertinoButton(
             padding: EdgeInsets.zero,
-            onPressed: _saveItem,
+            onPressed: () => _saveItem(context),
             child: const Icon(CupertinoIcons.floppy_disk),
           ),
         ),
