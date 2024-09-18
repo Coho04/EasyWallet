@@ -81,7 +81,7 @@ class PersistenceController {
             repeating INTEGER DEFAULT NULL,
             repeatPattern TEXT DEFAULT NULL,
             timestamp TEXT DEFAULT NULL,
-            url TEXT DEFAULT NULL,
+            url TEXT DEFAULT NULL
           )
           ''',
       );
