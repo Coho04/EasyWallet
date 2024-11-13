@@ -38,7 +38,7 @@ dependencies:
   intl: ^0.19.0
   cached_network_image: ^3.4.1
   fl_chart: ^0.69.0
-  timezone: ^0.9.4
+  timezone: ^0.10.0
   shared_preferences: ^2.3.3
   syncfusion_flutter_charts:
     git:
