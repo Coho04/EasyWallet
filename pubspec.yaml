@@ -39,7 +39,7 @@ dependencies:
   cached_network_image: ^3.4.1
   fl_chart: ^0.69.0
   timezone: ^0.9.4
-  shared_preferences: ^2.3.1
+  shared_preferences: ^2.3.3
   syncfusion_flutter_charts:
     git:
       url: https://github.com/fingineering/flutter-widgets.git
