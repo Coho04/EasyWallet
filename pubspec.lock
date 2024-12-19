@@ -457,10 +457,10 @@ packages:
     dependency: "direct main"
     description:
       name: image
-      sha256: "20842a5ad1555be624c314b0c0cc0566e8ece412f61e859a42efeb6d4101a26c"
+      sha256: b50b415345578583de0f1cf4c7bd389f164de0b316d890c707b41133047dbc2a
       url: "https://pub.dev"
     source: hosted
-    version: "4.5.0"
+    version: "4.5.1"
   intl:
     dependency: "direct main"
     description:
