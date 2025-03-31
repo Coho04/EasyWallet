@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
@@ -11,7 +12,6 @@ import 'package:easy_wallet/views/components/form_fields/date_picker_field.dart'
 import 'package:easy_wallet/views/components/form_fields/dropdown_field.dart';
 import 'package:easy_wallet/views/components/form_fields/text_field.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
@@ -51,14 +51,15 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   Widget build(BuildContext context) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
-
     return Consumer<CurrencyProvider>(
         builder: (context, currencyProvider, child) {
       final currency = currencyProvider.currency;
       return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-          middle: Text(
+          middle: AutoSizeText(
             Intl.message('addSubscription'),
+            maxLines: 1,
+            style: EasyWalletApp.responsiveTextStyle(context),
           ),
           trailing: CupertinoButton(
             padding: EdgeInsets.zero,
@@ -146,9 +147,15 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                       builder: (context, categoryProvider, child) {
                     var categories = categoryProvider.categories;
                     return Material(
+                        color: isDarkMode
+                            ? CupertinoColors.black
+                            : CupertinoColors.systemGrey6,
                         child: Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: MultiSelectDialogField(
+                        backgroundColor: isDarkMode
+                            ? CupertinoColors.darkBackgroundGray
+                            : CupertinoColors.systemGrey6,
                         decoration: BoxDecoration(
                           color: isDarkMode
                               ? CupertinoColors.darkBackgroundGray
@@ -163,12 +170,16 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                         searchable: true,
                         separateSelectedItems: true,
                         selectedItemsTextStyle: TextStyle(
-                          color: isDarkMode
-                              ? CupertinoColors.white
-                              : CupertinoColors.white,
+                          color: CupertinoColors.white
                         ),
-                        buttonText: Text(Intl.message('select')),
-                        title: Text(Intl.message('categories')),
+                        buttonText: Text(Intl.message('select'), style: TextStyle(
+                          color: isDarkMode
+                              ? CupertinoColors.systemGrey
+                              : CupertinoColors.systemGrey4
+                        )),
+                        title: Text(Intl.message('categories'), style: TextStyle(
+                          color: CupertinoColors.systemBlue
+                        )),
                         checkColor: CupertinoColors.white,
                         cancelText: Text(Intl.message('cancel')),
                         closeSearchIcon: const Icon(CupertinoIcons.clear),
@@ -234,11 +245,6 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
       );
     } else {
       return CachedNetworkImage(
-        errorListener: (exception) {
-          if (kDebugMode) {
-            debugPrint('Image loading failed: $exception');
-          }
-        },
         imageUrl:
             'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(_urlController.text).host}',
         placeholder: (context, url) => const CupertinoActivityIndicator(),
@@ -277,7 +283,8 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
               ),
               CupertinoButton(
                 child: const AutoText(
-                    text: 'OK', color: CupertinoColors.activeBlue),
+                    text: 'OK',
+                    color: CupertinoColors.activeBlue),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },

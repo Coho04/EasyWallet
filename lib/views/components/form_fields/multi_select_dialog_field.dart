@@ -235,7 +235,6 @@ class __MultiSelectDialogFieldViewState<V>
   void initState() {
     super.initState();
     _selectedItems.addAll(widget.initialValue);
-    print("Initial selected items: $_selectedItems");
   }
 
   @override

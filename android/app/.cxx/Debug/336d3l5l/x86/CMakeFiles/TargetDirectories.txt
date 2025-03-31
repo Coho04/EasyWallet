@@ -1,0 +1,2 @@
+C:/Users/cohoh/StudioProjects/EasyWallet/android/app/.cxx/Debug/336d3l5l/x86/CMakeFiles/edit_cache.dir
+C:/Users/cohoh/StudioProjects/EasyWallet/android/app/.cxx/Debug/336d3l5l/x86/CMakeFiles/rebuild_cache.dir

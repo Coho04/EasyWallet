@@ -25,7 +25,7 @@ class AmountField extends StatelessWidget {
         Expanded(
           child: CupertinoTextField(
             controller: controller,
-            placeholder: Intl.message('Costs'),
+            placeholder: Intl.message('costs'),
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             style: EasyWalletApp.responsiveTextStyle(
               context,

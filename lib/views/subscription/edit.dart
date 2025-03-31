@@ -136,6 +136,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                     placeholder: 'URL',
                     isDarkMode: isDarkMode,
                     keyboardType: TextInputType.url,
+                    autocorrect: false,
                     onChanged: (value) {
                       if (!value.startsWith('https://')) {
                         _urlController.text =
@@ -351,8 +352,14 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       selectedColor: CupertinoColors.activeBlue,
       searchable: true,
       separateSelectedItems: true,
-      buttonText: Text(Intl.message('select'), style: textStyle),
-      title: Text(Intl.message('categories'), style: textStyle),
+      buttonText: Text(Intl.message('select'), style: TextStyle(
+        color: isDarkMode
+            ? CupertinoColors.systemGrey
+            : CupertinoColors.systemGrey4
+      )),
+      title: Text(Intl.message('categories'), style: TextStyle(
+          color: CupertinoColors.systemBlue
+      )),
       checkColor: CupertinoColors.white,
       cancelText: Text(Intl.message('cancel'),
           style: const TextStyle(color: CupertinoColors.activeBlue)),
