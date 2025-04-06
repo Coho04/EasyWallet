@@ -18,6 +18,7 @@ import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_wallet/model/category.dart' as category;
+import '../../enum/payment_methode.dart';
 import '../../provider/category_provider.dart';
 import '../components/form_fields/multi_select_dialog_field.dart';
 
@@ -35,6 +36,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   final _notesController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   String _selectedPayRate = PaymentRate.monthly.value;
+  String _selectedPayMethode = PaymentMethode.invoice.value;
   String _selectedRememberCycle = RememberCycle.sameDay.value;
 
   List<category.Category> _selectedCategories = [];
@@ -112,6 +114,17 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                     onChanged: (value) {
                       setState(() {
                         _selectedPayRate = value!;
+                      });
+                    },
+                    isDarkMode: isDarkMode,
+                  ),
+                  EasyWalletDropdownField(
+                    label: Intl.message('paymentMethode'),
+                    currentValue: _selectedPayMethode,
+                    options: PaymentMethode.values,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedPayMethode = value!;
                       });
                     },
                     isDarkMode: isDarkMode,
@@ -321,6 +334,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         notes: notes,
         url: url,
         rememberCycle: _selectedRememberCycle,
+        paymentMethode: _selectedPayMethode,
         timestamp: DateTime.now(),
         isPaused: false,
         isPinned: false,

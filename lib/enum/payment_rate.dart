@@ -1,6 +1,7 @@
+import 'package:easy_wallet/class/translatable_enum.dart';
 import 'package:intl/intl.dart';
 
-enum PaymentRate {
+enum PaymentRate with TranslatableEnum {
   yearly(value: 'yearly'),
   monthly(value: 'monthly');
 
@@ -9,10 +10,6 @@ enum PaymentRate {
   });
 
   final String value;
-
-  String translate() {
-    return Intl.message(value);
-  }
 
   static PaymentRate findByName(String name) {
     return PaymentRate.values.firstWhere(

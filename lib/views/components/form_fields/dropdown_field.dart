@@ -1,4 +1,6 @@
+import 'package:easy_wallet/class/translatable_enum.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
+import 'package:easy_wallet/enum/payment_methode.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
@@ -74,9 +76,9 @@ class EasyWalletDropdownField extends StatelessWidget {
       builder: (BuildContext context) {
         return CupertinoActionSheet(
           actions: options.map((option) {
-            final String value = (option is PaymentRate)
-                ? option.value
-                : (option as RememberCycle).value;
+            final String value = (option is PaymentRate) ? option.value
+                : (option is RememberCycle) ? option.value
+                : (option as PaymentMethode).value;
             return CupertinoActionSheetAction(
               child: Text(_capitalize(_translateEnum(value, options)),
                   style: EasyWalletApp.responsiveTextStyle(context,
@@ -101,14 +103,10 @@ class EasyWalletDropdownField extends StatelessWidget {
   }
 
   String _translateEnum<T>(String value, List<T> options) {
-    for (var option in options) {
-      if (option is PaymentRate && option.value == value) {
-        return option.translate();
-      } else if (option is RememberCycle && option.value == value) {
-        return option.translate();
-      }
-    }
-    return value;
+    final TranslatableEnum match = options
+        .whereType<TranslatableEnum>()
+        .firstWhere((o) => o.value == value);
+    return match.translate() ?? value;
   }
 
   String _capitalize(String s) {
