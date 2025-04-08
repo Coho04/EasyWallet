@@ -89,13 +89,6 @@ class CategoryShowViewState extends State<CategoryShowView> {
               ? CupertinoColors.darkBackgroundGray
               : CupertinoColors.white,
           borderRadius: BorderRadius.circular(12.0),
-          boxShadow: [
-            BoxShadow(
-              color: CupertinoColors.systemGrey.withOpacity(0.5),
-              blurRadius: 10,
-              spreadRadius: 1,
-            ),
-          ],
         ),
         child: CupertinoButton(
           padding: EdgeInsets.zero,
@@ -201,13 +194,6 @@ class CategoryShowViewState extends State<CategoryShowView> {
               ? CupertinoColors.darkBackgroundGray
               : CupertinoColors.white,
           borderRadius: BorderRadius.circular(12.0),
-          boxShadow: [
-            BoxShadow(
-              color: CupertinoColors.systemGrey.withOpacity(0.5),
-              blurRadius: 10,
-              spreadRadius: 1,
-            ),
-          ],
         ),
         child: CupertinoButton(
           padding: EdgeInsets.zero,

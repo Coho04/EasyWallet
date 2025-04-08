@@ -17,6 +17,7 @@ import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:provider/provider.dart';
 
+import '../../enum/payment_methode.dart';
 import '../../model/category.dart';
 import '../../provider/category_provider.dart';
 import '../components/form_fields/multi_select_dialog_field.dart';
@@ -42,6 +43,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   DateTime _date = DateTime.now();
   String _paymentRate = PaymentRate.monthly.value;
   String _rememberCycle = RememberCycle.dayBefore.value;
+  String _selectedPayMethode = PaymentMethode.invoice.value;
 
   bool _titleValid = true;
   bool _amountValid = true;
@@ -60,6 +62,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
         widget.subscription.repeatPattern ?? PaymentRate.monthly.value;
     _rememberCycle =
         widget.subscription.rememberCycle ?? RememberCycle.dayBefore.value;
+    _selectedPayMethode = widget.subscription.paymentMethode ?? PaymentMethode.invoice.value;
   }
 
   @override
@@ -95,6 +98,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       subscription.notes = _notesController.text.trim();
       subscription.repeatPattern = _paymentRate;
       subscription.rememberCycle = _rememberCycle;
+      subscription.paymentMethode = _selectedPayMethode;
       subscription =
           await Provider.of<SubscriptionProvider>(context, listen: false)
               .saveSubscription(subscription);
@@ -167,6 +171,17 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                     onChanged: (value) {
                       setState(() {
                         _paymentRate = value!;
+                      });
+                    },
+                    isDarkMode: isDarkMode,
+                  ),
+                  EasyWalletDropdownField(
+                    label: Intl.message('paymentMethode'),
+                    currentValue: _selectedPayMethode,
+                    options: PaymentMethode.values,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedPayMethode = value!;
                       });
                     },
                     isDarkMode: isDarkMode,
