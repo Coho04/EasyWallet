@@ -28,13 +28,6 @@ class CardSection extends StatelessWidget {
             ? CupertinoColors.darkBackgroundGray
             : CupertinoColors.white,
         borderRadius: BorderRadius.circular(12.0),
-        boxShadow: const [
-          BoxShadow(
-            color: CupertinoColors.systemGrey,
-            blurRadius: 5.0,
-            spreadRadius: 1.0,
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

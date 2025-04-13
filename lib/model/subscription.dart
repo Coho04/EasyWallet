@@ -21,6 +21,7 @@ class Subscription {
   bool isPinned;
   String? notes;
   String? rememberCycle;
+  String? paymentMethode;
   bool repeating;
   String? repeatPattern;
   DateTime? timestamp;
@@ -35,6 +36,7 @@ class Subscription {
     required this.isPinned,
     this.notes,
     this.rememberCycle,
+    this.paymentMethode,
     required this.repeating,
     this.repeatPattern,
     this.timestamp,
@@ -51,6 +53,7 @@ class Subscription {
       'isPinned': isPinned ? 1 : 0,
       'notes': notes,
       'rememberCycle': rememberCycle,
+      'paymentMethode': paymentMethode,
       'repeating': repeating ? 1 : 0,
       'repeatPattern': repeatPattern,
       'timestamp': timestamp?.toIso8601String(),

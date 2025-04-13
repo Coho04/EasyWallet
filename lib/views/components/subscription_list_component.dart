@@ -74,7 +74,8 @@ class SubscriptionListComponentState extends State<SubscriptionListComponent> {
                 : CupertinoColors.systemGrey5)
                 : (CupertinoTheme
                 .of(context)
-                .barBackgroundColor)),
+                .barBackgroundColor)
+        ),
         child: Column(
           children: [
             Row(

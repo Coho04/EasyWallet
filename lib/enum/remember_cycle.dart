@@ -1,6 +1,7 @@
+import 'package:easy_wallet/class/translatable_enum.dart';
 import 'package:intl/intl.dart';
 
-enum RememberCycle {
+enum RememberCycle with TranslatableEnum {
   sameDay(value: 'same_day', camelCase: 'sameDay', migration: 'SameDay'),
   dayBefore(
       value: 'day_before', camelCase: 'dayBefore', migration: 'OneDayBefore'),
@@ -19,10 +20,12 @@ enum RememberCycle {
     required this.migration,
   });
 
+  @override
   final String value;
   final String camelCase;
   final String migration;
 
+  @override
   String translate() {
     return Intl.message(camelCase);
   }

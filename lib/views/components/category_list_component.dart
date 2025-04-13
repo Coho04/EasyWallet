@@ -3,6 +3,7 @@ import 'package:easy_wallet/views/categories/show.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/components/color_circle.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class CategoryListComponent extends StatelessWidget {
   final Category category;
@@ -23,12 +24,15 @@ class CategoryListComponent extends StatelessWidget {
     return GestureDetector(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
               color: CupertinoColors.separator,
             ),
           ),
+          color: isDarkMode? CupertinoTheme
+              .of(context)
+              .barBackgroundColor : CupertinoColors.systemGrey5
         ),
         child: Row(
           children: [
