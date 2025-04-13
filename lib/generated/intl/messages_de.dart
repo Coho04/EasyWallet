@@ -53,6 +53,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Alphabetisch absteigend",
     ),
     "appStats": MessageLookupByLibrary.simpleMessage("App Statistiken"),
+    "apple_pay": MessageLookupByLibrary.simpleMessage("Apple Pay"),
     "cancel": MessageLookupByLibrary.simpleMessage("Abbrechen"),
     "categories": MessageLookupByLibrary.simpleMessage("Kategorien"),
     "categoryTitle": MessageLookupByLibrary.simpleMessage("Kategorie Titel"),
@@ -78,6 +79,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Konnte nicht gestartet werden",
     ),
     "createdOn": MessageLookupByLibrary.simpleMessage("Erstellt am"),
+    "creditCard": MessageLookupByLibrary.simpleMessage("Kreditkarte"),
     "currency": MessageLookupByLibrary.simpleMessage("Währung"),
     "dataExportedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Daten erfolgreich exportiert.",
@@ -159,6 +161,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "googleDriveLogoutSuccess": MessageLookupByLibrary.simpleMessage(
       "Google Drive Abmeldung erfolgreich",
     ),
+    "google_pay": MessageLookupByLibrary.simpleMessage("Google Pay"),
     "help": MessageLookupByLibrary.simpleMessage("Hilfe"),
     "hint": MessageLookupByLibrary.simpleMessage("Hinweis"),
     "import": MessageLookupByLibrary.simpleMessage("Importieren"),
@@ -167,6 +170,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
       "Kosten in Benachrichtigungen",
     ),
+    "invoice": MessageLookupByLibrary.simpleMessage("Rechnung"),
     "invoiceInformation": MessageLookupByLibrary.simpleMessage(
       "Rechnungsinformationen",
     ),
@@ -214,7 +218,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "paused": MessageLookupByLibrary.simpleMessage("Pausiert"),
     "pausedVsActive": MessageLookupByLibrary.simpleMessage("Pausiert vs Aktiv"),
+    "paymentMethode": MessageLookupByLibrary.simpleMessage("Bezahlmethode"),
+    "paymentMethods": MessageLookupByLibrary.simpleMessage("Bezahlmethoden"),
     "paymentRate": MessageLookupByLibrary.simpleMessage("Zyklus"),
+    "paypal": MessageLookupByLibrary.simpleMessage("Paypal"),
     "pickAColor": MessageLookupByLibrary.simpleMessage("Wählen Sie eine Farbe"),
     "pinSubscription": MessageLookupByLibrary.simpleMessage(
       "Dieses Abonnement anheften",
@@ -250,6 +257,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "security": MessageLookupByLibrary.simpleMessage("Sicherheit"),
     "select": MessageLookupByLibrary.simpleMessage("Auswählen"),
     "selectCurrency": MessageLookupByLibrary.simpleMessage("Währung auswählen"),
+    "sepa": MessageLookupByLibrary.simpleMessage("Sepa-Lastschrift"),
     "settings": MessageLookupByLibrary.simpleMessage("Einstellungen"),
     "settingsAuthFailed": MessageLookupByLibrary.simpleMessage(
       "Authentifizierung fehlgeschlagen. Einstellung wurde nicht geändert..",

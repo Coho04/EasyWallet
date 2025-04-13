@@ -49,6 +49,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Alphabetical Descending",
     ),
     "appStats": MessageLookupByLibrary.simpleMessage("App Statistics"),
+    "apple_pay": MessageLookupByLibrary.simpleMessage("Apple Pay"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "categories": MessageLookupByLibrary.simpleMessage("Categories"),
     "categoryTitle": MessageLookupByLibrary.simpleMessage("Category Title"),
@@ -68,6 +69,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "costs": MessageLookupByLibrary.simpleMessage("Costs"),
     "couldNotLaunch": MessageLookupByLibrary.simpleMessage("Could not launch"),
     "createdOn": MessageLookupByLibrary.simpleMessage("Created on"),
+    "creditCard": MessageLookupByLibrary.simpleMessage("Creditcard"),
     "currency": MessageLookupByLibrary.simpleMessage("Currency"),
     "dataExportedSuccessfully": MessageLookupByLibrary.simpleMessage(
       "Data exported successfully.",
@@ -147,6 +149,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "googleDriveLogoutSuccess": MessageLookupByLibrary.simpleMessage(
       "Google Drive logout successful",
     ),
+    "google_pay": MessageLookupByLibrary.simpleMessage("Google Pay"),
     "help": MessageLookupByLibrary.simpleMessage("Help"),
     "hint": MessageLookupByLibrary.simpleMessage("Hint"),
     "import": MessageLookupByLibrary.simpleMessage("Import"),
@@ -155,6 +158,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
       "Include cost in notifications",
     ),
+    "invoice": MessageLookupByLibrary.simpleMessage("Invoice"),
     "invoiceInformation": MessageLookupByLibrary.simpleMessage(
       "Invoice information",
     ),
@@ -198,7 +202,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "paused": MessageLookupByLibrary.simpleMessage("Paused"),
     "pausedVsActive": MessageLookupByLibrary.simpleMessage("Paused vs Active"),
+    "paymentMethode": MessageLookupByLibrary.simpleMessage("Payment Methode"),
+    "paymentMethods": MessageLookupByLibrary.simpleMessage("Payment Methods"),
     "paymentRate": MessageLookupByLibrary.simpleMessage("Payment rate"),
+    "paypal": MessageLookupByLibrary.simpleMessage("Paypal"),
     "pickAColor": MessageLookupByLibrary.simpleMessage("Pick a color"),
     "pinSubscription": MessageLookupByLibrary.simpleMessage(
       "Pin this subscription",
@@ -228,6 +235,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "security": MessageLookupByLibrary.simpleMessage("Security"),
     "select": MessageLookupByLibrary.simpleMessage("Select"),
     "selectCurrency": MessageLookupByLibrary.simpleMessage("Select Currency"),
+    "sepa": MessageLookupByLibrary.simpleMessage("Sepa-Payment"),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "settingsAuthFailed": MessageLookupByLibrary.simpleMessage(
       "Authentication failed. Setting was not changed.",

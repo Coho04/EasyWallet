@@ -18,6 +18,7 @@ import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_wallet/model/category.dart' as category;
+import '../../enum/payment_methode.dart';
 import '../../provider/category_provider.dart';
 import '../components/form_fields/multi_select_dialog_field.dart';
 
@@ -35,6 +36,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   final _notesController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   String _selectedPayRate = PaymentRate.monthly.value;
+  String _selectedPayMethode = PaymentMethode.invoice.value;
   String _selectedRememberCycle = RememberCycle.sameDay.value;
 
   List<category.Category> _selectedCategories = [];
@@ -116,6 +118,17 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                     },
                     isDarkMode: isDarkMode,
                   ),
+                  EasyWalletDropdownField(
+                    label: Intl.message('paymentMethode'),
+                    currentValue: _selectedPayMethode,
+                    options: PaymentMethode.values,
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedPayMethode = value!;
+                      });
+                    },
+                    isDarkMode: isDarkMode,
+                  ),
                   const SizedBox(height: 16),
                   EasyWalletDropdownField(
                     label: Intl.message('remembering'),
@@ -129,12 +142,6 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                     isDarkMode: isDarkMode,
                   ),
                   const SizedBox(height: 16),
-                  EasyWalletTextField(
-                      controller: _notesController,
-                      placeholder: Intl.message('notes'),
-                      maxLines: 5,
-                      isDarkMode: isDarkMode),
-                  const SizedBox(height: 16),
                   Text(
                     Intl.message('categories'),
                     style: TextStyle(
@@ -145,55 +152,61 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                   ),
                   Consumer<CategoryProvider>(
                       builder: (context, categoryProvider, child) {
-                    var categories = categoryProvider.categories;
-                    return Material(
-                        color: isDarkMode
-                            ? CupertinoColors.black
-                            : CupertinoColors.systemGrey6,
-                        child: Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: MultiSelectDialogField(
-                        backgroundColor: isDarkMode
-                            ? CupertinoColors.darkBackgroundGray
-                            : CupertinoColors.systemGrey6,
-                        decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? CupertinoColors.darkBackgroundGray
-                              : CupertinoColors.systemGrey6,
-                          borderRadius: BorderRadius.circular(8.0),
-                          border: Border.all(
-                              color: isDarkMode
-                                  ? CupertinoColors.systemGrey
-                                  : CupertinoColors.systemGrey4),
-                        ),
-                        selectedColor: CupertinoColors.activeBlue,
-                        searchable: true,
-                        separateSelectedItems: true,
-                        selectedItemsTextStyle: TextStyle(
-                          color: CupertinoColors.white
-                        ),
-                        buttonText: Text(Intl.message('select'), style: TextStyle(
-                          color: isDarkMode
-                              ? CupertinoColors.systemGrey
-                              : CupertinoColors.systemGrey4
-                        )),
-                        title: Text(Intl.message('categories'), style: TextStyle(
-                          color: CupertinoColors.systemBlue
-                        )),
-                        checkColor: CupertinoColors.white,
-                        cancelText: Text(Intl.message('cancel')),
-                        closeSearchIcon: const Icon(CupertinoIcons.clear),
-                        confirmText: Text(Intl.message('confirm')),
-                        items: categories
-                            .map((e) => MultiSelectItem(e, e.title))
-                            .toList(),
-                        listType: MultiSelectListType.CHIP,
-                        onConfirm: (values) {
-                          _selectedCategories = values;
-                        },
-                      ),
-                    ));
-                  }),
+                        var categories = categoryProvider.categories;
+                        return Material(
+                            color: isDarkMode
+                                ? CupertinoColors.black
+                                : CupertinoColors.systemGrey6,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: MultiSelectDialogField(
+                                backgroundColor: isDarkMode
+                                    ? CupertinoColors.darkBackgroundGray
+                                    : CupertinoColors.systemGrey6,
+                                decoration: BoxDecoration(
+                                  color: isDarkMode
+                                      ? CupertinoColors.darkBackgroundGray
+                                      : CupertinoColors.systemGrey6,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  border: Border.all(
+                                      color: isDarkMode
+                                          ? CupertinoColors.systemGrey
+                                          : CupertinoColors.systemGrey4),
+                                ),
+                                selectedColor: CupertinoColors.activeBlue,
+                                searchable: true,
+                                separateSelectedItems: true,
+                                selectedItemsTextStyle: TextStyle(
+                                    color: CupertinoColors.white
+                                ),
+                                buttonText: Text(Intl.message('select'), style: TextStyle(
+                                    color: isDarkMode
+                                        ? CupertinoColors.systemGrey
+                                        : CupertinoColors.systemGrey4
+                                )),
+                                title: Text(Intl.message('categories'), style: TextStyle(
+                                    color: CupertinoColors.systemBlue
+                                )),
+                                checkColor: CupertinoColors.white,
+                                cancelText: Text(Intl.message('cancel')),
+                                closeSearchIcon: const Icon(CupertinoIcons.clear),
+                                confirmText: Text(Intl.message('confirm')),
+                                items: categories
+                                    .map((e) => MultiSelectItem(e, e.title))
+                                    .toList(),
+                                listType: MultiSelectListType.CHIP,
+                                onConfirm: (values) {
+                                  _selectedCategories = values;
+                                },
+                              ),
+                            ));
+                      }),
+                  const SizedBox(height: 16),
+                  EasyWalletTextField(
+                      controller: _notesController,
+                      placeholder: Intl.message('notes'),
+                      maxLines: 5,
+                      isDarkMode: isDarkMode),
                 ],
               ),
             ),
@@ -321,6 +334,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         notes: notes,
         url: url,
         rememberCycle: _selectedRememberCycle,
+        paymentMethode: _selectedPayMethode,
         timestamp: DateTime.now(),
         isPaused: false,
         isPinned: false,

@@ -427,12 +427,54 @@ class S {
 
   /// `Monthly`
   String get monthly {
-    return Intl.message('Monthly', name: 'monthly', desc: '', args: []);
+    return Intl.message('Monthly', name: 'monthly',desc: '', args: []);
   }
 
   /// `Yearly`
   String get yearly {
     return Intl.message('Yearly', name: 'yearly', desc: '', args: []);
+  }
+
+  /// `Payment Methode`
+  String get paymentMethode {
+    return Intl.message(
+      'Payment Methode',
+      name: 'paymentMethode', desc: '', args: []);
+  }
+
+  /// `Payment Methods`
+  String get paymentMethods {
+    return Intl.message('Payment Methods', name: 'paymentMethods', desc: '', args: []);
+  }
+
+  /// `Creditcard`
+  String get creditCard {
+    return Intl.message('Creditcard', name: 'creditCard', desc: '', args: []);
+  }
+
+  /// `Paypal`
+  String get paypal {
+    return Intl.message('Paypal', name: 'paypal', desc: '', args: []);
+  }
+
+  /// `Sepa-Payment`
+  String get sepa {
+    return Intl.message('Sepa-Payment', name: 'sepa', desc: '', args: []);
+  }
+
+  /// `Apple Pay`
+  String get apple_pay {
+    return Intl.message('Apple Pay', name: 'apple_pay', desc: '', args: []);
+  }
+
+  /// `Google Pay`
+  String get google_pay {
+    return Intl.message('Google Pay', name: 'google_pay', desc: '', args: []);
+  }
+
+  /// `Invoice`
+  String get invoice {
+    return Intl.message('Invoice', name: 'invoice', desc: '', args: []);
   }
 
   /// `Pinned`
