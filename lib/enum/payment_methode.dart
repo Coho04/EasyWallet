@@ -1,16 +1,17 @@
 import 'package:easy_wallet/class/translatable_enum.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 
 enum PaymentMethode with TranslatableEnum {
-  creditCard(value: 'creditCard'),
-  paypal(value: 'paypal'),
-  sepa(value: 'sepa'),
-  applePay(value: 'apple_pay'),
-  googlePay(value: 'google_pay'),
-  invoice(value: 'invoice');
+  creditCard(value: 'creditCard', color: Colors.yellowAccent),
+  paypal(value: 'paypal', color: Colors.blue),
+  sepa(value: 'sepa', color: Colors.cyan),
+  applePay(value: 'apple_pay', color: Colors.grey),
+  googlePay(value: 'google_pay', color: Colors.greenAccent),
+  invoice(value: 'invoice', color: Colors.orange);
 
   const PaymentMethode({
     required this.value,
+    required this.color,
   });
 
   static PaymentMethode findByName(String name) {
@@ -25,4 +26,5 @@ enum PaymentMethode with TranslatableEnum {
 
   @override
   final String value;
+  final Color color;
 }

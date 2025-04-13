@@ -58,6 +58,7 @@
   "monthly": "Monatlich",
   "yearly": "Jährlich",
   "paymentMethode": "Bezahlmethode",
+  "paymentMethods": "Bezahlmethoden",
   "creditCard": "Kreditkarte",
   "paypal": "Paypal",
   "sepa": "Sepa-Lastschrift",

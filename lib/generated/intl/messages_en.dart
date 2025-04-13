@@ -203,6 +203,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "paused": MessageLookupByLibrary.simpleMessage("Paused"),
     "pausedVsActive": MessageLookupByLibrary.simpleMessage("Paused vs Active"),
     "paymentMethode": MessageLookupByLibrary.simpleMessage("Payment Methode"),
+    "paymentMethods": MessageLookupByLibrary.simpleMessage("Payment Methods"),
     "paymentRate": MessageLookupByLibrary.simpleMessage("Payment rate"),
     "paypal": MessageLookupByLibrary.simpleMessage("Paypal"),
     "pickAColor": MessageLookupByLibrary.simpleMessage("Pick a color"),

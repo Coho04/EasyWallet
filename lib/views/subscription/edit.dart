@@ -199,12 +199,6 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                     isDarkMode: isDarkMode,
                   ),
                   const SizedBox(height: 16),
-                  EasyWalletTextField(
-                      controller: _notesController,
-                      placeholder: Intl.message('notes'),
-                      maxLines: 5,
-                      isDarkMode: isDarkMode),
-                  const SizedBox(height: 16),
                   Text(
                     Intl.message('categories'),
                     style: TextStyle(
@@ -215,15 +209,21 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                   ),
                   Consumer<CategoryProvider>(
                       builder: (context, categoryProvider, child) {
-                    return Material(
-                        color:
+                        return Material(
+                            color:
                             CupertinoTheme.of(context).scaffoldBackgroundColor,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: buildMultiSelectDialogField(
-                              categoryProvider.categories),
-                        ));
-                  }),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: buildMultiSelectDialogField(
+                                  categoryProvider.categories),
+                            ));
+                      }),
+                  const SizedBox(height: 16),
+                  EasyWalletTextField(
+                      controller: _notesController,
+                      placeholder: Intl.message('notes'),
+                      maxLines: 5,
+                      isDarkMode: isDarkMode),
                 ],
               ),
             ),

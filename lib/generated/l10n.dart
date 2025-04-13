@@ -445,6 +445,16 @@ class S {
     );
   }
 
+  /// `Payment Methods`
+  String get paymentMethods {
+    return Intl.message(
+      'Payment Methods',
+      name: 'paymentMethods',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Creditcard`
   String get creditCard {
     return Intl.message('Creditcard', name: 'creditCard', desc: '', args: []);

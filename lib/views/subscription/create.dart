@@ -142,12 +142,6 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                     isDarkMode: isDarkMode,
                   ),
                   const SizedBox(height: 16),
-                  EasyWalletTextField(
-                      controller: _notesController,
-                      placeholder: Intl.message('notes'),
-                      maxLines: 5,
-                      isDarkMode: isDarkMode),
-                  const SizedBox(height: 16),
                   Text(
                     Intl.message('categories'),
                     style: TextStyle(
@@ -158,55 +152,61 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                   ),
                   Consumer<CategoryProvider>(
                       builder: (context, categoryProvider, child) {
-                    var categories = categoryProvider.categories;
-                    return Material(
-                        color: isDarkMode
-                            ? CupertinoColors.black
-                            : CupertinoColors.systemGrey6,
-                        child: Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: MultiSelectDialogField(
-                        backgroundColor: isDarkMode
-                            ? CupertinoColors.darkBackgroundGray
-                            : CupertinoColors.systemGrey6,
-                        decoration: BoxDecoration(
-                          color: isDarkMode
-                              ? CupertinoColors.darkBackgroundGray
-                              : CupertinoColors.systemGrey6,
-                          borderRadius: BorderRadius.circular(8.0),
-                          border: Border.all(
-                              color: isDarkMode
-                                  ? CupertinoColors.systemGrey
-                                  : CupertinoColors.systemGrey4),
-                        ),
-                        selectedColor: CupertinoColors.activeBlue,
-                        searchable: true,
-                        separateSelectedItems: true,
-                        selectedItemsTextStyle: TextStyle(
-                          color: CupertinoColors.white
-                        ),
-                        buttonText: Text(Intl.message('select'), style: TextStyle(
-                          color: isDarkMode
-                              ? CupertinoColors.systemGrey
-                              : CupertinoColors.systemGrey4
-                        )),
-                        title: Text(Intl.message('categories'), style: TextStyle(
-                          color: CupertinoColors.systemBlue
-                        )),
-                        checkColor: CupertinoColors.white,
-                        cancelText: Text(Intl.message('cancel')),
-                        closeSearchIcon: const Icon(CupertinoIcons.clear),
-                        confirmText: Text(Intl.message('confirm')),
-                        items: categories
-                            .map((e) => MultiSelectItem(e, e.title))
-                            .toList(),
-                        listType: MultiSelectListType.CHIP,
-                        onConfirm: (values) {
-                          _selectedCategories = values;
-                        },
-                      ),
-                    ));
-                  }),
+                        var categories = categoryProvider.categories;
+                        return Material(
+                            color: isDarkMode
+                                ? CupertinoColors.black
+                                : CupertinoColors.systemGrey6,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: MultiSelectDialogField(
+                                backgroundColor: isDarkMode
+                                    ? CupertinoColors.darkBackgroundGray
+                                    : CupertinoColors.systemGrey6,
+                                decoration: BoxDecoration(
+                                  color: isDarkMode
+                                      ? CupertinoColors.darkBackgroundGray
+                                      : CupertinoColors.systemGrey6,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  border: Border.all(
+                                      color: isDarkMode
+                                          ? CupertinoColors.systemGrey
+                                          : CupertinoColors.systemGrey4),
+                                ),
+                                selectedColor: CupertinoColors.activeBlue,
+                                searchable: true,
+                                separateSelectedItems: true,
+                                selectedItemsTextStyle: TextStyle(
+                                    color: CupertinoColors.white
+                                ),
+                                buttonText: Text(Intl.message('select'), style: TextStyle(
+                                    color: isDarkMode
+                                        ? CupertinoColors.systemGrey
+                                        : CupertinoColors.systemGrey4
+                                )),
+                                title: Text(Intl.message('categories'), style: TextStyle(
+                                    color: CupertinoColors.systemBlue
+                                )),
+                                checkColor: CupertinoColors.white,
+                                cancelText: Text(Intl.message('cancel')),
+                                closeSearchIcon: const Icon(CupertinoIcons.clear),
+                                confirmText: Text(Intl.message('confirm')),
+                                items: categories
+                                    .map((e) => MultiSelectItem(e, e.title))
+                                    .toList(),
+                                listType: MultiSelectListType.CHIP,
+                                onConfirm: (values) {
+                                  _selectedCategories = values;
+                                },
+                              ),
+                            ));
+                      }),
+                  const SizedBox(height: 16),
+                  EasyWalletTextField(
+                      controller: _notesController,
+                      placeholder: Intl.message('notes'),
+                      maxLines: 5,
+                      isDarkMode: isDarkMode),
                 ],
               ),
             ),
