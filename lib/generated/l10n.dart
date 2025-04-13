@@ -427,7 +427,7 @@ class S {
 
   /// `Monthly`
   String get monthly {
-    return Intl.message('Monthly', name: 'monthly',desc: '', args: []);
+    return Intl.message('Monthly', name: 'monthly', desc: '', args: []);
   }
 
   /// `Yearly`
@@ -439,12 +439,20 @@ class S {
   String get paymentMethode {
     return Intl.message(
       'Payment Methode',
-      name: 'paymentMethode', desc: '', args: []);
+      name: 'paymentMethode',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Payment Methods`
   String get paymentMethods {
-    return Intl.message('Payment Methods', name: 'paymentMethods', desc: '', args: []);
+    return Intl.message(
+      'Payment Methods',
+      name: 'paymentMethods',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Creditcard`
