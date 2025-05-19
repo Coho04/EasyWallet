@@ -38,7 +38,7 @@ dependencies:
       url: https://github.com/fluttercommunity/flutter_workmanager.git
       path: workmanager
       ref: main
-  flutter_local_notifications: ^19.2.0
+  flutter_local_notifications: ^19.2.1
   intl: ^0.19.0
   cached_network_image: ^3.4.1
   fl_chart: ^1.0.0
