@@ -19,7 +19,7 @@ class Category {
     return {
       'id': id,
       'title': title,
-      'color': color.value,
+      'color': color.toARGB32(),
     };
   }
 

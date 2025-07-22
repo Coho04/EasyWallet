@@ -131,8 +131,7 @@ class BackgroundFetchManager {
             notifyDate = nextBillDate.subtract(const Duration(days: 7));
             break;
           case RememberCycle.sameDay:
-          default:
-            break;
+          break;
         }
 
         if (notifyDate.isBefore(now) || notifyDate.isAtSameMomentAs(now)) {
