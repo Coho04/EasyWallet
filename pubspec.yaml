@@ -41,7 +41,7 @@ dependencies:
   flutter_local_notifications: ^19.5.0
   intl: ^0.20.2
   cached_network_image: ^3.4.1
-  fl_chart: ^1.0.0
+  fl_chart: ^1.1.1
   timezone: ^0.10.1
   shared_preferences: ^2.5.3
   syncfusion_flutter_charts: ^31.2.16
