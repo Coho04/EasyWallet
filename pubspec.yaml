@@ -48,7 +48,7 @@ dependencies:
   url_launcher: ^6.3.2
   permission_handler: ^12.0.1
   path: ^1.9.1
-  sentry_flutter: ^9.5.0
+  sentry_flutter: ^9.8.0
   http: ^1.4.0
   icloud_storage: ^2.2.0
   image: ^4.5.4
