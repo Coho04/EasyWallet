@@ -433,42 +433,42 @@ packages:
     dependency: "direct main"
     description:
       name: google_sign_in
-      sha256: "521031b65853b4409b8213c0387d57edaad7e2a949ce6dea0d8b2afc9cb29763"
+      sha256: d0a2c3bcb06e607bb11e4daca48bd4b6120f0bbc4015ccebbe757d24ea60ed2a
       url: "https://pub.dev"
     source: hosted
-    version: "7.2.0"
+    version: "6.3.0"
   google_sign_in_android:
     dependency: transitive
     description:
       name: google_sign_in_android
-      sha256: "5ec98ab35387c68c0050495bb211bd88375873723a80fae7c2e9266ea0bdd8bb"
+      sha256: d5e23c56a4b84b6427552f1cf3f98f716db3b1d1a647f16b96dbb5b93afa2805
       url: "https://pub.dev"
     source: hosted
-    version: "7.2.7"
+    version: "6.2.1"
   google_sign_in_ios:
     dependency: transitive
     description:
       name: google_sign_in_ios
-      sha256: aee8bb29484611a37607849175a2009d423de6bd7c129326c69fd7068f0b6ed7
+      sha256: "102005f498ce18442e7158f6791033bbc15ad2dcc0afa4cf4752e2722a516c96"
       url: "https://pub.dev"
     source: hosted
-    version: "6.2.4"
+    version: "5.9.0"
   google_sign_in_platform_interface:
     dependency: transitive
     description:
       name: google_sign_in_platform_interface
-      sha256: "7f59208c42b415a3cca203571128d6f84f885fead2d5b53eb65a9e27f2965bb5"
+      sha256: "5f6f79cf139c197261adb6ac024577518ae48fdff8e53205c5373b5f6430a8aa"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.0"
+    version: "2.5.0"
   google_sign_in_web:
     dependency: transitive
     description:
       name: google_sign_in_web
-      sha256: "2fc1f941e6443b2d6984f4056a727a3eaeab15d8ee99ba7125d79029be75a1da"
+      sha256: "460547beb4962b7623ac0fb8122d6b8268c951cf0b646dd150d60498430e4ded"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "0.12.4+4"
   googleapis:
     dependency: "direct main"
     description:
@@ -1303,34 +1303,34 @@ packages:
     description:
       path: workmanager
       ref: main
-      resolved-ref: b45313bdcad1120b44b7f6e0dc772b101b8df68f
+      resolved-ref: "7f4f870d593f858b0f55bd344c9863a6099cb30f"
       url: "https://github.com/fluttercommunity/flutter_workmanager.git"
     source: git
-    version: "0.8.0"
+    version: "0.9.0+3"
   workmanager_android:
     dependency: transitive
     description:
       name: workmanager_android
-      sha256: a6447816c41aa0ad8f6fa29b62d09a528891cf0737296397e1caae2523ced7dc
+      sha256: "9ae744db4ef891f5fcd2fb8671fccc712f4f96489a487a1411e0c8675e5e8cb7"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.0"
+    version: "0.9.0+2"
   workmanager_apple:
     dependency: transitive
     description:
       name: workmanager_apple
-      sha256: "9c99003682a8423bdc122ff4bae891e24574d1e676ea302d2ef0493266228461"
+      sha256: "1cc12ae3cbf5535e72f7ba4fde0c12dd11b757caf493a28e22d684052701f2ca"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.0"
+    version: "0.9.1+2"
   workmanager_platform_interface:
     dependency: transitive
     description:
       name: workmanager_platform_interface
-      sha256: b1f0a868f1117511a23b0eb4220f08134152433b51a83eed479b1d68bbe23789
+      sha256: f40422f10b970c67abb84230b44da22b075147637532ac501729256fcea10a47
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.0"
+    version: "0.9.1+1"
   xdg_directories:
     dependency: transitive
     description:
