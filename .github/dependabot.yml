@@ -12,8 +12,6 @@ updates:
       interval: "daily"
     assignees:
       - "Coho04"
-    reviewers:
-      - "Coho04"
     labels:
       - "dependencies"
 
@@ -22,8 +20,6 @@ updates:
     schedule:
       interval: "daily"
     assignees:
-      - "Coho04"
-    reviewers:
       - "Coho04"
     labels:
       - "dependencies"
@@ -34,8 +30,6 @@ updates:
       interval: "daily"
     assignees:
       - "Coho04"
-    reviewers:
-      - "Coho04"
     labels:
       - "dependencies"
 
@@ -44,8 +38,6 @@ updates:
     schedule:
       interval: "daily"
     assignees:
-      - "Coho04"
-    reviewers:
       - "Coho04"
     labels:
       - "dependencies"

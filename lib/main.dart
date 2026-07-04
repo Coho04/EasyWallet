@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,6 +30,11 @@ void initializeSentry() async {
       options.profilesSampleRate = 1.0;
     },
     appRunner: () async {
+      await GoogleSignIn.instance.initialize(
+        clientId: defaultTargetPlatform == TargetPlatform.iOS
+            ? '1080526043884-uvf1g98assgkb6et168nlt9bv226afro.apps.googleusercontent.com'
+            : '1080526043884-b1ectocrn53qqil0dihs6sr86s0qndeo.apps.googleusercontent.com',
+      );
       runApp(
         MultiProvider(
           providers: [
@@ -97,11 +103,7 @@ Future<bool> authenticateWithBiometrics() async {
     final bool didAuthenticate = await auth.authenticate(
       localizedReason:
           Intl.message('pleaseAuthenticateYourselfToViewYourSubscriptions'),
-      options: const AuthenticationOptions(
-        biometricOnly: true,
-        useErrorDialogs: true,
-        stickyAuth: true,
-      ),
+      biometricOnly: true,
     );
     return didAuthenticate;
   } on PlatformException {

@@ -133,11 +133,7 @@ class EasyWalletAppState extends State<EasyWalletApp>
       final bool didAuthenticate = await auth.authenticate(
         localizedReason:
             Intl.message('pleaseAuthenticateYourselfToViewYourSubscriptions'),
-        options: const AuthenticationOptions(
-          biometricOnly: true,
-          useErrorDialogs: true,
-          stickyAuth: true,
-        ),
+        biometricOnly: true,
       );
       return didAuthenticate;
     } on PlatformException {

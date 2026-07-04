@@ -14,28 +14,22 @@ import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:easy_wallet/model/category.dart' as category;
 
 class GoogleDrive extends Cloud {
-  final GoogleSignIn googleSignIn = GoogleSignIn(
-    scopes: [
-      'https://www.googleapis.com/auth/drive.appdata',
-      'https://www.googleapis.com/auth/drive.file',
-      'https://www.googleapis.com/auth/drive'
-    ],
-    signInOption: SignInOption.standard,
-    clientId: defaultTargetPlatform == TargetPlatform.iOS
-        ? '1080526043884-uvf1g98assgkb6et168nlt9bv226afro.apps.googleusercontent.com'
-        : '1080526043884-b1ectocrn53qqil0dihs6sr86s0qndeo.apps.googleusercontent.com',
-  );
+  static const _scopes = [
+    'https://www.googleapis.com/auth/drive.appdata',
+    'https://www.googleapis.com/auth/drive.file',
+    'https://www.googleapis.com/auth/drive',
+  ];
 
   GoogleDrive({required super.database});
 
   Future<void> syncTo(List<Subscription> subscriptions, List<category.Category> categories) async {
-    final GoogleSignInAccount? account = await googleSignIn.signInSilently();
+    final GoogleSignInAccount? account = await GoogleSignIn.instance.attemptLightweightAuthentication();
     if (account == null) {
       debugPrint('Google Drive login failed');
       return;
     }
 
-    final authHeaders = await account.authHeaders;
+    final authHeaders = await account.authorizationClient.authorizationHeaders(_scopes, promptIfNecessary: true) ?? {};
     final authenticateClient = AuthClient(authHeaders, http.Client());
     final driveApi = drive.DriveApi(authenticateClient);
     const folderName = 'EasyWallet';
@@ -88,12 +82,12 @@ class GoogleDrive extends Cloud {
 
   Future<void> syncFrom() async {
     try {
-      final GoogleSignInAccount? account = await googleSignIn.signInSilently();
+      final GoogleSignInAccount? account = await GoogleSignIn.instance.attemptLightweightAuthentication();
       if (account == null) {
         debugPrint('Google Drive login failed');
         return;
       }
-      final authHeaders = await account.authHeaders;
+      final authHeaders = await account.authorizationClient.authorizationHeaders(_scopes, promptIfNecessary: true) ?? {};
       final authenticateClient = AuthClient(authHeaders, http.Client());
       final driveApi = drive.DriveApi(authenticateClient);
 

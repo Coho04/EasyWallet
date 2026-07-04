@@ -7,6 +7,7 @@ import 'package:easy_wallet/views/components/card_section_component.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -85,11 +86,7 @@ class SettingsViewState extends State<SettingsView> {
       final bool authenticated = await auth.authenticate(
         localizedReason:
             Intl.message('pleaseAuthenticateYourselfToChangeThisSetting'),
-        options: const AuthenticationOptions(
-          biometricOnly: true,
-          useErrorDialogs: true,
-          stickyAuth: true,
-        ),
+        biometricOnly: true,
       );
       return authenticated;
     } on PlatformException {
@@ -547,26 +544,18 @@ class SettingsViewState extends State<SettingsView> {
     var googleCloud = await PersistenceController.instance.googleDrive;
     if (enable) {
       try {
-        final account = await googleCloud.googleSignIn.signIn();
-        if (account != null) {
-          if (await googleCloud.googleSignIn.isSignedIn()) {
-            PersistenceController.instance.syncWithCloud();
-            displayMessage(
-                title: Intl.message("successfully"),
-                message: Intl.message("googleDriveLoginSuccess"));
-          } else {
-            displayMessage(
-                title: Intl.message("error"),
-                message: Intl.message('googleDriveLoginFailed'));
-          }
-        }
+        await GoogleSignIn.instance.authenticate();
+        PersistenceController.instance.syncWithCloud();
+        displayMessage(
+            title: Intl.message("successfully"),
+            message: Intl.message("googleDriveLoginSuccess"));
       } catch (error) {
         displayMessage(
             title: Intl.message("error"),
             message: Intl.message("googleDriveLoginFailed"));
       }
     } else {
-      await googleCloud.googleSignIn.signOut();
+      await GoogleSignIn.instance.signOut();
       displayMessage(
           title: Intl.message("successfully"),
           message: Intl.message("googleDriveLogoutSuccess"));

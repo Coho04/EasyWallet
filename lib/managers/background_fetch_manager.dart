@@ -43,7 +43,7 @@ class BackgroundFetchManager {
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings);
     tz.initializeTimeZones();
   }
 
@@ -215,10 +215,10 @@ class BackgroundFetchManager {
 
     try {
       await flutterLocalNotificationsPlugin.show(
-        id,
-        title,
-        body,
-        platformChannelSpecifics,
+        id: id,
+        title: title,
+        body: body,
+        notificationDetails: platformChannelSpecifics,
         payload: 'item x',
       );
     } catch (e) {
