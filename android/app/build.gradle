@@ -61,7 +61,7 @@ android {
 configurations.all {
     resolutionStrategy.eachDependency { DependencyResolveDetails details ->
         if (details.requested.group == 'org.jetbrains.kotlin' && details.requested.name.contains('kotlin')) {
-            details.useVersion '2.0.21'
+            details.useVersion '2.1.20'
         }
     }
 }
