@@ -187,7 +187,7 @@ class SubscriptionHeader extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           _budgetExceeded
-              ? '€ ${(monthlySpent - budgetLimit!).toStringAsFixed(2)} über'
+              ? '$currencySymbol ${(monthlySpent - budgetLimit!).toStringAsFixed(2)} über'
               : '${(100 * _budgetProgress).toStringAsFixed(0)}%',
           style: const TextStyle(fontSize: 10, color: Color(0x72FFFFFF)),
         ),
