@@ -26,4 +26,10 @@ brew install cocoapods
 # Install CocoaPods dependencies.
 cd ios && pod install # run `pod install` in the `ios` directory.
 
+# Resolve Swift Package Manager dependencies before Xcode Cloud archives.
+xcodebuild -workspace Runner.xcworkspace \
+  -scheme Runner \
+  -resolvePackageDependencies \
+  -derivedDataPath /tmp/DerivedData
+
 exit 0
