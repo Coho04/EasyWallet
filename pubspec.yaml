@@ -44,7 +44,7 @@ dependencies:
   fl_chart: ^1.0.0
   timezone: ^0.11.1
   shared_preferences: ^2.5.3
-  syncfusion_flutter_charts: ^33.2.15
+  syncfusion_flutter_charts: ^34.1.29
   url_launcher: ^6.3.2
   permission_handler: ^12.0.1
   path: ^1.9.1
