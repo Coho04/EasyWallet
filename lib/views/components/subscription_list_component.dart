@@ -2,7 +2,6 @@ import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/model/category.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:intl/intl.dart';
@@ -185,7 +184,11 @@ class SubscriptionListComponentState
                                   Text(
                                     isPaused
                                         ? 'Pausiert'
-                                        : '${DateFormat.MMMd('de').format(sub.getNextBillDate())} · ${_cycleLabel()}',
+                                        : () {
+                                            final label = _cycleLabel();
+                                            final dateStr = DateFormat.MMMd('de').format(sub.getNextBillDate());
+                                            return label.isEmpty ? dateStr : '$dateStr · $label';
+                                          }(),
                                     style: TextStyle(
                                       fontSize: 10,
                                       color: isPaused
@@ -247,7 +250,10 @@ class SubscriptionListComponentState
               ),
               if (widget.displayCategories && _categories != null && _categories!.isNotEmpty)
                 _buildCategories(),
-              const Divider(height: 0.5, thickness: 0.5),
+              Container(
+                height: 0.5,
+                color: CupertinoColors.separator.resolveFrom(context),
+              ),
             ],
           ),
         ),
@@ -266,13 +272,20 @@ class SubscriptionListComponentState
         child: Wrap(
           spacing: 6,
           children: _categories!
-              .map((cat) => Chip(
-                    label: Text(cat.title,
-                        style: const TextStyle(
-                            color: CupertinoColors.white, fontSize: 11)),
-                    padding: EdgeInsets.zero,
-                    backgroundColor: cat.color,
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              .map((cat) => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: cat.color,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      cat.title,
+                      style: const TextStyle(
+                        color: CupertinoColors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ))
               .toList(),
         ),
