@@ -28,27 +28,14 @@ class UpcomingStrip extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(14, 6, 14, 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'NÄCHSTE 7 TAGE',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                    color: CupertinoColors.label,
-                  ),
-                ),
-                CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {},
-                  child: const Text(
-                    'Alle →',
-                    style: TextStyle(fontSize: 12, color: CupertinoColors.activeBlue),
-                  ),
-                ),
-              ],
+            child: const Text(
+              'NÄCHSTE 7 TAGE',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+                color: CupertinoColors.label,
+              ),
             ),
           ),
           SizedBox(

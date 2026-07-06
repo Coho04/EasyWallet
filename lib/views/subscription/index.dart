@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:easy_wallet/easy_wallet_app.dart';
-import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/sort_option.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/persistence_controller.dart';
@@ -70,6 +69,9 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
   }
 
   Future<Color> _accentColor(Subscription sub) {
+    if (sub.url == null || sub.url!.isEmpty) {
+      return Future.value(CupertinoColors.activeBlue);
+    }
     final key = sub.getFaviconUrl();
     return _futureCache.putIfAbsent(
       key,
@@ -109,27 +111,29 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
 
   double _calcMonthly(List<Subscription> subs) {
     final now = DateTime.now();
-    return subs.where((s) {
-      if (s.isPaused) return false;
-      final next = s.getNextBillDate();
-      return next.month == now.month && next.year == now.year;
-    }).fold(0.0, (sum, s) => sum + s.amount);
-  }
-
-  double _calcYearly(List<Subscription> subs) {
-    final now = DateTime.now();
-    final endOfYear = DateTime(now.year, 12, 31);
     double total = 0.0;
     for (final s in subs) {
       if (s.isPaused) continue;
-      DateTime next = s.getNextBillDate();
-      if (s.repeatPattern == PaymentRate.yearly.value) {
-        if (next.year == now.year) total += s.amount;
-      } else if (s.repeatPattern == PaymentRate.monthly.value) {
-        while (next.isBefore(endOfYear.add(const Duration(days: 1)))) {
+      if (s.repeatPattern == 'monthly') {
+        total += s.amount;
+      } else if (s.repeatPattern == 'yearly') {
+        // yearly sub bills in the same calendar month each year
+        if (s.date != null && s.date!.month == now.month) {
           total += s.amount;
-          next = DateTime(next.year, next.month + 1, next.day);
         }
+      }
+    }
+    return total;
+  }
+
+  double _calcYearly(List<Subscription> subs) {
+    double total = 0.0;
+    for (final s in subs) {
+      if (s.isPaused) continue;
+      if (s.repeatPattern == 'monthly') {
+        total += s.amount * 12;
+      } else if (s.repeatPattern == 'yearly') {
+        total += s.amount;
       }
     }
     return total;
