@@ -1,186 +1,282 @@
 import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/model/category.dart';
-import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:easy_wallet/model/subscription.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:easy_wallet/model/subscription.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SubscriptionListComponent extends StatefulWidget {
+  const SubscriptionListComponent({
+    super.key,
+    required this.subscription,
+    required this.currency,
+    required this.displayCategories,
+    this.accentColor,
+    required this.onTogglePin,
+    required this.onTogglePause,
+    required this.onDelete,
+  });
+
   final Subscription subscription;
   final Currency currency;
-
-  const SubscriptionListComponent(
-      {super.key, required this.subscription, required this.currency});
+  final bool displayCategories;
+  final Color? accentColor;
+  final VoidCallback onTogglePin;
+  final VoidCallback onTogglePause;
+  final VoidCallback onDelete;
 
   @override
   SubscriptionListComponentState createState() =>
       SubscriptionListComponentState();
 }
 
-class SubscriptionListComponentState extends State<SubscriptionListComponent> {
-  bool? displayCategories;
-  List<Category>? categories;
+class SubscriptionListComponentState
+    extends State<SubscriptionListComponent> {
+  List<Category>? _categories;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    if (widget.displayCategories) _loadCategories();
   }
 
-  Future<void> _loadData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    displayCategories = prefs.getBool('displayCategories') ?? true;
-
-    if (displayCategories!) {
-      bool hasCategories = await widget.subscription.hasCategories();
-      if (hasCategories) {
-        categories = await widget.subscription.categories;
-      }
+  Future<void> _loadCategories() async {
+    final has = await widget.subscription.hasCategories();
+    if (has) {
+      final cats = await widget.subscription.categories;
+      if (mounted) setState(() => _categories = cats);
     }
-    setState(() {});
+  }
+
+  Color _badgeColor(int days) {
+    if (days <= 2) return const Color(0xFFFF3B30);
+    if (days <= 13) return const Color(0xFFFF9500);
+    return const Color(0xFF30D158);
+  }
+
+  String _cycleLabel() {
+    final pattern = widget.subscription.repeatPattern;
+    if (pattern == 'yearly') return 'jährlich';
+    if (pattern == 'monthly') return 'monatlich';
+    return '';
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode =
-        MediaQuery
-            .of(context)
-            .platformBrightness == Brightness.dark;
+    final sub = widget.subscription;
+    final isPaused = sub.isPaused;
+    final days = sub.remainingDays();
+    final accent = widget.accentColor ?? CupertinoColors.activeBlue;
+    final isDark =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
+    return Slidable(
+      key: ValueKey(sub.id),
+      startActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.25,
+        children: [
+          SlidableAction(
+            onPressed: (_) => widget.onTogglePin(),
+            backgroundColor: CupertinoColors.activeBlue,
+            foregroundColor: CupertinoColors.white,
+            icon: sub.isPinned ? CupertinoIcons.pin_slash : CupertinoIcons.pin_fill,
+            label: sub.isPinned ? 'Unpin' : 'Pin',
+            borderRadius: BorderRadius.zero,
+          ),
+        ],
+      ),
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.50,
+        children: [
+          SlidableAction(
+            onPressed: (_) => widget.onTogglePause(),
+            backgroundColor: const Color(0xFFFF9500),
+            foregroundColor: CupertinoColors.white,
+            icon: sub.isPaused
+                ? CupertinoIcons.play_arrow_solid
+                : CupertinoIcons.pause_fill,
+            label: sub.isPaused ? 'Weiter' : 'Pause',
+            borderRadius: BorderRadius.zero,
+          ),
+          SlidableAction(
+            onPressed: (_) => widget.onDelete(),
+            backgroundColor: CupertinoColors.destructiveRed,
+            foregroundColor: CupertinoColors.white,
+            icon: CupertinoIcons.delete,
+            label: 'Löschen',
+            borderRadius: BorderRadius.zero,
+          ),
+        ],
+      ),
+      child: GestureDetector(
+        onTap: () => Navigator.push(
           context,
           CupertinoPageRoute(
-            builder: (context) =>
-                SubscriptionShowView(
-                  subscription: widget.subscription,
-                ),
+            builder: (_) => SubscriptionShowView(subscription: sub),
           ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        decoration: BoxDecoration(
-            border: const Border(
-              bottom: BorderSide(color: CupertinoColors.separator),
-            ),
-            color: widget.subscription.isPaused
-                ? (isDarkMode
-                ? Colors.grey.withOpacity(0.5)
-                : CupertinoColors.systemGrey5)
-                : (CupertinoTheme
-                .of(context)
-                .barBackgroundColor)
         ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                widget.subscription.buildImage(),
-                const SizedBox(width: 16.0),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: AutoText(
-                              text: widget.subscription.title,
-                              maxLines: 3,
-                              softWrap: true,
-                              color: isDarkMode
-                                  ? CupertinoColors.white
-                                  : CupertinoColors.black,
-                              bold: true,
+        child: Container(
+          color: isPaused
+              ? (isDark
+                  ? const Color(0xFF2C2C2E)
+                  : const Color(0xFFF9F9F9))
+              : (isDark
+                  ? const Color(0xFF1C1C1E)
+                  : CupertinoColors.white),
+          child: Column(
+            children: [
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Accent bar
+                    Container(
+                      width: 3,
+                      decoration: BoxDecoration(
+                        color: isPaused
+                            ? const Color(0xFFD1D1D6)
+                            : accent,
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(2),
+                          bottomRight: Radius.circular(2),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(11, 10, 14, 10),
+                        child: Row(
+                          children: [
+                            sub.buildImage(width: 36, height: 36, borderRadius: 9),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          sub.title,
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: isPaused
+                                                ? const Color(0xFFAEAEB2)
+                                                : CupertinoColors.label
+                                                    .resolveFrom(context),
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      if (sub.isPinned)
+                                        const Icon(
+                                          CupertinoIcons.pin_fill,
+                                          size: 10,
+                                          color: Color(0xFFC7C7CC),
+                                        ),
+                                    ],
+                                  ),
+                                  Text(
+                                    isPaused
+                                        ? 'Pausiert'
+                                        : '${DateFormat.MMMd('de').format(sub.getNextBillDate())} · ${_cycleLabel()}',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: isPaused
+                                          ? const Color(0xFFC7C7CC)
+                                          : CupertinoColors.secondaryLabel
+                                              .resolveFrom(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          if (widget.subscription.isPinned)
-                            const Icon(
-                              CupertinoIcons.pin_fill,
-                              color: CupertinoColors.systemGrey,
+                            const SizedBox(width: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  sub.displayConvertedPrice(widget.currency),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: isPaused
+                                        ? const Color(0xFFAEAEB2)
+                                        : CupertinoColors.label
+                                            .resolveFrom(context),
+                                  ),
+                                ),
+                                if (!isPaused)
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: _badgeColor(days),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      '$days T',
+                                      style: const TextStyle(
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w700,
+                                        color: CupertinoColors.white,
+                                      ),
+                                    ),
+                                  )
+                                else
+                                  const Text(
+                                    '⏸',
+                                    style: TextStyle(fontSize: 11),
+                                  ),
+                              ],
                             ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      AutoText(
-                        text:
-                        '${widget.subscription.remainingDays()} ${Intl.message(
-                            'D')}',
-                        color: isDarkMode
-                            ? CupertinoColors.systemGrey2
-                            : CupertinoColors.systemGrey,
-                      ),
-                      AutoText(
-                        text: widget.subscription
-                            .displayConvertedPrice(widget.currency),
-                        color: isDarkMode
-                            ? CupertinoColors.systemGrey2
-                            : CupertinoColors.systemGrey,
-                      ),
-                    ],
-                  ),
-                ),
-                CupertinoButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (context) =>
-                            SubscriptionShowView(
-                                subscription: widget.subscription
-                            ),
-                      ),
-                    );
-                  },
-                  child: const Icon(
-                    CupertinoIcons.right_chevron,
-                    color: CupertinoColors.systemGrey,
-                  ),
-                ),
-              ],
-            ),
-            displayCategories ?? false ? buildCategories() : const SizedBox()
-          ],
+              ),
+              if (widget.displayCategories && _categories != null && _categories!.isNotEmpty)
+                _buildCategories(),
+              const Divider(height: 0.5, thickness: 0.5),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget buildCategories() {
-    if (categories == null) return const SizedBox();
-    return Material(
-      color: CupertinoTheme
-          .of(context)
-          .barBackgroundColor,
-      child: SizedBox(
-        width: double.infinity,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Wrap(
-              spacing: 8.0,
-              children: categories!
-                  .map((category) =>
-                  Chip(
-                      label: Text(category.title,
-                          style: const TextStyle(
-                              color: CupertinoColors.white, fontSize: 12)),
-                      padding: const EdgeInsets.all(2),
-                backgroundColor: category.color,
-              ))
+  Widget _buildCategories() {
+    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    return Container(
+      color: isDark ? const Color(0xFF1C1C1E) : CupertinoColors.white,
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Wrap(
+          spacing: 6,
+          children: _categories!
+              .map((cat) => Chip(
+                    label: Text(cat.title,
+                        style: const TextStyle(
+                            color: CupertinoColors.white, fontSize: 11)),
+                    padding: EdgeInsets.zero,
+                    backgroundColor: cat.color,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ))
               .toList(),
         ),
       ),
-    ),);
+    );
   }
 }

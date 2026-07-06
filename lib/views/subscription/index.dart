@@ -27,6 +27,7 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
   String searchText = "";
   SortOption sortOption = SortOption.remainingDaysAscending;
   bool _isLoading = true;
+  bool _displayCategories = true;
 
   @override
   void initState() {
@@ -40,6 +41,9 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
       var cloud = await PersistenceController.instance.googleDrive;
       await cloud.syncFrom();
     }
+    setState(() {
+      _displayCategories = prefs.getBool('displayCategories') ?? true;
+    });
     try {
       await Provider.of<SubscriptionProvider>(context, listen: false)
           .loadSubscriptions();
@@ -52,6 +56,23 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _togglePin(Subscription sub) async {
+    sub.isPinned = !sub.isPinned;
+    await Provider.of<SubscriptionProvider>(context, listen: false)
+        .saveSubscription(sub);
+  }
+
+  Future<void> _togglePause(Subscription sub) async {
+    sub.isPaused = !sub.isPaused;
+    await Provider.of<SubscriptionProvider>(context, listen: false)
+        .saveSubscription(sub);
+  }
+
+  Future<void> _deleteSubscription(Subscription sub) async {
+    await Provider.of<SubscriptionProvider>(context, listen: false)
+        .deleteSubscription(sub);
   }
 
   List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
@@ -236,9 +257,14 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
                               padding: const EdgeInsets.only(bottom: 85.0),
                               itemCount: sortedSubscriptions.length,
                               itemBuilder: (context, index) {
+                                final sub = sortedSubscriptions[index];
                                 return SubscriptionListComponent(
                                   currency: currency,
-                                  subscription: sortedSubscriptions[index],
+                                  subscription: sub,
+                                  displayCategories: _displayCategories,
+                                  onTogglePin: () => _togglePin(sub),
+                                  onTogglePause: () => _togglePause(sub),
+                                  onDelete: () => _deleteSubscription(sub),
                                 );
                               },
                             ),
