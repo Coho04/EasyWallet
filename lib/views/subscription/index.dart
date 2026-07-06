@@ -1,20 +1,21 @@
+import 'dart:async';
+
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/sort_option.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/persistence_controller.dart';
 import 'package:easy_wallet/provider/category_provider.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
-import 'package:easy_wallet/views/components/auto_text.dart';
+import 'package:easy_wallet/views/components/subscription_header.dart';
 import 'package:easy_wallet/views/components/subscription_list_component.dart';
+import 'package:easy_wallet/views/components/upcoming_strip.dart';
 import 'package:easy_wallet/views/subscription/create.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../persistence_controller.dart';
 
 class SubscriptionIndexView extends StatefulWidget {
   const SubscriptionIndexView({super.key});
@@ -24,73 +25,67 @@ class SubscriptionIndexView extends StatefulWidget {
 }
 
 class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
-  String searchText = "";
-  SortOption sortOption = SortOption.remainingDaysAscending;
+  String _searchText = '';
+  SortOption _sortOption = SortOption.remainingDaysAscending;
   bool _isLoading = true;
   bool _displayCategories = true;
+  double _monthlyLimit = 0.0;
+  final Map<String, Color> _colorCache = {};
+  Timer? _debounce;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _loadAndSortSubscriptions(context);
+    _init();
   }
 
-  Future<void> _loadAndSortSubscriptions(context) async {
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _init() async {
     final prefs = await SharedPreferences.getInstance();
+    _displayCategories = prefs.getBool('displayCategories') ?? true;
+    _monthlyLimit = prefs.getDouble('monthlyLimit') ?? 0.0;
+
     if (prefs.getBool('syncWithGoogleDrive') ?? false) {
-      var cloud = await PersistenceController.instance.googleDrive;
+      final cloud = await PersistenceController.instance.googleDrive;
       await cloud.syncFrom();
     }
-    setState(() {
-      _displayCategories = prefs.getBool('displayCategories') ?? true;
-    });
-    try {
-      await Provider.of<SubscriptionProvider>(context, listen: false)
-          .loadSubscriptions();
-      await Provider.of<CurrencyProvider>(context, listen: false)
-          .loadCurrency();
-      await Provider.of<CategoryProvider>(context, listen: false)
-          .loadCategories();
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+
+    if (!mounted) return;
+    final subP = Provider.of<SubscriptionProvider>(context, listen: false);
+    final curP = Provider.of<CurrencyProvider>(context, listen: false);
+    final catP = Provider.of<CategoryProvider>(context, listen: false);
+    await subP.loadSubscriptions();
+    await curP.loadCurrency();
+    await catP.loadCategories();
+
+    setState(() => _isLoading = false);
   }
 
-  Future<void> _togglePin(Subscription sub) async {
-    sub.isPinned = !sub.isPinned;
-    await Provider.of<SubscriptionProvider>(context, listen: false)
-        .saveSubscription(sub);
+  Future<Color> _accentColor(Subscription sub) async {
+    final key = sub.getFaviconUrl();
+    if (_colorCache.containsKey(key)) return _colorCache[key]!;
+    final color = await sub.getDominantColorFromUrl(customUrl: key);
+    _colorCache[key] = color;
+    return color;
   }
 
-  Future<void> _togglePause(Subscription sub) async {
-    sub.isPaused = !sub.isPaused;
-    await Provider.of<SubscriptionProvider>(context, listen: false)
-        .saveSubscription(sub);
-  }
+  List<Subscription> _sorted(List<Subscription> subs) {
+    final filtered = subs.where((s) =>
+        s.title.toLowerCase().contains(_searchText.toLowerCase())).toList();
 
-  Future<void> _deleteSubscription(Subscription sub) async {
-    await Provider.of<SubscriptionProvider>(context, listen: false)
-        .deleteSubscription(sub);
-  }
-
-  List<Subscription> _sortSubscriptions(List<Subscription> subscriptions) {
-    List<Subscription> filteredSubscriptions =
-        subscriptions.where((subscription) {
-      return subscription.title
-          .toLowerCase()
-          .contains(searchText.toLowerCase());
-    }).toList();
-
-    filteredSubscriptions.sort((a, b) {
+    filtered.sort((a, b) {
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
-
       if (a.isPaused && !b.isPaused) return 1;
       if (!a.isPaused && b.isPaused) return -1;
-
-      switch (sortOption) {
+      switch (_sortOption) {
         case SortOption.alphabeticalAscending:
           return a.title.compareTo(b.title);
         case SortOption.alphabeticalDescending:
@@ -103,248 +98,247 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
           return a.remainingDays().compareTo(b.remainingDays());
         case SortOption.remainingDaysDescending:
           return b.remainingDays().compareTo(a.remainingDays());
-        default:
-          return 0;
       }
     });
-
-    return filteredSubscriptions;
+    return filtered;
   }
 
-  double calculateYearlySpent(List<Subscription> subscriptions) {
+  double _calcMonthly(List<Subscription> subs) {
     final now = DateTime.now();
-    final lastDayOfYear = DateTime(now.year, 12, 31);
-    double yearlySpent = 0.0;
+    return subs.where((s) {
+      if (s.isPaused) return false;
+      final next = s.getNextBillDate();
+      return next.month == now.month && next.year == now.year;
+    }).fold(0.0, (sum, s) => sum + s.amount);
+  }
 
-    for (var subscription in subscriptions) {
-      if (subscription.isPaused) continue;
-      DateTime nextBillDate = subscription.getNextBillDate();
-      if (subscription.repeatPattern == PaymentRate.yearly.value) {
-        if (nextBillDate.isBefore(lastDayOfYear.add(const Duration(days: 1))) &&
-            nextBillDate.year == now.year) {
-          yearlySpent += subscription.amount;
-        }
-      } else if (subscription.repeatPattern == PaymentRate.monthly.value) {
-        while (
-            nextBillDate.isBefore(lastDayOfYear.add(const Duration(days: 1)))) {
-          yearlySpent += subscription.amount;
-          nextBillDate = DateTime(
-              nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
+  double _calcYearly(List<Subscription> subs) {
+    final now = DateTime.now();
+    final endOfYear = DateTime(now.year, 12, 31);
+    double total = 0.0;
+    for (final s in subs) {
+      if (s.isPaused) continue;
+      DateTime next = s.getNextBillDate();
+      if (s.repeatPattern == PaymentRate.yearly.value) {
+        if (next.year == now.year) total += s.amount;
+      } else if (s.repeatPattern == PaymentRate.monthly.value) {
+        while (next.isBefore(endOfYear.add(const Duration(days: 1)))) {
+          total += s.amount;
+          next = DateTime(next.year, next.month + 1, next.day);
         }
       }
     }
-    return yearlySpent;
+    return total;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<SubscriptionProvider>(
-      builder: (context, subscriptionProvider, child) {
-        final subscriptions = subscriptionProvider.subscriptions;
-        final sortedSubscriptions = _sortSubscriptions(subscriptions);
-        double monthlySpent = sortedSubscriptions.where((subscription) {
-          if (subscription.isPaused) return false;
-          final now = DateTime.now();
-          DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
-          DateTime nextBillDate = subscription.getNextBillDate();
-          return nextBillDate.isBefore(lastDayOfMonth) &&
-              nextBillDate.month == now.month;
-        }).fold(0, (sum, subscription) => sum + subscription.amount);
-
-        return Consumer<CurrencyProvider>(
-            builder: (context, currencyProvider, child) {
-          final currency = currencyProvider.currency;
-          return CupertinoPageScaffold(
-            navigationBar: CupertinoNavigationBar(
-              middle: Column(
-                children: [
-                  SizedBox(
-                    height: 36,
-                    child: CupertinoSearchTextField(
-                      placeholder: Intl.message('search'),
-                      onChanged: (value) {
-                        setState(() {
-                          searchText = value;
-                          _sortSubscriptions(subscriptions);
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              leading: CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: () => _showSortOptions(context),
-                child: const Icon(CupertinoIcons.arrow_up_arrow_down,
-                    color: CupertinoColors.activeBlue),
-              ),
-              trailing: CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder: (context) => const SubscriptionCreateView(),
-                    ),
-                  ).then((value) {
-                    _loadAndSortSubscriptions(context);
-                  });
-                },
-                child: const Icon(CupertinoIcons.add,
-                    color: CupertinoColors.activeBlue),
-              ),
-            ),
-            child: Column(
-              children: <Widget>[
-                SizedBox(
-                  height: 100,
-                  child: Center(
-                    child: AutoText(
-                      text: Intl.message('subscriptions'),
-                      bold: true,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AutoText(
-                              text: Intl.message('outstandingExpenditureMonth'),
-                              color: CupertinoColors.systemGrey,
-                              maxLines: 2,
-                            ),
-                            AutoText(
-                              text:
-                                  '${monthlySpent.toStringAsFixed(2)} ${currency.symbol}',
-                              bold: true,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            AutoText(
-                              text: Intl.message('openExpenditureYear'),
-                              color: CupertinoColors.systemGrey,
-                              maxLines: 2,
-                            ),
-                            AutoText(
-                                text:
-                                    '${calculateYearlySpent(sortedSubscriptions).toStringAsFixed(2)} ${currency.symbol}',
-                                bold: true),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : sortedSubscriptions.isEmpty
-                          ? _buildEmptyState()
-                          : ListView.builder(
-                              padding: const EdgeInsets.only(bottom: 85.0),
-                              itemCount: sortedSubscriptions.length,
-                              itemBuilder: (context, index) {
-                                final sub = sortedSubscriptions[index];
-                                return SubscriptionListComponent(
-                                  currency: currency,
-                                  subscription: sub,
-                                  displayCategories: _displayCategories,
-                                  onTogglePin: () => _togglePin(sub),
-                                  onTogglePause: () => _togglePause(sub),
-                                  onDelete: () => _deleteSubscription(sub),
-                                );
-                              },
-                            ),
-                ),
-              ],
-            ),
-          );
-        });
-      },
-    );
+  void _onSearchChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 200), () {
+      setState(() => _searchText = value);
+    });
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AutoText(
-            text: Intl.message('noSubscriptionsAvailable'),
-            color: CupertinoColors.systemGrey,
+  void _togglePin(Subscription sub) {
+    sub.isPinned = !sub.isPinned;
+    Provider.of<SubscriptionProvider>(context, listen: false)
+        .saveSubscription(sub);
+  }
+
+  void _togglePause(Subscription sub) {
+    sub.isPaused = !sub.isPaused;
+    Provider.of<SubscriptionProvider>(context, listen: false)
+        .saveSubscription(sub);
+  }
+
+  void _delete(Subscription sub) {
+    showCupertinoDialog(
+      context: context,
+      builder: (ctx) => CupertinoAlertDialog(
+        title: const Text('Löschen?'),
+        content: Text('"${sub.title}" wird unwiderruflich gelöscht.'),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('Abbrechen'),
+            onPressed: () => Navigator.pop(ctx),
           ),
-          const SizedBox(height: 16),
-          CupertinoButton.filled(
+          CupertinoDialogAction(
+            isDestructiveAction: true,
             onPressed: () {
-              Navigator.push(
-                context,
-                CupertinoPageRoute(
-                  builder: (context) => const SubscriptionCreateView(),
-                ),
-              ).then((value) {
-                _loadAndSortSubscriptions(context);
-              });
+              Navigator.pop(ctx);
+              Provider.of<SubscriptionProvider>(context, listen: false)
+                  .deleteSubscription(sub);
             },
-            child: AutoText(
-              text: Intl.message('addNewSubscription'),
-              bold: true,
-              color: CupertinoColors.white,
-            ),
+            child: const Text('Löschen'),
           ),
         ],
       ),
     );
   }
 
-  void _showSortOptions(BuildContext context) {
+  void _showSortSheet() {
     showCupertinoModalPopup(
       context: context,
-      builder: (context) => CupertinoActionSheet(
+      builder: (ctx) => CupertinoActionSheet(
         title: Text(
           Intl.message('sortOptions'),
-          style: EasyWalletApp.responsiveTextStyle(context,
+          style: EasyWalletApp.responsiveTextStyle(ctx,
               color: CupertinoColors.systemGrey),
         ),
-        actions: <Widget>[
-          for (SortOption option in SortOption.values)
-            CupertinoActionSheetAction(
-              child: Text(
-                option.translate(),
-                style: EasyWalletApp.responsiveTextStyle(context,
-                    color: CupertinoColors.activeBlue),
-              ),
-              onPressed: () {
-                setState(() {
-                  sortOption = option;
-                  _sortSubscriptions(
-                      Provider.of<SubscriptionProvider>(context, listen: false)
-                          .subscriptions);
-                });
-                Navigator.pop(context);
-              },
-            ),
-        ],
+        actions: SortOption.values
+            .map((opt) => CupertinoActionSheetAction(
+                  onPressed: () {
+                    setState(() => _sortOption = opt);
+                    Navigator.pop(ctx);
+                  },
+                  child: Text(
+                    opt.translate(),
+                    style: EasyWalletApp.responsiveTextStyle(ctx,
+                        color: CupertinoColors.activeBlue),
+                  ),
+                ))
+            .toList(),
         cancelButton: CupertinoActionSheetAction(
-          child: Text(Intl.message('cancel'),
-              style: EasyWalletApp.responsiveTextStyle(context,
-                  color: CupertinoColors.systemGrey)),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(ctx),
+          child: Text(
+            Intl.message('cancel'),
+            style: EasyWalletApp.responsiveTextStyle(ctx,
+                color: CupertinoColors.systemGrey),
+          ),
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer2<SubscriptionProvider, CurrencyProvider>(
+      builder: (context, subProvider, currProvider, _) {
+        final currency = currProvider.currency;
+        final sorted = _sorted(subProvider.subscriptions);
+        final monthly = _calcMonthly(subProvider.subscriptions);
+        final yearly = _calcYearly(subProvider.subscriptions);
+        final upcoming = sorted
+            .where((s) => !s.isPaused && s.remainingDays() <= 7)
+            .toList();
+
+        return CupertinoPageScaffold(
+          child: CustomScrollView(
+            slivers: [
+              // Fixed header (not in sliver — use SliverToBoxAdapter)
+              SliverToBoxAdapter(
+                child: SubscriptionHeader(
+                  monthlySpent: monthly,
+                  yearlySpent: yearly,
+                  currencySymbol: currency.symbol,
+                  budgetLimit: _monthlyLimit > 0 ? _monthlyLimit : null,
+                  onSortTap: _showSortSheet,
+                  onAddTap: () => Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                      builder: (_) => const SubscriptionCreateView(),
+                    ),
+                  ).then((_) => _init()),
+                ),
+              ),
+              // Search bar
+              SliverToBoxAdapter(
+                child: Container(
+                  color: CupertinoColors.systemGroupedBackground
+                      .resolveFrom(context),
+                  padding: const EdgeInsets.fromLTRB(14, 8, 14, 4),
+                  child: CupertinoSearchTextField(
+                    controller: _searchController,
+                    placeholder: Intl.message('search'),
+                    onChanged: _onSearchChanged,
+                  ),
+                ),
+              ),
+              // Upcoming strip
+              if (upcoming.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: UpcomingStrip(
+                    upcomingSubscriptions: upcoming,
+                    currencySymbol: currency.symbol,
+                  ),
+                ),
+              // Section header
+              SliverToBoxAdapter(
+                child: Container(
+                  color: CupertinoColors.systemGroupedBackground
+                      .resolveFrom(context),
+                  padding: const EdgeInsets.fromLTRB(14, 6, 14, 2),
+                  child: const Text(
+                    'ALLE ABONNEMENTS',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                      color: CupertinoColors.label,
+                    ),
+                  ),
+                ),
+              ),
+              // List
+              if (_isLoading)
+                const SliverFillRemaining(
+                  child: Center(child: CupertinoActivityIndicator()),
+                )
+              else if (sorted.isEmpty)
+                SliverFillRemaining(child: _emptyState())
+              else
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final sub = sorted[index];
+                      return FutureBuilder<Color>(
+                        future: _accentColor(sub),
+                        builder: (context, snap) => SubscriptionListComponent(
+                          subscription: sub,
+                          currency: currency,
+                          displayCategories: _displayCategories,
+                          accentColor: snap.data,
+                          onTogglePin: () => _togglePin(sub),
+                          onTogglePause: () => _togglePause(sub),
+                          onDelete: () => _delete(sub),
+                        ),
+                      );
+                    },
+                    childCount: sorted.length,
+                  ),
+                ),
+              const SliverPadding(padding: EdgeInsets.only(bottom: 85)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _emptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            Intl.message('noSubscriptionsAvailable'),
+            style: const TextStyle(color: CupertinoColors.systemGrey),
+          ),
+          const SizedBox(height: 16),
+          CupertinoButton.filled(
+            onPressed: () => Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (_) => const SubscriptionCreateView(),
+              ),
+            ).then((_) => _init()),
+            child: Text(
+              Intl.message('addNewSubscription'),
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: CupertinoColors.white),
+            ),
+          ),
+        ],
       ),
     );
   }
