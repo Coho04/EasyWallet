@@ -31,6 +31,7 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
   bool _displayCategories = true;
   double _monthlyLimit = 0.0;
   final Map<String, Color> _colorCache = {};
+  final Map<String, Future<Color>> _futureCache = {};
   Timer? _debounce;
   final TextEditingController _searchController = TextEditingController();
 
@@ -68,12 +69,15 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
     setState(() => _isLoading = false);
   }
 
-  Future<Color> _accentColor(Subscription sub) async {
+  Future<Color> _accentColor(Subscription sub) {
     final key = sub.getFaviconUrl();
-    if (_colorCache.containsKey(key)) return _colorCache[key]!;
-    final color = await sub.getDominantColorFromUrl(customUrl: key);
-    _colorCache[key] = color;
-    return color;
+    return _futureCache.putIfAbsent(
+      key,
+      () => sub.getDominantColorFromUrl(customUrl: key).then((c) {
+        _colorCache[key] = c;
+        return c;
+      }),
+    );
   }
 
   List<Subscription> _sorted(List<Subscription> subs) {
@@ -217,7 +221,7 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
         final sorted = _sorted(subProvider.subscriptions);
         final monthly = _calcMonthly(subProvider.subscriptions);
         final yearly = _calcYearly(subProvider.subscriptions);
-        final upcoming = sorted
+        final upcoming = subProvider.subscriptions
             .where((s) => !s.isPaused && s.remainingDays() <= 7)
             .toList();
 
