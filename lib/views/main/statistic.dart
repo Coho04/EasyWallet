@@ -268,6 +268,7 @@ class StatisticViewState extends State<StatisticView> {
   }
 
   Widget _statRow(String label, String value) {
+    final labelColor = CupertinoColors.label.resolveFrom(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
@@ -275,15 +276,14 @@ class StatisticViewState extends State<StatisticView> {
         children: [
           Expanded(
             child: Text(label,
-                style: const TextStyle(
-                    fontSize: 13, color: CupertinoColors.label),
+                style: TextStyle(fontSize: 13, color: labelColor),
                 overflow: TextOverflow.ellipsis),
           ),
           Text(value,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: CupertinoColors.label)),
+                  color: labelColor)),
         ],
       ),
     );
@@ -307,7 +307,7 @@ class StatisticViewState extends State<StatisticView> {
             const SizedBox(width: 10),
             Expanded(
               child: Text(sub.title,
-                  style: const TextStyle(fontSize: 13),
+                  style: TextStyle(fontSize: 13, color: CupertinoColors.label.resolveFrom(context)),
                   overflow: TextOverflow.ellipsis),
             ),
             Text(
@@ -347,16 +347,21 @@ class StatisticViewState extends State<StatisticView> {
           ),
         ),
       ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Text('Alle',
-              style:
-                  TextStyle(fontSize: 13, color: CupertinoColors.activeBlue)),
-          SizedBox(width: 4),
-          Icon(CupertinoIcons.chevron_right,
-              size: 13, color: CupertinoColors.activeBlue),
-        ],
+      child: Builder(
+        builder: (BuildContext context) {
+          final activeBlueColor = CupertinoColors.activeBlue.resolveFrom(context);
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text('Alle',
+                  style:
+                      TextStyle(fontSize: 13, color: activeBlueColor)),
+              const SizedBox(width: 4),
+              Icon(CupertinoIcons.chevron_right,
+                  size: 13, color: activeBlueColor),
+            ],
+          );
+        },
       ),
     );
   }
