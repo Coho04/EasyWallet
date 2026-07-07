@@ -2,10 +2,10 @@ import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/views/components/card_section_component.dart';
+import 'package:easy_wallet/views/components/gradient_header.dart';
 import 'package:easy_wallet/views/subscription/edit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +31,16 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
   void initState() {
     super.initState();
     subscription = widget.subscription;
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    final cats = await subscription.categories;
+    if (mounted) {
+      setState(() {
+        categories = cats;
+      });
+    }
   }
 
   @override
@@ -43,133 +53,136 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
         return CupertinoPageScaffold(
           backgroundColor:
               CupertinoColors.systemGroupedBackground.resolveFrom(context),
-          navigationBar: CupertinoNavigationBar(
-            middle: Text(
-              Intl.message('subscriptions'),
-              style: EasyWalletApp.responsiveTextStyle(context),
-            ),
-            trailing: CupertinoButton(
-              padding: EdgeInsets.zero,
-              onPressed: () {
-                openEditView(context);
-              },
-              child: const Icon(CupertinoIcons.pencil),
-            ),
-          ),
-          child: SafeArea(
-            minimum: const EdgeInsets.only(bottom: 20),
-            top: true,
-            bottom: true,
-            child: ListView(
-              padding:
-                  const EdgeInsets.only(right: 16.0, left: 16.0, bottom: 20),
-              children: <Widget>[
-                const SizedBox(height: 20),
-                _buildHeader(),
-                const SizedBox(height: 5),
-                buildCategories(),
-                const SizedBox(height: 20),
-                CardSection(
-                  title: Intl.message('generalInformation'),
-                  children: [
-                    CardDetailRow(
-                      label: Intl.message('costs'),
-                      value:
-                          '${subscription.amount.toStringAsFixed(2)} ${currency.symbol}',
-                    ),
-                    CardDetailRow(
-                      label: Intl.message('repetitionRate'),
-                      value: subscription.getRepeatPattern().translate(),
-                    ),
-                  ],
+          child: Column(
+            children: [
+              GradientHeader(
+                title: Intl.message('subscriptions'),
+                showBackButton: true,
+                trailing: CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () => openEditView(),
+                  child: const Icon(CupertinoIcons.pencil,
+                      color: CupertinoColors.white),
                 ),
-                const SizedBox(height: 20),
-                CardSection(
-                  title: Intl.message('invoiceInformation'),
-                  children: [
-                    CardDetailRow(
-                      label: Intl.message('nextInvoice'),
-                      value: _formatDateTime(subscription.getNextBillDate()),
-                    ),
-                    CardDetailRow(
-                      label: Intl.message('previousInvoice'),
-                      value: _formatDateTime(
-                          subscription.calculatePreviousBillDate()),
-                    ),
-                    CardDetailRow(
-                      label: Intl.message('firstDebit'),
-                      value: _formatDateTime(subscription.date),
-                    ),
-                    CardDetailRow(
-                      label: Intl.message('createdOn'),
-                      maxLines: 1,
-                      value: _formatDateTime(subscription.timestamp,
-                          withTime: true),
-                      softBreak: true,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                CardSection(
-                  title: Intl.message('additionalInformation'),
-                  children: [
-                    CardDetailRow(
-                      label: Intl.message('previousDebits'),
-                      value: subscription.countPayment().toString(),
-                    ),
-                    CardDetailRow(
-                      label: Intl.message('convertedCosts'),
-                      value:
-                          '(${widget.subscription.displayConvertedPrice(currency)})',
-                    ),
-                    CardDetailRow(
-                      label: Intl.message('totalCosts'),
-                      value:
-                          '${subscription.sumPayment().toStringAsFixed(2)} ${currency.symbol}',
-                    ),
-                    if (subscription.notes != null &&
-                        subscription.notes!.trim().isNotEmpty)
-                      CardDetailRow(
-                        label: Intl.message('notes'),
-                        value: subscription.notes!,
+              ),
+              Expanded(
+                child: SafeArea(
+                  top: false,
+                  minimum: const EdgeInsets.only(bottom: 20),
+                  child: ListView(
+                    padding: const EdgeInsets.only(
+                        right: 16.0, left: 16.0, bottom: 20),
+                    children: <Widget>[
+                      const SizedBox(height: 20),
+                      _buildHeader(),
+                      const SizedBox(height: 5),
+                      buildCategories(),
+                      const SizedBox(height: 20),
+                      CardSection(
+                        title: Intl.message('generalInformation'),
+                        children: [
+                          CardDetailRow(
+                            label: Intl.message('costs'),
+                            value:
+                                '${subscription.amount.toStringAsFixed(2)} ${currency.symbol}',
+                          ),
+                          CardDetailRow(
+                            label: Intl.message('repetitionRate'),
+                            value: subscription.getRepeatPattern().translate(),
+                          ),
+                        ],
                       ),
-                  ],
+                      const SizedBox(height: 20),
+                      CardSection(
+                        title: Intl.message('invoiceInformation'),
+                        children: [
+                          CardDetailRow(
+                            label: Intl.message('nextInvoice'),
+                            value:
+                                _formatDateTime(subscription.getNextBillDate()),
+                          ),
+                          CardDetailRow(
+                            label: Intl.message('previousInvoice'),
+                            value: _formatDateTime(
+                                subscription.calculatePreviousBillDate()),
+                          ),
+                          CardDetailRow(
+                            label: Intl.message('firstDebit'),
+                            value: _formatDateTime(subscription.date),
+                          ),
+                          CardDetailRow(
+                            label: Intl.message('createdOn'),
+                            maxLines: 1,
+                            value: _formatDateTime(subscription.timestamp,
+                                withTime: true),
+                            softBreak: true,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      CardSection(
+                        title: Intl.message('additionalInformation'),
+                        children: [
+                          CardDetailRow(
+                            label: Intl.message('previousDebits'),
+                            value: subscription.countPayment().toString(),
+                          ),
+                          CardDetailRow(
+                            label: Intl.message('convertedCosts'),
+                            value:
+                                '(${widget.subscription.displayConvertedPrice(currency)})',
+                          ),
+                          CardDetailRow(
+                            label: Intl.message('totalCosts'),
+                            value:
+                                '${subscription.sumPayment().toStringAsFixed(2)} ${currency.symbol}',
+                          ),
+                          if (subscription.notes != null &&
+                              subscription.notes!.trim().isNotEmpty)
+                            CardDetailRow(
+                              label: Intl.message('notes'),
+                              value: subscription.notes!,
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      CardSection(
+                        title: Intl.message('actions'),
+                        children: [
+                          CardActionButton(
+                            label: subscription.isPinned
+                                ? Intl.message('unpinSubscription')
+                                : Intl.message('pinSubscription'),
+                            icon: subscription.isPinned
+                                ? CupertinoIcons.pin_slash
+                                : CupertinoIcons.pin,
+                            onPressed: () => _toggleStates(),
+                            color: subscription.isPinned
+                                ? CupertinoColors.systemBlue
+                                : null,
+                          ),
+                          CardActionButton(
+                            label: subscription.isPaused
+                                ? Intl.message('continueSubscription')
+                                : Intl.message('pauseSubscription'),
+                            icon: subscription.isPaused
+                                ? CupertinoIcons.play_arrow_solid
+                                : CupertinoIcons.pause,
+                            onPressed: () => _toggleStates(pause: true),
+                          ),
+                          CardActionButton(
+                            label: Intl.message('deleteSubscription'),
+                            icon: CupertinoIcons.delete,
+                            onPressed: () => _deleteItem(),
+                            color: CupertinoColors.destructiveRed,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 20),
-                CardSection(
-                  title: Intl.message('actions'),
-                  children: [
-                    CardActionButton(
-                      label: subscription.isPinned
-                          ? Intl.message('unpinSubscription')
-                          : Intl.message('pinSubscription'),
-                      icon: subscription.isPinned
-                          ? CupertinoIcons.pin_slash
-                          : CupertinoIcons.pin,
-                      onPressed: () => _toggleStates(),
-                      color: subscription.isPinned
-                          ? CupertinoColors.systemBlue
-                          : null,
-                    ),
-                    CardActionButton(
-                      label: subscription.isPaused
-                          ? Intl.message('continueSubscription')
-                          : Intl.message('pauseSubscription'),
-                      icon: subscription.isPaused
-                          ? CupertinoIcons.play_arrow_solid
-                          : CupertinoIcons.pause,
-                      onPressed: () => _toggleStates(pause: true),
-                    ),
-                    CardActionButton(
-                      label: Intl.message('deleteSubscription'),
-                      icon: CupertinoIcons.delete,
-                      onPressed: () => _deleteItem(),
-                      color: CupertinoColors.destructiveRed,
-                    ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       });
@@ -177,8 +190,6 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
   }
 
   Widget _buildHeader() {
-    final isDarkMode =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Row(
       children: [
         subscription.buildImage(),
@@ -189,7 +200,7 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
             style: EasyWalletApp.responsiveTextStyle(
               context,
               bold: true,
-              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+              color: CupertinoColors.label.resolveFrom(context),
             ),
           ),
         ),
@@ -246,8 +257,9 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
     return '$paddedTime\n$date';
   }
 
-  void openEditView(context) async {
+  void openEditView() async {
     var selectedCategories = await subscription.categories;
+    if (!mounted) return;
     Navigator.push(
       context,
       CupertinoPageRoute(
@@ -260,26 +272,31 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
   }
 
   Widget buildCategories() {
-    final bgColor = CupertinoTheme.of(context).barBackgroundColor;
     if (categories == null || categories!.isEmpty) return const SizedBox();
-    return Material(
-      color: bgColor,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Wrap(
-          spacing: 4.0,
-          children: categories!
-              .map((category) => Chip(
-                    label: Text(
-                      category.title,
-                      style: const TextStyle(
-                          color: CupertinoColors.white, fontSize: 11),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: categories!
+            .map((cat) => Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: cat.color,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    padding: const EdgeInsets.all(0),
-                    backgroundColor: category.color,
-                  ))
-              .toList(),
-        ),
+                    child: Text(
+                      cat.title,
+                      style: const TextStyle(
+                        color: CupertinoColors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ))
+            .toList(),
       ),
     );
   }
