@@ -10,6 +10,7 @@ class SubscriptionHeader extends StatelessWidget {
     this.budgetLimit,
     required this.onSortTap,
     required this.onAddTap,
+    this.showActions = true,
   });
 
   final double monthlySpent;
@@ -18,6 +19,7 @@ class SubscriptionHeader extends StatelessWidget {
   final double? budgetLimit;
   final VoidCallback onSortTap;
   final VoidCallback onAddTap;
+  final bool showActions;
 
   bool get _budgetExceeded =>
       budgetLimit != null && budgetLimit! > 0 && monthlySpent > budgetLimit!;
@@ -59,23 +61,25 @@ class SubscriptionHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: onSortTap,
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: const Color(0x1FFFFFFF),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    CupertinoIcons.arrow_up_arrow_down,
-                    color: CupertinoColors.white,
-                    size: 14,
-                  ),
-                ),
-              ),
+              showActions
+                  ? CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: onSortTap,
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: const Color(0x1FFFFFFF),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          CupertinoIcons.arrow_up_arrow_down,
+                          color: CupertinoColors.white,
+                          size: 14,
+                        ),
+                      ),
+                    )
+                  : const SizedBox(width: 30),
               const Text(
                 'EasyWallet',
                 style: TextStyle(
@@ -84,23 +88,25 @@ class SubscriptionHeader extends StatelessWidget {
                   color: CupertinoColors.white,
                 ),
               ),
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: onAddTap,
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: const Color(0x1FFFFFFF),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    CupertinoIcons.add,
-                    color: CupertinoColors.white,
-                    size: 14,
-                  ),
-                ),
-              ),
+              showActions
+                  ? CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: onAddTap,
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: const Color(0x1FFFFFFF),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          CupertinoIcons.add,
+                          color: CupertinoColors.white,
+                          size: 14,
+                        ),
+                      ),
+                    )
+                  : const SizedBox(width: 30),
             ],
           ),
           const SizedBox(height: 12),

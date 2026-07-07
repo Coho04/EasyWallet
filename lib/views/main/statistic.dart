@@ -98,6 +98,8 @@ class StatisticViewState extends State<StatisticView> {
         }
 
         final top3 = _top3Subscriptions(subscriptions);
+        final monthly = _calcMonthly(subscriptions);
+        final yearly = _calcYearly(subscriptions);
 
         return CupertinoPageScaffold(
           backgroundColor:
@@ -106,12 +108,13 @@ class StatisticViewState extends State<StatisticView> {
             slivers: [
               SliverToBoxAdapter(
                 child: SubscriptionHeader(
-                  monthlySpent: monthlyExpenses,
-                  yearlySpent: yearlyExpenses,
+                  monthlySpent: monthly,
+                  yearlySpent: yearly,
                   currencySymbol: currency.symbol,
                   budgetLimit: _monthlyLimit > 0 ? _monthlyLimit : null,
                   onSortTap: () {},
                   onAddTap: () {},
+                  showActions: false,
                 ),
               ),
               SliverPadding(
@@ -154,7 +157,8 @@ class StatisticViewState extends State<StatisticView> {
                             child: buildPieChart(subscriptions),
                           ),
                           _chartDetailButton('Alle', subscriptions, null,
-                              buildPieChartSections(subscriptions), context),
+                              buildPieChartSections(subscriptions), context,
+                              pageTitle: 'Kostenverteilung'),
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -174,7 +178,9 @@ class StatisticViewState extends State<StatisticView> {
                             subscriptions,
                             _makeYearlyToMonthlyData(subscriptions),
                             null,
-                            context),
+                            context,
+                            dataType: 'StackedSeriesBase',
+                            pageTitle: 'Monatlicher Verlauf'),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -230,6 +236,35 @@ class StatisticViewState extends State<StatisticView> {
     this.pinnedCount = pinnedCount;
     this.unpinnedCount = unpinnedCount;
     nextDueSubscriptions = nextDue;
+  }
+
+  double _calcMonthly(List<Subscription> subs) {
+    final now = DateTime.now();
+    double total = 0.0;
+    for (final s in subs) {
+      if (s.isPaused) continue;
+      if (s.repeatPattern == 'monthly') {
+        total += s.amount;
+      } else if (s.repeatPattern == 'yearly') {
+        if (s.date != null && s.date!.month == now.month) {
+          total += s.amount;
+        }
+      }
+    }
+    return total;
+  }
+
+  double _calcYearly(List<Subscription> subs) {
+    double total = 0.0;
+    for (final s in subs) {
+      if (s.isPaused) continue;
+      if (s.repeatPattern == 'monthly') {
+        total += s.amount * 12;
+      } else if (s.repeatPattern == 'yearly') {
+        total += s.amount;
+      }
+    }
+    return total;
   }
 
   Widget _statRow(String label, String value) {
@@ -293,8 +328,10 @@ class StatisticViewState extends State<StatisticView> {
     List<Subscription> subscriptions,
     List<CartesianSeries<ChartData, String>>? chartData,
     List<PieChartSectionData>? pieData,
-    BuildContext context,
-  ) {
+    BuildContext context, {
+    String dataType = 'StackedColumn100Series',
+    String? pageTitle,
+  }) {
     return CupertinoButton(
       padding: EdgeInsets.zero,
       minimumSize: const Size(0, 0),
@@ -302,10 +339,11 @@ class StatisticViewState extends State<StatisticView> {
         context,
         CupertinoPageRoute(
           builder: (_) => ChartDetailPage(
-            title: label,
+            title: pageTitle ?? label,
             chartData: chartData,
             pieChartData: pieData,
             subscriptions: subscriptions,
+            dataType: dataType,
           ),
         ),
       ),
