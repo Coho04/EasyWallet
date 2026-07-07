@@ -1,6 +1,7 @@
 import 'package:easy_wallet/provider/category_provider.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/views/components/card_section_component.dart';
+import 'package:easy_wallet/views/components/gradient_header.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,41 +43,60 @@ class CategoryShowViewState extends State<CategoryShowView> {
     return CupertinoPageScaffold(
       backgroundColor:
           CupertinoColors.systemGroupedBackground.resolveFrom(context),
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(
-          category.title,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-        ),
-      ),
-      child: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildEditCard(context, isDarkMode),
-                const SizedBox(width: 20),
-                _buildDeleteCard(context, isDarkMode),
-              ],
-            ),
-            const SizedBox(height: 20),
-            CardSection(title: Intl.message('subscriptions'), children: [
-              FutureBuilder<List<Widget>>(
-                future: _buildSubscriptions(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else {
-                    return Column(children: snapshot.data!);
-                  }
-                },
+      child: Column(
+        children: [
+          GradientHeader(
+            title: category.title,
+            showBackButton: true,
+            trailing: Container(
+              width: 24,
+              height: 24,
+              margin: const EdgeInsets.only(right: 12),
+              decoration: BoxDecoration(
+                color: category.color,
+                shape: BoxShape.circle,
+                border: Border.all(
+                    color: CupertinoColors.white.withValues(alpha: 0.6),
+                    width: 1.5),
               ),
-            ])
-          ],
-        ),
+            ),
+          ),
+          Expanded(
+            child: SafeArea(
+              top: false,
+              child: ListView(
+                padding: const EdgeInsets.all(16.0),
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildEditCard(context, isDarkMode),
+                      const SizedBox(width: 20),
+                      _buildDeleteCard(context, isDarkMode),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  CardSection(title: Intl.message('subscriptions'), children: [
+                    FutureBuilder<List<Widget>>(
+                      future: _buildSubscriptions(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CupertinoActivityIndicator());
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return Column(children: snapshot.data!);
+                        }
+                      },
+                    ),
+                  ])
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
