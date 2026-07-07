@@ -4,13 +4,16 @@ import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
-import 'package:easy_wallet/views/components/card_section_component.dart';
+import 'package:easy_wallet/views/components/stat_card.dart';
+import 'package:easy_wallet/views/components/subscription_header.dart';
 import 'package:easy_wallet/views/statistics/show.dart';
+import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:easy_wallet/model/subscription.dart';
 
@@ -34,6 +37,9 @@ class StatisticViewState extends State<StatisticView> {
   int touchedIndex = -1;
   int? _selectedSubscriptionId;
   bool _isLoading = true;
+  double _monthlyLimit = 0.0;
+  String _costToMonthEnd = '';
+  String _costToYearEnd = '';
 
   @override
   void initState() {
@@ -42,10 +48,23 @@ class StatisticViewState extends State<StatisticView> {
   }
 
   Future<void> _initializeData() async {
+    final prefs = await SharedPreferences.getInstance();
+    _monthlyLimit = prefs.getDouble('monthlyLimit') ?? 0.0;
+
+    if (!mounted) return;
     final subscriptions = context.read<SubscriptionProvider>().subscriptions;
+    final currency = context.read<CurrencyProvider>().currency;
+
     await prefetchColors(subscriptions);
     _calculateStatistics(subscriptions);
+
+    final toMonth = await calculateExpensesToEndOfMonth(subscriptions, currency);
+    final toYear = await calculateExpensesToEndOfYear(subscriptions, currency);
+
+    if (!mounted) return;
     setState(() {
+      _costToMonthEnd = toMonth;
+      _costToYearEnd = toYear;
       _isLoading = false;
     });
   }
@@ -67,224 +86,123 @@ class StatisticViewState extends State<StatisticView> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CurrencyProvider>(
-        builder: (context, currencyProvider, child) {
-      final currency = currencyProvider.currency;
-      return Consumer<SubscriptionProvider>(
-        builder: (context, subscriptionProvider, child) {
-          final subscriptions = subscriptionProvider.subscriptions;
-          return CupertinoPageScaffold(
-            backgroundColor:
-                CupertinoColors.systemGroupedBackground.resolveFrom(context),
-            navigationBar: CupertinoNavigationBar(
-              middle: Text(Intl.message('statistics')),
-            ),
-            child: SafeArea(
-              child: Center(
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Wrap(
-                            spacing: 20,
-                            runSpacing: 20,
-                            children: [
-                              CardSection(
-                                title: Intl.message('appStats'),
-                                children: [
-                                  CardDetailRow(
-                                    maxLines: 2,
-                                    label:
-                                        Intl.message('numberOfSubscriptions'),
-                                    value: '${subscriptions.length}',
-                                  ),
-                                  CardDetailRow(
-                                    maxLines: 2,
-                                    label: Intl.message(
-                                        'expensesSinceAppInstallation'),
-                                    value:
-                                        '${calculateExpensesSinceInstallation(subscriptions).toStringAsFixed(2)} ${currency.symbol}',
-                                    softBreak: true,
-                                  ),
-                                ],
-                              ),
-                              CardSection(
-                                title: Intl.message('totalExpenses'),
-                                children: [
-                                  CardDetailRow(
-                                    label: Intl.message('expenditureThisYear'),
-                                    maxLines: 1,
-                                    value:
-                                        '${calculateTotalSpentThisYear(subscriptions).toStringAsFixed(2)} ${currency.symbol}',
-                                  ),
-                                  CardDetailRow(
-                                    label: Intl.message(
-                                        'issuesOfMonthlySubscriptions'),
-                                    maxLines: 2,
-                                    value:
-                                        '${calculateMonthlyExpenses(subscriptions).toStringAsFixed(2)} ${currency.symbol}',
-                                    softBreak: true,
-                                  ),
-                                  CardDetailRow(
-                                    label: Intl.message(
-                                        'issuesOfAnnualSubscriptions'),
-                                    maxLines: 2,
-                                    value:
-                                        '${yearlyExpenses.toStringAsFixed(2)} ${currency.symbol}',
-                                    softBreak: true,
-                                  ),
-                                ],
-                              ),
-                              CardSection(
-                                title: Intl.message('remainingCosts'),
-                                children: [
-                                  CardDetailRow(
-                                    label: Intl.message(
-                                        'expenditureUntilTheEndOfTheMonth'),
-                                    maxLines: 2,
-                                    value: calculateExpensesToEndOfMonth(
-                                        subscriptions, currency),
-                                    softBreak: true,
-                                  ),
-                                  CardDetailRow(
-                                    label: Intl.message(
-                                        'expenditureUntilTheEndOfTheYear'),
-                                    maxLines: 2,
-                                    value: calculateExpensesToEndOfYear(
-                                        subscriptions, currency),
-                                    softBreak: true,
-                                  ),
-                                ],
-                              ),
-                              if (subscriptions.isNotEmpty)
-                                CardSection(
-                                  title: Intl.message('costShare'),
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 40),
-                                      child: buildPieChart(subscriptions),
-                                    ),
-                                    CardActionButton(
-                                      label: Intl.message('overview'),
-                                      icon: CupertinoIcons.right_chevron,
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          CupertinoPageRoute(
-                                            builder: (context) =>
-                                                ChartDetailPage(
-                                              title: Intl.message('costShare'),
-                                              pieChartData:
-                                                  buildPieChartSections(
-                                                      subscriptions),
-                                              subscriptions: subscriptions,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      color: CupertinoColors.activeBlue,
-                                    ),
-                                  ],
-                                ),
-                              if (subscriptions.isNotEmpty)
-                                CardSection(
-                                  title:
-                                      Intl.message('yearlyVsMonthlyExpenses'),
-                                  subtitle: Intl.message(
-                                      'yearlyVsMonthlyExpensesSubtitle'),
-                                  children: [
-                                    _buildChart(_makeYearlyToMonthlyData(
-                                        subscriptions)),
-                                    CardActionButton(
-                                      label: Intl.message('overview'),
-                                      icon: CupertinoIcons.right_chevron,
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          CupertinoPageRoute(
-                                            builder: (context) =>
-                                                ChartDetailPage(
-                                              title: Intl.message(
-                                                  'yearlyVsMonthlyExpenses'),
-                                              chartData:
-                                                  _makeYearlyToMonthlyData(
-                                                      subscriptions),
-                                              subscriptions: subscriptions,
-                                              dataType: 'StackedSeriesBase',
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      color: CupertinoColors.activeBlue,
-                                    ),
-                                  ],
-                                ),
-                              if (subscriptions.isNotEmpty)
-                                CardSection(
-                                  title: Intl.message('pinnedVsUnpinned'),
-                                  children: [
-                                    _buildChart(_makePinnedData(subscriptions)),
-                                    CardActionButton(
-                                      label: Intl.message('overview'),
-                                      icon: CupertinoIcons.right_chevron,
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          CupertinoPageRoute(
-                                            builder: (context) =>
-                                                ChartDetailPage(
-                                              title: Intl.message(
-                                                  'pinnedVsUnpinned'),
-                                              chartData: _makePinnedData(
-                                                  subscriptions),
-                                              subscriptions: subscriptions,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      color: CupertinoColors.activeBlue,
-                                    ),
-                                  ],
-                                ),
-                              if (subscriptions.isNotEmpty)
-                                CardSection(
-                                  title: Intl.message('pausedVsActive'),
-                                  children: [
-                                    _buildChart(_makePausedData(subscriptions)),
-                                    CardActionButton(
-                                      label: Intl.message('overview'),
-                                      icon: CupertinoIcons.right_chevron,
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          CupertinoPageRoute(
-                                            builder: (context) =>
-                                                ChartDetailPage(
-                                              title: Intl.message(
-                                                  'pausedVsActive'),
-                                              chartData: _makePausedData(
-                                                  subscriptions),
-                                              subscriptions: subscriptions,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      color: CupertinoColors.activeBlue,
-                                    ),
-                                  ],
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-              ),
-            ),
+    return Consumer2<CurrencyProvider, SubscriptionProvider>(
+      builder: (context, currencyProvider, subProvider, _) {
+        final currency = currencyProvider.currency;
+        final subscriptions = subProvider.subscriptions;
+
+        if (_isLoading) {
+          return const CupertinoPageScaffold(
+            child: Center(child: CupertinoActivityIndicator()),
           );
-        },
-      );
-    });
+        }
+
+        final top3 = _top3Subscriptions(subscriptions);
+
+        return CupertinoPageScaffold(
+          backgroundColor:
+              CupertinoColors.systemGroupedBackground.resolveFrom(context),
+          child: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: SubscriptionHeader(
+                  monthlySpent: monthlyExpenses,
+                  yearlySpent: yearlyExpenses,
+                  currencySymbol: currency.symbol,
+                  budgetLimit: _monthlyLimit > 0 ? _monthlyLimit : null,
+                  onSortTap: () {},
+                  onAddTap: () {},
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    // Card 1: Verbleibend
+                    StatCard(
+                      title: 'Verbleibend',
+                      icon: CupertinoIcons.calendar_badge_minus,
+                      children: [
+                        _statRow('Bis Monatsende', _costToMonthEnd),
+                        _statRow('Bis Jahresende', _costToYearEnd),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    // Card 2: Top 3
+                    StatCard(
+                      title: 'Top Abonnements',
+                      icon: CupertinoIcons.star,
+                      children: top3.isEmpty
+                          ? [
+                              const Text('Keine aktiven Abonnements',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      color: CupertinoColors.secondaryLabel))
+                            ]
+                          : top3.map((s) => _top3Row(s, currency)).toList(),
+                    ),
+                    const SizedBox(height: 12),
+                    // Card 3: Kostenverteilung
+                    if (subscriptions.isNotEmpty) ...[
+                      StatCard(
+                        title: 'Kostenverteilung',
+                        icon: CupertinoIcons.chart_pie,
+                        children: [
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(top: 8, bottom: 8),
+                            child: buildPieChart(subscriptions),
+                          ),
+                          _chartDetailButton('Alle', subscriptions, null,
+                              buildPieChartSections(subscriptions), context),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    // Card 4: Verlauf
+                    StatCard(
+                      title: 'Monatlicher Verlauf',
+                      icon: CupertinoIcons.chart_bar,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8, bottom: 8),
+                          child: _buildChart(
+                              _makeYearlyToMonthlyData(subscriptions)),
+                        ),
+                        _chartDetailButton(
+                            'Alle',
+                            subscriptions,
+                            _makeYearlyToMonthlyData(subscriptions),
+                            null,
+                            context),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    // Card 5: App Gesamt
+                    StatCard(
+                      title: 'Gesamt',
+                      icon: CupertinoIcons.info_circle,
+                      children: [
+                        _statRow(
+                            'Ausgaben seit Installation',
+                            '${calculateExpensesSinceInstallation(subscriptions).toStringAsFixed(2)} ${currency.symbol}'),
+                        _statRow(
+                            'Aktive Abonnements',
+                            '${subscriptions.where((s) => !s.isPaused).length}'),
+                        _statRow(
+                            'Pausiert',
+                            '${subscriptions.where((s) => s.isPaused).length}'),
+                      ],
+                    ),
+                    const SizedBox(height: 85),
+                  ]),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _calculateStatistics(List<Subscription> subscriptions) {
@@ -312,6 +230,109 @@ class StatisticViewState extends State<StatisticView> {
     this.pinnedCount = pinnedCount;
     this.unpinnedCount = unpinnedCount;
     nextDueSubscriptions = nextDue;
+  }
+
+  Widget _statRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Text(label,
+                style: const TextStyle(
+                    fontSize: 13, color: CupertinoColors.label),
+                overflow: TextOverflow.ellipsis),
+          ),
+          Text(value,
+              style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: CupertinoColors.label)),
+        ],
+      ),
+    );
+  }
+
+  Widget _top3Row(Subscription sub, Currency currency) {
+    final equiv =
+        sub.repeatPattern == 'yearly' ? sub.amount / 12 : sub.amount;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: GestureDetector(
+        onTap: () => Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (_) => SubscriptionShowView(subscription: sub),
+          ),
+        ),
+        child: Row(
+          children: [
+            sub.buildImage(width: 28, height: 28, borderRadius: 7),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(sub.title,
+                  style: const TextStyle(fontSize: 13),
+                  overflow: TextOverflow.ellipsis),
+            ),
+            Text(
+              '${equiv.toStringAsFixed(2)} ${currency.symbol}/Mo',
+              style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: CupertinoColors.secondaryLabel),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _chartDetailButton(
+    String label,
+    List<Subscription> subscriptions,
+    List<CartesianSeries<ChartData, String>>? chartData,
+    List<PieChartSectionData>? pieData,
+    BuildContext context,
+  ) {
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      minimumSize: const Size(0, 0),
+      onPressed: () => Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (_) => ChartDetailPage(
+            title: label,
+            chartData: chartData,
+            pieChartData: pieData,
+            subscriptions: subscriptions,
+          ),
+        ),
+      ),
+      child: const Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text('Alle',
+              style:
+                  TextStyle(fontSize: 13, color: CupertinoColors.activeBlue)),
+          SizedBox(width: 4),
+          Icon(CupertinoIcons.chevron_right,
+              size: 13, color: CupertinoColors.activeBlue),
+        ],
+      ),
+    );
+  }
+
+  List<Subscription> _top3Subscriptions(List<Subscription> subscriptions) {
+    final active = subscriptions.where((s) => !s.isPaused).toList();
+    active.sort((a, b) {
+      final aEquiv =
+          a.repeatPattern == 'yearly' ? a.amount / 12 : a.amount;
+      final bEquiv =
+          b.repeatPattern == 'yearly' ? b.amount / 12 : b.amount;
+      return bEquiv.compareTo(aEquiv);
+    });
+    return active.take(3).toList();
   }
 
   Widget buildPieChart(List<Subscription> subscriptions) {
