@@ -275,13 +275,13 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
                   color: CupertinoColors.systemGroupedBackground
                       .resolveFrom(context),
                   padding: const EdgeInsets.fromLTRB(14, 6, 14, 2),
-                  child: const Text(
+                  child: Text(
                     'ALLE ABONNEMENTS',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
-                      color: CupertinoColors.label,
+                      color: CupertinoColors.label.resolveFrom(context),
                     ),
                   ),
                 ),

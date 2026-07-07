@@ -28,13 +28,13 @@ class UpcomingStrip extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(14, 6, 14, 4),
-            child: const Text(
+            child: Text(
               'NÄCHSTE 7 TAGE',
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
-                color: CupertinoColors.label,
+                color: CupertinoColors.label.resolveFrom(context),
               ),
             ),
           ),
@@ -69,10 +69,10 @@ class UpcomingStrip extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         sub.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: CupertinoColors.label,
+                          color: CupertinoColors.label.resolveFrom(context),
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
