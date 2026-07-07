@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
@@ -11,8 +10,8 @@ import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/components/form_fields/date_picker_field.dart';
 import 'package:easy_wallet/views/components/form_fields/dropdown_field.dart';
 import 'package:easy_wallet/views/components/form_fields/text_field.dart';
+import 'package:easy_wallet/views/components/gradient_header.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:multi_select_flutter/util/multi_select_list_type.dart';
@@ -57,24 +56,26 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         builder: (context, currencyProvider, child) {
       final currency = currencyProvider.currency;
       return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: AutoSizeText(
-            Intl.message('addSubscription'),
-            maxLines: 1,
-            style: EasyWalletApp.responsiveTextStyle(context),
-          ),
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: () => _saveItem(context),
-            child: const Icon(CupertinoIcons.floppy_disk),
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              child: ListView(
-                children: [
+        child: Column(
+          children: [
+            GradientHeader(
+              title: Intl.message('addSubscription'),
+              showBackButton: true,
+              trailing: CupertinoButton(
+                padding: EdgeInsets.zero,
+                onPressed: () => _saveItem(context),
+                child: const Icon(CupertinoIcons.floppy_disk,
+                    color: CupertinoColors.white),
+              ),
+            ),
+            Expanded(
+              child: SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    child: ListView(
+                      children: [
                   _buildHeader(isDarkMode),
                   const SizedBox(height: 16),
                   EasyWalletTextField(
@@ -153,7 +154,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                   Consumer<CategoryProvider>(
                       builder: (context, categoryProvider, child) {
                         var categories = categoryProvider.categories;
-                        return Material(
+                        return Container(
                             color: isDarkMode
                                 ? CupertinoColors.black
                                 : CupertinoColors.systemGrey6,
@@ -207,12 +208,15 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                       placeholder: Intl.message('notes'),
                       maxLines: 5,
                       isDarkMode: isDarkMode),
-                ],
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-      );
+        ],
+      ),
+    );
     });
   }
 
@@ -252,7 +256,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   Widget _buildImage() {
     if (_urlController.text.isEmpty) {
       return const Icon(
-        Icons.account_balance_wallet_rounded,
+        CupertinoIcons.creditcard,
         color: CupertinoColors.systemGrey,
         size: 40,
       );
