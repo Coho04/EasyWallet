@@ -137,10 +137,10 @@ class StatisticViewState extends State<StatisticView> {
                       icon: CupertinoIcons.star,
                       children: top3.isEmpty
                           ? [
-                              const Text('Keine aktiven Abonnements',
+                              Text('Keine aktiven Abonnements',
                                   style: TextStyle(
                                       fontSize: 13,
-                                      color: CupertinoColors.secondaryLabel))
+                                      color: CupertinoColors.secondaryLabel.resolveFrom(context)))
                             ]
                           : top3.map((s) => _top3Row(s, currency)).toList(),
                     ),
@@ -312,10 +312,10 @@ class StatisticViewState extends State<StatisticView> {
             ),
             Text(
               '${equiv.toStringAsFixed(2)} ${currency.symbol}/Mo',
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: CupertinoColors.secondaryLabel),
+                  color: CupertinoColors.secondaryLabel.resolveFrom(context)),
             ),
           ],
         ),
