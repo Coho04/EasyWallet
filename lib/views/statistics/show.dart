@@ -31,19 +31,61 @@ class ChartDetailPageState extends State<ChartDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    final topPadding = MediaQuery.paddingOf(context).top;
     return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text(widget.title),
-        ),
-        child: SafeArea(
-            child: Center(
-                child: ListView(children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _buildChart(context),
+      child: Column(
+        children: [
+          // Gradient header with safe-area
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF1a1a2e), Color(0xFF16213e), Color(0xFF0f3460)],
+              ),
+            ),
+            padding: EdgeInsets.fromLTRB(8, topPadding + 8, 16, 12),
+            child: Row(
+              children: [
+                CupertinoButton(
+                  padding: EdgeInsets.zero,
+                  onPressed: () => Navigator.pop(context),
+                  child: const Icon(
+                    CupertinoIcons.back,
+                    color: CupertinoColors.white,
+                    size: 28,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    widget.title,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: CupertinoColors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(width: 44), // balance back button
+              ],
+            ),
           ),
-          _buildSubscriptionList(context)
-        ]))));
+          Expanded(
+            child: SafeArea(
+              top: false,
+              child: ListView(children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: _buildChart(context),
+                ),
+                _buildSubscriptionList(context),
+              ]),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildChart(context) {
