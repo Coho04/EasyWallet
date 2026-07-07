@@ -2,6 +2,7 @@ import 'package:easy_wallet/model/category.dart';
 import 'package:easy_wallet/provider/category_provider.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/components/category_list_component.dart';
+import 'package:easy_wallet/views/components/gradient_header.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -34,52 +35,47 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
       final categories = categoryProvider.categories;
       final sortedCategories = _sortCategories(categories);
       return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Column(
-            children: [
-              SizedBox(
-                height: 36,
-                child: CupertinoSearchTextField(
-                  placeholder: Intl.message('search'),
-                  onChanged: (value) {
-                    setState(() {
-                      searchText = value;
-                      _sortCategories(categories);
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-          leading: CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: _toggleSortDirection,
-            child: const Icon(CupertinoIcons.arrow_up_arrow_down,
-                color: CupertinoColors.activeBlue),
-          ),
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: () {
-              _showAddCategoryDialog(context);
-            },
-            child: const Icon(CupertinoIcons.add,
-                color: CupertinoColors.activeBlue),
-          ),
-        ),
         child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 100,
-              child: Center(
-                child: AutoText(
-                  text: Intl.message('categories'),
-                  bold: true,
-                ),
+          children: [
+            GradientHeader(
+              title: Intl.message('categories'),
+              showBackButton: false,
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: _toggleSortDirection,
+                    child: const Icon(CupertinoIcons.arrow_up_arrow_down,
+                        color: CupertinoColors.white),
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      _showAddCategoryDialog(context);
+                    },
+                    child: const Icon(CupertinoIcons.add,
+                        color: CupertinoColors.white),
+                  ),
+                ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: CupertinoSearchTextField(
+                placeholder: Intl.message('search'),
+                onChanged: (value) {
+                  setState(() {
+                    searchText = value;
+                    _sortCategories(categories);
+                  });
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
             Expanded(
               child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(child: CupertinoActivityIndicator())
                   : sortedCategories.isEmpty
                       ? _buildEmptyState()
                       : ListView.builder(
