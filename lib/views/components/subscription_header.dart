@@ -32,7 +32,7 @@ class SubscriptionHeader extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildGradientHeader(),
+        _buildGradientHeader(context),
         if (_budgetExceeded)
           BudgetWarningBanner(
             spent: monthlySpent,
@@ -43,7 +43,8 @@ class SubscriptionHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildGradientHeader() {
+  Widget _buildGradientHeader(BuildContext context) {
+    final topPadding = MediaQuery.paddingOf(context).top;
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -52,7 +53,7 @@ class SubscriptionHeader extends StatelessWidget {
           colors: [Color(0xFF1a1a2e), Color(0xFF16213e), Color(0xFF0f3460)],
         ),
       ),
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      padding: EdgeInsets.fromLTRB(16, topPadding + 14, 16, 14),
       child: Column(
         children: [
           Row(
