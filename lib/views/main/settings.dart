@@ -4,6 +4,7 @@ import 'package:easy_wallet/persistence_controller.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/components/card_section_component.dart';
+import 'package:easy_wallet/views/components/gradient_header.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -320,23 +321,24 @@ class SettingsViewState extends State<SettingsView> {
   Widget build(BuildContext context) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
-    final backgroundColor = isDarkMode
-        ? CupertinoColors.darkBackgroundGray
-        : CupertinoColors.systemBackground;
     final textColor =
         isDarkMode ? CupertinoColors.white : CupertinoColors.black;
 
     return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text(Intl.message('settings')),
-          backgroundColor: backgroundColor,
-        ),
-        backgroundColor:
-            CupertinoColors.systemGroupedBackground.resolveFrom(context),
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
+      backgroundColor:
+          CupertinoColors.systemGroupedBackground.resolveFrom(context),
+      child: Column(
+        children: [
+          GradientHeader(
+            title: Intl.message('settings'),
+            showBackButton: false,
+          ),
+          Expanded(
+            child: SafeArea(
+              top: false,
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
               CardSection(
                 title: Intl.message('notifications'),
                 children: [
@@ -481,9 +483,13 @@ class SettingsViewState extends State<SettingsView> {
                   _buildLinkActionButton('rateApp', _rateApp()),
                 ],
               ),
-            ],
+                ],
+              ),
+            ),
           ),
-        ));
+        ],
+      ),
+    );
   }
 
   List<Widget> _buildPlatformSpecificSyncOptions({required Color textColor}) {
