@@ -39,7 +39,7 @@ dependencies:
       path: workmanager
       ref: main
     version: 0.10.7
-  flutter_local_notifications: ^22.2.0
+  flutter_local_notifications: ^22.3.0
   intl: ^0.20.2
   cached_network_image: ^3.4.1
   fl_chart: ^1.0.0
