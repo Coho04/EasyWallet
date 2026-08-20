@@ -1263,18 +1263,18 @@ packages:
     description:
       path: workmanager
       ref: main
-      resolved-ref: "53261a568221a310b1331fb27caf9349f95a988d"
+      resolved-ref: "5ffa188212a66e4a3c3f4899f4ed8d0300c067dd"
       url: "https://github.com/fluttercommunity/flutter_workmanager.git"
     source: git
-    version: "0.10.8"
+    version: "0.10.9"
   workmanager_android:
     dependency: transitive
     description:
       name: workmanager_android
-      sha256: "08bbc7805b762bd93de6b137ef5c2651d305e43adf00b8e0e6da9bc525e40281"
+      sha256: "187d1d34864f57f9e388b33b88c001c494093c53679831a3dec2e8176e8829d1"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.7"
+    version: "0.10.8"
   workmanager_apple:
     dependency: transitive
     description:
