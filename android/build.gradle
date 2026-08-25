@@ -22,27 +22,3 @@ ext {
     targetSdkVersion = 36
     appCompatVersion = "1.4.2"
 }
-
-buildscript {
-    ext.kotlin_version = '2.4.10'
-    repositories {
-        google()
-        mavenCentral()
-        maven { url 'https://mvnrepository.com' }
-    }
-    dependencies {
-        classpath 'com.google.gms:google-services:4.5.0'
-        classpath 'com.android.tools.build:gradle:9.3.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-//
-//subprojects {
-//    configurations.all {
-//        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-//            if (details.requested.group == 'org.jetbrains.kotlin' && details.requested.name.contains('kotlin')) {
-//                details.useVersion '2.0.20'
-//            }
-//        }
-//    }
-//}
