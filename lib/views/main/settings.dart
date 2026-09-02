@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/persistence_controller.dart';
@@ -436,7 +437,7 @@ class SettingsViewState extends State<SettingsView> {
                       onTap: () => _enterMonthlyLimit(context),
                       child: AutoText(
                           maxLines: 1,
-                          text: '$monthlyLimit ${currency.symbol}',
+                          text: Money.format(monthlyLimit, currency.symbol),
                           color: CupertinoColors.systemBlue),
                     ),
                   ),

@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/class/billing_schedule.dart';
 import 'package:easy_wallet/model/category.dart' as category;
 import 'package:easy_wallet/provider/currency_provider.dart';
@@ -197,7 +198,7 @@ class CalendarViewState extends State<CalendarView> {
           ),
           Text(
             '${S.of(context).monthTotal}: '
-            '${total.toStringAsFixed(2)} $currencySymbol',
+            '${Money.format(total, currencySymbol)}',
             style: TextStyle(
               fontSize: 13,
               color: CupertinoColors.secondaryLabel.resolveFrom(context),

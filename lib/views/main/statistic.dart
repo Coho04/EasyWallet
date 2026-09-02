@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/money.dart';
 import 'dart:math';
 
 import 'package:easy_wallet/enum/currency.dart';
@@ -204,7 +205,7 @@ class StatisticViewState extends State<StatisticView> {
                       children: [
                         _statRow(
                             'Ausgaben seit Installation',
-                            '${calculateExpensesSinceInstallation(subscriptions).toStringAsFixed(2)} ${currency.symbol}'),
+                            Money.format(calculateExpensesSinceInstallation(subscriptions), currency.symbol)),
                         _statRow(
                             'Aktive Abonnements',
                             '${subscriptions.where((s) => !s.isPaused).length}'),
@@ -324,7 +325,7 @@ class StatisticViewState extends State<StatisticView> {
                   overflow: TextOverflow.ellipsis),
             ),
             Text(
-              '${equiv.toStringAsFixed(2)} ${currency.symbol}/Mo',
+              '${Money.format(equiv, currency.symbol)}/Mo',
               style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -507,7 +508,7 @@ class StatisticViewState extends State<StatisticView> {
         monthlyExpenses += subscription.amount;
       }
     }
-    return '${monthlyExpenses.toStringAsFixed(2)} ${currency.symbol}';
+    return Money.format(monthlyExpenses, currency.symbol);
   }
 
   Future<String> calculateExpensesToEndOfYear(
@@ -531,7 +532,7 @@ class StatisticViewState extends State<StatisticView> {
         }
       }
     }
-    return '${yearlyExpenses.toStringAsFixed(2)} ${currency.symbol}';
+    return Money.format(yearlyExpenses, currency.symbol);
   }
 
   DateTime? getNextDueDate(Subscription subscription, DateTime referenceDate) {
