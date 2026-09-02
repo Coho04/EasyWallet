@@ -348,7 +348,7 @@ class __MultiSelectDialogFieldViewState<V>
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        InkWell(
+        GestureDetector(
           onTap: () {
             _showDialog(context);
           },
@@ -364,7 +364,13 @@ class __MultiSelectDialogFieldViewState<V>
             ),
           ),
         ),
-        _buildInheritedChipDisplay(),
+        // MultiSelectChipDisplay renders Material ChoiceChips, which assert on a
+        // Material ancestor. The app is Cupertino-only, so provide a transparent
+        // one that satisfies the assert without painting anything.
+        Material(
+          type: MaterialType.transparency,
+          child: _buildInheritedChipDisplay(),
+        ),
         ...buildErrorRow(),
       ],
     );
