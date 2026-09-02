@@ -137,21 +137,21 @@ class StatisticViewState extends State<StatisticView> {
                   delegate: SliverChildListDelegate([
                     // Card 1: Verbleibend
                     StatCard(
-                      title: 'Verbleibend',
+                      title: Intl.message('remainingCosts'),
                       icon: CupertinoIcons.calendar_badge_minus,
                       children: [
-                        _statRow('Bis Monatsende', _costToMonthEnd),
-                        _statRow('Bis Jahresende', _costToYearEnd),
+                        _statRow(Intl.message('untilEndOfMonth'), _costToMonthEnd),
+                        _statRow(Intl.message('untilEndOfYear'), _costToYearEnd),
                       ],
                     ),
                     const SizedBox(height: 12),
                     // Card 2: Top 3
                     StatCard(
-                      title: 'Top Abonnements',
+                      title: Intl.message('topSubscriptions'),
                       icon: CupertinoIcons.star,
                       children: top3.isEmpty
                           ? [
-                              Text('Keine aktiven Abonnements',
+                              Text(Intl.message('noActiveSubscriptions'),
                                   style: TextStyle(
                                       fontSize: 13,
                                       color: CupertinoColors.secondaryLabel.resolveFrom(context)))
@@ -162,7 +162,7 @@ class StatisticViewState extends State<StatisticView> {
                     // Card 3: Kostenverteilung
                     if (subscriptions.isNotEmpty) ...[
                       StatCard(
-                        title: 'Kostenverteilung',
+                        title: Intl.message('costDistribution'),
                         icon: CupertinoIcons.chart_pie,
                         children: [
                           Padding(
@@ -170,16 +170,16 @@ class StatisticViewState extends State<StatisticView> {
                                 const EdgeInsets.only(top: 8, bottom: 8),
                             child: buildPieChart(subscriptions),
                           ),
-                          _chartDetailButton('Alle', subscriptions, null,
+                          _chartDetailButton(Intl.message('all'), subscriptions, null,
                               buildPieChartSections(subscriptions), context,
-                              pageTitle: 'Kostenverteilung'),
+                              pageTitle: Intl.message('costDistribution')),
                         ],
                       ),
                       const SizedBox(height: 12),
                     ],
                     // Card 4: Verlauf
                     StatCard(
-                      title: 'Monatlicher Verlauf',
+                      title: Intl.message('monthlyTrend'),
                       icon: CupertinoIcons.chart_bar,
                       children: [
                         Padding(
@@ -188,19 +188,19 @@ class StatisticViewState extends State<StatisticView> {
                               _makeYearlyToMonthlyData(subscriptions)),
                         ),
                         _chartDetailButton(
-                            'Alle',
+                            Intl.message('all'),
                             subscriptions,
                             _makeYearlyToMonthlyData(subscriptions),
                             null,
                             context,
                             dataType: 'StackedSeriesBase',
-                            pageTitle: 'Monatlicher Verlauf'),
+                            pageTitle: Intl.message('monthlyTrend')),
                       ],
                     ),
                     const SizedBox(height: 12),
                     // Card 5: App Gesamt
                     StatCard(
-                      title: 'Gesamt',
+                      title: Intl.message('total'),
                       icon: CupertinoIcons.info_circle,
                       children: [
                         _statRow(
@@ -210,7 +210,7 @@ class StatisticViewState extends State<StatisticView> {
                             'Aktive Abonnements',
                             '${subscriptions.where((s) => !s.isPaused).length}'),
                         _statRow(
-                            'Pausiert',
+                            Intl.message('paused'),
                             '${subscriptions.where((s) => s.isPaused).length}'),
                       ],
                     ),
@@ -367,7 +367,7 @@ class StatisticViewState extends State<StatisticView> {
           return Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text('Alle',
+              Text(Intl.message('all'),
                   style:
                       TextStyle(fontSize: 13, color: activeBlueColor)),
               const SizedBox(width: 4),

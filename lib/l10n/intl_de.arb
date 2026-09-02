@@ -146,7 +146,7 @@
   "yearlyVsMonthlyExpensesSubtitle": "Monatliche und jährlichen ausgaben relativ zu den Gesamt ausgaben",
   "pleaseAuthenticateYourselfToViewYourSubscriptions": "Bitte authentifizieren Sie sich, um Ihre Abonnements anzuzeigen",
   "security": "Sicherheit",
-  "enableAuthProtection": "Biometric aktivieren",
+  "enableAuthProtection": "Biometrie aktivieren",
   "pleaseAuthenticateYourselfToChangeThisSetting": "Bitte authentifizieren Sie sich, um diese Einstellung zu ändern",
   "dataManagement": "Datenverwaltung",
   "exportData": "Daten exportieren",
@@ -183,5 +183,14 @@
   "editCategory": "Kategorie bearbeiten",
   "calendar": "Kalender",
   "monthTotal": "Monatssumme",
-  "noBillingsThisDay": "Keine Abbuchungen an diesem Tag"
+  "noBillingsThisDay": "Keine Abbuchungen an diesem Tag",
+  "syncWithGoogleDrive": "Mit Google Drive synchronisieren",
+  "untilEndOfMonth": "Bis Monatsende",
+  "untilEndOfYear": "Bis Jahresende",
+  "topSubscriptions": "Top Abonnements",
+  "noActiveSubscriptions": "Keine aktiven Abonnements",
+  "costDistribution": "Kostenverteilung",
+  "monthlyTrend": "Monatlicher Verlauf",
+  "total": "Gesamt",
+  "all": "Alle"
 }

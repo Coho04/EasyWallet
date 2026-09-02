@@ -183,5 +183,14 @@
   "editCategory": "Edit Category",
   "calendar": "Calendar",
   "monthTotal": "Month total",
-  "noBillingsThisDay": "No billings on this day"
+  "noBillingsThisDay": "No billings on this day",
+  "syncWithGoogleDrive": "Sync with Google Drive",
+  "untilEndOfMonth": "Until end of month",
+  "untilEndOfYear": "Until end of year",
+  "topSubscriptions": "Top subscriptions",
+  "noActiveSubscriptions": "No active subscriptions",
+  "costDistribution": "Cost distribution",
+  "monthlyTrend": "Monthly trend",
+  "total": "Total",
+  "all": "All"
 }

@@ -1,3 +1,6 @@
+import 'package:provider/provider.dart';
+import 'package:easy_wallet/provider/currency_provider.dart';
+import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easy_wallet/model/subscription.dart';
@@ -129,6 +132,8 @@ class ChartDetailPageState extends State<ChartDetailPage> {
   }
 
   Widget _buildSubscriptionList(context) {
+    final currency =
+        Provider.of<CurrencyProvider>(context, listen: false).currency;
     return CupertinoListSection(
       children: widget.subscriptions.map((subscription) {
         return CupertinoListTile(
@@ -142,7 +147,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
             );
           },
           title: Text(subscription.title),
-          additionalInfo: Text('${subscription.amount} €'),
+          additionalInfo: Text(Money.format(subscription.amount, currency.symbol)),
           leading: subscription.buildImage(
               width: (_selectedSubscriptionId != null &&
                       _selectedSubscriptionId == subscription.id)

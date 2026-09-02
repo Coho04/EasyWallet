@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/views/components/color_picker_sheet.dart';
 import 'package:easy_wallet/provider/category_provider.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
@@ -257,7 +258,7 @@ class CategoryShowViewState extends State<CategoryShowView> {
           );
         },
         title: Text(subscription.title),
-        additionalInfo: Text('${subscription.amount} ${currency.symbol}'),
+        additionalInfo: Text(Money.format(subscription.amount, currency.symbol)),
         leading: subscription.buildImage(errorImgSize: 30),
         backgroundColor: isDarkMode
             ? CupertinoColors.darkBackgroundGray

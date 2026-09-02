@@ -499,7 +499,7 @@ class SettingsViewState extends State<SettingsView> {
         CupertinoFormRow(
           padding: const EdgeInsets.all(16),
           prefix:
-              AutoText(maxLines: 1, text: 'Sync with iCloud', color: textColor),
+              AutoText(maxLines: 1, text: Intl.message('syncWithICloud'), color: textColor),
           child: CupertinoSwitch(
             value: syncWithICloud,
             onChanged: (bool value) {
@@ -513,7 +513,7 @@ class SettingsViewState extends State<SettingsView> {
         ),
         CupertinoFormRow(
           prefix: AutoText(
-              maxLines: 1, text: 'Sync with Google Drive', color: textColor),
+              maxLines: 1, text: Intl.message('syncWithGoogleDrive'), color: textColor),
           child: CupertinoSwitch(
             value: syncWithGoogleDrive,
             onChanged: (bool value) {
@@ -531,7 +531,7 @@ class SettingsViewState extends State<SettingsView> {
       return [
         CupertinoFormRow(
           prefix: AutoText(
-              maxLines: 1, text: 'Sync with Google Drive', color: textColor),
+              maxLines: 1, text: Intl.message('syncWithGoogleDrive'), color: textColor),
           child: CupertinoSwitch(
             value: syncWithGoogleDrive,
             onChanged: (bool value) {

@@ -42,6 +42,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "additionalInformation": MessageLookupByLibrary.simpleMessage(
       "Additional information",
     ),
+    "all": MessageLookupByLibrary.simpleMessage("All"),
     "alphabeticalAscending": MessageLookupByLibrary.simpleMessage(
       "Alphabetical Ascending",
     ),
@@ -66,6 +67,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "convertedCosts": MessageLookupByLibrary.simpleMessage("Converted costs"),
     "costAscending": MessageLookupByLibrary.simpleMessage("Cost Ascending"),
     "costDescending": MessageLookupByLibrary.simpleMessage("Cost Descending"),
+    "costDistribution": MessageLookupByLibrary.simpleMessage(
+      "Cost distribution",
+    ),
     "costShare": MessageLookupByLibrary.simpleMessage("Cost share"),
     "costs": MessageLookupByLibrary.simpleMessage("Costs"),
     "couldNotLaunch": MessageLookupByLibrary.simpleMessage("Could not launch"),
@@ -175,7 +179,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "monthly": MessageLookupByLibrary.simpleMessage("Monthly"),
     "monthlyExpenses": MessageLookupByLibrary.simpleMessage("Monthly Expenses"),
     "monthlyLimit": MessageLookupByLibrary.simpleMessage("Monthly Limit"),
+    "monthlyTrend": MessageLookupByLibrary.simpleMessage("Monthly trend"),
     "nextInvoice": MessageLookupByLibrary.simpleMessage("Next invoice"),
+    "noActiveSubscriptions": MessageLookupByLibrary.simpleMessage(
+      "No active subscriptions",
+    ),
     "noBillingsThisDay": MessageLookupByLibrary.simpleMessage(
       "No billings on this day",
     ),
@@ -256,9 +264,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptions": MessageLookupByLibrary.simpleMessage("Subscriptions"),
     "successfully": MessageLookupByLibrary.simpleMessage("Successfully"),
     "support": MessageLookupByLibrary.simpleMessage("Support"),
+    "syncWithGoogleDrive": MessageLookupByLibrary.simpleMessage(
+      "Sync with Google Drive",
+    ),
     "syncWithICloud": MessageLookupByLibrary.simpleMessage("Sync with iCloud"),
     "tipJar": MessageLookupByLibrary.simpleMessage("Tip Jar"),
     "title": MessageLookupByLibrary.simpleMessage("Title"),
+    "topSubscriptions": MessageLookupByLibrary.simpleMessage(
+      "Top subscriptions",
+    ),
+    "total": MessageLookupByLibrary.simpleMessage("Total"),
     "totalCosts": MessageLookupByLibrary.simpleMessage("Total costs"),
     "totalExpenses": MessageLookupByLibrary.simpleMessage("Total Expenses"),
     "twoDaysBefore": MessageLookupByLibrary.simpleMessage("Two Days Before"),
@@ -267,6 +282,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Unpin this subscription",
     ),
     "unpinned": MessageLookupByLibrary.simpleMessage("Unpinned"),
+    "untilEndOfMonth": MessageLookupByLibrary.simpleMessage(
+      "Until end of month",
+    ),
+    "untilEndOfYear": MessageLookupByLibrary.simpleMessage("Until end of year"),
     "weekBefore": MessageLookupByLibrary.simpleMessage("One Week Before"),
     "year": MessageLookupByLibrary.simpleMessage("year"),
     "yearly": MessageLookupByLibrary.simpleMessage("Yearly"),
