@@ -180,5 +180,8 @@
   "select": "Auswählen",
   "add": "Hinzufügen",
   "categoryTitle": "Kategorie Titel",
-  "editCategory": "Kategorie bearbeiten"
+  "editCategory": "Kategorie bearbeiten",
+  "calendar": "Kalender",
+  "monthTotal": "Monatssumme",
+  "noBillingsThisDay": "Keine Abbuchungen an diesem Tag"
 }
