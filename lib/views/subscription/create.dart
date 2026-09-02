@@ -318,7 +318,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     }
   }
 
-  Future<void> _saveItem(context) async {
+  Future<void> _saveItem(BuildContext context) async {
     final title = _titleController.text.trim();
     final amount = double.tryParse(_amountController.text.replaceAll(',', '.'));
     final url = _urlController.text;
@@ -349,6 +349,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
               .saveSubscription(newSubscription);
       newSubscription.assignCategories(_selectedCategories);
 
+      if (!context.mounted) return;
       Navigator.of(context).pop(true);
     }
   }

@@ -579,7 +579,7 @@ class StatisticViewState extends State<StatisticView> {
     }
   }
 
-  Widget _buildChart(data) {
+  Widget _buildChart(List<CartesianSeries<ChartData, String>> data) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Padding(
@@ -650,46 +650,8 @@ class StatisticViewState extends State<StatisticView> {
     return seriesList;
   }
 
-  List<CartesianSeries<ChartData, String>> _makePinnedData(
-      List<Subscription> subscriptions) {
-    List<CartesianSeries<ChartData, String>> seriesList = [];
-    var hasPinned = subscriptions.any((subscription) => subscription.isPinned);
-    bool hasUnpinned =
-        subscriptions.any((subscription) => !subscription.isPinned);
-    if (!hasPinned || !hasUnpinned) {
-      seriesList.add(
-        buildPlaceholderSeries(hasUnpinned ? 'pinned' : 'unpinned'),
-      );
-    }
-
-    for (var subscription in subscriptions) {
-      seriesList.add(buildStackedColumn100Series(
-          subscription, subscription.isPinned ? 'pinned' : 'unpinned', 1));
-    }
-
-    return seriesList;
-  }
-
-  List<CartesianSeries<ChartData, String>> _makePausedData(
-      List<Subscription> subscriptions) {
-    List<CartesianSeries<ChartData, String>> seriesList = [];
-    var hasActive = subscriptions.any((subscription) => !subscription.isPaused);
-    var hasPaused = subscriptions.any((subscription) => subscription.isPaused);
-
-    if (!hasPaused || !hasActive) {
-      seriesList.add(
-        buildPlaceholderSeries(hasActive ? 'active' : 'paused'),
-      );
-    }
-
-    for (var subscription in subscriptions) {
-      seriesList.add(buildStackedColumn100Series(
-          subscription, subscription.isPaused ? 'paused' : 'active', 1));
-    }
-    return seriesList;
-  }
-
-  dynamic buildPlaceholderSeries(category, {bool stackedColumnSeries = false}) {
+  dynamic buildPlaceholderSeries(String category,
+      {bool stackedColumnSeries = false}) {
     category = Intl.message(category);
     return stackedColumnSeries
         ? StackedColumnSeries<ChartData, String>(
@@ -710,13 +672,15 @@ class StatisticViewState extends State<StatisticView> {
           );
   }
 
-  dynamic buildStackedColumn100Series(subscription, category, value,
+  dynamic buildStackedColumn100Series(
+      Subscription subscription, String category, double value,
       {bool stackedColumnSeries = false}) {
     Color? color = colorCache[subscription.getFaviconUrl()] ?? Colors.grey;
     bool isSelected = _selectedSubscriptionId == subscription.id;
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
-    final commonSettings = {
+    // Explicit, because the values are spread into typed named arguments.
+    final Map<String, dynamic> commonSettings = {
       'onPointTap': (ChartPointDetails point) {
         setState(() {
           if (_selectedSubscriptionId == subscription.id) {

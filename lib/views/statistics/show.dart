@@ -91,7 +91,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
     );
   }
 
-  Widget _buildChart(context) {
+  Widget _buildChart(BuildContext context) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     if (widget.chartData != null) {
@@ -131,7 +131,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
     return Container();
   }
 
-  Widget _buildSubscriptionList(context) {
+  Widget _buildSubscriptionList(BuildContext context) {
     final currency =
         Provider.of<CurrencyProvider>(context, listen: false).currency;
     return CupertinoListSection(
@@ -169,7 +169,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
     );
   }
 
-  StackedSeriesBase buildSeries(series) {
+  StackedSeriesBase buildSeries(CartesianSeries<ChartData, String> series) {
     if (widget.dataType == 'StackedColumn100Series') {
       return StackedColumn100Series<ChartData, String>(
         dataSource: series.dataSource,

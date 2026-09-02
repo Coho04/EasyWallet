@@ -24,9 +24,9 @@ import '../components/form_fields/multi_select_dialog_field.dart';
 
 class SubscriptionEditView extends StatefulWidget {
   final Subscription subscription;
-  List<Category> selectedCategories;
+  final List<Category> selectedCategories;
 
-  SubscriptionEditView(
+  const SubscriptionEditView(
       {super.key,
       required this.subscription,
       required this.selectedCategories});
@@ -83,7 +83,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
     return _titleValid && _amountValid;
   }
 
-  void _saveItem(context) async {
+  void _saveItem(BuildContext context) async {
     if (_validateForm()) {
       var subscription = widget.subscription;
       subscription.title = _titleController.text.trim();
@@ -103,6 +103,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
           await Provider.of<SubscriptionProvider>(context, listen: false)
               .saveSubscription(subscription);
       subscription.assignCategories(widget.selectedCategories);
+      if (!context.mounted) return;
       Navigator.of(context).pop(true);
     }
   }

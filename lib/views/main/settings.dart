@@ -67,7 +67,7 @@ class SettingsViewState extends State<SettingsView> {
     });
   }
 
-  Future<void> _saveSettings(context) async {
+  Future<void> _saveSettings(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('notificationsEnabled', notificationsEnabled);
     prefs.setBool('includeCostInNotifications', includeCostInNotifications);
@@ -80,6 +80,7 @@ class SettingsViewState extends State<SettingsView> {
     prefs.setString('notificationTime',
         '${notificationTime.hour}:${notificationTime.minute}');
 
+    if (!context.mounted) return;
     await Provider.of<CurrencyProvider>(context, listen: false).loadCurrency();
   }
 
@@ -183,7 +184,7 @@ class SettingsViewState extends State<SettingsView> {
     return '';
   }
 
-  Future<void> _selectNotificationTime(context) async {
+  Future<void> _selectNotificationTime(BuildContext context) async {
     final DateTime? picked = await showCupertinoModalPopup<DateTime>(
       context: context,
       builder: (BuildContext context) {
@@ -224,6 +225,7 @@ class SettingsViewState extends State<SettingsView> {
       setState(() {
         notificationTime = picked;
       });
+      if (!context.mounted) return;
       _saveSettings(context);
     }
   }
@@ -548,7 +550,7 @@ class SettingsViewState extends State<SettingsView> {
   }
 
   void handleGoogleSignIn(BuildContext context, bool enable) async {
-    var googleCloud = await PersistenceController.instance.googleDrive;
+    await PersistenceController.instance.googleDrive;
     if (enable) {
       try {
         await GoogleSignIn.instance.authenticate();

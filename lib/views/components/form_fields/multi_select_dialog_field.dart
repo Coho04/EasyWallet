@@ -15,6 +15,7 @@ class MultiSelectDialogField<V> extends FormField<List<V>> {
   final List<MultiSelectItem<V>> items;
   final void Function(List<V>)? onSelectionChanged;
   final MultiSelectChipDisplay<V>? chipDisplay;
+  @override
   final List<V> initialValue;
   final void Function(List<V>) onConfirm;
   final bool searchable;
@@ -37,9 +38,13 @@ class MultiSelectDialogField<V> extends FormField<List<V>> {
   final bool separateSelectedItems;
   final Color? checkColor;
   final bool isDismissible;
+  @override
   final AutovalidateMode autovalidateMode;
+  @override
   final FormFieldValidator<List<V>>? validator;
+  @override
   final FormFieldSetter<List<V>>? onSaved;
+  @override
   final GlobalKey<FormFieldState>? key;
   FormFieldState<List<V>>? state;
 
@@ -189,7 +194,7 @@ class _MultiSelectDialogFieldView<V> extends StatefulWidget {
   });
 
   _MultiSelectDialogFieldView._withState(
-      _MultiSelectDialogFieldView<V> field, FormFieldState<List<V>> state)
+      _MultiSelectDialogFieldView<V> field, this.state)
       : items = field.items,
         title = field.title,
         buttonText = field.buttonText,
@@ -219,8 +224,7 @@ class _MultiSelectDialogFieldView<V> extends StatefulWidget {
         selectedItemsTextStyle = field.selectedItemsTextStyle,
         separateSelectedItems = field.separateSelectedItems,
         checkColor = field.checkColor,
-        isDismissible = field.isDismissible,
-        state = state;
+        isDismissible = field.isDismissible;
 
   @override
   __MultiSelectDialogFieldViewState createState() =>
@@ -302,7 +306,7 @@ class __MultiSelectDialogFieldViewState<V>
     }
   }
 
-  _showDialog(BuildContext ctx) async {
+  Future<void> _showDialog(BuildContext ctx) async {
     await showCupertinoDialog(
       barrierDismissible: widget.isDismissible,
       context: context,
