@@ -1,11 +1,10 @@
+import 'package:easy_wallet/views/components/color_picker_sheet.dart';
 import 'package:easy_wallet/model/category.dart';
 import 'package:easy_wallet/provider/category_provider.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/components/category_list_component.dart';
 import 'package:easy_wallet/views/components/gradient_header.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -173,7 +172,7 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
                     GestureDetector(
                       onTap: () async {
                         pickerColor =
-                            await _pickColor(pickerColor) ?? pickerColor;
+                            await showColorPickerSheet(context, pickerColor) ?? pickerColor;
                         setState(() {});
                       },
                       child: Row(
@@ -229,49 +228,6 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
     );
   }
 
-  Future<Color?> _pickColor(Color currentColor) async {
-    final isDarkMode =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
-
-    Color? pickedColor;
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: isDarkMode
-              ? CupertinoColors.darkBackgroundGray
-              : CupertinoColors.white,
-          title: Text(Intl.message('pickAColor')),
-          titleTextStyle: TextStyle(
-            color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-          ),
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: currentColor,
-              onColorChanged: (Color color) {
-                pickedColor = color;
-              },
-              showLabel: false,
-              labelTextStyle: TextStyle(
-                color:
-                    isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-              ),
-              pickerAreaHeightPercent: 0.8,
-            ),
-          ),
-          actions: <Widget>[
-            CupertinoButton(
-              child: Text(Intl.message('done')),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-    return pickedColor;
-  }
 
   List<Category> _sortCategories(List<Category> categories) {
     List<Category> filteredCategories = categories.where((category) {
