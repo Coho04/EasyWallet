@@ -59,7 +59,8 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
                 ],
               ),
             ),
-            Padding(
+            if (categories.isNotEmpty)
+              Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: CupertinoSearchTextField(
                 placeholder: Intl.message('search'),
@@ -91,7 +92,9 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
                                       .categories);
                                 });
                               },
-                              onDelete: (deletedCategory) {
+                              onDelete: (deletedCategory) async {
+                                if (!await _confirmDelete(context)) return;
+                                if (!context.mounted) return;
                                 setState(() {
                                   Provider.of<CategoryProvider>(context,
                                           listen: false)
@@ -122,6 +125,29 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
     }
   }
 
+  /// Deleting a category cannot be undone, so it is confirmed first.
+  Future<bool> _confirmDelete(BuildContext context) async {
+    final confirmed = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: Text(Intl.message('deleteCategoryQuestion')),
+        content: Text(Intl.message('deleteCategoryHint')),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(Intl.message('cancel')),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(Intl.message('delete')),
+          ),
+        ],
+      ),
+    );
+    return confirmed ?? false;
+  }
+
   Widget _buildEmptyState() {
     return Center(
       child: Column(
@@ -134,14 +160,11 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
           ),
           const SizedBox(height: 16),
           CupertinoButton.filled(
+            sizeStyle: CupertinoButtonSize.medium,
             onPressed: () {
               _showAddCategoryDialog(context);
             },
-            child: AutoText(
-              text: Intl.message('addNewCategory'),
-              bold: true,
-              color: CupertinoColors.white,
-            ),
+            child: Text(Intl.message('addNewCategory')),
           ),
         ],
       ),

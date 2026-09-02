@@ -95,6 +95,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Days Remaining Descending",
     ),
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
+    "deleteCategoryHint": MessageLookupByLibrary.simpleMessage(
+      "This cannot be undone.",
+    ),
+    "deleteCategoryQuestion": MessageLookupByLibrary.simpleMessage(
+      "Delete category?",
+    ),
     "deleteSubscription": MessageLookupByLibrary.simpleMessage(
       "Delete this subscription",
     ),
@@ -142,6 +148,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "exportData": MessageLookupByLibrary.simpleMessage("Export Data"),
     "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
     "firstDebit": MessageLookupByLibrary.simpleMessage("First Debit"),
+    "general": MessageLookupByLibrary.simpleMessage("General"),
     "generalInformation": MessageLookupByLibrary.simpleMessage(
       "General information",
     ),
@@ -191,6 +198,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "No categories available",
     ),
     "noData": MessageLookupByLibrary.simpleMessage("No data"),
+    "noDataYet": MessageLookupByLibrary.simpleMessage("No data yet"),
     "noEntriesFound": MessageLookupByLibrary.simpleMessage("No entries found"),
     "noSubscriptionsAvailable": MessageLookupByLibrary.simpleMessage(
       "No subscriptions available",

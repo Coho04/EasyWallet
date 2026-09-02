@@ -1329,6 +1329,36 @@ class S {
   String get all {
     return Intl.message('All', name: 'all', desc: '', args: []);
   }
+
+  /// `General`
+  String get general {
+    return Intl.message('General', name: 'general', desc: '', args: []);
+  }
+
+  /// `Delete category?`
+  String get deleteCategoryQuestion {
+    return Intl.message(
+      'Delete category?',
+      name: 'deleteCategoryQuestion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This cannot be undone.`
+  String get deleteCategoryHint {
+    return Intl.message(
+      'This cannot be undone.',
+      name: 'deleteCategoryHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No data yet`
+  String get noDataYet {
+    return Intl.message('No data yet', name: 'noDataYet', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

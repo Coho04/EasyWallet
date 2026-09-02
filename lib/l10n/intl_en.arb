@@ -192,5 +192,9 @@
   "costDistribution": "Cost distribution",
   "monthlyTrend": "Monthly trend",
   "total": "Total",
-  "all": "All"
+  "all": "All",
+  "general": "General",
+  "deleteCategoryQuestion": "Delete category?",
+  "deleteCategoryHint": "This cannot be undone.",
+  "noDataYet": "No data yet"
 }

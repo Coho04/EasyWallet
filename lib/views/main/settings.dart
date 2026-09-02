@@ -411,7 +411,7 @@ class SettingsViewState extends State<SettingsView> {
               ),
               const SizedBox(height: 20),
               CardSection(
-                title: Intl.message('settings'),
+                title: Intl.message('general'),
                 children: [
                   CupertinoFormRow(
                     padding: const EdgeInsets.all(16),

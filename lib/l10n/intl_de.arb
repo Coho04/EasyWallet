@@ -192,5 +192,9 @@
   "costDistribution": "Kostenverteilung",
   "monthlyTrend": "Monatlicher Verlauf",
   "total": "Gesamt",
-  "all": "Alle"
+  "all": "Alle",
+  "general": "Allgemein",
+  "deleteCategoryQuestion": "Kategorie löschen?",
+  "deleteCategoryHint": "Das lässt sich nicht rückgängig machen.",
+  "noDataYet": "Noch keine Daten"
 }
