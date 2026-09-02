@@ -94,6 +94,30 @@ class Category {
     });
   }
 
+  /// The categories of every subscription, keyed by subscription id. One join
+  /// instead of a query per subscription, for views that need the categories of
+  /// all subscriptions at once.
+  static Future<Map<int, List<Category>>> forAllSubscriptions() async {
+    if (kIsWeb) {
+      throw UnsupportedError("Database is not supported on the web");
+    }
+    final db = await PersistenceController.instance.database;
+    final maps = await db.rawQuery(
+      'SELECT sc.subscription_id AS subscription_id, c.* '
+      'FROM subscription_categories sc '
+      'JOIN categories c ON c.id = sc.category_id',
+    );
+
+    final bySubscription = <int, List<Category>>{};
+    for (final map in maps) {
+      final subscriptionId = map['subscription_id'] as int;
+      bySubscription
+          .putIfAbsent(subscriptionId, () => [])
+          .add(Category.fromJson(map));
+    }
+    return bySubscription;
+  }
+
   @override
   String toString() {
     return title;

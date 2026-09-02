@@ -180,5 +180,8 @@
   "select": "Select",
   "add": "Add",
   "categoryTitle": "Category Title",
-  "editCategory": "Edit Category"
+  "editCategory": "Edit Category",
+  "calendar": "Calendar",
+  "monthTotal": "Month total",
+  "noBillingsThisDay": "No billings on this day"
 }
