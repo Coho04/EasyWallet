@@ -109,26 +109,26 @@ packages:
     dependency: "direct main"
     description:
       name: cached_network_image
-      sha256: "7c1183e361e5c8b0a0f21a28401eecdbde252441106a9816400dd4c2b2424916"
+      sha256: "03d9cff3f68ded9e7c5588ebe7fc8650a669192685e59d2d2413d7813b286d6b"
       url: "https://pub.dev"
     source: hosted
-    version: "3.4.1"
+    version: "4.0.0"
   cached_network_image_platform_interface:
     dependency: transitive
     description:
       name: cached_network_image_platform_interface
-      sha256: "35814b016e37fbdc91f7ae18c8caf49ba5c88501813f73ce8a07027a395e2829"
+      sha256: ff60d021d5a013490368cd9efdcbe35df4227fdb6c5971d15b4bc6e3d0172fe0
       url: "https://pub.dev"
     source: hosted
-    version: "4.1.1"
+    version: "5.0.0"
   cached_network_image_web:
     dependency: transitive
     description:
       name: cached_network_image_web
-      sha256: "980842f4e8e2535b8dbd3d5ca0b1f0ba66bf61d14cc3a17a9b4788a3685ba062"
+      sha256: c8edf00f48d91bc469731e4fb095350b0162e18efe2cf0054cb40c62d1a1f70a
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.1"
+    version: "2.0.0"
   characters:
     dependency: transitive
     description:
@@ -217,6 +217,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.9"
+  cupertino_ui:
+    dependency: transitive
+    description:
+      name: cupertino_ui
+      sha256: "2137c0d41f3b62cc4d3d2495e6c354bd6b6133cd21c6bb155736cc31dbd49a11"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   dart_style:
     dependency: transitive
     description:
@@ -505,10 +513,10 @@ packages:
     dependency: "direct main"
     description:
       name: googleapis
-      sha256: "62b5988f228b774448ebd99b53fe8069becb55840f1b28948bb84160373dc0b6"
+      sha256: d38bb64016ef27eca7fde992994b9d2999bcea307685807e15d6a08bff05dc61
       url: "https://pub.dev"
     source: hosted
-    version: "16.0.0"
+    version: "17.0.0"
   googleapis_auth:
     dependency: "direct main"
     description:
@@ -553,10 +561,10 @@ packages:
     dependency: "direct main"
     description:
       name: image
-      sha256: f9881ff4998044947ec38d098bc7c8316ae1186fa786eddffdb867b9bc94dfce
+      sha256: "1976370a4df3091bb0f72409c187ad1f9132a818bc6b95ca59c0bae1c75c688e"
       url: "https://pub.dev"
     source: hosted
-    version: "4.8.0"
+    version: "4.9.2"
   intl:
     dependency: "direct main"
     description:
@@ -677,6 +685,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.13.0"
+  material_ui:
+    dependency: transitive
+    description:
+      name: material_ui
+      sha256: "7ba1ca315d50a004791dbab290417c52a61466d56db2822fe3c5c2994903110c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   meta:
     dependency: transitive
     description:
@@ -929,18 +945,18 @@ packages:
     dependency: transitive
     description:
       name: sentry
-      sha256: "330a341076e16b87aa8a4f97b0bd48c085737d087e81ef337aee2b4c3e8896f9"
+      sha256: "5641a2acec1647f6482e472679374ac02070464e8c1d0df946361393ea7681a2"
       url: "https://pub.dev"
     source: hosted
-    version: "9.26.0"
+    version: "9.28.0"
   sentry_flutter:
     dependency: "direct main"
     description:
       name: sentry_flutter
-      sha256: "163685070e173b9b28cd10e56eb76fdaca34067831bd7e3563f98a5bc5866165"
+      sha256: "41df8ab3a30190a05eb44e2c0e739b5ba90eb341de771454ced282295fde8c62"
       url: "https://pub.dev"
     source: hosted
-    version: "9.26.0"
+    version: "9.28.0"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1086,18 +1102,18 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_charts
-      sha256: fd8cc7a91ff192e908051eb3743130b0da8eb1ab348f893662d3566a43385697
+      sha256: "76c499d816c38a4ed63d691898b8db58d0e155e62ee3422d0e5d4d2f405b01c6"
       url: "https://pub.dev"
     source: hosted
-    version: "34.2.3"
+    version: "34.2.5"
   syncfusion_flutter_core:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: e7f8efe88922e19b83cd5f008f552442b304f40ff84e5037425e9042e1f1a1bd
+      sha256: e557b6968b4bc4221ee9aa1ae886586d8152a75899ef695b59f88cb62374c955
       url: "https://pub.dev"
     source: hosted
-    version: "34.2.3"
+    version: "34.2.5"
   synchronized:
     dependency: transitive
     description:
@@ -1263,18 +1279,18 @@ packages:
     description:
       path: workmanager
       ref: main
-      resolved-ref: af5d75ae94574e9f2952768617ced738c140c52f
+      resolved-ref: "5ffa188212a66e4a3c3f4899f4ed8d0300c067dd"
       url: "https://github.com/fluttercommunity/flutter_workmanager.git"
     source: git
-    version: "0.10.7"
+    version: "0.10.9"
   workmanager_android:
     dependency: transitive
     description:
       name: workmanager_android
-      sha256: f89029cbcf0695c772287aa8fbbd7af776f1ea63bc95b60a00617f69468ddaa0
+      sha256: "187d1d34864f57f9e388b33b88c001c494093c53679831a3dec2e8176e8829d1"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.6"
+    version: "0.10.8"
   workmanager_apple:
     dependency: transitive
     description:

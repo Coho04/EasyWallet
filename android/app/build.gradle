@@ -26,7 +26,7 @@ if (flutterVersionName == null) {
 android {
     namespace = "io.github.coho04.easy_wallet"
     compileSdk = 36
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         coreLibraryDesugaringEnabled true
@@ -58,17 +58,9 @@ android {
     }
 }
 
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        if (details.requested.group == 'org.jetbrains.kotlin' && details.requested.name.contains('kotlin')) {
-            details.useVersion '2.1.20'
-        }
-    }
-}
-
 dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
-    implementation 'com.google.android.gms:play-services-auth:21.6.0'
+    implementation 'com.google.android.gms:play-services-auth:22.0.0'
 }
 
 flutter {
