@@ -1,8 +1,10 @@
 import 'package:easy_wallet/views/components/auto_text.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/cupertino.dart';
 
+/// A grouped card with a section header, styled like [StatCard] so the
+/// settings, subscription and category views all read the same: a small
+/// uppercase caption over a rounded card on the grouped background.
 class CardSection extends StatelessWidget {
   final String title;
   final List<Widget> children;
@@ -19,36 +21,56 @@ class CardSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(14.0),
       decoration: BoxDecoration(
-        color: isDarkMode
-            ? CupertinoColors.darkBackgroundGray
-            : CupertinoColors.white,
-        borderRadius: BorderRadius.circular(12.0),
+        // System colours instead of a manual dark-mode branch, so the card
+        // follows the platform in both appearances.
+        color: CupertinoColors.secondarySystemGroupedBackground
+            .resolveFrom(context),
+        borderRadius: BorderRadius.circular(14.0),
+        boxShadow: [
+          BoxShadow(
+            color: CupertinoColors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AutoText(
-            text: title,
-            bold: true,
-            color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+          Text(
+            title.toUpperCase(),
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              color: CupertinoColors.secondaryLabel.resolveFrom(context),
+            ),
           ),
-          const SizedBox(height: 10),
-          if (subtitle != null)
+          Container(
+            margin: const EdgeInsets.only(top: 8, bottom: 4),
+            height: 0.5,
+            color: CupertinoColors.separator.resolveFrom(context),
+          ),
+          if (subtitle != null) ...[
             AutoText(
               text: subtitle!,
               bold: false,
-              color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
+              color: CupertinoColors.secondaryLabel.resolveFrom(context),
             ),
-          if (subtitle != null) const SizedBox(height: 10),
+            const SizedBox(height: 10),
+          ],
           ...List.generate(children.length, (index) {
             return Column(
               children: [
-                if (index > 0) const Divider(),
+                if (index > 0)
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    height: 0.5,
+                    color: CupertinoColors.separator.resolveFrom(context),
+                  ),
                 children[index],
               ],
             );

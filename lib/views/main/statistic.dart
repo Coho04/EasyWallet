@@ -182,6 +182,16 @@ class StatisticViewState extends State<StatisticView> {
                       title: Intl.message('monthlyTrend'),
                       icon: CupertinoIcons.chart_bar,
                       children: [
+                        if (subscriptions.isEmpty)
+                          Text(
+                            Intl.message('noDataYet'),
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: CupertinoColors.secondaryLabel
+                                  .resolveFrom(context),
+                            ),
+                          )
+                        else
                         Padding(
                           padding: const EdgeInsets.only(top: 8, bottom: 8),
                           child: _buildChart(
@@ -463,7 +473,8 @@ class StatisticViewState extends State<StatisticView> {
       return PieChartSectionData(
         color: color,
         value: subscription.amount,
-        title: '${percentage.toStringAsFixed(1)}%',
+        // Same separator convention as the amounts on this screen.
+        title: '${NumberFormat.decimalPatternDigits(decimalDigits: 1).format(percentage)}%',
         titlePositionPercentageOffset: 0.65,
         radius: radius,
         badgeWidget: BadgeComponent(
