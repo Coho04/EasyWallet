@@ -50,6 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "appStats": MessageLookupByLibrary.simpleMessage("App Statistics"),
     "apple_pay": MessageLookupByLibrary.simpleMessage("Apple Pay"),
+    "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "categories": MessageLookupByLibrary.simpleMessage("Categories"),
     "categoryTitle": MessageLookupByLibrary.simpleMessage("Category Title"),
@@ -170,10 +171,14 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "month": MessageLookupByLibrary.simpleMessage("month"),
+    "monthTotal": MessageLookupByLibrary.simpleMessage("Month total"),
     "monthly": MessageLookupByLibrary.simpleMessage("Monthly"),
     "monthlyExpenses": MessageLookupByLibrary.simpleMessage("Monthly Expenses"),
     "monthlyLimit": MessageLookupByLibrary.simpleMessage("Monthly Limit"),
     "nextInvoice": MessageLookupByLibrary.simpleMessage("Next invoice"),
+    "noBillingsThisDay": MessageLookupByLibrary.simpleMessage(
+      "No billings on this day",
+    ),
     "noCategoriesAvailable": MessageLookupByLibrary.simpleMessage(
       "No categories available",
     ),

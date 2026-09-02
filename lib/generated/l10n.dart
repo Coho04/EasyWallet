@@ -1229,6 +1229,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Calendar`
+  String get calendar {
+    return Intl.message('Calendar', name: 'calendar', desc: '', args: []);
+  }
+
+  /// `Month total`
+  String get monthTotal {
+    return Intl.message('Month total', name: 'monthTotal', desc: '', args: []);
+  }
+
+  /// `No billings on this day`
+  String get noBillingsThisDay {
+    return Intl.message(
+      'No billings on this day',
+      name: 'noBillingsThisDay',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
