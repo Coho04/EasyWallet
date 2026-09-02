@@ -52,8 +52,16 @@ class StatisticViewState extends State<StatisticView> {
     _monthlyLimit = prefs.getDouble('monthlyLimit') ?? 0.0;
 
     if (!mounted) return;
-    final subscriptions = context.read<SubscriptionProvider>().subscriptions;
-    final currency = context.read<CurrencyProvider>().currency;
+    final subscriptionProvider = context.read<SubscriptionProvider>();
+    final currencyProvider = context.read<CurrencyProvider>();
+
+    // Tabs are built lazily, so this view cannot rely on the subscription tab
+    // having filled the providers before it is opened.
+    await subscriptionProvider.loadSubscriptions();
+    await currencyProvider.loadCurrency();
+
+    final subscriptions = subscriptionProvider.subscriptions;
+    final currency = currencyProvider.currency;
 
     await prefetchColors(subscriptions);
     _calculateStatistics(subscriptions);
@@ -104,8 +112,13 @@ class StatisticViewState extends State<StatisticView> {
         return CupertinoPageScaffold(
           backgroundColor:
               CupertinoColors.systemGroupedBackground.resolveFrom(context),
-          child: CustomScrollView(
-            slivers: [
+          // top: false keeps the gradient header running under the status bar,
+          // while the bottom inset stops the content from scrolling under the
+          // tab bar - the same treatment the settings view already uses.
+          child: SafeArea(
+            top: false,
+            child: CustomScrollView(
+              slivers: [
               SliverToBoxAdapter(
                 child: SubscriptionHeader(
                   monthlySpent: monthly,
@@ -200,11 +213,11 @@ class StatisticViewState extends State<StatisticView> {
                             '${subscriptions.where((s) => s.isPaused).length}'),
                       ],
                     ),
-                    const SizedBox(height: 85),
                   ]),
                 ),
               ),
-            ],
+              ],
+            ),
           ),
         );
       },
