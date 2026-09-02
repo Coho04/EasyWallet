@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/views/components/budget_warning_banner.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -147,7 +149,7 @@ class SubscriptionHeader extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            '$symbol ${value.toStringAsFixed(2)}',
+            Money.format(value, symbol),
             style: const TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
@@ -194,8 +196,8 @@ class SubscriptionHeader extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           _budgetExceeded
-              ? '$currencySymbol ${(monthlySpent - budgetLimit!).toStringAsFixed(2)} über'
-              : '${(100 * _budgetProgress).toStringAsFixed(0)}%',
+              ? '${Money.format(monthlySpent - budgetLimit!, currencySymbol)} über'
+              : '${NumberFormat.decimalPatternDigits(decimalDigits: 0).format(100 * _budgetProgress)}%',
           style: const TextStyle(fontSize: 10, color: Color(0x72FFFFFF)),
         ),
       ],

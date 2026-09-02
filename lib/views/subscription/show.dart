@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
@@ -84,7 +85,7 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
                           CardDetailRow(
                             label: Intl.message('costs'),
                             value:
-                                '${subscription.amount.toStringAsFixed(2)} ${currency.symbol}',
+                                Money.format(subscription.amount, currency.symbol),
                           ),
                           CardDetailRow(
                             label: Intl.message('repetitionRate'),
@@ -135,7 +136,7 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
                           CardDetailRow(
                             label: Intl.message('totalCosts'),
                             value:
-                                '${subscription.sumPayment().toStringAsFixed(2)} ${currency.symbol}',
+                                Money.format(subscription.sumPayment(), currency.symbol),
                           ),
                           if (subscription.notes != null &&
                               subscription.notes!.trim().isNotEmpty)

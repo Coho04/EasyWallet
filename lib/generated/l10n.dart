@@ -1249,6 +1249,116 @@ class S {
       args: [],
     );
   }
+
+  /// `Sync with Google Drive`
+  String get syncWithGoogleDrive {
+    return Intl.message(
+      'Sync with Google Drive',
+      name: 'syncWithGoogleDrive',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Until end of month`
+  String get untilEndOfMonth {
+    return Intl.message(
+      'Until end of month',
+      name: 'untilEndOfMonth',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Until end of year`
+  String get untilEndOfYear {
+    return Intl.message(
+      'Until end of year',
+      name: 'untilEndOfYear',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Top subscriptions`
+  String get topSubscriptions {
+    return Intl.message(
+      'Top subscriptions',
+      name: 'topSubscriptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No active subscriptions`
+  String get noActiveSubscriptions {
+    return Intl.message(
+      'No active subscriptions',
+      name: 'noActiveSubscriptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cost distribution`
+  String get costDistribution {
+    return Intl.message(
+      'Cost distribution',
+      name: 'costDistribution',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly trend`
+  String get monthlyTrend {
+    return Intl.message(
+      'Monthly trend',
+      name: 'monthlyTrend',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total`
+  String get total {
+    return Intl.message('Total', name: 'total', desc: '', args: []);
+  }
+
+  /// `All`
+  String get all {
+    return Intl.message('All', name: 'all', desc: '', args: []);
+  }
+
+  /// `General`
+  String get general {
+    return Intl.message('General', name: 'general', desc: '', args: []);
+  }
+
+  /// `Delete category?`
+  String get deleteCategoryQuestion {
+    return Intl.message(
+      'Delete category?',
+      name: 'deleteCategoryQuestion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This cannot be undone.`
+  String get deleteCategoryHint {
+    return Intl.message(
+      'This cannot be undone.',
+      name: 'deleteCategoryHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No data yet`
+  String get noDataYet {
+    return Intl.message('No data yet', name: 'noDataYet', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

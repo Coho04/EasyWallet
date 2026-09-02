@@ -1,11 +1,10 @@
+import 'package:easy_wallet/views/components/color_picker_sheet.dart';
 import 'package:easy_wallet/model/category.dart';
 import 'package:easy_wallet/provider/category_provider.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/components/category_list_component.dart';
 import 'package:easy_wallet/views/components/gradient_header.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -60,7 +59,8 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
                 ],
               ),
             ),
-            Padding(
+            if (categories.isNotEmpty)
+              Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: CupertinoSearchTextField(
                 placeholder: Intl.message('search'),
@@ -92,7 +92,9 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
                                       .categories);
                                 });
                               },
-                              onDelete: (deletedCategory) {
+                              onDelete: (deletedCategory) async {
+                                if (!await _confirmDelete(context)) return;
+                                if (!context.mounted) return;
                                 setState(() {
                                   Provider.of<CategoryProvider>(context,
                                           listen: false)
@@ -123,6 +125,29 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
     }
   }
 
+  /// Deleting a category cannot be undone, so it is confirmed first.
+  Future<bool> _confirmDelete(BuildContext context) async {
+    final confirmed = await showCupertinoDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: Text(Intl.message('deleteCategoryQuestion')),
+        content: Text(Intl.message('deleteCategoryHint')),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(Intl.message('cancel')),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(Intl.message('delete')),
+          ),
+        ],
+      ),
+    );
+    return confirmed ?? false;
+  }
+
   Widget _buildEmptyState() {
     return Center(
       child: Column(
@@ -135,14 +160,11 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
           ),
           const SizedBox(height: 16),
           CupertinoButton.filled(
+            sizeStyle: CupertinoButtonSize.medium,
             onPressed: () {
               _showAddCategoryDialog(context);
             },
-            child: AutoText(
-              text: Intl.message('addNewCategory'),
-              bold: true,
-              color: CupertinoColors.white,
-            ),
+            child: Text(Intl.message('addNewCategory')),
           ),
         ],
       ),
@@ -173,7 +195,7 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
                     GestureDetector(
                       onTap: () async {
                         pickerColor =
-                            await _pickColor(pickerColor) ?? pickerColor;
+                            await showColorPickerSheet(context, pickerColor) ?? pickerColor;
                         setState(() {});
                       },
                       child: Row(
@@ -229,49 +251,6 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
     );
   }
 
-  Future<Color?> _pickColor(Color currentColor) async {
-    final isDarkMode =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
-
-    Color? pickedColor;
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: isDarkMode
-              ? CupertinoColors.darkBackgroundGray
-              : CupertinoColors.white,
-          title: Text(Intl.message('pickAColor')),
-          titleTextStyle: TextStyle(
-            color: isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-          ),
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: currentColor,
-              onColorChanged: (Color color) {
-                pickedColor = color;
-              },
-              showLabel: false,
-              labelTextStyle: TextStyle(
-                color:
-                    isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-              ),
-              pickerAreaHeightPercent: 0.8,
-            ),
-          ),
-          actions: <Widget>[
-            CupertinoButton(
-              child: Text(Intl.message('done')),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-    return pickedColor;
-  }
 
   List<Category> _sortCategories(List<Category> categories) {
     List<Category> filteredCategories = categories.where((category) {

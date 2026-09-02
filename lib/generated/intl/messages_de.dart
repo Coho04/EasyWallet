@@ -46,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "additionalInformation": MessageLookupByLibrary.simpleMessage(
       "Zusätzliche Informationen",
     ),
+    "all": MessageLookupByLibrary.simpleMessage("Alle"),
     "alphabeticalAscending": MessageLookupByLibrary.simpleMessage(
       "Alphabetisch aufsteigend",
     ),
@@ -74,6 +75,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "costAscending": MessageLookupByLibrary.simpleMessage("Kosten aufsteigend"),
     "costDescending": MessageLookupByLibrary.simpleMessage("Kosten absteigend"),
+    "costDistribution": MessageLookupByLibrary.simpleMessage(
+      "Kostenverteilung",
+    ),
     "costShare": MessageLookupByLibrary.simpleMessage("Kostenanteil"),
     "costs": MessageLookupByLibrary.simpleMessage("Kosten"),
     "couldNotLaunch": MessageLookupByLibrary.simpleMessage(
@@ -101,6 +105,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Verbleibende Tage absteigend",
     ),
     "delete": MessageLookupByLibrary.simpleMessage("Löschen"),
+    "deleteCategoryHint": MessageLookupByLibrary.simpleMessage(
+      "Das lässt sich nicht rückgängig machen.",
+    ),
+    "deleteCategoryQuestion": MessageLookupByLibrary.simpleMessage(
+      "Kategorie löschen?",
+    ),
     "deleteSubscription": MessageLookupByLibrary.simpleMessage(
       "Dieses Abonnement löschen",
     ),
@@ -119,7 +129,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Abonnement bearbeiten",
     ),
     "enableAuthProtection": MessageLookupByLibrary.simpleMessage(
-      "Biometric aktivieren",
+      "Biometrie aktivieren",
     ),
     "enableNotifications": MessageLookupByLibrary.simpleMessage(
       "Benachrichtigungen aktivieren",
@@ -150,6 +160,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "exportData": MessageLookupByLibrary.simpleMessage("Daten exportieren"),
     "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
     "firstDebit": MessageLookupByLibrary.simpleMessage("Erste Lastschrift"),
+    "general": MessageLookupByLibrary.simpleMessage("Allgemein"),
     "generalInformation": MessageLookupByLibrary.simpleMessage(
       "Allgemeine Informationen",
     ),
@@ -189,7 +200,11 @@ class MessageLookup extends MessageLookupByLibrary {
       "Monatliche Ausgaben",
     ),
     "monthlyLimit": MessageLookupByLibrary.simpleMessage("Monatliches Limit"),
+    "monthlyTrend": MessageLookupByLibrary.simpleMessage("Monatlicher Verlauf"),
     "nextInvoice": MessageLookupByLibrary.simpleMessage("Nächste Rechnung"),
+    "noActiveSubscriptions": MessageLookupByLibrary.simpleMessage(
+      "Keine aktiven Abonnements",
+    ),
     "noBillingsThisDay": MessageLookupByLibrary.simpleMessage(
       "Keine Abbuchungen an diesem Tag",
     ),
@@ -197,6 +212,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Keine Kategorien verfügbar",
     ),
     "noData": MessageLookupByLibrary.simpleMessage("Keine Daten"),
+    "noDataYet": MessageLookupByLibrary.simpleMessage("Noch keine Daten"),
     "noEntriesFound": MessageLookupByLibrary.simpleMessage(
       "Keine Einträge gefunden",
     ),
@@ -278,11 +294,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptions": MessageLookupByLibrary.simpleMessage("Abonnements"),
     "successfully": MessageLookupByLibrary.simpleMessage("Erfolgreich"),
     "support": MessageLookupByLibrary.simpleMessage("Support"),
+    "syncWithGoogleDrive": MessageLookupByLibrary.simpleMessage(
+      "Mit Google Drive synchronisieren",
+    ),
     "syncWithICloud": MessageLookupByLibrary.simpleMessage(
       "Mit iCloud synchronisieren",
     ),
     "tipJar": MessageLookupByLibrary.simpleMessage("Trinkgeld Kasse"),
     "title": MessageLookupByLibrary.simpleMessage("Titel"),
+    "topSubscriptions": MessageLookupByLibrary.simpleMessage("Top Abonnements"),
+    "total": MessageLookupByLibrary.simpleMessage("Gesamt"),
     "totalCosts": MessageLookupByLibrary.simpleMessage("Gesamt kosten"),
     "totalExpenses": MessageLookupByLibrary.simpleMessage("Gesamtausgaben"),
     "twoDaysBefore": MessageLookupByLibrary.simpleMessage("Zwei Tage vorher"),
@@ -291,6 +312,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Dieses Abonnement lösen",
     ),
     "unpinned": MessageLookupByLibrary.simpleMessage("Nicht Gepinnt"),
+    "untilEndOfMonth": MessageLookupByLibrary.simpleMessage("Bis Monatsende"),
+    "untilEndOfYear": MessageLookupByLibrary.simpleMessage("Bis Jahresende"),
     "weekBefore": MessageLookupByLibrary.simpleMessage("Eine Woche vorher"),
     "year": MessageLookupByLibrary.simpleMessage("Jahr"),
     "yearly": MessageLookupByLibrary.simpleMessage("Jährlich"),

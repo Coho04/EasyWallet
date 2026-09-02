@@ -106,7 +106,7 @@ class EasyWalletDropdownField extends StatelessWidget {
     final TranslatableEnum match = options
         .whereType<TranslatableEnum>()
         .firstWhere((o) => o.value == value);
-    return match.translate() ?? value;
+    return match.translate();
   }
 
   String _capitalize(String s) {

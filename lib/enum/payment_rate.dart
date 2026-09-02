@@ -1,5 +1,4 @@
 import 'package:easy_wallet/class/translatable_enum.dart';
-import 'package:intl/intl.dart';
 
 enum PaymentRate with TranslatableEnum {
   yearly(value: 'yearly'),
@@ -9,6 +8,7 @@ enum PaymentRate with TranslatableEnum {
     required this.value,
   });
 
+  @override
   final String value;
 
   static PaymentRate findByName(String name) {

@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/class/billing_schedule.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:flutter/cupertino.dart';
@@ -86,7 +87,7 @@ class DayBillingList extends StatelessWidget {
                 ),
               ),
             Text(
-              '${subscription.amount.toStringAsFixed(2)} $currencySymbol',
+              Money.format(subscription.amount, currencySymbol),
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,

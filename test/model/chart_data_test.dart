@@ -30,10 +30,11 @@ void main() {
       final chartData = ChartData('Example Label', 100, color);
 
       expect(chartData.color, equals(color));
-      expect(chartData.color.alpha, equals(255));
-      expect(chartData.color.red, equals(66));
-      expect(chartData.color.green, equals(165));
-      expect(chartData.color.blue, equals(245));
+      // Color exposes its channels as doubles from 0 to 1 now.
+      expect(chartData.color.a, equals(1.0));
+      expect((chartData.color.r * 255).round(), equals(66));
+      expect((chartData.color.g * 255).round(), equals(165));
+      expect((chartData.color.b * 255).round(), equals(245));
     });
   });
 }

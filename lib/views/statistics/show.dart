@@ -1,3 +1,6 @@
+import 'package:provider/provider.dart';
+import 'package:easy_wallet/provider/currency_provider.dart';
+import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easy_wallet/model/subscription.dart';
@@ -88,7 +91,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
     );
   }
 
-  Widget _buildChart(context) {
+  Widget _buildChart(BuildContext context) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     if (widget.chartData != null) {
@@ -128,7 +131,9 @@ class ChartDetailPageState extends State<ChartDetailPage> {
     return Container();
   }
 
-  Widget _buildSubscriptionList(context) {
+  Widget _buildSubscriptionList(BuildContext context) {
+    final currency =
+        Provider.of<CurrencyProvider>(context, listen: false).currency;
     return CupertinoListSection(
       children: widget.subscriptions.map((subscription) {
         return CupertinoListTile(
@@ -142,7 +147,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
             );
           },
           title: Text(subscription.title),
-          additionalInfo: Text('${subscription.amount} €'),
+          additionalInfo: Text(Money.format(subscription.amount, currency.symbol)),
           leading: subscription.buildImage(
               width: (_selectedSubscriptionId != null &&
                       _selectedSubscriptionId == subscription.id)
@@ -153,7 +158,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
               ? null
               : (_selectedSubscriptionId == null)
                   ? null
-                  : CupertinoColors.systemGrey.withOpacity(0.3),
+                  : CupertinoColors.systemGrey.withValues(alpha: 0.3),
           trailing: const SizedBox(
             width: 40,
             height: 40,
@@ -164,7 +169,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
     );
   }
 
-  StackedSeriesBase buildSeries(series) {
+  StackedSeriesBase buildSeries(CartesianSeries<ChartData, String> series) {
     if (widget.dataType == 'StackedColumn100Series') {
       return StackedColumn100Series<ChartData, String>(
         dataSource: series.dataSource,
@@ -183,7 +188,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
             if (id != null) {
               final isSelected = _selectedSubscriptionId == id;
               if (!isSelected) {
-                color = color.withOpacity(0.5);
+                color = color.withValues(alpha: 0.5);
               }
             }
           }
@@ -220,7 +225,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
                     .id ==
                 _selectedSubscriptionId;
             if (!isSelected) {
-              color = color.withOpacity(0.5);
+              color = color.withValues(alpha: 0.5);
             }
           }
           return color;

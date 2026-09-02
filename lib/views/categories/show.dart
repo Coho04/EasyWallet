@@ -1,11 +1,11 @@
+import 'package:easy_wallet/class/money.dart';
+import 'package:easy_wallet/views/components/color_picker_sheet.dart';
 import 'package:easy_wallet/provider/category_provider.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/views/components/card_section_component.dart';
 import 'package:easy_wallet/views/components/gradient_header.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_wallet/model/category.dart';
 import 'package:provider/provider.dart';
@@ -151,7 +151,7 @@ class CategoryShowViewState extends State<CategoryShowView> {
                     GestureDetector(
                       onTap: () async {
                         currentColor =
-                            await _pickColor(currentColor) ?? currentColor;
+                            await showColorPickerSheet(context, currentColor) ?? currentColor;
                         setState(() {});
                       },
                       child: Row(
@@ -258,7 +258,7 @@ class CategoryShowViewState extends State<CategoryShowView> {
           );
         },
         title: Text(subscription.title),
-        additionalInfo: Text('${subscription.amount} ${currency.symbol}'),
+        additionalInfo: Text(Money.format(subscription.amount, currency.symbol)),
         leading: subscription.buildImage(errorImgSize: 30),
         backgroundColor: isDarkMode
             ? CupertinoColors.darkBackgroundGray
@@ -272,49 +272,4 @@ class CategoryShowViewState extends State<CategoryShowView> {
     }).toList();
   }
 
-  Future<Color?> _pickColor(Color currentColor) async {
-    final isDarkMode =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
-
-    Color? pickedColor;
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: isDarkMode
-              ? CupertinoColors.darkBackgroundGray
-              : CupertinoColors.white,
-          title: Text(Intl.message('pickAColor')),
-          titleTextStyle: TextStyle(
-            color: isDarkMode
-                ? CupertinoColors.white
-                : CupertinoColors.black,
-          ),
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: currentColor,
-              onColorChanged: (Color color) {
-                pickedColor = color;
-              },
-              showLabel: false,
-              labelTextStyle: TextStyle(
-                color:
-                    isDarkMode ? CupertinoColors.white : CupertinoColors.black,
-              ),
-              pickerAreaHeightPercent: 0.8,
-            ),
-          ),
-          actions: <Widget>[
-            CupertinoButton(
-              child: Text(Intl.message('done')),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-    return pickedColor;
-  }
 }

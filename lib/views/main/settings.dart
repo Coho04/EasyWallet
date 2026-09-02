@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/persistence_controller.dart';
@@ -66,7 +67,7 @@ class SettingsViewState extends State<SettingsView> {
     });
   }
 
-  Future<void> _saveSettings(context) async {
+  Future<void> _saveSettings(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('notificationsEnabled', notificationsEnabled);
     prefs.setBool('includeCostInNotifications', includeCostInNotifications);
@@ -79,6 +80,7 @@ class SettingsViewState extends State<SettingsView> {
     prefs.setString('notificationTime',
         '${notificationTime.hour}:${notificationTime.minute}');
 
+    if (!context.mounted) return;
     await Provider.of<CurrencyProvider>(context, listen: false).loadCurrency();
   }
 
@@ -182,7 +184,7 @@ class SettingsViewState extends State<SettingsView> {
     return '';
   }
 
-  Future<void> _selectNotificationTime(context) async {
+  Future<void> _selectNotificationTime(BuildContext context) async {
     final DateTime? picked = await showCupertinoModalPopup<DateTime>(
       context: context,
       builder: (BuildContext context) {
@@ -223,6 +225,7 @@ class SettingsViewState extends State<SettingsView> {
       setState(() {
         notificationTime = picked;
       });
+      if (!context.mounted) return;
       _saveSettings(context);
     }
   }
@@ -410,7 +413,7 @@ class SettingsViewState extends State<SettingsView> {
               ),
               const SizedBox(height: 20),
               CardSection(
-                title: Intl.message('settings'),
+                title: Intl.message('general'),
                 children: [
                   CupertinoFormRow(
                     padding: const EdgeInsets.all(16),
@@ -436,7 +439,7 @@ class SettingsViewState extends State<SettingsView> {
                       onTap: () => _enterMonthlyLimit(context),
                       child: AutoText(
                           maxLines: 1,
-                          text: '$monthlyLimit ${currency.symbol}',
+                          text: Money.format(monthlyLimit, currency.symbol),
                           color: CupertinoColors.systemBlue),
                     ),
                   ),
@@ -498,7 +501,7 @@ class SettingsViewState extends State<SettingsView> {
         CupertinoFormRow(
           padding: const EdgeInsets.all(16),
           prefix:
-              AutoText(maxLines: 1, text: 'Sync with iCloud', color: textColor),
+              AutoText(maxLines: 1, text: Intl.message('syncWithICloud'), color: textColor),
           child: CupertinoSwitch(
             value: syncWithICloud,
             onChanged: (bool value) {
@@ -512,7 +515,7 @@ class SettingsViewState extends State<SettingsView> {
         ),
         CupertinoFormRow(
           prefix: AutoText(
-              maxLines: 1, text: 'Sync with Google Drive', color: textColor),
+              maxLines: 1, text: Intl.message('syncWithGoogleDrive'), color: textColor),
           child: CupertinoSwitch(
             value: syncWithGoogleDrive,
             onChanged: (bool value) {
@@ -530,7 +533,7 @@ class SettingsViewState extends State<SettingsView> {
       return [
         CupertinoFormRow(
           prefix: AutoText(
-              maxLines: 1, text: 'Sync with Google Drive', color: textColor),
+              maxLines: 1, text: Intl.message('syncWithGoogleDrive'), color: textColor),
           child: CupertinoSwitch(
             value: syncWithGoogleDrive,
             onChanged: (bool value) {
@@ -547,7 +550,7 @@ class SettingsViewState extends State<SettingsView> {
   }
 
   void handleGoogleSignIn(BuildContext context, bool enable) async {
-    var googleCloud = await PersistenceController.instance.googleDrive;
+    await PersistenceController.instance.googleDrive;
     if (enable) {
       try {
         await GoogleSignIn.instance.authenticate();

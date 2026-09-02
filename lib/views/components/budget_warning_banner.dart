@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/money.dart';
 import 'package:flutter/cupertino.dart';
 
 class BudgetWarningBanner extends StatelessWidget {
@@ -59,7 +60,7 @@ class BudgetWarningBanner extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Limit $currencySymbol ${limit.toStringAsFixed(2)} · +$currencySymbol ${over.toStringAsFixed(2)}',
+                  'Limit ${Money.format(limit, currencySymbol)} · +${Money.format(over, currencySymbol)}',
                   style: const TextStyle(
                     fontSize: 10,
                     color: Color(0xA8FF6B6B),

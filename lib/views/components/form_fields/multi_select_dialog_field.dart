@@ -15,6 +15,7 @@ class MultiSelectDialogField<V> extends FormField<List<V>> {
   final List<MultiSelectItem<V>> items;
   final void Function(List<V>)? onSelectionChanged;
   final MultiSelectChipDisplay<V>? chipDisplay;
+  @override
   final List<V> initialValue;
   final void Function(List<V>) onConfirm;
   final bool searchable;
@@ -37,9 +38,13 @@ class MultiSelectDialogField<V> extends FormField<List<V>> {
   final bool separateSelectedItems;
   final Color? checkColor;
   final bool isDismissible;
+  @override
   final AutovalidateMode autovalidateMode;
+  @override
   final FormFieldValidator<List<V>>? validator;
+  @override
   final FormFieldSetter<List<V>>? onSaved;
+  @override
   final GlobalKey<FormFieldState>? key;
   FormFieldState<List<V>>? state;
 
@@ -189,7 +194,7 @@ class _MultiSelectDialogFieldView<V> extends StatefulWidget {
   });
 
   _MultiSelectDialogFieldView._withState(
-      _MultiSelectDialogFieldView<V> field, FormFieldState<List<V>> state)
+      _MultiSelectDialogFieldView<V> field, this.state)
       : items = field.items,
         title = field.title,
         buttonText = field.buttonText,
@@ -219,8 +224,7 @@ class _MultiSelectDialogFieldView<V> extends StatefulWidget {
         selectedItemsTextStyle = field.selectedItemsTextStyle,
         separateSelectedItems = field.separateSelectedItems,
         checkColor = field.checkColor,
-        isDismissible = field.isDismissible,
-        state = state;
+        isDismissible = field.isDismissible;
 
   @override
   __MultiSelectDialogFieldViewState createState() =>
@@ -278,7 +282,7 @@ class __MultiSelectDialogFieldViewState<V>
           chipColor: widget.chipDisplay!.chipColor ??
               ((widget.selectedColor != null &&
                       widget.selectedColor != Colors.transparent)
-                  ? widget.selectedColor!.withOpacity(0.35)
+                  ? widget.selectedColor!.withValues(alpha: 0.35)
                   : null),
           alignment: widget.chipDisplay!.alignment,
           textStyle: widget.chipDisplay!.textStyle,
@@ -296,13 +300,13 @@ class __MultiSelectDialogFieldViewState<V>
         colorator: widget.colorator,
         chipColor: (widget.selectedColor != null &&
                 widget.selectedColor != Colors.transparent)
-            ? widget.selectedColor!.withOpacity(0.35)
+            ? widget.selectedColor!.withValues(alpha: 0.35)
             : null,
       );
     }
   }
 
-  _showDialog(BuildContext ctx) async {
+  Future<void> _showDialog(BuildContext ctx) async {
     await showCupertinoDialog(
       barrierDismissible: widget.isDismissible,
       context: context,
@@ -406,7 +410,7 @@ class __MultiSelectDialogFieldViewState<V>
     }
     Color borderColor;
     if (widget.state != null && widget.state!.hasError) {
-      borderColor = Colors.red.shade800.withOpacity(0.6);
+      borderColor = Colors.red.shade800.withValues(alpha: 0.6);
     } else if (_selectedItems.isNotEmpty) {
       if (widget.selectedColor != null &&
           widget.selectedColor != Colors.transparent) {

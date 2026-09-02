@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/money.dart';
 import 'dart:math';
 
 import 'package:easy_wallet/enum/currency.dart';
@@ -52,8 +53,16 @@ class StatisticViewState extends State<StatisticView> {
     _monthlyLimit = prefs.getDouble('monthlyLimit') ?? 0.0;
 
     if (!mounted) return;
-    final subscriptions = context.read<SubscriptionProvider>().subscriptions;
-    final currency = context.read<CurrencyProvider>().currency;
+    final subscriptionProvider = context.read<SubscriptionProvider>();
+    final currencyProvider = context.read<CurrencyProvider>();
+
+    // Tabs are built lazily, so this view cannot rely on the subscription tab
+    // having filled the providers before it is opened.
+    await subscriptionProvider.loadSubscriptions();
+    await currencyProvider.loadCurrency();
+
+    final subscriptions = subscriptionProvider.subscriptions;
+    final currency = currencyProvider.currency;
 
     await prefetchColors(subscriptions);
     _calculateStatistics(subscriptions);
@@ -104,8 +113,13 @@ class StatisticViewState extends State<StatisticView> {
         return CupertinoPageScaffold(
           backgroundColor:
               CupertinoColors.systemGroupedBackground.resolveFrom(context),
-          child: CustomScrollView(
-            slivers: [
+          // top: false keeps the gradient header running under the status bar,
+          // while the bottom inset stops the content from scrolling under the
+          // tab bar - the same treatment the settings view already uses.
+          child: SafeArea(
+            top: false,
+            child: CustomScrollView(
+              slivers: [
               SliverToBoxAdapter(
                 child: SubscriptionHeader(
                   monthlySpent: monthly,
@@ -123,21 +137,21 @@ class StatisticViewState extends State<StatisticView> {
                   delegate: SliverChildListDelegate([
                     // Card 1: Verbleibend
                     StatCard(
-                      title: 'Verbleibend',
+                      title: Intl.message('remainingCosts'),
                       icon: CupertinoIcons.calendar_badge_minus,
                       children: [
-                        _statRow('Bis Monatsende', _costToMonthEnd),
-                        _statRow('Bis Jahresende', _costToYearEnd),
+                        _statRow(Intl.message('untilEndOfMonth'), _costToMonthEnd),
+                        _statRow(Intl.message('untilEndOfYear'), _costToYearEnd),
                       ],
                     ),
                     const SizedBox(height: 12),
                     // Card 2: Top 3
                     StatCard(
-                      title: 'Top Abonnements',
+                      title: Intl.message('topSubscriptions'),
                       icon: CupertinoIcons.star,
                       children: top3.isEmpty
                           ? [
-                              Text('Keine aktiven Abonnements',
+                              Text(Intl.message('noActiveSubscriptions'),
                                   style: TextStyle(
                                       fontSize: 13,
                                       color: CupertinoColors.secondaryLabel.resolveFrom(context)))
@@ -148,7 +162,7 @@ class StatisticViewState extends State<StatisticView> {
                     // Card 3: Kostenverteilung
                     if (subscriptions.isNotEmpty) ...[
                       StatCard(
-                        title: 'Kostenverteilung',
+                        title: Intl.message('costDistribution'),
                         icon: CupertinoIcons.chart_pie,
                         children: [
                           Padding(
@@ -156,55 +170,65 @@ class StatisticViewState extends State<StatisticView> {
                                 const EdgeInsets.only(top: 8, bottom: 8),
                             child: buildPieChart(subscriptions),
                           ),
-                          _chartDetailButton('Alle', subscriptions, null,
+                          _chartDetailButton(Intl.message('all'), subscriptions, null,
                               buildPieChartSections(subscriptions), context,
-                              pageTitle: 'Kostenverteilung'),
+                              pageTitle: Intl.message('costDistribution')),
                         ],
                       ),
                       const SizedBox(height: 12),
                     ],
                     // Card 4: Verlauf
                     StatCard(
-                      title: 'Monatlicher Verlauf',
+                      title: Intl.message('monthlyTrend'),
                       icon: CupertinoIcons.chart_bar,
                       children: [
+                        if (subscriptions.isEmpty)
+                          Text(
+                            Intl.message('noDataYet'),
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: CupertinoColors.secondaryLabel
+                                  .resolveFrom(context),
+                            ),
+                          )
+                        else
                         Padding(
                           padding: const EdgeInsets.only(top: 8, bottom: 8),
                           child: _buildChart(
                               _makeYearlyToMonthlyData(subscriptions)),
                         ),
                         _chartDetailButton(
-                            'Alle',
+                            Intl.message('all'),
                             subscriptions,
                             _makeYearlyToMonthlyData(subscriptions),
                             null,
                             context,
                             dataType: 'StackedSeriesBase',
-                            pageTitle: 'Monatlicher Verlauf'),
+                            pageTitle: Intl.message('monthlyTrend')),
                       ],
                     ),
                     const SizedBox(height: 12),
                     // Card 5: App Gesamt
                     StatCard(
-                      title: 'Gesamt',
+                      title: Intl.message('total'),
                       icon: CupertinoIcons.info_circle,
                       children: [
                         _statRow(
                             'Ausgaben seit Installation',
-                            '${calculateExpensesSinceInstallation(subscriptions).toStringAsFixed(2)} ${currency.symbol}'),
+                            Money.format(calculateExpensesSinceInstallation(subscriptions), currency.symbol)),
                         _statRow(
                             'Aktive Abonnements',
                             '${subscriptions.where((s) => !s.isPaused).length}'),
                         _statRow(
-                            'Pausiert',
+                            Intl.message('paused'),
                             '${subscriptions.where((s) => s.isPaused).length}'),
                       ],
                     ),
-                    const SizedBox(height: 85),
                   ]),
                 ),
               ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -311,7 +335,7 @@ class StatisticViewState extends State<StatisticView> {
                   overflow: TextOverflow.ellipsis),
             ),
             Text(
-              '${equiv.toStringAsFixed(2)} ${currency.symbol}/Mo',
+              '${Money.format(equiv, currency.symbol)}/Mo',
               style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -353,7 +377,7 @@ class StatisticViewState extends State<StatisticView> {
           return Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text('Alle',
+              Text(Intl.message('all'),
                   style:
                       TextStyle(fontSize: 13, color: activeBlueColor)),
               const SizedBox(width: 4),
@@ -449,7 +473,8 @@ class StatisticViewState extends State<StatisticView> {
       return PieChartSectionData(
         color: color,
         value: subscription.amount,
-        title: '${percentage.toStringAsFixed(1)}%',
+        // Same separator convention as the amounts on this screen.
+        title: '${NumberFormat.decimalPatternDigits(decimalDigits: 1).format(percentage)}%',
         titlePositionPercentageOffset: 0.65,
         radius: radius,
         badgeWidget: BadgeComponent(
@@ -494,7 +519,7 @@ class StatisticViewState extends State<StatisticView> {
         monthlyExpenses += subscription.amount;
       }
     }
-    return '${monthlyExpenses.toStringAsFixed(2)} ${currency.symbol}';
+    return Money.format(monthlyExpenses, currency.symbol);
   }
 
   Future<String> calculateExpensesToEndOfYear(
@@ -518,7 +543,7 @@ class StatisticViewState extends State<StatisticView> {
         }
       }
     }
-    return '${yearlyExpenses.toStringAsFixed(2)} ${currency.symbol}';
+    return Money.format(yearlyExpenses, currency.symbol);
   }
 
   DateTime? getNextDueDate(Subscription subscription, DateTime referenceDate) {
@@ -554,7 +579,7 @@ class StatisticViewState extends State<StatisticView> {
     }
   }
 
-  Widget _buildChart(data) {
+  Widget _buildChart(List<CartesianSeries<ChartData, String>> data) {
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     return Padding(
@@ -625,46 +650,8 @@ class StatisticViewState extends State<StatisticView> {
     return seriesList;
   }
 
-  List<CartesianSeries<ChartData, String>> _makePinnedData(
-      List<Subscription> subscriptions) {
-    List<CartesianSeries<ChartData, String>> seriesList = [];
-    var hasPinned = subscriptions.any((subscription) => subscription.isPinned);
-    bool hasUnpinned =
-        subscriptions.any((subscription) => !subscription.isPinned);
-    if (!hasPinned || !hasUnpinned) {
-      seriesList.add(
-        buildPlaceholderSeries(hasUnpinned ? 'pinned' : 'unpinned'),
-      );
-    }
-
-    for (var subscription in subscriptions) {
-      seriesList.add(buildStackedColumn100Series(
-          subscription, subscription.isPinned ? 'pinned' : 'unpinned', 1));
-    }
-
-    return seriesList;
-  }
-
-  List<CartesianSeries<ChartData, String>> _makePausedData(
-      List<Subscription> subscriptions) {
-    List<CartesianSeries<ChartData, String>> seriesList = [];
-    var hasActive = subscriptions.any((subscription) => !subscription.isPaused);
-    var hasPaused = subscriptions.any((subscription) => subscription.isPaused);
-
-    if (!hasPaused || !hasActive) {
-      seriesList.add(
-        buildPlaceholderSeries(hasActive ? 'active' : 'paused'),
-      );
-    }
-
-    for (var subscription in subscriptions) {
-      seriesList.add(buildStackedColumn100Series(
-          subscription, subscription.isPaused ? 'paused' : 'active', 1));
-    }
-    return seriesList;
-  }
-
-  dynamic buildPlaceholderSeries(category, {bool stackedColumnSeries = false}) {
+  dynamic buildPlaceholderSeries(String category,
+      {bool stackedColumnSeries = false}) {
     category = Intl.message(category);
     return stackedColumnSeries
         ? StackedColumnSeries<ChartData, String>(
@@ -685,13 +672,15 @@ class StatisticViewState extends State<StatisticView> {
           );
   }
 
-  dynamic buildStackedColumn100Series(subscription, category, value,
+  dynamic buildStackedColumn100Series(
+      Subscription subscription, String category, double value,
       {bool stackedColumnSeries = false}) {
     Color? color = colorCache[subscription.getFaviconUrl()] ?? Colors.grey;
     bool isSelected = _selectedSubscriptionId == subscription.id;
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;
-    final commonSettings = {
+    // Explicit, because the values are spread into typed named arguments.
+    final Map<String, dynamic> commonSettings = {
       'onPointTap': (ChartPointDetails point) {
         setState(() {
           if (_selectedSubscriptionId == subscription.id) {

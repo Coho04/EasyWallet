@@ -3,7 +3,6 @@ import 'package:easy_wallet/views/categories/show.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/components/color_circle.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 class CategoryListComponent extends StatelessWidget {
   final Category category;
