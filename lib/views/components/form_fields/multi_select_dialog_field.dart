@@ -278,7 +278,7 @@ class __MultiSelectDialogFieldViewState<V>
           chipColor: widget.chipDisplay!.chipColor ??
               ((widget.selectedColor != null &&
                       widget.selectedColor != Colors.transparent)
-                  ? widget.selectedColor!.withOpacity(0.35)
+                  ? widget.selectedColor!.withValues(alpha: 0.35)
                   : null),
           alignment: widget.chipDisplay!.alignment,
           textStyle: widget.chipDisplay!.textStyle,
@@ -296,7 +296,7 @@ class __MultiSelectDialogFieldViewState<V>
         colorator: widget.colorator,
         chipColor: (widget.selectedColor != null &&
                 widget.selectedColor != Colors.transparent)
-            ? widget.selectedColor!.withOpacity(0.35)
+            ? widget.selectedColor!.withValues(alpha: 0.35)
             : null,
       );
     }
@@ -406,7 +406,7 @@ class __MultiSelectDialogFieldViewState<V>
     }
     Color borderColor;
     if (widget.state != null && widget.state!.hasError) {
-      borderColor = Colors.red.shade800.withOpacity(0.6);
+      borderColor = Colors.red.shade800.withValues(alpha: 0.6);
     } else if (_selectedItems.isNotEmpty) {
       if (widget.selectedColor != null &&
           widget.selectedColor != Colors.transparent) {

@@ -158,7 +158,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
               ? null
               : (_selectedSubscriptionId == null)
                   ? null
-                  : CupertinoColors.systemGrey.withOpacity(0.3),
+                  : CupertinoColors.systemGrey.withValues(alpha: 0.3),
           trailing: const SizedBox(
             width: 40,
             height: 40,
@@ -188,7 +188,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
             if (id != null) {
               final isSelected = _selectedSubscriptionId == id;
               if (!isSelected) {
-                color = color.withOpacity(0.5);
+                color = color.withValues(alpha: 0.5);
               }
             }
           }
@@ -225,7 +225,7 @@ class ChartDetailPageState extends State<ChartDetailPage> {
                     .id ==
                 _selectedSubscriptionId;
             if (!isSelected) {
-              color = color.withOpacity(0.5);
+              color = color.withValues(alpha: 0.5);
             }
           }
           return color;

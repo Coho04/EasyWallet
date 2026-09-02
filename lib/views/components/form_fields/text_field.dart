@@ -40,7 +40,7 @@ class EasyWalletTextField extends StatelessWidget {
             ? CupertinoColors.darkBackgroundGray
             : isValid
             ? CupertinoColors.systemGrey6
-            : CupertinoColors.systemRed.withOpacity(0.1),
+            : CupertinoColors.systemRed.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8.0),
         border: Border.all(
           color: isValid

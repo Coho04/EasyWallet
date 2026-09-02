@@ -85,7 +85,7 @@ void main() {
 
       final border = decoration.border as Border;
       expect(border.top.color, CupertinoColors.systemRed);
-      expect(decoration.color, CupertinoColors.systemRed.withOpacity(0.1));
+      expect(decoration.color, CupertinoColors.systemRed.withValues(alpha: 0.1));
     });
 
     testWidgets('calls onChanged when text changes', (WidgetTester tester) async {
