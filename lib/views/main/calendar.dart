@@ -121,7 +121,11 @@ class CalendarViewState extends State<CalendarView> {
               children: [
                 _header(
                   context,
-                  BillingSchedule.total(byDay),
+                  BillingSchedule.total(
+                    byDay,
+                    targetCurrency: currencyProvider.currency.name,
+                    rates: currencyProvider.rates,
+                  ),
                   currencyProvider.currency.symbol,
                 ),
                 Container(
