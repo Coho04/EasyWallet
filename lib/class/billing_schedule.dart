@@ -31,7 +31,17 @@ class BillingSchedule {
 
     final anchor = _dateOnly(start);
     final rangeStart = _dateOnly(from);
-    final rangeEnd = _dateOnly(to);
+
+    // The end date is inclusive: the subscription is still billed on that day,
+    // never after it.
+    final end = subscription.endDate;
+    var rangeEnd = _dateOnly(to);
+    if (end != null && _dateOnly(end).isBefore(rangeEnd)) {
+      rangeEnd = _dateOnly(end);
+    }
+    if (rangeEnd.isBefore(rangeStart)) {
+      return [];
+    }
 
     if (!subscription.repeating) {
       final withinRange =

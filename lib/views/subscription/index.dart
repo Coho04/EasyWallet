@@ -226,7 +226,8 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
         final monthly = _calcMonthly(subProvider.subscriptions);
         final yearly = _calcYearly(subProvider.subscriptions);
         final upcoming = subProvider.subscriptions
-            .where((s) => !s.isPaused && s.remainingDays() <= 7)
+            .where((s) =>
+                !s.isPaused && !s.isExpired && s.remainingDays() <= 7)
             .toList();
 
         return CupertinoPageScaffold(

@@ -113,8 +113,17 @@ class BackgroundFetchManager {
         return;
       }
 
+      final today = DateTime.now();
       for (var subscription in subscriptions) {
         if (subscription['date'] == null) continue;
+        // An expired subscription is not billed any more, so it must not
+        // remind either.
+        final endDate = subscription['endDate'];
+        if (endDate != null &&
+            DateTime.parse(endDate)
+                .isBefore(DateTime(today.year, today.month, today.day))) {
+          continue;
+        }
         var startDate = DateTime.parse(subscription['date']);
         var nextBillDate =
             getNextBillDate(startDate, subscription['repeatPattern']);

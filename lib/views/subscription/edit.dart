@@ -41,6 +41,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   late TextEditingController _amountController;
   late TextEditingController _notesController;
   DateTime _date = DateTime.now();
+  DateTime? _endDate;
   String _paymentRate = PaymentRate.monthly.value;
   String _rememberCycle = RememberCycle.dayBefore.value;
   String _selectedPayMethode = PaymentMethode.invoice.value;
@@ -58,6 +59,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
     _notesController =
         TextEditingController(text: widget.subscription.notes ?? '');
     _date = widget.subscription.date ?? DateTime.now();
+    _endDate = widget.subscription.endDate;
     _paymentRate =
         widget.subscription.repeatPattern ?? PaymentRate.monthly.value;
     _rememberCycle =
@@ -95,6 +97,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       subscription.amount =
           double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0;
       subscription.date = _date;
+      subscription.endDate = _endDate;
       subscription.notes = _notesController.text.trim();
       subscription.repeatPattern = _paymentRate;
       subscription.rememberCycle = _rememberCycle;
@@ -165,6 +168,14 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                       label: Intl.message('startDate'),
                       date: _date,
                       onTap: _pickDate,
+                      isDarkMode: isDarkMode),
+                  const SizedBox(height: 16),
+                  EasyWalletDatePickerField(
+                      label: Intl.message('endDate'),
+                      date: _endDate,
+                      placeholder: Intl.message('noEndDate'),
+                      onTap: _pickEndDate,
+                      onClear: () => setState(() => _endDate = null),
                       isDarkMode: isDarkMode),
                   const SizedBox(height: 16),
                   EasyWalletDropdownField(
@@ -293,6 +304,38 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
         height: 40,
       );
     }
+  }
+
+  Future<void> _pickEndDate() async {
+    var draft = _endDate ?? DateTime.now();
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (context) {
+        return Container(
+          height: 260,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 200,
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: draft,
+                  use24hFormat: true,
+                  onDateTimeChanged: (DateTime newDate) => draft = newDate,
+                ),
+              ),
+              CupertinoButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK',
+                    style: TextStyle(color: CupertinoColors.activeBlue)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    setState(() => _endDate = draft);
   }
 
   Future<void> _pickDate() async {

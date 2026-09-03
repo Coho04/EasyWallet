@@ -34,6 +34,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   final _amountController = TextEditingController();
   final _notesController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
+  DateTime? _endDate;
   String _selectedPayRate = PaymentRate.monthly.value;
   String _selectedPayMethode = PaymentMethode.invoice.value;
   String _selectedRememberCycle = RememberCycle.sameDay.value;
@@ -106,6 +107,14 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                       label: Intl.message('startDate'),
                       date: _selectedDate,
                       onTap: _pickDate,
+                      isDarkMode: isDarkMode),
+                  const SizedBox(height: 16),
+                  EasyWalletDatePickerField(
+                      label: Intl.message('endDate'),
+                      date: _endDate,
+                      placeholder: Intl.message('noEndDate'),
+                      onTap: _pickEndDate,
+                      onClear: () => setState(() => _endDate = null),
                       isDarkMode: isDarkMode),
                   const SizedBox(height: 16),
                   EasyWalletDropdownField(
@@ -311,11 +320,44 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         );
       },
     );
+
     if (pickedDate != null && pickedDate != _selectedDate) {
       setState(() {
         _selectedDate = pickedDate;
       });
     }
+  }
+
+  Future<void> _pickEndDate() async {
+    var draft = _endDate ?? DateTime.now();
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 260,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 200,
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: draft,
+                  use24hFormat: true,
+                  onDateTimeChanged: (DateTime newDate) => draft = newDate,
+                ),
+              ),
+              CupertinoButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const AutoText(
+                    text: 'OK', color: CupertinoColors.activeBlue),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    setState(() => _endDate = draft);
   }
 
   Future<void> _saveItem(BuildContext context) async {
@@ -334,6 +376,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         title: title,
         amount: amount!,
         date: _selectedDate,
+        endDate: _endDate,
         repeatPattern: _selectedPayRate,
         notes: notes,
         url: url,

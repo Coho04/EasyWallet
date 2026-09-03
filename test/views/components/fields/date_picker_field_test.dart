@@ -96,4 +96,52 @@ void main() {
       expect(find.text('25.12.2023'), findsOneWidget);
     });
   });
+
+  group('EasyWalletDatePickerField optional date', () {
+    testWidgets('shows a placeholder when no date is set',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: CupertinoPageScaffold(
+            child: EasyWalletDatePickerField(
+              label: 'Ablaufdatum',
+              date: null,
+              placeholder: 'Kein Datum',
+              onTap: () {},
+              isDarkMode: false,
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Kein Datum'), findsOneWidget);
+      expect(find.byKey(const ValueKey('clear-date')), findsNothing);
+    });
+
+    testWidgets('offers a way to clear a date that is set',
+        (WidgetTester tester) async {
+      var cleared = false;
+
+      await tester.pumpWidget(
+        CupertinoApp(
+          home: CupertinoPageScaffold(
+            child: EasyWalletDatePickerField(
+              label: 'Ablaufdatum',
+              date: DateTime(2026, 9, 3),
+              placeholder: 'Kein Datum',
+              onTap: () {},
+              onClear: () => cleared = true,
+              isDarkMode: false,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('03.09.2026'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('clear-date')));
+
+      expect(cleared, isTrue);
+    });
+  });
 }

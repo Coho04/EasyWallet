@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 Subscription sub({
   required String title,
   DateTime? date,
+  DateTime? endDate,
   String? repeatPattern = 'monthly',
   bool repeating = true,
   bool isPaused = false,
@@ -14,6 +15,7 @@ Subscription sub({
   return Subscription(
     amount: amount,
     date: date,
+    endDate: endDate,
     isPaused: isPaused,
     isPinned: false,
     repeating: repeating,
@@ -191,6 +193,86 @@ void main() {
 
       expect(byDay.length, 1);
       expect(byDay.containsKey(DateTime(2026, 9, 12)), isFalse);
+    });
+  });
+
+  group('BillingSchedule.datesFor with an end date', () {
+    test('stops expanding after the end date', () {
+      final gym = sub(
+        title: 'Gym',
+        date: DateTime(2026, 1, 10),
+        endDate: DateTime(2026, 3, 31),
+      );
+
+      final dates = BillingSchedule.datesFor(
+        gym,
+        DateTime(2026, 1, 1),
+        DateTime(2026, 6, 30),
+      );
+
+      expect(dates, [
+        DateTime(2026, 1, 10),
+        DateTime(2026, 2, 10),
+        DateTime(2026, 3, 10),
+      ]);
+    });
+
+    test('still bills on the end date itself', () {
+      final gym = sub(
+        title: 'Gym',
+        date: DateTime(2026, 1, 10),
+        endDate: DateTime(2026, 3, 10),
+      );
+
+      final dates = BillingSchedule.datesFor(
+        gym,
+        DateTime(2026, 3, 1),
+        DateTime(2026, 3, 31),
+      );
+
+      expect(dates, [DateTime(2026, 3, 10)]);
+    });
+
+    test('yields nothing when the end date precedes the start', () {
+      final gym = sub(
+        title: 'Gym',
+        date: DateTime(2026, 5, 10),
+        endDate: DateTime(2026, 1, 1),
+      );
+
+      expect(
+        BillingSchedule.datesFor(
+            gym, DateTime(2026, 1, 1), DateTime(2026, 12, 31)),
+        isEmpty,
+      );
+    });
+
+    test('bounds a non-repeating subscription too', () {
+      final oneOff = sub(
+        title: 'One off',
+        date: DateTime(2026, 5, 4),
+        endDate: DateTime(2026, 5, 1),
+        repeating: false,
+        repeatPattern: null,
+      );
+
+      expect(
+        BillingSchedule.datesFor(
+            oneOff, DateTime(2026, 5, 1), DateTime(2026, 5, 31)),
+        isEmpty,
+      );
+    });
+
+    test('an open end date changes nothing', () {
+      final gym = sub(title: 'Gym', date: DateTime(2026, 1, 10));
+
+      final dates = BillingSchedule.datesFor(
+        gym,
+        DateTime(2026, 1, 1),
+        DateTime(2026, 3, 31),
+      );
+
+      expect(dates.length, 3);
     });
   });
 

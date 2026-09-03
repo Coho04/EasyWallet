@@ -196,5 +196,8 @@
   "general": "Allgemein",
   "deleteCategoryQuestion": "Kategorie löschen?",
   "deleteCategoryHint": "Das lässt sich nicht rückgängig machen.",
-  "noDataYet": "Noch keine Daten"
+  "noDataYet": "Noch keine Daten",
+  "endDate": "Ablaufdatum",
+  "noEndDate": "Kein Ablaufdatum",
+  "expired": "Abgelaufen"
 }

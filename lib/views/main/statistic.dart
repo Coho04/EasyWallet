@@ -250,7 +250,9 @@ class StatisticViewState extends State<StatisticView> {
       }
 
       subscription.isPinned ? pinnedCount++ : unpinnedCount++;
-      if (subscription.date != null && !subscription.isPaused) {
+      if (subscription.date != null &&
+          !subscription.isPaused &&
+          !subscription.isExpired) {
         nextDue.add(subscription);
       }
     }
@@ -266,7 +268,7 @@ class StatisticViewState extends State<StatisticView> {
     final now = DateTime.now();
     double total = 0.0;
     for (final s in subs) {
-      if (s.isPaused) continue;
+      if (s.isPaused || s.isExpired) continue;
       if (s.repeatPattern == 'monthly') {
         total += s.amount;
       } else if (s.repeatPattern == 'yearly') {
@@ -281,7 +283,7 @@ class StatisticViewState extends State<StatisticView> {
   double _calcYearly(List<Subscription> subs) {
     double total = 0.0;
     for (final s in subs) {
-      if (s.isPaused) continue;
+      if (s.isPaused || s.isExpired) continue;
       if (s.repeatPattern == 'monthly') {
         total += s.amount * 12;
       } else if (s.repeatPattern == 'yearly') {

@@ -122,6 +122,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "enableNotifications": MessageLookupByLibrary.simpleMessage(
       "Enable Notifications",
     ),
+    "endDate": MessageLookupByLibrary.simpleMessage("End date"),
     "enterMonthlyLimit": MessageLookupByLibrary.simpleMessage(
       "Enter Monthly Limit",
     ),
@@ -144,6 +145,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "expensesThisYear": MessageLookupByLibrary.simpleMessage(
       "Expenses this Year",
     ),
+    "expired": MessageLookupByLibrary.simpleMessage("Expired"),
     "export": MessageLookupByLibrary.simpleMessage("Export"),
     "exportData": MessageLookupByLibrary.simpleMessage("Export Data"),
     "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
@@ -199,6 +201,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "noData": MessageLookupByLibrary.simpleMessage("No data"),
     "noDataYet": MessageLookupByLibrary.simpleMessage("No data yet"),
+    "noEndDate": MessageLookupByLibrary.simpleMessage("No end date"),
     "noEntriesFound": MessageLookupByLibrary.simpleMessage("No entries found"),
     "noSubscriptionsAvailable": MessageLookupByLibrary.simpleMessage(
       "No subscriptions available",

@@ -112,6 +112,13 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
                             value: _formatDateTime(subscription.date),
                           ),
                           CardDetailRow(
+                            label: Intl.message('endDate'),
+                            value: subscription.endDate == null
+                                ? Intl.message('noEndDate')
+                                : '${_formatDateTime(subscription.endDate)}'
+                                    '${subscription.isExpired ? ' (${Intl.message('expired')})' : ''}',
+                          ),
+                          CardDetailRow(
                             label: Intl.message('createdOn'),
                             maxLines: 1,
                             value: _formatDateTime(subscription.timestamp,

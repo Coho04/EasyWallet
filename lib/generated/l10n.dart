@@ -1359,6 +1359,21 @@ class S {
   String get noDataYet {
     return Intl.message('No data yet', name: 'noDataYet', desc: '', args: []);
   }
+
+  /// `End date`
+  String get endDate {
+    return Intl.message('End date', name: 'endDate', desc: '', args: []);
+  }
+
+  /// `No end date`
+  String get noEndDate {
+    return Intl.message('No end date', name: 'noEndDate', desc: '', args: []);
+  }
+
+  /// `Expired`
+  String get expired {
+    return Intl.message('Expired', name: 'expired', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

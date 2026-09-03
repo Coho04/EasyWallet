@@ -196,5 +196,8 @@
   "general": "General",
   "deleteCategoryQuestion": "Delete category?",
   "deleteCategoryHint": "This cannot be undone.",
-  "noDataYet": "No data yet"
+  "noDataYet": "No data yet",
+  "endDate": "End date",
+  "noEndDate": "No end date",
+  "expired": "Expired"
 }

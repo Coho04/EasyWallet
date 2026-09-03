@@ -48,7 +48,7 @@ class PersistenceController {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, 'easywallet.db');
 
-    return await openDatabase(path, version: 4, onCreate: (db, version) {
+    return await openDatabase(path, version: 5, onCreate: (db, version) {
       db.execute('''
         CREATE TABLE IF NOT EXISTS categories(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -74,6 +74,7 @@ class PersistenceController {
             title TEXT,
             amount REAL,
             date TEXT,
+            endDate TEXT DEFAULT NULL,
             isPaused INTEGER DEFAULT NULL,
             isPinned INTEGER DEFAULT NULL,
             notes TEXT DEFAULT NULL,
@@ -108,6 +109,10 @@ class PersistenceController {
       }
       if (oldVersion < 4) {
         await db.execute('ALTER TABLE subscriptions ADD COLUMN paymentMethode TEXT DEFAULT NULL;');
+      }
+      if (oldVersion < 5) {
+        await db.execute(
+            'ALTER TABLE subscriptions ADD COLUMN endDate TEXT DEFAULT NULL;');
       }
     });
   }

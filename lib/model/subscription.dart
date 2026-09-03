@@ -17,6 +17,9 @@ class Subscription {
   int? id;
   double amount;
   DateTime? date;
+
+  /// Last day the subscription is billed, inclusive. Null means open ended.
+  DateTime? endDate;
   bool isPaused;
   bool isPinned;
   String? notes;
@@ -32,6 +35,7 @@ class Subscription {
     this.id,
     required this.amount,
     this.date,
+    this.endDate,
     required this.isPaused,
     required this.isPinned,
     this.notes,
@@ -49,6 +53,7 @@ class Subscription {
       'id': id,
       'amount': amount,
       'date': date?.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
       'isPaused': isPaused ? 1 : 0,
       'isPinned': isPinned ? 1 : 0,
       'notes': notes,
@@ -237,11 +242,34 @@ class Subscription {
     });
   }
 
-  int countPayment() {
+  /// Whether the subscription has run out on [day]. The end date is
+  /// inclusive, so the subscription is still active on that day itself.
+  bool isExpiredOn(DateTime day) {
+    final end = endDate;
+    if (end == null) {
+      return false;
+    }
+    return DateTime(day.year, day.month, day.day)
+        .isAfter(DateTime(end.year, end.month, end.day));
+  }
+
+  bool get isExpired => isExpiredOn(DateTime.now());
+
+  /// The day up to which this subscription is billed: the end date once it has
+  /// passed, otherwise [asOf].
+  DateTime _billedUntil(DateTime asOf) {
+    final end = endDate;
+    if (end != null && end.isBefore(asOf)) {
+      return end;
+    }
+    return asOf;
+  }
+
+  int countPayment({DateTime? asOf}) {
     if (date == null) {
       return 0;
     }
-    final today = DateTime.now();
+    final today = _billedUntil(asOf ?? DateTime.now());
     DateTime nextBillDate = date!;
     int count = 0;
     if (repeatPattern == PaymentRate.yearly.value) {
@@ -260,11 +288,11 @@ class Subscription {
     return count;
   }
 
-  double sumPayment() {
+  double sumPayment({DateTime? asOf}) {
     if (date == null) {
       return 0.0;
     }
-    final today = DateTime.now();
+    final today = _billedUntil(asOf ?? DateTime.now());
     DateTime nextBillDate = date!;
     Duration interval;
     if (repeatPattern == PaymentRate.yearly.value) {
@@ -290,6 +318,8 @@ class Subscription {
       id: json['id'],
       amount: (json['amount'] as num).toDouble(),
       date: json['date'] != null ? DateTime.parse(json['date']) : null,
+      endDate:
+          json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
       isPaused: json['isPaused'] == 1,
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],
@@ -310,6 +340,8 @@ class Subscription {
       id: json['id'],
       amount: (json['amount'] as num).toDouble(),
       date: json['date'] != null ? DateTime.parse(json['date']) : null,
+      endDate:
+          json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
       isPaused: json['isPaused'] == 1,
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],
