@@ -2,4 +2,6 @@
 <resources>
     <string name="widget_next_payment">NEXT PAYMENT</string>
     <string name="widget_nothing_due">Nothing due</string>
+    <string name="widget_upcoming_label">Upcoming payments</string>
+    <string name="widget_calendar_label">Billing calendar</string>
 </resources>

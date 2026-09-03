@@ -1,99 +1,137 @@
 import SwiftUI
 import WidgetKit
 
-/// Values written by the Flutter side into the shared App Group. All
-/// formatting happens there: the widget has no access to the database or to
-/// the app's locale settings.
 private enum WidgetKeys {
     static let appGroup = "group.de.golden-developer.EasyWallet"
-    static let empty = "nextPaymentEmpty"
-    static let title = "nextPaymentTitle"
-    static let amount = "nextPaymentAmount"
-    static let date = "nextPaymentDate"
+    static let upcomingImage = "upcomingImage"
+    static let calendarImage = "calendarImage"
 }
 
-struct NextPaymentEntry: TimelineEntry {
+/// Both widgets show a picture the Flutter side renders. That keeps one
+/// drawing for iOS and Android, lets the calendar reuse the grid from the app,
+/// and puts the subscription icons on the widget without loading them here.
+/// Why there is nothing to show. Naming the step turns an empty widget into
+/// something that can be acted on.
+enum EmptyReason {
+    case noAppGroup
+    case neverWritten
+    case fileMissing
+
+    var message: String {
+        switch self {
+        case .noAppGroup:
+            return "App Group missing"
+        case .neverWritten:
+            return "Open EasyWallet once"
+        case .fileMissing:
+            return "Reopen EasyWallet"
+        }
+    }
+}
+
+struct ImageEntry: TimelineEntry {
     let date: Date
-    let isEmpty: Bool
-    let title: String
-    let amount: String
-    let due: String
+    let image: UIImage?
+    let reason: EmptyReason?
 }
 
-struct NextPaymentProvider: TimelineProvider {
-    func placeholder(in context: Context) -> NextPaymentEntry {
-        NextPaymentEntry(date: Date(), isEmpty: false, title: "Netflix",
-                         amount: "5,99 €", due: "Oct 2")
+struct ImageProvider: TimelineProvider {
+    let key: String
+
+    func placeholder(in context: Context) -> ImageEntry {
+        ImageEntry(date: Date(), image: nil, reason: .neverWritten)
     }
 
-    func getSnapshot(in context: Context,
-                     completion: @escaping (NextPaymentEntry) -> Void) {
+    func getSnapshot(in context: Context, completion: @escaping (ImageEntry) -> Void) {
         completion(readEntry())
     }
 
-    func getTimeline(in context: Context,
-                     completion: @escaping (Timeline<NextPaymentEntry>) -> Void) {
-        // The app rewrites the values whenever something changes and asks for a
-        // reload, so refreshing once an hour is only a safety net.
+    func getTimeline(in context: Context, completion: @escaping (Timeline<ImageEntry>) -> Void) {
+        // The app rewrites the picture whenever something changes and asks for
+        // a reload; refreshing hourly is only a safety net.
         let next = Calendar.current.date(byAdding: .hour, value: 1, to: Date())!
         completion(Timeline(entries: [readEntry()], policy: .after(next)))
     }
 
-    private func readEntry() -> NextPaymentEntry {
-        let defaults = UserDefaults(suiteName: WidgetKeys.appGroup)
-        return NextPaymentEntry(
-            date: Date(),
-            isEmpty: defaults?.bool(forKey: WidgetKeys.empty) ?? true,
-            title: defaults?.string(forKey: WidgetKeys.title) ?? "",
-            amount: defaults?.string(forKey: WidgetKeys.amount) ?? "",
-            due: defaults?.string(forKey: WidgetKeys.date) ?? ""
-        )
+    private func readEntry() -> ImageEntry {
+        // Without the App Group entitlement in the profile this is nil, which
+        // is the usual reason a widget stays empty on a real device.
+        guard let defaults = UserDefaults(suiteName: WidgetKeys.appGroup) else {
+            return ImageEntry(date: Date(), image: nil, reason: .noAppGroup)
+        }
+        guard let path = defaults.string(forKey: key) else {
+            return ImageEntry(date: Date(), image: nil, reason: .neverWritten)
+        }
+        // The path carries the container id, which changes when the app is
+        // reinstalled; the file is then gone until the app writes again.
+        guard let image = UIImage(contentsOfFile: path) else {
+            return ImageEntry(date: Date(), image: nil, reason: .fileMissing)
+        }
+        return ImageEntry(date: Date(), image: image, reason: nil)
     }
 }
 
-struct NextPaymentWidgetView: View {
-    var entry: NextPaymentProvider.Entry
+struct ImageWidgetView: View {
+    var entry: ImageEntry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("NEXT PAYMENT")
-                .font(.system(size: 11, weight: .bold))
-                .foregroundStyle(.secondary)
-
-            if entry.isEmpty {
-                Text("Nothing due")
-                    .font(.system(size: 16, weight: .semibold))
-            } else {
-                Text(entry.title)
-                    .font(.system(size: 16, weight: .semibold))
-                    .lineLimit(1)
-                Text(entry.amount)
-                    .font(.system(size: 20, weight: .bold))
-                Text(entry.due)
-                    .font(.system(size: 13))
+        if let image = entry.image {
+            Image(uiImage: image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+        } else {
+            VStack(spacing: 4) {
+                Text("EasyWallet")
+                    .font(.system(size: 13, weight: .semibold))
+                Text(entry.reason?.message ?? "")
+                    .font(.system(size: 11))
+                    .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
             }
-            Spacer(minLength: 0)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+struct NextPaymentWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(
+            kind: "NextPaymentWidget",
+            provider: ImageProvider(key: WidgetKeys.upcomingImage)
+        ) { entry in
+            if #available(iOS 17.0, *) {
+                ImageWidgetView(entry: entry).containerBackground(.fill.tertiary, for: .widget)
+            } else {
+                ImageWidgetView(entry: entry).padding()
+            }
+        }
+        .configurationDisplayName("Upcoming payments")
+        .description("The next subscriptions that are billed.")
+        .supportedFamilies([.systemMedium, .systemLarge])
+    }
+}
+
+struct CalendarWidget: Widget {
+    var body: some WidgetConfiguration {
+        StaticConfiguration(
+            kind: "CalendarWidget",
+            provider: ImageProvider(key: WidgetKeys.calendarImage)
+        ) { entry in
+            if #available(iOS 17.0, *) {
+                ImageWidgetView(entry: entry).containerBackground(.fill.tertiary, for: .widget)
+            } else {
+                ImageWidgetView(entry: entry).padding()
+            }
+        }
+        .configurationDisplayName("Billing calendar")
+        .description("This month, with a dot on every day something is billed.")
+        .supportedFamilies([.systemMedium, .systemLarge])
     }
 }
 
 @main
-struct NextPaymentWidget: Widget {
-    let kind: String = "NextPaymentWidget"
-
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: NextPaymentProvider()) { entry in
-            if #available(iOS 17.0, *) {
-                NextPaymentWidgetView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
-            } else {
-                NextPaymentWidgetView(entry: entry).padding()
-            }
-        }
-        .configurationDisplayName("Next payment")
-        .description("The next subscription that is billed.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+struct EasyWalletWidgets: WidgetBundle {
+    var body: some Widget {
+        NextPaymentWidget()
+        CalendarWidget()
     }
 }

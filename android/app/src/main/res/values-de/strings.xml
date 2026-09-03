@@ -2,4 +2,6 @@
 <resources>
     <string name="widget_next_payment">NÄCHSTE ABBUCHUNG</string>
     <string name="widget_nothing_due">Nichts fällig</string>
+    <string name="widget_upcoming_label">Nächste Abbuchungen</string>
+    <string name="widget_calendar_label">Abbuchungs-Kalender</string>
 </resources>

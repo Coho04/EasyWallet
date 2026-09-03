@@ -1,7 +1,8 @@
-# iOS widget
+# iOS widgets
 
 The target `NextPaymentWidget` is part of `Runner.xcodeproj`, it is embedded
 into `Runner.app/PlugIns/` and it builds. Nothing has to be created in Xcode.
+It ships two widgets: *Upcoming payments* and *Billing calendar*.
 
 What is left is signing, which cannot be done from a repository.
 
@@ -33,7 +34,7 @@ The same group id appears in three places and they have to agree:
 2. Start the app once. The widget shows what the app writes; before the first
    launch there is nothing to read.
 3. On the iPhone, long press the home screen → **+** → search for *EasyWallet*
-   → pick a size → *Add widget*.
+   → pick *Upcoming payments* or *Billing calendar* → *Add widget*.
 
 Without an upcoming payment the widget reads "Nothing due" - that is the empty
 state, not a failure.
