@@ -199,5 +199,7 @@
   "noDataYet": "No data yet",
   "endDate": "End date",
   "noEndDate": "No end date",
-  "expired": "Expired"
+  "expired": "Expired",
+  "about": "About",
+  "version": "Version"
 }

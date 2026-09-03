@@ -1,3 +1,4 @@
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/currency.dart';
@@ -5,6 +6,7 @@ import 'package:easy_wallet/persistence_controller.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/components/card_section_component.dart';
+import 'package:easy_wallet/views/components/settings_row.dart';
 import 'package:easy_wallet/views/components/gradient_header.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -33,12 +35,20 @@ class SettingsViewState extends State<SettingsView> {
   DateTime notificationTime = DateTime.now();
   Currency currency = Currency.usd;
   double monthlyLimit = 0.0;
+  String _appVersion = '';
   final LocalAuthentication auth = LocalAuthentication();
 
   @override
   void initState() {
     super.initState();
     _loadSettings();
+    _loadAppVersion();
+  }
+
+  Future<void> _loadAppVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    if (!mounted) return;
+    setState(() => _appVersion = '${info.version} (${info.buildNumber})');
   }
 
   Future<void> _loadSettings() async {
@@ -345,49 +355,25 @@ class SettingsViewState extends State<SettingsView> {
               CardSection(
                 title: Intl.message('notifications'),
                 children: [
-                  CupertinoFormRow(
-                    prefix: Flexible(
-                        flex: 2,
-                        child: AutoText(
-                            text: Intl.message('enableNotifications'),
-                            maxLines: 2,
-                            color: textColor)),
-                    child: CupertinoSwitch(
-                      value: notificationsEnabled,
-                      onChanged: _handleNotificationsToggle,
-                    ),
+                  SettingsRow.toggle(
+                    label: Intl.message('enableNotifications'),
+                    value: notificationsEnabled,
+                    onChanged: _handleNotificationsToggle,
                   ),
-                  CupertinoFormRow(
-                    prefix: Flexible(
-                      flex: 3,
-                      child: AutoText(
-                          text: Intl.message('includeCostInNotifications'),
-                          maxLines: 3,
-                          color: textColor),
-                    ),
-                    child: CupertinoSwitch(
-                      value: includeCostInNotifications,
-                      onChanged: (value) {
-                        setState(() {
-                          includeCostInNotifications = value;
-                        });
-                        _saveSettings(context);
-                      },
-                    ),
+                  SettingsRow.toggle(
+                    label: Intl.message('includeCostInNotifications'),
+                    value: includeCostInNotifications,
+                    onChanged: (value) {
+                      setState(() {
+                        includeCostInNotifications = value;
+                      });
+                      _saveSettings(context);
+                    },
                   ),
-                  CupertinoFormRow(
-                    padding: const EdgeInsets.all(16),
-                    prefix: AutoText(
-                        maxLines: 1,
-                        text: Intl.message('notificationTime'),
-                        color: textColor),
-                    child: GestureDetector(
-                      onTap: () => _selectNotificationTime(context),
-                      child: AutoText(
-                          maxLines: 1,
-                          text: _formatTime(notificationTime),
-                          color: CupertinoColors.systemBlue),
-                    ),
+                  SettingsRow.value(
+                    label: Intl.message('notificationTime'),
+                    value: _formatTime(notificationTime),
+                    onTap: () => _selectNotificationTime(context),
                   ),
                 ],
               ),
@@ -395,19 +381,11 @@ class SettingsViewState extends State<SettingsView> {
               CardSection(
                 title: Intl.message('security'),
                 children: [
-                  CupertinoFormRow(
-                    prefix: Expanded(
-                      flex: 4,
-                      child: AutoText(
-                          text: Intl.message('enableAuthProtection'),
-                          color: textColor),
-                    ),
-                    child: CupertinoSwitch(
-                      value: isAuthProtected,
-                      onChanged: (value) {
-                        _handleAuthProtectionToggle(value, context);
-                      },
-                    ),
+                  SettingsRow.toggle(
+                    label: Intl.message('enableAuthProtection'),
+                    value: isAuthProtected,
+                    onChanged: (value) =>
+                        _handleAuthProtectionToggle(value, context),
                   ),
                 ],
               ),
@@ -415,49 +393,25 @@ class SettingsViewState extends State<SettingsView> {
               CardSection(
                 title: Intl.message('general'),
                 children: [
-                  CupertinoFormRow(
-                    padding: const EdgeInsets.all(16),
-                    prefix: AutoText(
-                        maxLines: 1,
-                        text: Intl.message('currency'),
-                        color: textColor),
-                    child: GestureDetector(
-                      onTap: () => _selectCurrency(context),
-                      child: AutoText(
-                          maxLines: 1,
-                          text: currency.name,
-                          color: CupertinoColors.systemBlue),
-                    ),
+                  SettingsRow.value(
+                    label: Intl.message('currency'),
+                    value: currency.name,
+                    onTap: () => _selectCurrency(context),
                   ),
-                  CupertinoFormRow(
-                    padding: const EdgeInsets.all(16),
-                    prefix: AutoText(
-                        maxLines: 1,
-                        text: Intl.message('monthlyLimit'),
-                        color: textColor),
-                    child: GestureDetector(
-                      onTap: () => _enterMonthlyLimit(context),
-                      child: AutoText(
-                          maxLines: 1,
-                          text: Money.format(monthlyLimit, currency.symbol),
-                          color: CupertinoColors.systemBlue),
-                    ),
+                  SettingsRow.value(
+                    label: Intl.message('monthlyLimit'),
+                    value: Money.format(monthlyLimit, currency.symbol),
+                    onTap: () => _enterMonthlyLimit(context),
                   ),
-                  CupertinoFormRow(
-                    padding: const EdgeInsets.all(16),
-                    prefix: AutoText(
-                        maxLines: 1,
-                        text: Intl.message('displayCategories'),
-                        color: textColor),
-                    child: CupertinoSwitch(
-                      value: displayCategories,
-                      onChanged: (value) {
-                        setState(() {
-                          displayCategories = value;
-                        });
-                        _saveSettings(context);
-                      },
-                    ),
+                  SettingsRow.toggle(
+                    label: Intl.message('displayCategories'),
+                    value: displayCategories,
+                    onChanged: (value) {
+                      setState(() {
+                        displayCategories = value;
+                      });
+                      _saveSettings(context);
+                    },
                   ),
                 ],
               ),
@@ -486,6 +440,16 @@ class SettingsViewState extends State<SettingsView> {
                   _buildLinkActionButton('rateApp', _rateApp()),
                 ],
               ),
+              const SizedBox(height: 20),
+              CardSection(
+                title: Intl.message('about'),
+                children: [
+                  SettingsRow.info(
+                    label: Intl.message('version'),
+                    value: _appVersion,
+                  ),
+                ],
+              ),
                 ],
               ),
             ),
@@ -498,52 +462,42 @@ class SettingsViewState extends State<SettingsView> {
   List<Widget> _buildPlatformSpecificSyncOptions({required Color textColor}) {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       return [
-        CupertinoFormRow(
-          padding: const EdgeInsets.all(16),
-          prefix:
-              AutoText(maxLines: 1, text: Intl.message('syncWithICloud'), color: textColor),
-          child: CupertinoSwitch(
-            value: syncWithICloud,
-            onChanged: (bool value) {
-              setState(() {
-                syncWithICloud = value;
-                syncWithGoogleDrive = value ? false : syncWithGoogleDrive;
-              });
-              _saveSettings(context);
-            },
-          ),
+        SettingsRow.toggle(
+          label: Intl.message('syncWithICloud'),
+          value: syncWithICloud,
+          onChanged: (bool value) {
+            setState(() {
+              syncWithICloud = value;
+              syncWithGoogleDrive = value ? false : syncWithGoogleDrive;
+            });
+            _saveSettings(context);
+          },
         ),
-        CupertinoFormRow(
-          prefix: AutoText(
-              maxLines: 1, text: Intl.message('syncWithGoogleDrive'), color: textColor),
-          child: CupertinoSwitch(
-            value: syncWithGoogleDrive,
-            onChanged: (bool value) {
-              handleGoogleSignIn(context, value);
-              setState(() {
-                syncWithGoogleDrive = value;
-                syncWithICloud = value ? false : syncWithICloud;
-              });
-              _saveSettings(context);
-            },
-          ),
+        SettingsRow.toggle(
+          label: Intl.message('syncWithGoogleDrive'),
+          value: syncWithGoogleDrive,
+          onChanged: (bool value) {
+            handleGoogleSignIn(context, value);
+            setState(() {
+              syncWithGoogleDrive = value;
+              syncWithICloud = value ? false : syncWithICloud;
+            });
+            _saveSettings(context);
+          },
         ),
       ];
     } else {
       return [
-        CupertinoFormRow(
-          prefix: AutoText(
-              maxLines: 1, text: Intl.message('syncWithGoogleDrive'), color: textColor),
-          child: CupertinoSwitch(
-            value: syncWithGoogleDrive,
-            onChanged: (bool value) {
-              handleGoogleSignIn(context, value);
-              setState(() {
-                syncWithGoogleDrive = value;
-              });
-              _saveSettings(context);
-            },
-          ),
+        SettingsRow.toggle(
+          label: Intl.message('syncWithGoogleDrive'),
+          value: syncWithGoogleDrive,
+          onChanged: (bool value) {
+            handleGoogleSignIn(context, value);
+            setState(() {
+              syncWithGoogleDrive = value;
+            });
+            _saveSettings(context);
+          },
         ),
       ];
     }
@@ -593,18 +547,9 @@ class SettingsViewState extends State<SettingsView> {
   }
 
   Widget _buildLinkActionButton(String text, String url) {
-    return CupertinoFormRow(
-      padding: const EdgeInsets.all(16),
-      child: GestureDetector(
-        onTap: () => _openWebPage(url, context),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: AutoText(
-              maxLines: 1,
-              text: Intl.message(text),
-              color: CupertinoColors.systemBlue),
-        ),
-      ),
+    return SettingsRow.link(
+      label: Intl.message(text),
+      onTap: () => _openWebPage(url, context),
     );
   }
 }

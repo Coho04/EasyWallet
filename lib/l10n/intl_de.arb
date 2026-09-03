@@ -199,5 +199,7 @@
   "noDataYet": "Noch keine Daten",
   "endDate": "Ablaufdatum",
   "noEndDate": "Kein Ablaufdatum",
-  "expired": "Abgelaufen"
+  "expired": "Abgelaufen",
+  "about": "Über",
+  "version": "Version"
 }

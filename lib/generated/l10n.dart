@@ -1374,6 +1374,16 @@ class S {
   String get expired {
     return Intl.message('Expired', name: 'expired', desc: '', args: []);
   }
+
+  /// `About`
+  String get about {
+    return Intl.message('About', name: 'about', desc: '', args: []);
+  }
+
+  /// `Version`
+  String get version {
+    return Intl.message('Version', name: 'version', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
