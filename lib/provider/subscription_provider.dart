@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/managers/background_fetch_manager.dart';
+import 'package:easy_wallet/managers/home_widget_bridge.dart';
 import 'package:easy_wallet/persistence_controller.dart';
 
 class SubscriptionProvider with ChangeNotifier {
@@ -31,6 +32,8 @@ class SubscriptionProvider with ChangeNotifier {
 
   /// The reminders are handed to the system in advance, so a change has to
   /// rebuild them right away instead of waiting for the next background run.
+  /// The home screen widget shows the same upcoming payment and is refreshed
+  /// with them.
   Future<void> _rescheduleNotifications() async {
     if (kIsWeb) return;
     try {
@@ -38,5 +41,6 @@ class SubscriptionProvider with ChangeNotifier {
     } catch (e) {
       debugPrint('Could not reschedule notifications: $e');
     }
+    await HomeWidgetBridge.refresh();
   }
 }

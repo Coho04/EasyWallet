@@ -43,6 +43,7 @@ dependencies:
   url_launcher: ^6.3.2
   permission_handler: ^13.0.1
   path: ^1.9.1
+  home_widget: ^0.9.3
   collection: ^1.19.1
   sentry_flutter: ^9.28.0
   http: ^1.4.0

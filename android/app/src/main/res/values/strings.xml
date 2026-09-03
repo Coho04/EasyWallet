@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_next_payment">NEXT PAYMENT</string>
+    <string name="widget_nothing_due">Nothing due</string>
+</resources>

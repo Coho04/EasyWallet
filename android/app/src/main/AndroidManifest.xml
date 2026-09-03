@@ -52,7 +52,17 @@
                 android:enabled="true"
                 android:exported="true"
                 tools:replace="android:enabled"/>
-    </application>
+            <receiver
+            android:name=".NextPaymentWidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/next_payment_widget_info" />
+        </receiver>
+</application>
 
     <queries>
         <intent>

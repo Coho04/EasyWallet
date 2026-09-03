@@ -1,3 +1,4 @@
+import 'package:easy_wallet/managers/home_widget_bridge.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/class/notification_plan.dart';
 import 'dart:async';
@@ -28,6 +29,7 @@ class BackgroundFetchManager {
     } catch (e) {
       Sentry.captureException(e);
     }
+    await HomeWidgetBridge.refresh();
   }
 
   Future<void> _initNotifications() async {
