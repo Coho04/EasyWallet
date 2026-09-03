@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="widget_next_payment">NEXT PAYMENT</string>
+    <string name="widget_upcoming_headline">UPCOMING</string>
     <string name="widget_nothing_due">Nothing due</string>
+    <string name="widget_no_data">Open EasyWallet once</string>
+    <string name="widget_today">Today</string>
+    <string name="widget_days_short">%1$d d</string>
     <string name="widget_upcoming_label">Upcoming payments</string>
     <string name="widget_calendar_label">Billing calendar</string>
 </resources>

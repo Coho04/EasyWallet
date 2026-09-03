@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="widget_next_payment">NÄCHSTE ABBUCHUNG</string>
+    <string name="widget_upcoming_headline">NÄCHSTE</string>
     <string name="widget_nothing_due">Nichts fällig</string>
+    <string name="widget_no_data">EasyWallet einmal öffnen</string>
+    <string name="widget_today">Heute</string>
+    <string name="widget_days_short">%1$d T</string>
     <string name="widget_upcoming_label">Nächste Abbuchungen</string>
     <string name="widget_calendar_label">Abbuchungs-Kalender</string>
 </resources>
