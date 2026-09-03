@@ -61,6 +61,7 @@ class StatisticViewState extends State<StatisticView> {
     // having filled the providers before it is opened.
     await subscriptionProvider.loadSubscriptions();
     await currencyProvider.loadCurrency();
+    await currencyProvider.loadRates();
 
     final subscriptions = subscriptionProvider.subscriptions;
     final currency = currencyProvider.currency;

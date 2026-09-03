@@ -43,6 +43,7 @@ class CalendarViewState extends State<CalendarView> {
 
     await subscriptionProvider.loadSubscriptions();
     await currencyProvider.loadCurrency();
+    await currencyProvider.loadRates();
     final categories = await category.Category.forAllSubscriptions();
 
     if (!mounted) return;

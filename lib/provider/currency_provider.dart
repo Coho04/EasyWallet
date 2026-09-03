@@ -20,8 +20,12 @@ class CurrencyProvider with ChangeNotifier {
     String name = prefs.getString('currency') ?? Currency.usd.name;
     _currency = Currency.findByName(name);
     notifyListeners();
+  }
 
-    // Rates come from the network and must not hold up the currency itself.
+  /// Fetches the conversion rates. Deliberately separate from loadCurrency:
+  /// reading the setting must not depend on the network, and callers that do
+  /// not convert anything should not pay for a request.
+  Future<void> loadRates() async {
     try {
       _rates = await ExchangeRateService().ratesFor(_currency.name);
       notifyListeners();
