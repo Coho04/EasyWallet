@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/exchange_rates.dart';
 import 'package:easy_wallet/class/money.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/enum/currency.dart';
@@ -21,6 +22,15 @@ class Subscription {
 
   /// Last day the subscription is billed, inclusive. Null means open ended.
   DateTime? endDate;
+
+  /// Last day of a free trial, inclusive. Billing starts after it.
+  DateTime? trialEndDate;
+
+  /// How many people share the cost. Null or 1 means it is paid alone.
+  int? splitCount;
+
+  /// Currency this subscription is billed in. Null means the app's currency.
+  String? currencyCode;
   bool isPaused;
   bool isPinned;
   String? notes;
@@ -37,6 +47,9 @@ class Subscription {
     required this.amount,
     this.date,
     this.endDate,
+    this.trialEndDate,
+    this.splitCount,
+    this.currencyCode,
     required this.isPaused,
     required this.isPinned,
     this.notes,
@@ -55,6 +68,9 @@ class Subscription {
       'amount': amount,
       'date': date?.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
+      'trialEndDate': trialEndDate?.toIso8601String(),
+      'splitCount': splitCount,
+      'currencyCode': currencyCode,
       'isPaused': isPaused ? 1 : 0,
       'isPinned': isPinned ? 1 : 0,
       'notes': notes,
@@ -256,6 +272,39 @@ class Subscription {
 
   bool get isExpired => isExpiredOn(DateTime.now());
 
+  /// This user's share expressed in [targetCurrency]. Without rates, or when
+  /// the subscription has no currency of its own, the amount is used as is.
+  double shareIn(String? targetCurrency, ExchangeRates? rates) {
+    final share = shareOfAmount;
+    final from = currencyCode;
+    if (from == null || targetCurrency == null || rates == null) {
+      return share;
+    }
+    return rates.convert(share, from: from, to: targetCurrency);
+  }
+
+  /// The part of [amount] this user carries once the cost is shared.
+  double get shareOfAmount {
+    final count = splitCount;
+    if (count == null || count <= 1) {
+      return amount;
+    }
+    return amount / count;
+  }
+
+  /// Whether the free trial is still running on [day]. The trial end date is
+  /// inclusive, so the last free day is the date itself.
+  bool isInTrialOn(DateTime day) {
+    final trialEnd = trialEndDate;
+    if (trialEnd == null) {
+      return false;
+    }
+    return !DateTime(day.year, day.month, day.day)
+        .isAfter(DateTime(trialEnd.year, trialEnd.month, trialEnd.day));
+  }
+
+  bool get isInTrial => isInTrialOn(DateTime.now());
+
   /// The day up to which this subscription is billed: the end date once it has
   /// passed, otherwise [asOf].
   DateTime _billedUntil(DateTime asOf) {
@@ -321,6 +370,11 @@ class Subscription {
       date: json['date'] != null ? DateTime.parse(json['date']) : null,
       endDate:
           json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+      trialEndDate: json['trialEndDate'] != null
+          ? DateTime.parse(json['trialEndDate'])
+          : null,
+      splitCount: json['splitCount'],
+      currencyCode: json['currencyCode'],
       isPaused: json['isPaused'] == 1,
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],
@@ -343,6 +397,11 @@ class Subscription {
       date: json['date'] != null ? DateTime.parse(json['date']) : null,
       endDate:
           json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+      trialEndDate: json['trialEndDate'] != null
+          ? DateTime.parse(json['trialEndDate'])
+          : null,
+      splitCount: json['splitCount'],
+      currencyCode: json['currencyCode'],
       isPaused: json['isPaused'] == 1,
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],
@@ -362,7 +421,9 @@ class Subscription {
     final db = await PersistenceController.instance.database;
     if (id == null) {
       id = await db.insert('subscriptions', toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
+      await _recordPrice(db);
     } else {
+      await _recordPriceIfChanged(db);
       await db.update(
         'subscriptions',
         toJson(),
@@ -372,6 +433,50 @@ class Subscription {
     }
     await PersistenceController.instance.syncWithCloud();
     return this;
+  }
+
+/// Writes the current price into the history. Subscriptions get more
+  /// expensive over time and that is precisely what people track them for.
+  Future<void> _recordPrice(DatabaseExecutor db) async {
+    await db.insert('price_history', {
+      'subscription_id': id,
+      'amount': amount,
+      'currencyCode': currencyCode,
+      'changedAt': DateTime.now().toIso8601String(),
+    });
+  }
+
+  Future<void> _recordPriceIfChanged(DatabaseExecutor db) async {
+    final rows = await db.query(
+      'subscriptions',
+      columns: ['amount'],
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    if (rows.isEmpty) {
+      return;
+    }
+    final stored = (rows.first['amount'] as num?)?.toDouble();
+    if (stored != null && (stored - amount).abs() < 0.001) {
+      return;
+    }
+    await _recordPrice(db);
+  }
+
+  /// Every recorded price of this subscription, oldest first.
+  Future<List<PriceChange>> priceHistory() async {
+    if (id == null) {
+      return [];
+    }
+    final db = await PersistenceController.instance.database;
+    final rows = await db.query(
+      'price_history',
+      where: 'subscription_id = ?',
+      whereArgs: [id],
+      orderBy: 'changedAt ASC',
+    );
+    return rows.map(PriceChange.fromJson).toList();
   }
 
   Future<void> delete() async {
@@ -416,4 +521,23 @@ extension on DateTime {
       return false;
     }
   }
+}
+
+/// One recorded price of a subscription.
+class PriceChange {
+  const PriceChange({
+    required this.amount,
+    required this.changedAt,
+    this.currencyCode,
+  });
+
+  final double amount;
+  final DateTime changedAt;
+  final String? currencyCode;
+
+  factory PriceChange.fromJson(Map<String, dynamic> json) => PriceChange(
+        amount: (json['amount'] as num).toDouble(),
+        changedAt: DateTime.parse(json['changedAt']),
+        currencyCode: json['currencyCode'],
+      );
 }

@@ -48,7 +48,7 @@ class PersistenceController {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, 'easywallet.db');
 
-    return await openDatabase(path, version: 5, onCreate: (db, version) {
+    return await openDatabase(path, version: 6, onCreate: (db, version) {
       db.execute('''
         CREATE TABLE IF NOT EXISTS categories(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -67,6 +67,17 @@ class PersistenceController {
       )
       ''');
 
+      db.execute('''
+      CREATE TABLE IF NOT EXISTS price_history(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        subscription_id INTEGER NOT NULL,
+        amount REAL NOT NULL,
+        currencyCode TEXT DEFAULT NULL,
+        changedAt TEXT NOT NULL,
+        FOREIGN KEY (subscription_id) REFERENCES subscriptions(id) ON DELETE CASCADE
+      )
+      ''');
+
       return db.execute(
         '''
           CREATE TABLE IF NOT EXISTS subscriptions(
@@ -75,6 +86,9 @@ class PersistenceController {
             amount REAL,
             date TEXT,
             endDate TEXT DEFAULT NULL,
+            trialEndDate TEXT DEFAULT NULL,
+            splitCount INTEGER DEFAULT NULL,
+            currencyCode TEXT DEFAULT NULL,
             isPaused INTEGER DEFAULT NULL,
             isPinned INTEGER DEFAULT NULL,
             notes TEXT DEFAULT NULL,
@@ -113,6 +127,24 @@ class PersistenceController {
       if (oldVersion < 5) {
         await db.execute(
             'ALTER TABLE subscriptions ADD COLUMN endDate TEXT DEFAULT NULL;');
+      }
+      if (oldVersion < 6) {
+        await db.execute(
+            'ALTER TABLE subscriptions ADD COLUMN trialEndDate TEXT DEFAULT NULL;');
+        await db.execute(
+            'ALTER TABLE subscriptions ADD COLUMN splitCount INTEGER DEFAULT NULL;');
+        await db.execute(
+            'ALTER TABLE subscriptions ADD COLUMN currencyCode TEXT DEFAULT NULL;');
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS price_history(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            subscription_id INTEGER NOT NULL,
+            amount REAL NOT NULL,
+            currencyCode TEXT DEFAULT NULL,
+            changedAt TEXT NOT NULL,
+            FOREIGN KEY (subscription_id) REFERENCES subscriptions(id) ON DELETE CASCADE
+          )
+          ''');
       }
     });
   }
