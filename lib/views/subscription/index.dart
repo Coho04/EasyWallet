@@ -1,3 +1,4 @@
+import 'package:easy_wallet/model/category.dart';
 import 'dart:async';
 
 import 'package:easy_wallet/easy_wallet_app.dart';
@@ -25,6 +26,8 @@ class SubscriptionIndexView extends StatefulWidget {
 
 class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
   String _searchText = '';
+  int? _selectedCategoryId;
+  Map<int, List<Category>> _categoriesBySubscription = {};
   SortOption _sortOption = SortOption.remainingDaysAscending;
   bool _isLoading = true;
   bool _displayCategories = true;
@@ -61,6 +64,7 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
     final subP = Provider.of<SubscriptionProvider>(context, listen: false);
     final curP = Provider.of<CurrencyProvider>(context, listen: false);
     final catP = Provider.of<CategoryProvider>(context, listen: false);
+    _categoriesBySubscription = await Category.forAllSubscriptions();
     await subP.loadSubscriptions();
     await curP.loadCurrency();
     await catP.loadCategories();
@@ -79,6 +83,65 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
         _colorCache[key] = c;
         return c;
       }),
+    );
+  }
+
+  /// Only the subscriptions carrying the selected category, if one is chosen.
+  List<Subscription> _inSelectedCategory(List<Subscription> subs) {
+    final selected = _selectedCategoryId;
+    if (selected == null) {
+      return subs;
+    }
+    return subs.where((s) {
+      final categories = _categoriesBySubscription[s.id];
+      return categories != null && categories.any((c) => c.id == selected);
+    }).toList();
+  }
+
+  Widget _categoryFilter(List<Category> categories) {
+    if (categories.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    Widget chip(String label, int? id) {
+      final selected = _selectedCategoryId == id;
+      return Padding(
+        padding: const EdgeInsets.only(right: 8),
+        child: GestureDetector(
+          onTap: () => setState(() => _selectedCategoryId = id),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: selected
+                  ? CupertinoColors.activeBlue
+                  : CupertinoColors.secondarySystemGroupedBackground
+                      .resolveFrom(context),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                color: selected
+                    ? CupertinoColors.white
+                    : CupertinoColors.label.resolveFrom(context),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: 40,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(14, 4, 14, 4),
+        children: [
+          chip(Intl.message('allCategories'), null),
+          for (final category in categories) chip(category.title, category.id),
+        ],
+      ),
     );
   }
 
@@ -222,7 +285,7 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
     return Consumer2<SubscriptionProvider, CurrencyProvider>(
       builder: (context, subProvider, currProvider, _) {
         final currency = currProvider.currency;
-        final sorted = _sorted(subProvider.subscriptions);
+        final sorted = _sorted(_inSelectedCategory(subProvider.subscriptions));
         final monthly = _calcMonthly(subProvider.subscriptions);
         final yearly = _calcYearly(subProvider.subscriptions);
         final upcoming = subProvider.subscriptions
@@ -259,6 +322,17 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
                     controller: _searchController,
                     placeholder: Intl.message('search'),
                     onChanged: _onSearchChanged,
+                  ),
+                ),
+              ),
+              // Category filter
+              SliverToBoxAdapter(
+                child: Container(
+                  color: CupertinoColors.systemGroupedBackground
+                      .resolveFrom(context),
+                  child: Consumer<CategoryProvider>(
+                    builder: (context, provider, _) =>
+                        _categoryFilter(provider.categories),
                   ),
                 ),
               ),
