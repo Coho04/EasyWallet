@@ -1,3 +1,12 @@
+import 'package:easy_wallet/generated/l10n.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:easy_wallet/provider/subscription_provider.dart';
+import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/model/category.dart' as model;
+import 'package:easy_wallet/class/data_transfer.dart';
+import 'dart:typed_data';
+import 'dart:convert';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
@@ -429,6 +438,14 @@ class SettingsViewState extends State<SettingsView> {
                 title: Intl.message('dataManagement'),
                 children: [
                   ..._buildPlatformSpecificSyncOptions(textColor: textColor),
+                  SettingsRow.link(
+                    label: Intl.message('exportData'),
+                    onTap: _exportData,
+                  ),
+                  SettingsRow.link(
+                    label: Intl.message('importData'),
+                    onTap: _importData,
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
@@ -552,6 +569,76 @@ class SettingsViewState extends State<SettingsView> {
           ],
         );
       },
+    );
+  }
+
+/// Writes every subscription and category into a file the user picks. The
+  /// app already syncs to iCloud and Drive, but nothing let people take their
+  /// own copy out.
+  Future<void> _exportData() async {
+    try {
+      final json = DataTransfer.encode(
+        subscriptions: await Subscription.all(),
+        categories: await model.Category.all(),
+      );
+      final stamp = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      await FilePicker.saveFile(
+        fileName: 'easywallet-$stamp.json',
+        bytes: Uint8List.fromList(utf8.encode(json)),
+        mimeType: 'application/json',
+      );
+    } catch (e) {
+      Sentry.captureException(e);
+      if (mounted) _showMessage(Intl.message('exportFailed'), '$e');
+    }
+  }
+
+  /// Adds the contents of a backup. Existing entries are kept: the records are
+  /// inserted as new ones, so an import can never destroy what is already
+  /// there.
+  Future<void> _importData() async {
+    try {
+      final file = await FilePicker.pickFile(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+      );
+      if (file == null) return;
+
+      final backup = DataTransfer.decode(utf8.decode(await file.readAsBytes()));
+      for (final category in backup.categories) {
+        await model.Category(title: category.title, color: category.color)
+            .save();
+      }
+      for (final subscription in backup.subscriptions) {
+        subscription.id = null;
+        await subscription.save();
+      }
+
+      if (!mounted) return;
+      await Provider.of<SubscriptionProvider>(context, listen: false)
+          .loadSubscriptions();
+      if (!mounted) return;
+      _showMessage(Intl.message('successfully'),
+          S.of(context).importedCount(backup.subscriptions.length));
+    } catch (e) {
+      Sentry.captureException(e);
+      if (mounted) _showMessage(Intl.message('importFailed'), '$e');
+    }
+  }
+
+  void _showMessage(String title, String body) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(body),
+        actions: [
+          CupertinoDialogAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(Intl.message('done')),
+          ),
+        ],
+      ),
     );
   }
 
