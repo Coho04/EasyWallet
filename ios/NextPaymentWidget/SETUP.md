@@ -1,27 +1,39 @@
-# iOS widget setup
+# iOS widget
 
-The Swift source next to this file is complete. What it needs is an Xcode
-target, and that cannot be scripted safely: `project.pbxproj` is generated and
-a bad edit breaks the whole iOS build. These steps take a couple of minutes in
-Xcode and only have to be done once.
+The target `NextPaymentWidget` is part of `Runner.xcodeproj`, it is embedded
+into `Runner.app/PlugIns/` and it builds. Nothing has to be created in Xcode.
 
-1. Open `ios/Runner.xcworkspace` in Xcode.
-2. **File → New → Target… → Widget Extension**. Name it `NextPaymentWidget`.
-   Uncheck *Include Live Activity* and *Include Configuration App Intent*.
-   When Xcode offers to activate the new scheme, accept.
-3. Xcode creates a folder with template Swift files. Delete the generated
-   `NextPaymentWidget.swift` and drag `ios/NextPaymentWidget/NextPaymentWidget.swift`
-   from this repository into the target instead ("Copy items if needed" off).
-4. Select the **Runner** target → *Signing & Capabilities* → **+ Capability** →
-   **App Groups**, and add `group.de.golden-developer.EasyWallet`.
-5. Repeat step 4 for the **NextPaymentWidget** target. Both need the same group,
-   otherwise the widget cannot read what the app writes.
-6. Set the widget target's *Minimum Deployment* to the same iOS version the
-   Runner target uses.
+What is left is signing, which cannot be done from a repository.
 
-The group id also appears in `lib/managers/home_widget_bridge.dart` as
-`HomeWidgetBridge.appGroupId`. Change it in all three places or nowhere.
+## Once, in the Apple Developer portal
 
-Xcode Cloud picks the new target up automatically once it is committed, but the
-provisioning profile has to carry the App Group, so the first cloud build after
-this change is worth watching.
+The widget is its own App ID and both it and the app must share an App Group.
+
+1. Certificates, Identifiers & Profiles → **Identifiers** → **App Groups**:
+   create `group.de.golden-developer.EasyWallet` if it does not exist.
+2. **Identifiers → App IDs**: make sure
+   `de.golden-developer.EasyWallet.NextPaymentWidget` exists, and enable the
+   *App Groups* capability on it and on `de.golden-developer.EasyWallet`,
+   each pointing at the group above.
+3. Regenerate the provisioning profiles, or let Xcode do it: with automatic
+   signing, opening the project with your account and building to a device
+   creates the App ID and updates the profiles for you.
+
+The same group id appears in three places and they have to agree:
+
+- `ios/Runner/Runner.entitlements`
+- `ios/NextPaymentWidget/NextPaymentWidget.entitlements`
+- `HomeWidgetBridge.appGroupId` in `lib/managers/home_widget_bridge.dart`
+
+## To see it on a device
+
+1. Build a **signed** build onto the iPhone: open `ios/Runner.xcworkspace`,
+   pick the *Runner* scheme and your device, and run. `--no-codesign` builds
+   cannot be installed.
+2. Start the app once. The widget shows what the app writes; before the first
+   launch there is nothing to read.
+3. On the iPhone, long press the home screen → **+** → search for *EasyWallet*
+   → pick a size → *Add widget*.
+
+Without an upcoming payment the widget reads "Nothing due" - that is the empty
+state, not a failure.
