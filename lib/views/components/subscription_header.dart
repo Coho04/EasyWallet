@@ -1,3 +1,4 @@
+import 'package:easy_wallet/generated/l10n.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/views/components/budget_warning_banner.dart';
@@ -114,14 +115,18 @@ class SubscriptionHeader extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildSpendCard('Diesen Monat', monthlySpent, currencySymbol)),
+              Expanded(
+                  child: _buildSpendCard(
+                      S.of(context).thisMonth, monthlySpent, currencySymbol)),
               const SizedBox(width: 8),
-              Expanded(child: _buildSpendCard('Dieses Jahr', yearlySpent, currencySymbol)),
+              Expanded(
+                  child: _buildSpendCard(
+                      S.of(context).thisYear, yearlySpent, currencySymbol)),
             ],
           ),
           if (budgetLimit != null && budgetLimit! > 0) ...[
             const SizedBox(height: 10),
-            _buildBudgetBar(),
+            _buildBudgetBar(context),
           ],
         ],
       ),
@@ -167,7 +172,7 @@ class SubscriptionHeader extends StatelessWidget {
           ? const Color(0xFFFF9500)
           : const Color(0xFF30D158);
 
-  Widget _buildBudgetBar() {
+  Widget _buildBudgetBar(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -196,7 +201,8 @@ class SubscriptionHeader extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           _budgetExceeded
-              ? '${Money.format(monthlySpent - budgetLimit!, currencySymbol)} über'
+              ? S.of(context).overBudgetBy(
+                  Money.format(monthlySpent - budgetLimit!, currencySymbol))
               : '${NumberFormat.decimalPatternDigits(decimalDigits: 0).format(100 * _budgetProgress)}%',
           style: const TextStyle(fontSize: 10, color: Color(0x72FFFFFF)),
         ),

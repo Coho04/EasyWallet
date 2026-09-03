@@ -1,3 +1,4 @@
+import 'package:easy_wallet/generated/l10n.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -29,7 +30,7 @@ class UpcomingStrip extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(14, 6, 14, 4),
             child: Text(
-              'NÄCHSTE 7 TAGE',
+              S.of(context).nextSevenDays.toUpperCase(),
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -79,7 +80,7 @@ class UpcomingStrip extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        '$days T',
+                        '$days ${S.of(context).daysAbbreviation}',
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: days <= 2 ? FontWeight.w700 : FontWeight.w400,

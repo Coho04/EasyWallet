@@ -1,3 +1,4 @@
+import 'package:easy_wallet/generated/l10n.dart';
 import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/model/category.dart';
 import 'package:easy_wallet/views/subscription/show.dart';
@@ -55,10 +56,10 @@ class SubscriptionListComponentState
     return const Color(0xFF30D158);
   }
 
-  String _cycleLabel() {
+  String _cycleLabel(BuildContext context) {
     final pattern = widget.subscription.repeatPattern;
-    if (pattern == 'yearly') return 'jährlich';
-    if (pattern == 'monthly') return 'monatlich';
+    if (pattern == 'yearly') return S.of(context).yearly;
+    if (pattern == 'monthly') return S.of(context).monthly;
     return '';
   }
 
@@ -98,7 +99,7 @@ class SubscriptionListComponentState
             icon: sub.isPaused
                 ? CupertinoIcons.play_arrow_solid
                 : CupertinoIcons.pause_fill,
-            label: sub.isPaused ? 'Weiter' : 'Pause',
+            label: sub.isPaused ? S.of(context).resume : S.of(context).pause,
             borderRadius: BorderRadius.zero,
           ),
           SlidableAction(
@@ -106,7 +107,7 @@ class SubscriptionListComponentState
             backgroundColor: CupertinoColors.destructiveRed,
             foregroundColor: CupertinoColors.white,
             icon: CupertinoIcons.delete,
-            label: 'Löschen',
+            label: S.of(context).delete,
             borderRadius: BorderRadius.zero,
           ),
         ],
@@ -183,10 +184,14 @@ class SubscriptionListComponentState
                                   ),
                                   Text(
                                     isPaused
-                                        ? 'Pausiert'
+                                        ? S.of(context).paused
                                         : () {
-                                            final label = _cycleLabel();
-                                            final dateStr = DateFormat.MMMd('de').format(sub.getNextBillDate());
+                                            final label = _cycleLabel(context);
+                                            final dateStr = DateFormat.MMMd(
+                                                    Localizations.localeOf(
+                                                            context)
+                                                        .languageCode)
+                                                .format(sub.getNextBillDate());
                                             return label.isEmpty ? dateStr : '$dateStr · $label';
                                           }(),
                                     style: TextStyle(
@@ -226,7 +231,7 @@ class SubscriptionListComponentState
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      '$days T',
+                                      '$days ${S.of(context).daysAbbreviation}',
                                       style: const TextStyle(
                                         fontSize: 9,
                                         fontWeight: FontWeight.w700,

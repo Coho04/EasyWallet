@@ -242,5 +242,36 @@
         "type": "int"
       }
     }
+  },
+  "thisMonth": "This Month",
+  "thisYear": "This Year",
+  "nextSevenDays": "Next 7 days",
+  "allSubscriptions": "All subscriptions",
+  "monthlyBudgetExceeded": "Monthly budget exceeded",
+  "limitLabel": "Limit",
+  "deleteSubscriptionQuestion": "Delete?",
+  "overBudgetBy": "{amount} over",
+  "@overBudgetBy": {
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "12.00 €"
+      }
+    }
+  },
+  "deleteSubscriptionHint": "\"{title}\" will be deleted permanently.",
+  "@deleteSubscriptionHint": {
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Netflix"
+      }
+    }
+  },
+  "pause": "Pause",
+  "resume": "Resume",
+  "daysAbbreviation": "d",
+  "@daysAbbreviation": {
+    "description": "Single letter suffix for a day count, e.g. \"4 d\""
   }
 }

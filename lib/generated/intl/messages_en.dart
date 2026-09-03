@@ -22,14 +22,18 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(count) => "${count} subscriptions";
 
-  static String m1(count) => "${count} subscriptions imported";
+  static String m1(title) => "\"${title}\" will be deleted permanently.";
 
-  static String m2(title) => "Your subscription ${title} is due soon!";
+  static String m2(count) => "${count} subscriptions imported";
 
-  static String m3(title, price) =>
+  static String m3(amount) => "${amount} over";
+
+  static String m4(title) => "Your subscription ${title} is due soon!";
+
+  static String m5(title, price) =>
       "Your subscription ${title} (${price} €) is due soon!";
 
-  static String m4(title) => "The trial of ${title} ends soon";
+  static String m6(title) => "The trial of ${title} ends soon";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -51,6 +55,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "all": MessageLookupByLibrary.simpleMessage("All"),
     "allCategories": MessageLookupByLibrary.simpleMessage("All"),
+    "allSubscriptions": MessageLookupByLibrary.simpleMessage(
+      "All subscriptions",
+    ),
     "alphabeticalAscending": MessageLookupByLibrary.simpleMessage(
       "Alphabetical Ascending",
     ),
@@ -101,6 +108,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dataManagement": MessageLookupByLibrary.simpleMessage("Data Management"),
     "dayBefore": MessageLookupByLibrary.simpleMessage("One Day Before"),
     "days": MessageLookupByLibrary.simpleMessage("Days"),
+    "daysAbbreviation": MessageLookupByLibrary.simpleMessage("d"),
     "daysRemainingAscending": MessageLookupByLibrary.simpleMessage(
       "Days Remaining Ascending",
     ),
@@ -116,6 +124,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "deleteSubscription": MessageLookupByLibrary.simpleMessage(
       "Delete this subscription",
+    ),
+    "deleteSubscriptionHint": m1,
+    "deleteSubscriptionQuestion": MessageLookupByLibrary.simpleMessage(
+      "Delete?",
     ),
     "deletionIsNotSupportedOnTheWeb": MessageLookupByLibrary.simpleMessage(
       "Deletion is not supported on the web",
@@ -183,7 +195,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "import": MessageLookupByLibrary.simpleMessage("Import"),
     "importData": MessageLookupByLibrary.simpleMessage("Import Data"),
     "importFailed": MessageLookupByLibrary.simpleMessage("Import failed"),
-    "importedCount": m1,
+    "importedCount": m2,
     "imprint": MessageLookupByLibrary.simpleMessage("Imprint"),
     "inTrial": MessageLookupByLibrary.simpleMessage("Trial"),
     "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
@@ -199,14 +211,19 @@ class MessageLookup extends MessageLookupByLibrary {
     "issuesOfMonthlySubscriptions": MessageLookupByLibrary.simpleMessage(
       "Issues of monthly subscriptions",
     ),
+    "limitLabel": MessageLookupByLibrary.simpleMessage("Limit"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "month": MessageLookupByLibrary.simpleMessage("month"),
     "monthTotal": MessageLookupByLibrary.simpleMessage("Month total"),
     "monthly": MessageLookupByLibrary.simpleMessage("Monthly"),
+    "monthlyBudgetExceeded": MessageLookupByLibrary.simpleMessage(
+      "Monthly budget exceeded",
+    ),
     "monthlyExpenses": MessageLookupByLibrary.simpleMessage("Monthly Expenses"),
     "monthlyLimit": MessageLookupByLibrary.simpleMessage("Monthly Limit"),
     "monthlyTrend": MessageLookupByLibrary.simpleMessage("Monthly trend"),
     "nextInvoice": MessageLookupByLibrary.simpleMessage("Next invoice"),
+    "nextSevenDays": MessageLookupByLibrary.simpleMessage("Next 7 days"),
     "noActiveSubscriptions": MessageLookupByLibrary.simpleMessage(
       "No active subscriptions",
     ),
@@ -244,7 +261,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "outstandingExpenditureMonth": MessageLookupByLibrary.simpleMessage(
       "Outstanding expenditure month",
     ),
+    "overBudgetBy": m3,
     "overview": MessageLookupByLibrary.simpleMessage("Overview"),
+    "pause": MessageLookupByLibrary.simpleMessage("Pause"),
     "pauseSubscription": MessageLookupByLibrary.simpleMessage(
       "Pause this subscription",
     ),
@@ -278,6 +297,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "remainingCosts": MessageLookupByLibrary.simpleMessage("Remaining costs"),
     "remembering": MessageLookupByLibrary.simpleMessage("Remembering"),
     "repetitionRate": MessageLookupByLibrary.simpleMessage("Repetition rate"),
+    "resume": MessageLookupByLibrary.simpleMessage("Resume"),
     "sameDay": MessageLookupByLibrary.simpleMessage("Same Day"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "search": MessageLookupByLibrary.simpleMessage("Search"),
@@ -296,8 +316,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptionCurrency": MessageLookupByLibrary.simpleMessage(
       "Subscription currency",
     ),
-    "subscriptionIsDueSoon": m2,
-    "subscriptionIsDueSoonWithPrice": m3,
+    "subscriptionIsDueSoon": m4,
+    "subscriptionIsDueSoonWithPrice": m5,
     "subscriptionReminder": MessageLookupByLibrary.simpleMessage(
       "Subscription Reminder",
     ),
@@ -308,6 +328,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Sync with Google Drive",
     ),
     "syncWithICloud": MessageLookupByLibrary.simpleMessage("Sync with iCloud"),
+    "thisMonth": MessageLookupByLibrary.simpleMessage("This Month"),
+    "thisYear": MessageLookupByLibrary.simpleMessage("This Year"),
     "tipJar": MessageLookupByLibrary.simpleMessage("Tip Jar"),
     "title": MessageLookupByLibrary.simpleMessage("Title"),
     "topSubscriptions": MessageLookupByLibrary.simpleMessage(
@@ -317,7 +339,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalCosts": MessageLookupByLibrary.simpleMessage("Total costs"),
     "totalExpenses": MessageLookupByLibrary.simpleMessage("Total Expenses"),
     "trialEndDate": MessageLookupByLibrary.simpleMessage("Trial end"),
-    "trialEndsSoon": m4,
+    "trialEndsSoon": m6,
     "trialReminder": MessageLookupByLibrary.simpleMessage("Trial ending"),
     "twoDaysBefore": MessageLookupByLibrary.simpleMessage("Two Days Before"),
     "unknown": MessageLookupByLibrary.simpleMessage("unknown"),

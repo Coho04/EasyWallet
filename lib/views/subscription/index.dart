@@ -1,3 +1,4 @@
+import 'package:easy_wallet/generated/l10n.dart';
 import 'package:easy_wallet/model/category.dart';
 import 'dart:async';
 
@@ -225,11 +226,11 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: const Text('Löschen?'),
-        content: Text('"${sub.title}" wird unwiderruflich gelöscht.'),
+        title: Text(S.of(context).deleteSubscriptionQuestion),
+        content: Text(S.of(context).deleteSubscriptionHint(sub.title)),
         actions: [
           CupertinoDialogAction(
-            child: const Text('Abbrechen'),
+            child: Text(S.of(context).cancel),
             onPressed: () => Navigator.pop(ctx),
           ),
           CupertinoDialogAction(
@@ -239,7 +240,7 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
               Provider.of<SubscriptionProvider>(context, listen: false)
                   .deleteSubscription(sub);
             },
-            child: const Text('Löschen'),
+            child: Text(S.of(context).delete),
           ),
         ],
       ),
@@ -351,7 +352,7 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
                       .resolveFrom(context),
                   padding: const EdgeInsets.fromLTRB(14, 6, 14, 2),
                   child: Text(
-                    'ALLE ABONNEMENTS',
+                    S.of(context).allSubscriptions.toUpperCase(),
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,

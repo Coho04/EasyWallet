@@ -1,3 +1,4 @@
+import 'package:easy_wallet/generated/l10n.dart';
 import 'package:easy_wallet/class/money.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -51,8 +52,8 @@ class BudgetWarningBanner extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Monatsbudget überschritten',
+                Text(
+                  S.of(context).monthlyBudgetExceeded,
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -60,7 +61,7 @@ class BudgetWarningBanner extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Limit ${Money.format(limit, currencySymbol)} · +${Money.format(over, currencySymbol)}',
+                  '${S.of(context).limitLabel} ${Money.format(limit, currencySymbol)} · +${Money.format(over, currencySymbol)}',
                   style: const TextStyle(
                     fontSize: 10,
                     color: Color(0xA8FF6B6B),

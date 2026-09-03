@@ -22,14 +22,18 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m0(count) => "${count} Abonnements";
 
-  static String m1(count) => "${count} Abos importiert";
+  static String m1(title) => "\"${title}\" wird unwiderruflich gelöscht.";
 
-  static String m2(title) => "Ihr Abonnement ${title} steht bald an!";
+  static String m2(count) => "${count} Abos importiert";
 
-  static String m3(title, price) =>
+  static String m3(amount) => "${amount} über";
+
+  static String m4(title) => "Ihr Abonnement ${title} steht bald an!";
+
+  static String m5(title, price) =>
       "Ihr Abonnement ${title} (${price} €) steht bald an!";
 
-  static String m4(title) => "Die Probezeit von ${title} endet bald";
+  static String m6(title) => "Die Probezeit von ${title} endet bald";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -55,6 +59,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "all": MessageLookupByLibrary.simpleMessage("Alle"),
     "allCategories": MessageLookupByLibrary.simpleMessage("Alle"),
+    "allSubscriptions": MessageLookupByLibrary.simpleMessage(
+      "Alle Abonnements",
+    ),
     "alphabeticalAscending": MessageLookupByLibrary.simpleMessage(
       "Alphabetisch aufsteigend",
     ),
@@ -109,6 +116,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dataManagement": MessageLookupByLibrary.simpleMessage("Datenverwaltung"),
     "dayBefore": MessageLookupByLibrary.simpleMessage("Einen Tag vorher"),
     "days": MessageLookupByLibrary.simpleMessage("Tage"),
+    "daysAbbreviation": MessageLookupByLibrary.simpleMessage("T"),
     "daysRemainingAscending": MessageLookupByLibrary.simpleMessage(
       "Verbleibende Tage aufsteigend",
     ),
@@ -124,6 +132,10 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "deleteSubscription": MessageLookupByLibrary.simpleMessage(
       "Dieses Abonnement löschen",
+    ),
+    "deleteSubscriptionHint": m1,
+    "deleteSubscriptionQuestion": MessageLookupByLibrary.simpleMessage(
+      "Löschen?",
     ),
     "deletionIsNotSupportedOnTheWeb": MessageLookupByLibrary.simpleMessage(
       "Löschen wird im Web nicht unterstützt",
@@ -197,7 +209,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "importFailed": MessageLookupByLibrary.simpleMessage(
       "Import fehlgeschlagen",
     ),
-    "importedCount": m1,
+    "importedCount": m2,
     "imprint": MessageLookupByLibrary.simpleMessage("Impressum"),
     "inTrial": MessageLookupByLibrary.simpleMessage("Probezeit"),
     "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
@@ -213,16 +225,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "issuesOfMonthlySubscriptions": MessageLookupByLibrary.simpleMessage(
       "Ausgaben der Monatlichen Abonnements",
     ),
+    "limitLabel": MessageLookupByLibrary.simpleMessage("Limit"),
     "loading": MessageLookupByLibrary.simpleMessage("Laden..."),
     "month": MessageLookupByLibrary.simpleMessage("Monat"),
     "monthTotal": MessageLookupByLibrary.simpleMessage("Monatssumme"),
     "monthly": MessageLookupByLibrary.simpleMessage("Monatlich"),
+    "monthlyBudgetExceeded": MessageLookupByLibrary.simpleMessage(
+      "Monatsbudget überschritten",
+    ),
     "monthlyExpenses": MessageLookupByLibrary.simpleMessage(
       "Monatliche Ausgaben",
     ),
     "monthlyLimit": MessageLookupByLibrary.simpleMessage("Monatliches Limit"),
     "monthlyTrend": MessageLookupByLibrary.simpleMessage("Monatlicher Verlauf"),
     "nextInvoice": MessageLookupByLibrary.simpleMessage("Nächste Rechnung"),
+    "nextSevenDays": MessageLookupByLibrary.simpleMessage("Nächste 7 Tage"),
     "noActiveSubscriptions": MessageLookupByLibrary.simpleMessage(
       "Keine aktiven Abonnements",
     ),
@@ -264,7 +281,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "outstandingExpenditureMonth": MessageLookupByLibrary.simpleMessage(
       "Offene Ausgaben Monat",
     ),
+    "overBudgetBy": m3,
     "overview": MessageLookupByLibrary.simpleMessage("Übersicht"),
+    "pause": MessageLookupByLibrary.simpleMessage("Pause"),
     "pauseSubscription": MessageLookupByLibrary.simpleMessage(
       "Dieses Abonnement pausieren",
     ),
@@ -304,6 +323,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "remembering": MessageLookupByLibrary.simpleMessage("Erinnern"),
     "repetitionRate": MessageLookupByLibrary.simpleMessage("Wiederholungsrate"),
+    "resume": MessageLookupByLibrary.simpleMessage("Weiter"),
     "sameDay": MessageLookupByLibrary.simpleMessage("Am selben Tag"),
     "save": MessageLookupByLibrary.simpleMessage("Speichern"),
     "search": MessageLookupByLibrary.simpleMessage("Suche"),
@@ -322,8 +342,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptionCurrency": MessageLookupByLibrary.simpleMessage(
       "Währung des Abos",
     ),
-    "subscriptionIsDueSoon": m2,
-    "subscriptionIsDueSoonWithPrice": m3,
+    "subscriptionIsDueSoon": m4,
+    "subscriptionIsDueSoonWithPrice": m5,
     "subscriptionReminder": MessageLookupByLibrary.simpleMessage(
       "Abonnement Erinnerung",
     ),
@@ -336,6 +356,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "syncWithICloud": MessageLookupByLibrary.simpleMessage(
       "Mit iCloud synchronisieren",
     ),
+    "thisMonth": MessageLookupByLibrary.simpleMessage("Diesen Monat"),
+    "thisYear": MessageLookupByLibrary.simpleMessage("Dieses Jahr"),
     "tipJar": MessageLookupByLibrary.simpleMessage("Trinkgeld Kasse"),
     "title": MessageLookupByLibrary.simpleMessage("Titel"),
     "topSubscriptions": MessageLookupByLibrary.simpleMessage("Top Abonnements"),
@@ -343,7 +365,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalCosts": MessageLookupByLibrary.simpleMessage("Gesamt kosten"),
     "totalExpenses": MessageLookupByLibrary.simpleMessage("Gesamtausgaben"),
     "trialEndDate": MessageLookupByLibrary.simpleMessage("Ende der Probezeit"),
-    "trialEndsSoon": m4,
+    "trialEndsSoon": m6,
     "trialReminder": MessageLookupByLibrary.simpleMessage("Probezeit endet"),
     "twoDaysBefore": MessageLookupByLibrary.simpleMessage("Zwei Tage vorher"),
     "unknown": MessageLookupByLibrary.simpleMessage("Unbekannt"),

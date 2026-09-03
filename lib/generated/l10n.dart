@@ -1,6 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import 'intl/messages_all.dart';
 
 // **************************************************************************
@@ -28,10 +29,9 @@ class S {
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name =
-        (locale.countryCode?.isEmpty ?? false)
-            ? locale.languageCode
-            : locale.toString();
+    final name = (locale.countryCode?.isEmpty ?? false)
+        ? locale.languageCode
+        : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -1547,6 +1547,101 @@ class S {
       name: 'countSubscriptions',
       desc: '',
       args: [count],
+    );
+  }
+
+  /// `This Month`
+  String get thisMonth {
+    return Intl.message('This Month', name: 'thisMonth', desc: '', args: []);
+  }
+
+  /// `This Year`
+  String get thisYear {
+    return Intl.message('This Year', name: 'thisYear', desc: '', args: []);
+  }
+
+  /// `Next 7 days`
+  String get nextSevenDays {
+    return Intl.message(
+      'Next 7 days',
+      name: 'nextSevenDays',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All subscriptions`
+  String get allSubscriptions {
+    return Intl.message(
+      'All subscriptions',
+      name: 'allSubscriptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Monthly budget exceeded`
+  String get monthlyBudgetExceeded {
+    return Intl.message(
+      'Monthly budget exceeded',
+      name: 'monthlyBudgetExceeded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Limit`
+  String get limitLabel {
+    return Intl.message('Limit', name: 'limitLabel', desc: '', args: []);
+  }
+
+  /// `Delete?`
+  String get deleteSubscriptionQuestion {
+    return Intl.message(
+      'Delete?',
+      name: 'deleteSubscriptionQuestion',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{amount} over`
+  String overBudgetBy(String amount) {
+    return Intl.message(
+      '$amount over',
+      name: 'overBudgetBy',
+      desc: '',
+      args: [amount],
+    );
+  }
+
+  /// `"{title}" will be deleted permanently.`
+  String deleteSubscriptionHint(String title) {
+    return Intl.message(
+      '"$title" will be deleted permanently.',
+      name: 'deleteSubscriptionHint',
+      desc: '',
+      args: [title],
+    );
+  }
+
+  /// `Pause`
+  String get pause {
+    return Intl.message('Pause', name: 'pause', desc: '', args: []);
+  }
+
+  /// `Resume`
+  String get resume {
+    return Intl.message('Resume', name: 'resume', desc: '', args: []);
+  }
+
+  /// `d`
+  String get daysAbbreviation {
+    return Intl.message(
+      'd',
+      name: 'daysAbbreviation',
+      desc: 'Single letter suffix for a day count, e.g. "4 d"',
+      args: [],
     );
   }
 }
