@@ -1,3 +1,4 @@
+import 'package:easy_wallet/enum/payment_methode.dart';
 import 'package:easy_wallet/class/money.dart';
 import 'dart:math';
 
@@ -208,7 +209,14 @@ class StatisticViewState extends State<StatisticView> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    // Card 5: App Gesamt
+                    // Card 5: nach Zahlungsart
+                    StatCard(
+                      title: Intl.message('byPaymentMethod'),
+                      icon: CupertinoIcons.creditcard,
+                      children: _paymentMethodRows(subscriptions, currency),
+                    ),
+                    const SizedBox(height: 12),
+                    // Card 6: App Gesamt
                     StatCard(
                       title: Intl.message('total'),
                       icon: CupertinoIcons.info_circle,
@@ -244,9 +252,9 @@ class StatisticViewState extends State<StatisticView> {
 
     for (var subscription in subscriptions) {
       if (subscription.repeatPattern == PaymentRate.monthly.value) {
-        totalMonthlyExpenses += subscription.amount;
+        totalMonthlyExpenses += subscription.shareOfAmount;
       } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
-        totalYearlyExpenses += subscription.amount;
+        totalYearlyExpenses += subscription.shareOfAmount;
       }
 
       subscription.isPinned ? pinnedCount++ : unpinnedCount++;
@@ -265,15 +273,18 @@ class StatisticViewState extends State<StatisticView> {
   }
 
   double _calcMonthly(List<Subscription> subs) {
+    final provider = Provider.of<CurrencyProvider>(context, listen: false);
+    final currency = provider.currency;
+    final rates = provider.rates;
     final now = DateTime.now();
     double total = 0.0;
     for (final s in subs) {
       if (s.isPaused || s.isExpired) continue;
       if (s.repeatPattern == 'monthly') {
-        total += s.amount;
+        total += s.shareIn(currency.name, rates);
       } else if (s.repeatPattern == 'yearly') {
         if (s.date != null && s.date!.month == now.month) {
-          total += s.amount;
+          total += s.shareIn(currency.name, rates);
         }
       }
     }
@@ -281,13 +292,16 @@ class StatisticViewState extends State<StatisticView> {
   }
 
   double _calcYearly(List<Subscription> subs) {
+    final provider = Provider.of<CurrencyProvider>(context, listen: false);
+    final currency = provider.currency;
+    final rates = provider.rates;
     double total = 0.0;
     for (final s in subs) {
       if (s.isPaused || s.isExpired) continue;
       if (s.repeatPattern == 'monthly') {
-        total += s.amount * 12;
+        total += s.shareIn(currency.name, rates) * 12;
       } else if (s.repeatPattern == 'yearly') {
-        total += s.amount;
+        total += s.shareIn(currency.name, rates);
       }
     }
     return total;
@@ -404,6 +418,42 @@ class StatisticViewState extends State<StatisticView> {
     return active.take(3).toList();
   }
 
+/// What the user spends per month, grouped by how it is paid. Paused and
+  /// expired subscriptions are left out, like everywhere else on this screen.
+  List<Widget> _paymentMethodRows(
+      List<Subscription> subscriptions, Currency currency) {
+    final perMethod = <String, double>{};
+    for (final s in subscriptions) {
+      if (s.isPaused || s.isExpired) continue;
+      final monthly = s.repeatPattern == PaymentRate.yearly.value
+          ? s.shareOfAmount / 12
+          : s.shareOfAmount;
+      final method = PaymentMethode.findByName(
+              s.paymentMethode ?? PaymentMethode.invoice.value)
+          .translate();
+      perMethod[method] = (perMethod[method] ?? 0) + monthly;
+    }
+
+    if (perMethod.isEmpty) {
+      return [
+        Text(
+          Intl.message('noActiveSubscriptions'),
+          style: TextStyle(
+            fontSize: 13,
+            color: CupertinoColors.secondaryLabel.resolveFrom(context),
+          ),
+        ),
+      ];
+    }
+
+    final sorted = perMethod.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    return [
+      for (final entry in sorted)
+        _statRow(entry.key, Money.format(entry.value, currency.symbol)),
+    ];
+  }
+
   Widget buildPieChart(List<Subscription> subscriptions) {
     return AspectRatio(
       aspectRatio: 1.3,
@@ -436,7 +486,7 @@ class StatisticViewState extends State<StatisticView> {
     var totalMonthlyExpenses = 0.0;
     for (var subscription in subscriptions) {
       if (subscription.repeatPattern == PaymentRate.monthly.value) {
-        totalMonthlyExpenses += subscription.amount;
+        totalMonthlyExpenses += subscription.shareOfAmount;
       }
     }
     return totalMonthlyExpenses;
@@ -447,9 +497,9 @@ class StatisticViewState extends State<StatisticView> {
     for (var subscription in subscriptions) {
       if (subscription.isPaused) continue;
       if (subscription.repeatPattern == PaymentRate.monthly.value) {
-        totalExpenses += subscription.amount * 12;
+        totalExpenses += subscription.shareOfAmount * 12;
       } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
-        totalExpenses += subscription.amount;
+        totalExpenses += subscription.shareOfAmount;
       }
     }
     return totalExpenses;
