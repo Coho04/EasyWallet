@@ -19,17 +19,24 @@ class BackgroundFetchManager {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  /// Every step stands on its own. Notifications and the home screen widgets
+  /// have nothing to do with each other, so a device that refuses the one must
+  /// not silently cost the user the other.
   Future<void> init() async {
-    await _initNotifications();
-    await _configureBackgroundFetch();
-    // The reminders are handed over in advance, so they have to be built at
-    // startup as well - not only when a background fetch happens to run.
-    try {
-      await scheduleNotifications();
-    } catch (e) {
-      Sentry.captureException(e);
+    for (final step in <Future<void> Function()>[
+      _initNotifications,
+      _configureBackgroundFetch,
+      // The reminders are handed over in advance, so they have to be built at
+      // startup as well - not only when a background fetch happens to run.
+      scheduleNotifications,
+      HomeWidgetBridge.refresh,
+    ]) {
+      try {
+        await step();
+      } catch (e) {
+        Sentry.captureException(e);
+      }
     }
-    await HomeWidgetBridge.refresh();
   }
 
   Future<void> _initNotifications() async {

@@ -36,7 +36,8 @@ class SettingsView extends StatefulWidget {
   SettingsViewState createState() => SettingsViewState();
 }
 
-class SettingsViewState extends State<SettingsView> {
+class SettingsViewState extends State<SettingsView>
+    with WidgetsBindingObserver {
   bool notificationsEnabled = true;
   bool includeCostInNotifications = false;
   bool isAuthProtected = false;
@@ -56,6 +57,9 @@ class SettingsViewState extends State<SettingsView> {
     _loadSettings();
     _loadAppVersion();
     _loadWidgetStatus();
+    // The tab stays alive once it has been opened, so a status written after
+    // that would never show up. Reading it again on resume is enough.
+    WidgetsBinding.instance.addObserver(this);
   }
 
   Future<void> _loadAppVersion() async {
@@ -64,14 +68,25 @@ class SettingsViewState extends State<SettingsView> {
     setState(() => _appVersion = '${info.version} (${info.buildNumber})');
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _loadWidgetStatus();
+  }
+
   /// The home screen widgets can only fail silently on a device. Showing
   /// what the last refresh did makes the difference between "never written"
   /// and "written but not shared" visible without a debugger.
   Future<void> _loadWidgetStatus() async {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
-    setState(() =>
-        _widgetStatus = prefs.getString(HomeWidgetBridge.statusKey) ?? '');
+    setState(() => _widgetStatus =
+        prefs.getString(HomeWidgetBridge.statusKey) ?? 'never ran');
   }
 
   Future<void> _loadSettings() async {
@@ -487,11 +502,10 @@ class SettingsViewState extends State<SettingsView> {
                     label: Intl.message('version'),
                     value: _appVersion,
                   ),
-                  if (_widgetStatus.isNotEmpty)
-                    SettingsRow.info(
-                      label: 'Widget',
-                      value: _widgetStatus,
-                    ),
+                  SettingsRow.info(
+                    label: 'Widget',
+                    value: _widgetStatus,
+                  ),
                 ],
               ),
                 ],

@@ -1,4 +1,6 @@
 import 'package:background_fetch/background_fetch.dart';
+import 'package:easy_wallet/class/startup_locale.dart';
+import 'package:easy_wallet/generated/l10n.dart';
 import 'package:easy_wallet/managers/background_fetch_manager.dart';
 import 'package:easy_wallet/provider/category_provider.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
@@ -45,6 +47,16 @@ void initializeSentry() async {
           child: const EasyWalletApp(),
         ),
       );
+      // The notification categories are labelled from the translations, and
+      // S.current is a plain null check once the asserts are stripped from a
+      // release build. runApp returns before the first frame resolves the
+      // delegate, so load it here instead of racing it - otherwise init()
+      // throws on its first line and the home screen widgets are never fed.
+      await S.load(StartupLocale.resolve(
+        PlatformDispatcher.instance.locale,
+        S.delegate.supportedLocales,
+      ));
+
       final backgroundFetchManager = BackgroundFetchManager();
       await backgroundFetchManager.init();
     },
