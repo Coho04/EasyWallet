@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/money.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
@@ -399,10 +400,10 @@ class Subscription {
 
 
   String displayConvertedPrice(Currency currency) {
-    String priceString = amount.toStringAsFixed(2);
+    String priceString = Money.format(amount, currency.symbol);
     return repeatPattern == PaymentRate.yearly.value
-        ? '$priceString ${currency.symbol}/${Intl.message('Y')}'
-        : '$priceString ${currency.symbol}/${Intl.message('M')}';
+        ? '$priceString/${Intl.message('Y')}'
+        : '$priceString/${Intl.message('M')}';
   }
 }
 
