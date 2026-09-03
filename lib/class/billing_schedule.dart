@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/exchange_rates.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/model/subscription.dart';
 
@@ -30,7 +31,16 @@ class BillingSchedule {
     }
 
     final anchor = _dateOnly(start);
-    final rangeStart = _dateOnly(from);
+    var rangeStart = _dateOnly(from);
+
+    // Nothing is billed while a free trial runs, including on its last day.
+    final trialEnd = subscription.trialEndDate;
+    if (trialEnd != null) {
+      final firstBillable = _dateOnly(trialEnd).add(const Duration(days: 1));
+      if (firstBillable.isAfter(rangeStart)) {
+        rangeStart = firstBillable;
+      }
+    }
 
     // The end date is inclusive: the subscription is still billed on that day,
     // never after it.
@@ -86,15 +96,23 @@ class BillingSchedule {
     return byDay;
   }
 
-  /// What the given occurrences add up to. Paused subscriptions are left out:
-  /// they are shown in the calendar, but nothing is billed for them.
-  static double total(Map<DateTime, List<BillingOccurrence>> byDay) {
+  /// What the given occurrences cost this user. Paused subscriptions are left
+  /// out - they are shown in the calendar, but nothing is billed for them -
+  /// and a shared subscription only counts with the share the user carries.
+  ///
+  /// With [rates] and [targetCurrency] given, subscriptions billed in another
+  /// currency are converted before they are added up.
+  static double total(
+    Map<DateTime, List<BillingOccurrence>> byDay, {
+    String? targetCurrency,
+    ExchangeRates? rates,
+  }) {
     var total = 0.0;
 
     for (final occurrences in byDay.values) {
       for (final occurrence in occurrences) {
         if (!occurrence.subscription.isPaused) {
-          total += occurrence.subscription.amount;
+          total += occurrence.subscription.shareIn(targetCurrency, rates);
         }
       }
     }

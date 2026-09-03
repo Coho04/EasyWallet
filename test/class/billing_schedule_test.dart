@@ -1,3 +1,4 @@
+import 'package:easy_wallet/class/exchange_rates.dart';
 import 'package:easy_wallet/class/billing_schedule.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/model/subscription.dart';
@@ -7,6 +8,9 @@ Subscription sub({
   required String title,
   DateTime? date,
   DateTime? endDate,
+  DateTime? trialEndDate,
+  int? splitCount,
+  String? currencyCode,
   String? repeatPattern = 'monthly',
   bool repeating = true,
   bool isPaused = false,
@@ -16,6 +20,9 @@ Subscription sub({
     amount: amount,
     date: date,
     endDate: endDate,
+    trialEndDate: trialEndDate,
+    splitCount: splitCount,
+    currencyCode: currencyCode,
     isPaused: isPaused,
     isPinned: false,
     repeating: repeating,
@@ -276,6 +283,58 @@ void main() {
     });
   });
 
+  group('BillingSchedule.datesFor with a free trial', () {
+    test('nothing is billed while the trial runs', () {
+      final gym = sub(
+        title: 'Gym',
+        date: DateTime(2026, 1, 10),
+        trialEndDate: DateTime(2026, 3, 1),
+      );
+
+      final dates = BillingSchedule.datesFor(
+        gym,
+        DateTime(2026, 1, 1),
+        DateTime(2026, 5, 31),
+      );
+
+      expect(dates, [
+        DateTime(2026, 3, 10),
+        DateTime(2026, 4, 10),
+        DateTime(2026, 5, 10),
+      ]);
+    });
+
+    test('a billing on the last trial day is still free', () {
+      final gym = sub(
+        title: 'Gym',
+        date: DateTime(2026, 1, 10),
+        trialEndDate: DateTime(2026, 2, 10),
+      );
+
+      final dates = BillingSchedule.datesFor(
+        gym,
+        DateTime(2026, 2, 1),
+        DateTime(2026, 2, 28),
+      );
+
+      expect(dates, isEmpty);
+    });
+
+    test('an expired trial changes nothing', () {
+      final gym = sub(
+        title: 'Gym',
+        date: DateTime(2026, 1, 10),
+        trialEndDate: DateTime(2025, 12, 1),
+      );
+
+      expect(
+        BillingSchedule.datesFor(
+            gym, DateTime(2026, 1, 1), DateTime(2026, 2, 28)),
+        [DateTime(2026, 1, 10), DateTime(2026, 2, 10)],
+      );
+    });
+  });
+
   group('BillingSchedule.total', () {
     test('sums the amounts of the given occurrences', () {
       final occurrences = BillingSchedule.byDay(
@@ -316,6 +375,67 @@ void main() {
       );
 
       expect(BillingSchedule.total(occurrences), closeTo(17.99, 0.001));
+    });
+
+    test('counts only the user share of a shared subscription', () {
+      final occurrences = BillingSchedule.byDay(
+        [
+          sub(
+            title: 'Netflix',
+            date: DateTime(2026, 9, 11),
+            amount: 20.0,
+            splitCount: 4,
+          ),
+        ],
+        DateTime(2026, 9, 1),
+        DateTime(2026, 9, 30),
+      );
+
+      expect(BillingSchedule.total(occurrences), closeTo(5.0, 0.001));
+    });
+
+    test('converts a subscription billed in another currency', () {
+      final occurrences = BillingSchedule.byDay(
+        [
+          sub(
+            title: 'US service',
+            date: DateTime(2026, 9, 11),
+            amount: 11.0,
+            currencyCode: 'USD',
+          ),
+        ],
+        DateTime(2026, 9, 1),
+        DateTime(2026, 9, 30),
+      );
+
+      final rates = ExchangeRates(
+        base: 'EUR',
+        rates: const {'USD': 1.10},
+        fetchedAt: DateTime(2026, 9, 1),
+      );
+
+      expect(
+        BillingSchedule.total(occurrences,
+            targetCurrency: 'EUR', rates: rates),
+        closeTo(10.0, 0.001),
+      );
+    });
+
+    test('without rates the amount is taken as it is', () {
+      final occurrences = BillingSchedule.byDay(
+        [
+          sub(
+            title: 'US service',
+            date: DateTime(2026, 9, 11),
+            amount: 11.0,
+            currencyCode: 'USD',
+          ),
+        ],
+        DateTime(2026, 9, 1),
+        DateTime(2026, 9, 30),
+      );
+
+      expect(BillingSchedule.total(occurrences), closeTo(11.0, 0.001));
     });
 
     test('is zero without occurrences', () {
