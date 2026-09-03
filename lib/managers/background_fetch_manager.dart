@@ -1,13 +1,12 @@
+import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/class/notification_plan.dart';
 import 'dart:async';
-import 'package:easy_wallet/enum/payment_rate.dart';
-import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/data/latest.dart' as tzdata;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:background_fetch/background_fetch.dart';
 
 import '../generated/l10n.dart';
@@ -22,6 +21,13 @@ class BackgroundFetchManager {
   Future<void> init() async {
     await _initNotifications();
     await _configureBackgroundFetch();
+    // The reminders are handed over in advance, so they have to be built at
+    // startup as well - not only when a background fetch happens to run.
+    try {
+      await scheduleNotifications();
+    } catch (e) {
+      Sentry.captureException(e);
+    }
   }
 
   Future<void> _initNotifications() async {
@@ -44,7 +50,7 @@ class BackgroundFetchManager {
       iOS: initializationSettingsIOS,
     );
     await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings);
-    tz.initializeTimeZones();
+    tzdata.initializeTimeZones();
   }
 
   Future<void> _configureBackgroundFetch() async {
@@ -80,6 +86,14 @@ class BackgroundFetchManager {
   }
 
   Future<void> _performFetchTask() async {
+    // Two independent steps: a failing cloud sync must not stop the
+    // reminders, which is what happened while the sync sat inside
+    // scheduleNotifications().
+    try {
+      await PersistenceController.instance.syncWithCloud();
+    } catch (e) {
+      Sentry.captureException(e);
+    }
     try {
       await scheduleNotifications();
     } catch (e) {
@@ -87,118 +101,67 @@ class BackgroundFetchManager {
     }
   }
 
+  /// Hands the upcoming reminders to the operating system instead of firing
+  /// them whenever a background fetch happens to run. The system delivers them
+  /// at the exact time even if the app never wakes up.
+  ///
+  /// Everything pending is replaced on every run, so changed, paused, removed
+  /// or expired subscriptions cannot leave a stale reminder behind.
   Future<void> scheduleNotifications() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await PersistenceController.instance.syncWithCloud();
+    final prefs = await SharedPreferences.getInstance();
 
-    final TimeOfDay userNotificationTime = await _getUserNotificationTime();
-    final DateTime now = DateTime.now();
-    final DateTime notificationDateTime = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      userNotificationTime.hour,
-      userNotificationTime.minute,
+    // Nothing read this setting before, so switching notifications off in the
+    // app did not actually stop them.
+    if (!(prefs.getBool('notificationsEnabled') ?? true)) {
+      await flutterLocalNotificationsPlugin.cancelAll();
+      return;
+    }
+
+    final time = await _getUserNotificationTime();
+
+    final plan = NotificationPlan.build(
+      subscriptions: await Subscription.all(),
+      now: DateTime.now(),
+      hour: time.hour,
+      minute: time.minute,
     );
 
-    if (now.isAfter(notificationDateTime)) {
-      final Database database = await _openDatabase();
-      List<Map<String, dynamic>> subscriptions = await database.query(
-        'subscriptions',
-        where: 'isPaused = ? AND remembercycle != ?',
-        whereArgs: [0, 'None'],
+    await flutterLocalNotificationsPlugin.cancelAll();
+
+    final withPrice = prefs.getBool('includeCostInNotifications') ?? false;
+    for (final notification in plan) {
+      final body = withPrice
+          ? S.current.subscriptionIsDueSoonWithPrice(
+              notification.title, notification.amount)
+          : S.current.subscriptionIsDueSoon(notification.title);
+      await _scheduleNotification(notification, S.current.subscriptionReminder,
+          body);
+    }
+  }
+
+  Future<void> _scheduleNotification(
+      PlannedNotification notification, String title, String body) async {
+    try {
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        id: notification.id,
+        title: title,
+        body: body,
+        // from() keeps the instant, so the reminder lands at the configured
+        // wall clock time even though tz.local is not set explicitly.
+        scheduledDate: tz.TZDateTime.from(notification.at, tz.local),
+        notificationDetails: _notificationDetails(),
+        // Inexact avoids requiring the exact alarm permission on Android 12+;
+        // a daily reminder does not need second precision.
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        payload: '${notification.subscriptionId}',
       );
-
-      if (subscriptions.isEmpty) {
-        return;
-      }
-
-      final today = DateTime.now();
-      for (var subscription in subscriptions) {
-        if (subscription['date'] == null) continue;
-        // An expired subscription is not billed any more, so it must not
-        // remind either.
-        final endDate = subscription['endDate'];
-        if (endDate != null &&
-            DateTime.parse(endDate)
-                .isBefore(DateTime(today.year, today.month, today.day))) {
-          continue;
-        }
-        var startDate = DateTime.parse(subscription['date']);
-        var nextBillDate =
-            getNextBillDate(startDate, subscription['repeatPattern']);
-        var cycle = RememberCycle.findByName(subscription['remembercycle']);
-        var notifyDate = nextBillDate;
-        switch (cycle) {
-          case RememberCycle.dayBefore:
-            notifyDate = nextBillDate.subtract(const Duration(days: 1));
-            break;
-          case RememberCycle.twoDaysBefore:
-            notifyDate = nextBillDate.subtract(const Duration(days: 2));
-            break;
-          case RememberCycle.weekBefore:
-            notifyDate = nextBillDate.subtract(const Duration(days: 7));
-            break;
-          case RememberCycle.sameDay:
-          break;
-        }
-
-        if (notifyDate.isBefore(now) || notifyDate.isAtSameMomentAs(now)) {
-          continue;
-        }
-
-        var notificationKey = 'notification_${subscription['id']}';
-        var lastNotifiedTime = prefs.getString(notificationKey);
-        var alreadyNotified = false;
-        if (lastNotifiedTime != null) {
-          DateTime lastNotificationDateTime = DateTime.parse(lastNotifiedTime);
-          if (notifyDate.year == lastNotificationDateTime.year &&
-              notifyDate.month == lastNotificationDateTime.month &&
-              notifyDate.day == lastNotificationDateTime.day) {
-            alreadyNotified = true;
-          }
-        } else {
-          if (notifyDate.isBefore(DateTime.now())) {
-            alreadyNotified = true;
-            prefs.setString(notificationKey, notifyDate.toString());
-          }
-        }
-        if (!alreadyNotified) {
-          var body = S.current.subscriptionIsDueSoon(subscription['title']);
-          if (prefs.getBool('includeCostInNotifications') ?? false) {
-            body = S.current.subscriptionIsDueSoonWithPrice(
-                subscription['title'], subscription['amount']);
-          }
-          var title = S.current.subscriptionReminder;
-          await _showNotification(subscription, title, body);
-          prefs.setString(notificationKey, notifyDate.toString());
-        }
-      }
+    } catch (e) {
+      Sentry.captureException(e);
     }
   }
 
-  DateTime getNextBillDate(DateTime startDate, String repeatPattern) {
-    var nextBillDate = startDate;
-    var today = DateTime.now();
-    if (repeatPattern == PaymentRate.yearly.value) {
-      while (nextBillDate.isBefore(today)) {
-        nextBillDate = DateTime(
-            nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
-      }
-    } else if (repeatPattern == PaymentRate.monthly.value) {
-      while (nextBillDate.isBefore(today)) {
-        nextBillDate = DateTime(
-            nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
-      }
-    }
-    return nextBillDate;
-  }
-
-  Future<void> _showNotification(
-      Map<String, dynamic> subscription, String title, String body) async {
-    var id = DateTime.now().millisecondsSinceEpoch.remainder(100000);
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
+  NotificationDetails _notificationDetails() {
+    const androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'easy_wallet_channel_id',
       'EasyWallet',
       channelDescription: "EasyWallet App Notify Channel",
@@ -210,50 +173,15 @@ class BackgroundFetchManager {
       icon: '@mipmap/ic_launcher',
     );
 
-    const DarwinNotificationDetails iosPlatformChannelSpecifics =
-        DarwinNotificationDetails(
+    const iosPlatformChannelSpecifics = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
     );
 
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+    return const NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iosPlatformChannelSpecifics,
-    );
-
-    try {
-      await flutterLocalNotificationsPlugin.show(
-        id: id,
-        title: title,
-        body: body,
-        notificationDetails: platformChannelSpecifics,
-        payload: 'item x',
-      );
-    } catch (e) {
-      Sentry.captureException(e);
-    }
-  }
-
-  Future<Database> _openDatabase() async {
-    return openDatabase(
-      join(await getDatabasesPath(), 'easywallet.db'),
-      onCreate: (db, version) {
-        return db.execute(
-          '''
-          CREATE TABLE subscriptions(
-            id INTEGER PRIMARY KEY, 
-            title TEXT, 
-            amount REAL, 
-            isPaused INTEGER, 
-            remembercycle TEXT,
-            repeatPattern TEXT,
-            date TEXT
-          )
-          ''',
-        );
-      },
-      version: 1,
     );
   }
 

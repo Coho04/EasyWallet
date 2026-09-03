@@ -9,6 +9,7 @@ import 'package:easy_wallet/views/components/card_section_component.dart';
 import 'package:easy_wallet/views/components/settings_row.dart';
 import 'package:easy_wallet/views/components/gradient_header.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:easy_wallet/managers/background_fetch_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -92,6 +93,14 @@ class SettingsViewState extends State<SettingsView> {
 
     if (!context.mounted) return;
     await Provider.of<CurrencyProvider>(context, listen: false).loadCurrency();
+
+    // Time, cost display and the master switch all change what should be
+    // pending with the system.
+    try {
+      await BackgroundFetchManager().scheduleNotifications();
+    } catch (e) {
+      debugPrint('Could not reschedule notifications: $e');
+    }
   }
 
   Future<bool> _authenticate() async {
