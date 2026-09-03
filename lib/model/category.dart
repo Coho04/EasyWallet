@@ -49,7 +49,11 @@ class Category {
     return Category(
       id: json['id'],
       title: json['title'],
-      color: Color(int.parse(json['color'])),
+      // toJson writes an int, the database column is TEXT and hands back a
+      // string. Both have to be readable, or a restore from JSON fails.
+      color: Color(json['color'] is int
+          ? json['color'] as int
+          : int.parse(json['color'].toString())),
     );
   }
 
