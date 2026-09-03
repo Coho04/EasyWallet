@@ -232,5 +232,15 @@
     }
   },
   "subscriptionCurrency": "Subscription currency",
-  "appCurrency": "App currency"
+  "appCurrency": "App currency",
+  "noSubscriptions": "No subscriptions",
+  "oneSubscription": "One subscription",
+  "countSubscriptions": "{count} subscriptions",
+  "@countSubscriptions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

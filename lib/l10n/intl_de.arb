@@ -232,5 +232,15 @@
     }
   },
   "subscriptionCurrency": "Währung des Abos",
-  "appCurrency": "App-Währung"
+  "appCurrency": "App-Währung",
+  "noSubscriptions": "Keine Abonnements",
+  "oneSubscription": "Ein Abonnement",
+  "countSubscriptions": "{count} Abonnements",
+  "@countSubscriptions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

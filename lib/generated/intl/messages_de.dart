@@ -20,14 +20,16 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'de';
 
-  static String m0(count) => "${count} Abos importiert";
+  static String m0(count) => "${count} Abonnements";
 
-  static String m1(title) => "Ihr Abonnement ${title} steht bald an!";
+  static String m1(count) => "${count} Abos importiert";
 
-  static String m2(title, price) =>
+  static String m2(title) => "Ihr Abonnement ${title} steht bald an!";
+
+  static String m3(title, price) =>
       "Ihr Abonnement ${title} (${price} €) steht bald an!";
 
-  static String m3(title) => "Die Probezeit von ${title} endet bald";
+  static String m4(title) => "Die Probezeit von ${title} endet bald";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -91,6 +93,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "couldNotLaunch": MessageLookupByLibrary.simpleMessage(
       "Konnte nicht gestartet werden",
     ),
+    "countSubscriptions": m0,
     "createdOn": MessageLookupByLibrary.simpleMessage("Erstellt am"),
     "creditCard": MessageLookupByLibrary.simpleMessage("Kreditkarte"),
     "currency": MessageLookupByLibrary.simpleMessage("Währung"),
@@ -194,7 +197,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "importFailed": MessageLookupByLibrary.simpleMessage(
       "Import fehlgeschlagen",
     ),
-    "importedCount": m0,
+    "importedCount": m1,
     "imprint": MessageLookupByLibrary.simpleMessage("Impressum"),
     "inTrial": MessageLookupByLibrary.simpleMessage("Probezeit"),
     "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
@@ -238,6 +241,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noPriceChanges": MessageLookupByLibrary.simpleMessage(
       "Noch keine Preisänderung",
     ),
+    "noSubscriptions": MessageLookupByLibrary.simpleMessage(
+      "Keine Abonnements",
+    ),
     "noSubscriptionsAvailable": MessageLookupByLibrary.simpleMessage(
       "Keine Abonnements verfügbar",
     ),
@@ -251,6 +257,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "numberOfSubscriptions": MessageLookupByLibrary.simpleMessage(
       "Anzahl der Abonnements",
     ),
+    "oneSubscription": MessageLookupByLibrary.simpleMessage("Ein Abonnement"),
     "openExpenditureYear": MessageLookupByLibrary.simpleMessage(
       "Offene Ausgaben Jahr",
     ),
@@ -315,8 +322,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptionCurrency": MessageLookupByLibrary.simpleMessage(
       "Währung des Abos",
     ),
-    "subscriptionIsDueSoon": m1,
-    "subscriptionIsDueSoonWithPrice": m2,
+    "subscriptionIsDueSoon": m2,
+    "subscriptionIsDueSoonWithPrice": m3,
     "subscriptionReminder": MessageLookupByLibrary.simpleMessage(
       "Abonnement Erinnerung",
     ),
@@ -336,7 +343,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalCosts": MessageLookupByLibrary.simpleMessage("Gesamt kosten"),
     "totalExpenses": MessageLookupByLibrary.simpleMessage("Gesamtausgaben"),
     "trialEndDate": MessageLookupByLibrary.simpleMessage("Ende der Probezeit"),
-    "trialEndsSoon": m3,
+    "trialEndsSoon": m4,
     "trialReminder": MessageLookupByLibrary.simpleMessage("Probezeit endet"),
     "twoDaysBefore": MessageLookupByLibrary.simpleMessage("Zwei Tage vorher"),
     "unknown": MessageLookupByLibrary.simpleMessage("Unbekannt"),

@@ -1519,6 +1519,36 @@ class S {
       args: [],
     );
   }
+
+  /// `No subscriptions`
+  String get noSubscriptions {
+    return Intl.message(
+      'No subscriptions',
+      name: 'noSubscriptions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One subscription`
+  String get oneSubscription {
+    return Intl.message(
+      'One subscription',
+      name: 'oneSubscription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} subscriptions`
+  String countSubscriptions(int count) {
+    return Intl.message(
+      '$count subscriptions',
+      name: 'countSubscriptions',
+      desc: '',
+      args: [count],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
