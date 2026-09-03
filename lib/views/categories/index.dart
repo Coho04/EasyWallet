@@ -1,3 +1,10 @@
+import 'package:easy_wallet/views/categories/show.dart';
+import 'package:easy_wallet/generated/l10n.dart';
+import 'package:easy_wallet/provider/subscription_provider.dart';
+import 'package:easy_wallet/provider/currency_provider.dart';
+import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/enum/payment_rate.dart';
+import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/views/components/color_picker_sheet.dart';
 import 'package:easy_wallet/model/category.dart';
 import 'package:easy_wallet/provider/category_provider.dart';
@@ -17,6 +24,7 @@ class CategoryIndexView extends StatefulWidget {
 }
 
 class CategoryIndexViewState extends State<CategoryIndexView> {
+  Map<int, List<Category>> _categoriesBySubscription = {};
   String searchText = "";
   bool _isLoading = true;
   bool _isAscending = true;
@@ -78,32 +86,47 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
                   ? const Center(child: CupertinoActivityIndicator())
                   : sortedCategories.isEmpty
                       ? _buildEmptyState()
-                      : ListView.builder(
-                          padding: const EdgeInsets.only(bottom: 85.0),
-                          itemCount: sortedCategories.length,
-                          itemBuilder: (context, index) {
-                            return CategoryListComponent(
-                              category: sortedCategories[index],
-                              onUpdate: (updatedCategories) {
-                                setState(() {
-                                  _sortCategories(Provider.of<CategoryProvider>(
-                                          context,
-                                          listen: false)
-                                      .categories);
-                                });
-                              },
-                              onDelete: (deletedCategory) async {
-                                if (!await _confirmDelete(context)) return;
-                                if (!context.mounted) return;
-                                setState(() {
-                                  Provider.of<CategoryProvider>(context,
-                                          listen: false)
-                                      .deleteCategory(deletedCategory);
-                                  _sortCategories(sortedCategories);
-                                });
-                              },
-                            );
-                          },
+                      // One grouped card, like the rest of the app, instead
+                      // of a grey slab running edge to edge.
+                      : ListView(
+                          padding: const EdgeInsets.fromLTRB(14, 0, 14, 85),
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: CupertinoColors
+                                    .secondarySystemGroupedBackground
+                                    .resolveFrom(context),
+                                borderRadius: BorderRadius.circular(14),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: CupertinoColors.black
+                                        .withValues(alpha: 0.06),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  for (var i = 0;
+                                      i < sortedCategories.length;
+                                      i++) ...[
+                                    if (i > 0)
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 38),
+                                        child: Container(
+                                          height: 0.5,
+                                          color: CupertinoColors.separator
+                                              .resolveFrom(context),
+                                        ),
+                                      ),
+                                    _categoryRow(sortedCategories[i]),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
             ),
           ],
@@ -116,6 +139,16 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
     try {
       await Provider.of<CategoryProvider>(context, listen: false)
           .loadCategories();
+      if (!mounted) return;
+      // Tabs are built lazily, so this view cannot rely on the subscription
+      // tab having filled the providers before it is opened.
+      await Provider.of<SubscriptionProvider>(context, listen: false)
+          .loadSubscriptions();
+      if (!mounted) return;
+      final currencyProvider =
+          Provider.of<CurrencyProvider>(context, listen: false);
+      await currencyProvider.loadCurrency();
+      await currencyProvider.loadRates();
     } catch (e) {
       Sentry.captureException(e);
     } finally {
@@ -123,6 +156,10 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
         _isLoading = false;
       });
     }
+    // Needed for the count and the monthly sum per category.
+    final assignments = await Category.forAllSubscriptions();
+    if (!mounted) return;
+    setState(() => _categoriesBySubscription = assignments);
   }
 
   /// Deleting a category cannot be undone, so it is confirmed first.
@@ -146,6 +183,66 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
       ),
     );
     return confirmed ?? false;
+  }
+
+/// A row with what the category actually holds: how many subscriptions and
+  /// what they cost per month.
+  Widget _categoryRow(Category category) {
+    final subscriptions = _subscriptionsOf(category);
+    final currency =
+        Provider.of<CurrencyProvider>(context, listen: false).currency;
+    final rates = Provider.of<CurrencyProvider>(context, listen: false).rates;
+
+    var monthly = 0.0;
+    for (final subscription in subscriptions) {
+      if (subscription.isPaused || subscription.isExpired) continue;
+      final share = subscription.shareIn(currency.name, rates);
+      monthly += subscription.repeatPattern == PaymentRate.yearly.value
+          ? share / 12
+          : share;
+    }
+
+    final count = subscriptions.length;
+    final subtitle = count == 0
+        ? Intl.message('noSubscriptions')
+        : count == 1
+            ? Intl.message('oneSubscription')
+            : S.of(context).countSubscriptions(count);
+
+    return CategoryListComponent(
+      category: category,
+      subscriptionCount: count,
+      subtitle: subtitle,
+      monthlyTotal: Money.format(monthly, currency.symbol),
+      onTap: () {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => CategoryShowView(
+              category: category,
+              onUpdate: (_) => setState(() {}),
+              onDelete: (deleted) async {
+                if (!await _confirmDelete(context)) return;
+                if (!mounted) return;
+                await Provider.of<CategoryProvider>(context, listen: false)
+                    .deleteCategory(deleted);
+                if (mounted) setState(() {});
+              },
+            ),
+          ),
+        ).then((_) => _loadCategories());
+      },
+    );
+  }
+
+  List<Subscription> _subscriptionsOf(Category category) {
+    final subscriptions =
+        Provider.of<SubscriptionProvider>(context, listen: false).subscriptions;
+    return subscriptions
+        .where((s) =>
+            _categoriesBySubscription[s.id]?.any((c) => c.id == category.id) ??
+            false)
+        .toList();
   }
 
   Widget _buildEmptyState() {

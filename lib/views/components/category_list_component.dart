@@ -1,87 +1,100 @@
 import 'package:easy_wallet/model/category.dart';
-import 'package:easy_wallet/views/categories/show.dart';
-import 'package:easy_wallet/views/components/auto_text.dart';
-import 'package:easy_wallet/views/components/color_circle.dart';
 import 'package:flutter/cupertino.dart';
 
+/// One row of the category list.
+///
+/// The whole row is the tap target, the way iOS lists behave; the chevron is
+/// decoration, not a button. The label is set at a fixed size rather than
+/// through AutoText, which shrinks each string until it fits and leaves
+/// neighbouring rows at different sizes.
 class CategoryListComponent extends StatelessWidget {
-  final Category category;
-  final Function(Category) onUpdate;
-  final Function(Category) onDelete;
+  const CategoryListComponent({
+    super.key,
+    required this.category,
+    required this.subscriptionCount,
+    required this.subtitle,
+    required this.monthlyTotal,
+    required this.onTap,
+  });
 
-  const CategoryListComponent(
-      {super.key,
-      required this.category,
-      required this.onUpdate,
-      required this.onDelete});
+  final Category category;
+
+  /// How many subscriptions carry this category.
+  final int subscriptionCount;
+
+  /// Already translated, for instance "3 subscriptions".
+  final String subtitle;
+
+  /// What they cost per month, already formatted.
+  final String monthlyTotal;
+  final VoidCallback onTap;
+
+  static const double _minHeight = 44;
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
-
     return GestureDetector(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: CupertinoColors.separator,
-            ),
-          ),
-          color: isDarkMode? CupertinoTheme
-              .of(context)
-              .barBackgroundColor : CupertinoColors.systemGrey5
-        ),
-        child: Row(
-          children: [
-            const SizedBox(width: 16.0),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      ColorCircle(color: category.color),
-                      const SizedBox(width: 16.0),
-                      Expanded(
-                        child: AutoText(
-                            text: category.title,
-                            maxLines: 3,
-                            softWrap: true,
-                            bold: true),
-                      ),
-                    ],
-                  ),
-                ],
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: _minHeight),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Row(
+            children: [
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: category.color,
+                  shape: BoxShape.circle,
+                ),
               ),
-            ),
-            const SizedBox(width: 16.0),
-            Row(
-              children: [
-                CupertinoButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (context) => CategoryShowView(
-                          category: category,
-                          onUpdate: onUpdate,
-                          onDelete: onDelete,
-                        ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      category.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: CupertinoColors.label.resolveFrom(context),
                       ),
-                    ).then((_) => onUpdate(category));
-                  },
-                  child: Icon(
-                    CupertinoIcons.right_chevron,
-                    color: isDarkMode
-                        ? CupertinoColors.systemGrey2
-                        : CupertinoColors.systemGrey,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color:
+                            CupertinoColors.secondaryLabel.resolveFrom(context),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              if (subscriptionCount > 0)
+                Text(
+                  monthlyTotal,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: CupertinoColors.label.resolveFrom(context),
                   ),
                 ),
-              ],
-            ),
-          ],
+              const SizedBox(width: 6),
+              Icon(
+                CupertinoIcons.chevron_forward,
+                size: 16,
+                color: CupertinoColors.tertiaryLabel.resolveFrom(context),
+              ),
+            ],
+          ),
         ),
       ),
     );
