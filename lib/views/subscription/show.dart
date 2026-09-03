@@ -119,11 +119,61 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
                                     '${subscription.isExpired ? ' (${Intl.message('expired')})' : ''}',
                           ),
                           CardDetailRow(
+                            label: Intl.message('trialEndDate'),
+                            value: subscription.trialEndDate == null
+                                ? Intl.message('noTrial')
+                                : '${_formatDateTime(subscription.trialEndDate)}'
+                                    '${subscription.isInTrial ? ' (${Intl.message('inTrial')})' : ''}',
+                          ),
+                          CardDetailRow(
+                            label: Intl.message('splitCount'),
+                            value: (subscription.splitCount ?? 1) > 1
+                                ? '${subscription.splitCount}'
+                                : Intl.message('notShared'),
+                          ),
+                          if ((subscription.splitCount ?? 1) > 1)
+                            CardDetailRow(
+                              label: Intl.message('yourShare'),
+                              value: Money.format(
+                                  subscription.shareOfAmount, currency.symbol),
+                            ),
+                          CardDetailRow(
                             label: Intl.message('createdOn'),
                             maxLines: 1,
                             value: _formatDateTime(subscription.timestamp,
                                 withTime: true),
                             softBreak: true,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      CardSection(
+                        title: Intl.message('priceHistory'),
+                        children: [
+                          FutureBuilder<List<PriceChange>>(
+                            future: subscription.priceHistory(),
+                            builder: (context, snapshot) {
+                              final history = snapshot.data;
+                              if (history == null) {
+                                return const CupertinoActivityIndicator();
+                              }
+                              if (history.isEmpty) {
+                                return CardDetailRow(
+                                  label: Intl.message('noPriceChanges'),
+                                  value: '',
+                                );
+                              }
+                              return Column(
+                                children: [
+                                  for (final change in history.reversed)
+                                    CardDetailRow(
+                                      label: _formatDateTime(change.changedAt),
+                                      value: Money.format(
+                                          change.amount, currency.symbol),
+                                    ),
+                                ],
+                              );
+                            },
                           ),
                         ],
                       ),

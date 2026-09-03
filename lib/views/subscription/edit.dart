@@ -1,3 +1,4 @@
+import 'package:easy_wallet/enum/currency.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
@@ -42,6 +43,9 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   late TextEditingController _notesController;
   DateTime _date = DateTime.now();
   DateTime? _endDate;
+  DateTime? _trialEndDate;
+  String? _currencyCode;
+  final _splitCountController = TextEditingController();
   String _paymentRate = PaymentRate.monthly.value;
   String _rememberCycle = RememberCycle.dayBefore.value;
   String _selectedPayMethode = PaymentMethode.invoice.value;
@@ -60,6 +64,10 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
         TextEditingController(text: widget.subscription.notes ?? '');
     _date = widget.subscription.date ?? DateTime.now();
     _endDate = widget.subscription.endDate;
+    _trialEndDate = widget.subscription.trialEndDate;
+    _currencyCode = widget.subscription.currencyCode;
+    _splitCountController.text =
+        widget.subscription.splitCount?.toString() ?? '';
     _paymentRate =
         widget.subscription.repeatPattern ?? PaymentRate.monthly.value;
     _rememberCycle =
@@ -98,6 +106,10 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
           double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0;
       subscription.date = _date;
       subscription.endDate = _endDate;
+      subscription.trialEndDate = _trialEndDate;
+      subscription.splitCount =
+          int.tryParse(_splitCountController.text.trim());
+      subscription.currencyCode = _currencyCode;
       subscription.notes = _notesController.text.trim();
       subscription.repeatPattern = _paymentRate;
       subscription.rememberCycle = _rememberCycle;
@@ -176,6 +188,37 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                       placeholder: Intl.message('noEndDate'),
                       onTap: _pickEndDate,
                       onClear: () => setState(() => _endDate = null),
+                      isDarkMode: isDarkMode),
+                  const SizedBox(height: 16),
+                  EasyWalletDatePickerField(
+                      label: Intl.message('trialEndDate'),
+                      date: _trialEndDate,
+                      placeholder: Intl.message('noTrial'),
+                      onTap: _pickTrialEndDate,
+                      onClear: () => setState(() => _trialEndDate = null),
+                      isDarkMode: isDarkMode),
+                  const SizedBox(height: 16),
+                  Text(
+                    Intl.message('splitCount'),
+                    style: TextStyle(
+                      color: isDarkMode
+                          ? CupertinoColors.white
+                          : CupertinoColors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  EasyWalletTextField(
+                    controller: _splitCountController,
+                    placeholder: Intl.message('notShared'),
+                    keyboardType: TextInputType.number,
+                    isDarkMode: isDarkMode,
+                  ),
+                  const SizedBox(height: 16),
+                  EasyWalletDatePickerField(
+                      label: Intl.message('subscriptionCurrency'),
+                      date: null,
+                      placeholder: _currencyCode ?? Intl.message('appCurrency'),
+                      onTap: _selectSubscriptionCurrency,
                       isDarkMode: isDarkMode),
                   const SizedBox(height: 16),
                   EasyWalletDropdownField(
@@ -304,6 +347,68 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
         height: 40,
       );
     }
+  }
+
+  Future<void> _selectSubscriptionCurrency() async {
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: Text(Intl.message('subscriptionCurrency')),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setState(() => _currencyCode = null);
+              Navigator.pop(context);
+            },
+            child: Text(Intl.message('appCurrency')),
+          ),
+          for (final code in Currency.all())
+            CupertinoActionSheetAction(
+              onPressed: () {
+                setState(() => _currencyCode = code);
+                Navigator.pop(context);
+              },
+              child: Text(code),
+            ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: Text(Intl.message('cancel')),
+        ),
+      ),
+    );
+  }
+
+Future<void> _pickTrialEndDate() async {
+    var draft = _trialEndDate ?? DateTime.now();
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 260,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 200,
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: draft,
+                  use24hFormat: true,
+                  onDateTimeChanged: (DateTime newDate) => draft = newDate,
+                ),
+              ),
+              CupertinoButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK',
+                    style: TextStyle(color: CupertinoColors.activeBlue)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    setState(() => _trialEndDate = draft);
   }
 
   Future<void> _pickEndDate() async {

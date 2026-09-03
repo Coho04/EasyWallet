@@ -1,3 +1,4 @@
+import 'package:easy_wallet/enum/currency.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
@@ -35,6 +36,9 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   final _notesController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   DateTime? _endDate;
+  DateTime? _trialEndDate;
+  String? _currencyCode;
+  final _splitCountController = TextEditingController();
   String _selectedPayRate = PaymentRate.monthly.value;
   String _selectedPayMethode = PaymentMethode.invoice.value;
   String _selectedRememberCycle = RememberCycle.sameDay.value;
@@ -115,6 +119,37 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                       placeholder: Intl.message('noEndDate'),
                       onTap: _pickEndDate,
                       onClear: () => setState(() => _endDate = null),
+                      isDarkMode: isDarkMode),
+                  const SizedBox(height: 16),
+                  EasyWalletDatePickerField(
+                      label: Intl.message('trialEndDate'),
+                      date: _trialEndDate,
+                      placeholder: Intl.message('noTrial'),
+                      onTap: _pickTrialEndDate,
+                      onClear: () => setState(() => _trialEndDate = null),
+                      isDarkMode: isDarkMode),
+                  const SizedBox(height: 16),
+                  Text(
+                    Intl.message('splitCount'),
+                    style: TextStyle(
+                      color: isDarkMode
+                          ? CupertinoColors.white
+                          : CupertinoColors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  EasyWalletTextField(
+                    controller: _splitCountController,
+                    placeholder: Intl.message('notShared'),
+                    keyboardType: TextInputType.number,
+                    isDarkMode: isDarkMode,
+                  ),
+                  const SizedBox(height: 16),
+                  EasyWalletDatePickerField(
+                      label: Intl.message('subscriptionCurrency'),
+                      date: null,
+                      placeholder: _currencyCode ?? Intl.message('appCurrency'),
+                      onTap: _selectSubscriptionCurrency,
                       isDarkMode: isDarkMode),
                   const SizedBox(height: 16),
                   EasyWalletDropdownField(
@@ -328,6 +363,68 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
     }
   }
 
+  Future<void> _selectSubscriptionCurrency() async {
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: Text(Intl.message('subscriptionCurrency')),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              setState(() => _currencyCode = null);
+              Navigator.pop(context);
+            },
+            child: Text(Intl.message('appCurrency')),
+          ),
+          for (final code in Currency.all())
+            CupertinoActionSheetAction(
+              onPressed: () {
+                setState(() => _currencyCode = code);
+                Navigator.pop(context);
+              },
+              child: Text(code),
+            ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: Text(Intl.message('cancel')),
+        ),
+      ),
+    );
+  }
+
+Future<void> _pickTrialEndDate() async {
+    var draft = _trialEndDate ?? DateTime.now();
+    await showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 260,
+          color: CupertinoColors.systemBackground.resolveFrom(context),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 200,
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: draft,
+                  use24hFormat: true,
+                  onDateTimeChanged: (DateTime newDate) => draft = newDate,
+                ),
+              ),
+              CupertinoButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK',
+                    style: TextStyle(color: CupertinoColors.activeBlue)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    setState(() => _trialEndDate = draft);
+  }
+
   Future<void> _pickEndDate() async {
     var draft = _endDate ?? DateTime.now();
     await showCupertinoModalPopup<void>(
@@ -377,6 +474,9 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         amount: amount!,
         date: _selectedDate,
         endDate: _endDate,
+        trialEndDate: _trialEndDate,
+        splitCount: int.tryParse(_splitCountController.text.trim()),
+        currencyCode: _currencyCode,
         repeatPattern: _selectedPayRate,
         notes: notes,
         url: url,
