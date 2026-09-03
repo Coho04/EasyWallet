@@ -10,6 +10,7 @@ class PlannedNotification {
     required this.at,
     required this.title,
     required this.amount,
+    this.isTrialEnd = false,
   });
 
   /// Stable within a planning run, so the platform can replace it later.
@@ -18,6 +19,10 @@ class PlannedNotification {
   final DateTime at;
   final String title;
   final double amount;
+
+  /// A warning that a free trial is about to turn into a paid subscription,
+  /// rather than a reminder of an upcoming charge.
+  final bool isTrialEnd;
 }
 
 /// Works out which reminders are due when, so they can be handed to the system
@@ -57,6 +62,25 @@ class NotificationPlan {
         continue;
       }
 
+      // A running trial gets its own warning: the point of a trial is to
+      // cancel before it starts costing money.
+      final trialEnd = subscription.trialEndDate;
+      if (trialEnd != null && subscription.isInTrialOn(now)) {
+        final warnOn = trialEnd.subtract(offset);
+        final at = DateTime(
+            warnOn.year, warnOn.month, warnOn.day, hour, minute);
+        if (at.isAfter(now)) {
+          planned.add(PlannedNotification(
+            id: _idFor(id, _trialOccurrence),
+            subscriptionId: id,
+            at: at,
+            title: subscription.title,
+            amount: subscription.amount,
+            isTrialEnd: true,
+          ));
+        }
+      }
+
       // Look far enough ahead to fill the requested number of occurrences even
       // for a yearly subscription.
       final horizon = DateTime(
@@ -94,6 +118,9 @@ class NotificationPlan {
     planned.sort((a, b) => a.at.compareTo(b.at));
     return planned.length > maxCount ? planned.sublist(0, maxCount) : planned;
   }
+
+  /// Reserved slot so the trial warning cannot collide with a billing id.
+  static const int _trialOccurrence = 99;
 
   /// Ids stay inside the 32 bit range the notification plugins expect.
   static int _idFor(int subscriptionId, int occurrence) =>

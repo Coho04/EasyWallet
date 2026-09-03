@@ -8,6 +8,7 @@ Subscription sub({
   String title = 'Netflix',
   DateTime? date,
   DateTime? endDate,
+  DateTime? trialEndDate,
   bool isPaused = false,
   String cycle = 'same_day',
   String repeatPattern = 'monthly',
@@ -18,6 +19,7 @@ Subscription sub({
     amount: amount,
     date: date ?? DateTime(2026, 1, 10),
     endDate: endDate,
+    trialEndDate: trialEndDate,
     isPaused: isPaused,
     isPinned: false,
     repeating: true,
@@ -143,6 +145,63 @@ void main() {
       );
 
       expect(plan.map((n) => n.id).toSet().length, plan.length);
+    });
+
+    test('warns before a free trial turns into a paid subscription', () {
+      final plan = NotificationPlan.build(
+        subscriptions: [
+          sub(date: DateTime(2026, 1, 10), trialEndDate: DateTime(2026, 3, 1),
+              cycle: 'day_before'),
+        ],
+        now: now,
+        hour: 9,
+        minute: 0,
+        occurrencesPerSubscription: 1,
+      );
+
+      final trial = plan.where((n) => n.isTrialEnd).toList();
+      expect(trial.single.at, DateTime(2026, 2, 28, 9));
+    });
+
+    test('the trial warning comes before the first charge', () {
+      final plan = NotificationPlan.build(
+        subscriptions: [
+          sub(date: DateTime(2026, 1, 10), trialEndDate: DateTime(2026, 3, 1)),
+        ],
+        now: now,
+        hour: 9,
+        minute: 0,
+        occurrencesPerSubscription: 1,
+      );
+
+      expect(plan.first.isTrialEnd, isTrue);
+      expect(plan.length, 2);
+    });
+
+    test('no trial warning without a trial', () {
+      final plan = NotificationPlan.build(
+        subscriptions: [sub(date: DateTime(2026, 1, 10))],
+        now: now,
+        hour: 9,
+        minute: 0,
+        occurrencesPerSubscription: 1,
+      );
+
+      expect(plan.every((n) => !n.isTrialEnd), isTrue);
+    });
+
+    test('no trial warning once the trial is over', () {
+      final plan = NotificationPlan.build(
+        subscriptions: [
+          sub(date: DateTime(2026, 1, 10), trialEndDate: DateTime(2025, 12, 1)),
+        ],
+        now: now,
+        hour: 9,
+        minute: 0,
+        occurrencesPerSubscription: 1,
+      );
+
+      expect(plan.every((n) => !n.isTrialEnd), isTrue);
     });
 
     test('keeps the earliest reminders when the platform limit is reached', () {
