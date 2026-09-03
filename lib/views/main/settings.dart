@@ -453,16 +453,16 @@ class SettingsViewState extends State<SettingsView> {
                 title: Intl.message('support'),
                 children: [
                   _buildLinkActionButton(
-                      'imprint', "https://golden-developer.de/imprint"),
+                      'imprint', "https://code-sphere.de/imprint"),
                   _buildLinkActionButton(
-                      'privacyPolicy', "https://golden-developer.de/privacy"),
+                      'privacyPolicy', "https://code-sphere.de/privacy"),
                   _buildLinkActionButton(
-                      'help', "https://support.golden-developer.de"),
+                      'help', "https://support.code-sphere.de"),
                   _buildLinkActionButton('feedback', _rateApp()),
                   _buildLinkActionButton('contactDeveloper',
-                      "https://support.golden-developer.de"),
+                      "https://support.code-sphere.de"),
                   _buildLinkActionButton(
-                      'tipJar', 'https://donate.golden-developer.de'),
+                      'tipJar', 'https://paypal.me/coho04'),
                   _buildLinkActionButton('rateApp', _rateApp()),
                 ],
               ),
