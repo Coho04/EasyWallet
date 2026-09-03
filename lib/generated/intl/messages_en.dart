@@ -20,10 +20,14 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(title) => "Your subscription ${title} is due soon!";
+  static String m0(count) => "${count} subscriptions imported";
 
-  static String m1(title, price) =>
+  static String m1(title) => "Your subscription ${title} is due soon!";
+
+  static String m2(title, price) =>
       "Your subscription ${title} (${price} €) is due soon!";
+
+  static String m3(title) => "The trial of ${title} ends soon";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -44,14 +48,19 @@ class MessageLookup extends MessageLookupByLibrary {
       "Additional information",
     ),
     "all": MessageLookupByLibrary.simpleMessage("All"),
+    "allCategories": MessageLookupByLibrary.simpleMessage("All"),
     "alphabeticalAscending": MessageLookupByLibrary.simpleMessage(
       "Alphabetical Ascending",
     ),
     "alphabeticalDescending": MessageLookupByLibrary.simpleMessage(
       "Alphabetical Descending",
     ),
+    "appCurrency": MessageLookupByLibrary.simpleMessage("App currency"),
     "appStats": MessageLookupByLibrary.simpleMessage("App Statistics"),
     "apple_pay": MessageLookupByLibrary.simpleMessage("Apple Pay"),
+    "byPaymentMethod": MessageLookupByLibrary.simpleMessage(
+      "By payment method",
+    ),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "categories": MessageLookupByLibrary.simpleMessage("Categories"),
@@ -149,6 +158,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "expired": MessageLookupByLibrary.simpleMessage("Expired"),
     "export": MessageLookupByLibrary.simpleMessage("Export"),
     "exportData": MessageLookupByLibrary.simpleMessage("Export Data"),
+    "exportFailed": MessageLookupByLibrary.simpleMessage("Export failed"),
     "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
     "firstDebit": MessageLookupByLibrary.simpleMessage("First Debit"),
     "general": MessageLookupByLibrary.simpleMessage("General"),
@@ -169,7 +179,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "hint": MessageLookupByLibrary.simpleMessage("Hint"),
     "import": MessageLookupByLibrary.simpleMessage("Import"),
     "importData": MessageLookupByLibrary.simpleMessage("Import Data"),
+    "importFailed": MessageLookupByLibrary.simpleMessage("Import failed"),
+    "importedCount": m0,
     "imprint": MessageLookupByLibrary.simpleMessage("Imprint"),
+    "inTrial": MessageLookupByLibrary.simpleMessage("Trial"),
     "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
       "Include cost in notifications",
     ),
@@ -204,9 +217,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "noDataYet": MessageLookupByLibrary.simpleMessage("No data yet"),
     "noEndDate": MessageLookupByLibrary.simpleMessage("No end date"),
     "noEntriesFound": MessageLookupByLibrary.simpleMessage("No entries found"),
+    "noPriceChanges": MessageLookupByLibrary.simpleMessage(
+      "No price changes yet",
+    ),
     "noSubscriptionsAvailable": MessageLookupByLibrary.simpleMessage(
       "No subscriptions available",
     ),
+    "noTrial": MessageLookupByLibrary.simpleMessage("No trial"),
+    "notShared": MessageLookupByLibrary.simpleMessage("Not shared"),
     "notes": MessageLookupByLibrary.simpleMessage("Notes"),
     "notificationTime": MessageLookupByLibrary.simpleMessage(
       "Notification Time",
@@ -249,6 +267,7 @@ class MessageLookup extends MessageLookupByLibrary {
         ),
     "previousDebits": MessageLookupByLibrary.simpleMessage("Previous debits"),
     "previousInvoice": MessageLookupByLibrary.simpleMessage("Previous invoice"),
+    "priceHistory": MessageLookupByLibrary.simpleMessage("Price history"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "rateApp": MessageLookupByLibrary.simpleMessage("Rate the App"),
     "remainingCosts": MessageLookupByLibrary.simpleMessage("Remaining costs"),
@@ -266,10 +285,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "Authentication failed. Setting was not changed.",
     ),
     "sortOptions": MessageLookupByLibrary.simpleMessage("Sort Options"),
+    "splitCount": MessageLookupByLibrary.simpleMessage("Shared by"),
     "startDate": MessageLookupByLibrary.simpleMessage("Start date"),
     "statistics": MessageLookupByLibrary.simpleMessage("Statistics"),
-    "subscriptionIsDueSoon": m0,
-    "subscriptionIsDueSoonWithPrice": m1,
+    "subscriptionCurrency": MessageLookupByLibrary.simpleMessage(
+      "Subscription currency",
+    ),
+    "subscriptionIsDueSoon": m1,
+    "subscriptionIsDueSoonWithPrice": m2,
     "subscriptionReminder": MessageLookupByLibrary.simpleMessage(
       "Subscription Reminder",
     ),
@@ -288,6 +311,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "total": MessageLookupByLibrary.simpleMessage("Total"),
     "totalCosts": MessageLookupByLibrary.simpleMessage("Total costs"),
     "totalExpenses": MessageLookupByLibrary.simpleMessage("Total Expenses"),
+    "trialEndDate": MessageLookupByLibrary.simpleMessage("Trial end"),
+    "trialEndsSoon": m3,
+    "trialReminder": MessageLookupByLibrary.simpleMessage("Trial ending"),
     "twoDaysBefore": MessageLookupByLibrary.simpleMessage("Two Days Before"),
     "unknown": MessageLookupByLibrary.simpleMessage("unknown"),
     "unpinSubscription": MessageLookupByLibrary.simpleMessage(
@@ -309,5 +335,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "yearlyVsMonthlyExpensesSubtitle": MessageLookupByLibrary.simpleMessage(
       "Monthly and annual expenditure relative to total expenditure",
     ),
+    "yourShare": MessageLookupByLibrary.simpleMessage("Your share"),
   };
 }

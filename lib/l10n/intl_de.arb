@@ -201,5 +201,36 @@
   "noEndDate": "Kein Ablaufdatum",
   "expired": "Abgelaufen",
   "about": "Über",
-  "version": "Version"
+  "version": "Version",
+  "trialReminder": "Probezeit endet",
+  "trialEndsSoon": "Die Probezeit von {title} endet bald",
+  "trialEndDate": "Ende der Probezeit",
+  "noTrial": "Keine Probezeit",
+  "splitCount": "Geteilt durch",
+  "notShared": "Nicht geteilt",
+  "yourShare": "Dein Anteil",
+  "byPaymentMethod": "Nach Zahlungsart",
+  "allCategories": "Alle",
+  "inTrial": "Probezeit",
+  "@trialEndsSoon": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "priceHistory": "Preisverlauf",
+  "noPriceChanges": "Noch keine Preisänderung",
+  "exportFailed": "Export fehlgeschlagen",
+  "importFailed": "Import fehlgeschlagen",
+  "importedCount": "{count} Abos importiert",
+  "@importedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionCurrency": "Währung des Abos",
+  "appCurrency": "App-Währung"
 }

@@ -201,5 +201,36 @@
   "noEndDate": "No end date",
   "expired": "Expired",
   "about": "About",
-  "version": "Version"
+  "version": "Version",
+  "trialReminder": "Trial ending",
+  "trialEndsSoon": "The trial of {title} ends soon",
+  "trialEndDate": "Trial end",
+  "noTrial": "No trial",
+  "splitCount": "Shared by",
+  "notShared": "Not shared",
+  "yourShare": "Your share",
+  "byPaymentMethod": "By payment method",
+  "allCategories": "All",
+  "inTrial": "Trial",
+  "@trialEndsSoon": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "priceHistory": "Price history",
+  "noPriceChanges": "No price changes yet",
+  "exportFailed": "Export failed",
+  "importFailed": "Import failed",
+  "importedCount": "{count} subscriptions imported",
+  "@importedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subscriptionCurrency": "Subscription currency",
+  "appCurrency": "App currency"
 }

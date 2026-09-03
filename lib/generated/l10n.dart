@@ -1384,6 +1384,141 @@ class S {
   String get version {
     return Intl.message('Version', name: 'version', desc: '', args: []);
   }
+
+  /// `Trial ending`
+  String get trialReminder {
+    return Intl.message(
+      'Trial ending',
+      name: 'trialReminder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The trial of {title} ends soon`
+  String trialEndsSoon(String title) {
+    return Intl.message(
+      'The trial of $title ends soon',
+      name: 'trialEndsSoon',
+      desc: '',
+      args: [title],
+    );
+  }
+
+  /// `Trial end`
+  String get trialEndDate {
+    return Intl.message('Trial end', name: 'trialEndDate', desc: '', args: []);
+  }
+
+  /// `No trial`
+  String get noTrial {
+    return Intl.message('No trial', name: 'noTrial', desc: '', args: []);
+  }
+
+  /// `Shared by`
+  String get splitCount {
+    return Intl.message('Shared by', name: 'splitCount', desc: '', args: []);
+  }
+
+  /// `Not shared`
+  String get notShared {
+    return Intl.message('Not shared', name: 'notShared', desc: '', args: []);
+  }
+
+  /// `Your share`
+  String get yourShare {
+    return Intl.message('Your share', name: 'yourShare', desc: '', args: []);
+  }
+
+  /// `By payment method`
+  String get byPaymentMethod {
+    return Intl.message(
+      'By payment method',
+      name: 'byPaymentMethod',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All`
+  String get allCategories {
+    return Intl.message('All', name: 'allCategories', desc: '', args: []);
+  }
+
+  /// `Trial`
+  String get inTrial {
+    return Intl.message('Trial', name: 'inTrial', desc: '', args: []);
+  }
+
+  /// `Price history`
+  String get priceHistory {
+    return Intl.message(
+      'Price history',
+      name: 'priceHistory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No price changes yet`
+  String get noPriceChanges {
+    return Intl.message(
+      'No price changes yet',
+      name: 'noPriceChanges',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export failed`
+  String get exportFailed {
+    return Intl.message(
+      'Export failed',
+      name: 'exportFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import failed`
+  String get importFailed {
+    return Intl.message(
+      'Import failed',
+      name: 'importFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} subscriptions imported`
+  String importedCount(int count) {
+    return Intl.message(
+      '$count subscriptions imported',
+      name: 'importedCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Subscription currency`
+  String get subscriptionCurrency {
+    return Intl.message(
+      'Subscription currency',
+      name: 'subscriptionCurrency',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `App currency`
+  String get appCurrency {
+    return Intl.message(
+      'App currency',
+      name: 'appCurrency',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
