@@ -34,8 +34,17 @@ class BackgroundFetchManager {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const DarwinInitializationSettings initializationSettingsIOS =
+    final DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings(
+      notificationCategories: [
+        DarwinNotificationCategory(
+          notificationCategory,
+          actions: [
+            DarwinNotificationAction.plain(
+                pauseActionId, S.current.pauseSubscription),
+          ],
+        ),
+      ],
       defaultPresentAlert: true,
       defaultPresentBanner: true,
       defaultPresentSound: true,
@@ -44,12 +53,17 @@ class BackgroundFetchManager {
       requestSoundPermission: true,
     );
 
-    const InitializationSettings initializationSettings =
+    final InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
-    await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings);
+    await flutterLocalNotificationsPlugin.initialize(
+      settings: initializationSettings,
+      onDidReceiveNotificationResponse: _onNotificationResponse,
+      onDidReceiveBackgroundNotificationResponse:
+          notificationResponseBackgroundHandler,
+    );
     tzdata.initializeTimeZones();
   }
 
@@ -130,12 +144,19 @@ class BackgroundFetchManager {
 
     final withPrice = prefs.getBool('includeCostInNotifications') ?? false;
     for (final notification in plan) {
-      final body = withPrice
-          ? S.current.subscriptionIsDueSoonWithPrice(
-              notification.title, notification.amount)
-          : S.current.subscriptionIsDueSoon(notification.title);
-      await _scheduleNotification(notification, S.current.subscriptionReminder,
-          body);
+      final String title;
+      final String body;
+      if (notification.isTrialEnd) {
+        title = S.current.trialReminder;
+        body = S.current.trialEndsSoon(notification.title);
+      } else {
+        title = S.current.subscriptionReminder;
+        body = withPrice
+            ? S.current.subscriptionIsDueSoonWithPrice(
+                notification.title, notification.amount)
+            : S.current.subscriptionIsDueSoon(notification.title);
+      }
+      await _scheduleNotification(notification, title, body);
     }
   }
 
@@ -160,8 +181,16 @@ class BackgroundFetchManager {
     }
   }
 
+  /// Acting on a reminder without opening the app first.
+  static const String notificationCategory = 'easy_wallet_reminder';
+  static const String pauseActionId = 'pause';
+
+  Future<void> _onNotificationResponse(NotificationResponse response) async {
+    await handleNotificationAction(response);
+  }
+
   NotificationDetails _notificationDetails() {
-    const androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    final androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'easy_wallet_channel_id',
       'EasyWallet',
       channelDescription: "EasyWallet App Notify Channel",
@@ -171,15 +200,19 @@ class BackgroundFetchManager {
       groupKey: groupKey,
       setAsGroupSummary: false,
       icon: '@mipmap/ic_launcher',
+      actions: [
+        AndroidNotificationAction(pauseActionId, S.current.pauseSubscription),
+      ],
     );
 
     const iosPlatformChannelSpecifics = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
+      categoryIdentifier: notificationCategory,
     );
 
-    return const NotificationDetails(
+    return NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iosPlatformChannelSpecifics,
     );
@@ -203,4 +236,37 @@ void backgroundFetchHeadlessTask(String taskId) async {
   final manager = BackgroundFetchManager();
   await manager._performFetchTask();
   BackgroundFetch.finish(taskId);
+}
+
+/// Runs in its own isolate when the user acts on a reminder while the app is
+/// closed, so it must not touch anything the UI owns.
+@pragma('vm:entry-point')
+void notificationResponseBackgroundHandler(NotificationResponse response) {
+  handleNotificationAction(response);
+}
+
+/// Pauses the subscription the reminder belongs to and rebuilds what is
+/// pending, so no further reminder arrives for it.
+Future<void> handleNotificationAction(NotificationResponse response) async {
+  if (response.actionId != BackgroundFetchManager.pauseActionId) {
+    return;
+  }
+  final id = int.tryParse(response.payload ?? '');
+  if (id == null) {
+    return;
+  }
+
+  try {
+    final subscriptions = await Subscription.all();
+    final match = subscriptions.where((s) => s.id == id);
+    if (match.isEmpty) {
+      return;
+    }
+    final subscription = match.first;
+    subscription.isPaused = true;
+    await subscription.save();
+    await BackgroundFetchManager().scheduleNotifications();
+  } catch (e) {
+    Sentry.captureException(e);
+  }
 }
