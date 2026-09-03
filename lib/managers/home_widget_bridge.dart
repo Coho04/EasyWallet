@@ -34,6 +34,11 @@ class HomeWidgetBridge {
   static const String calendarWidgetAndroid = 'CalendarWidgetProvider';
   static const String calendarWidgetIOS = 'CalendarWidget';
 
+  /// What the last refresh did, readable in the settings. A widget that stays
+  /// empty on a device is otherwise impossible to tell apart from an app that
+  /// never wrote anything.
+  static const String statusKey = 'widgetStatus';
+
   static const String keyUpcomingImage = 'upcomingImage';
   static const String keyCalendarImage = 'calendarImage';
 
@@ -45,10 +50,11 @@ class HomeWidgetBridge {
   static Future<void> refresh() async {
     if (kIsWeb) return;
 
+    SharedPreferences? prefs;
     try {
-      await HomeWidget.setAppGroupId(appGroupId);
+      prefs = await SharedPreferences.getInstance();
+      final groupSet = await HomeWidget.setAppGroupId(appGroupId);
 
-      final prefs = await SharedPreferences.getInstance();
       final currency = Currency.findByName(
           prefs.getString('currency') ?? Currency.usd.name);
       final showAmount = prefs.getBool('includeCostInNotifications') ?? false;
@@ -67,8 +73,24 @@ class HomeWidgetBridge {
         androidName: calendarWidgetAndroid,
         iOSName: calendarWidgetIOS,
       );
+
+      // Read back what was written. If this comes back empty the app and the
+      // widget are not sharing a container, which is what a missing App Group
+      // looks like from in here.
+      final storedPath =
+          await HomeWidget.getWidgetData<String>(keyUpcomingImage);
+      final shared = storedPath != null && storedPath.isNotEmpty;
+
+      await prefs.setString(
+        statusKey,
+        shared
+            ? 'ok · ${DateFormat('dd.MM. HH:mm').format(DateTime.now())}'
+            : 'written, but not readable from the App Group '
+                '(setAppGroupId: $groupSet)',
+      );
     } catch (e) {
       debugPrint('Could not refresh the home screen widgets: $e');
+      await prefs?.setString(statusKey, 'failed: $e');
     }
   }
 

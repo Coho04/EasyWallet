@@ -1,3 +1,4 @@
+import 'package:easy_wallet/managers/home_widget_bridge.dart';
 import 'package:easy_wallet/generated/l10n.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:file_picker/file_picker.dart';
@@ -46,6 +47,7 @@ class SettingsViewState extends State<SettingsView> {
   Currency currency = Currency.usd;
   double monthlyLimit = 0.0;
   String _appVersion = '';
+  String _widgetStatus = '';
   final LocalAuthentication auth = LocalAuthentication();
 
   @override
@@ -53,12 +55,23 @@ class SettingsViewState extends State<SettingsView> {
     super.initState();
     _loadSettings();
     _loadAppVersion();
+    _loadWidgetStatus();
   }
 
   Future<void> _loadAppVersion() async {
     final info = await PackageInfo.fromPlatform();
     if (!mounted) return;
     setState(() => _appVersion = '${info.version} (${info.buildNumber})');
+  }
+
+  /// The home screen widgets can only fail silently on a device. Showing
+  /// what the last refresh did makes the difference between "never written"
+  /// and "written but not shared" visible without a debugger.
+  Future<void> _loadWidgetStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() =>
+        _widgetStatus = prefs.getString(HomeWidgetBridge.statusKey) ?? '');
   }
 
   Future<void> _loadSettings() async {
@@ -474,6 +487,11 @@ class SettingsViewState extends State<SettingsView> {
                     label: Intl.message('version'),
                     value: _appVersion,
                   ),
+                  if (_widgetStatus.isNotEmpty)
+                    SettingsRow.info(
+                      label: 'Widget',
+                      value: _widgetStatus,
+                    ),
                 ],
               ),
                 ],

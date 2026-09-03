@@ -10,21 +10,21 @@ private enum WidgetKeys {
 /// Both widgets show a picture the Flutter side renders. That keeps one
 /// drawing for iOS and Android, lets the calendar reuse the grid from the app,
 /// and puts the subscription icons on the widget without loading them here.
-/// Why there is nothing to show. Naming the step turns an empty widget into
-/// something that can be acted on.
+/// Why there is nothing to show.
+///
+/// UserDefaults(suiteName:) hands back an object even when the App Group is
+/// not shared, so an unreadable group is indistinguishable from an app that
+/// never wrote. Both end up in `noData`; the app's settings say which it is.
 enum EmptyReason {
-    case noAppGroup
-    case neverWritten
+    case noData
     case fileMissing
 
     var message: String {
         switch self {
-        case .noAppGroup:
-            return "App Group missing"
-        case .neverWritten:
-            return "Open EasyWallet once"
+        case .noData:
+            return "No data in the shared container.\nSee Settings › About."
         case .fileMissing:
-            return "Reopen EasyWallet"
+            return "Data outdated.\nOpen EasyWallet once."
         }
     }
 }
@@ -39,7 +39,7 @@ struct ImageProvider: TimelineProvider {
     let key: String
 
     func placeholder(in context: Context) -> ImageEntry {
-        ImageEntry(date: Date(), image: nil, reason: .neverWritten)
+        ImageEntry(date: Date(), image: nil, reason: .noData)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (ImageEntry) -> Void) {
@@ -56,11 +56,9 @@ struct ImageProvider: TimelineProvider {
     private func readEntry() -> ImageEntry {
         // Without the App Group entitlement in the profile this is nil, which
         // is the usual reason a widget stays empty on a real device.
-        guard let defaults = UserDefaults(suiteName: WidgetKeys.appGroup) else {
-            return ImageEntry(date: Date(), image: nil, reason: .noAppGroup)
-        }
-        guard let path = defaults.string(forKey: key) else {
-            return ImageEntry(date: Date(), image: nil, reason: .neverWritten)
+        guard let defaults = UserDefaults(suiteName: WidgetKeys.appGroup),
+              let path = defaults.string(forKey: key) else {
+            return ImageEntry(date: Date(), image: nil, reason: .noData)
         }
         // The path carries the container id, which changes when the app is
         // reinstalled; the file is then gone until the app writes again.
