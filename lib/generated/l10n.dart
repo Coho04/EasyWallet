@@ -1644,6 +1644,226 @@ class S {
       args: [],
     );
   }
+
+  /// `Video streaming`
+  String get categoryStreamingVideo {
+    return Intl.message(
+      'Video streaming',
+      name: 'categoryStreamingVideo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Music streaming`
+  String get categoryStreamingMusic {
+    return Intl.message(
+      'Music streaming',
+      name: 'categoryStreamingMusic',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Audiobooks & podcasts`
+  String get categoryStreamingAudio {
+    return Intl.message(
+      'Audiobooks & podcasts',
+      name: 'categoryStreamingAudio',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cloud storage`
+  String get categoryCloudStorage {
+    return Intl.message(
+      'Cloud storage',
+      name: 'categoryCloudStorage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Software`
+  String get categorySoftware {
+    return Intl.message(
+      'Software',
+      name: 'categorySoftware',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Gaming`
+  String get categoryGaming {
+    return Intl.message('Gaming', name: 'categoryGaming', desc: '', args: []);
+  }
+
+  /// `News`
+  String get categoryNews {
+    return Intl.message('News', name: 'categoryNews', desc: '', args: []);
+  }
+
+  /// `Fitness`
+  String get categoryFitness {
+    return Intl.message('Fitness', name: 'categoryFitness', desc: '', args: []);
+  }
+
+  /// `Mobile & internet`
+  String get categoryTelecom {
+    return Intl.message(
+      'Mobile & internet',
+      name: 'categoryTelecom',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Food & delivery`
+  String get categoryFood {
+    return Intl.message(
+      'Food & delivery',
+      name: 'categoryFood',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other`
+  String get categoryOther {
+    return Intl.message('Other', name: 'categoryOther', desc: '', args: []);
+  }
+
+  /// `Choose from catalog`
+  String get chooseFromCatalog {
+    return Intl.message(
+      'Choose from catalog',
+      name: 'chooseFromCatalog',
+      desc: 'Button that opens the catalog of known subscription services',
+      args: [],
+    );
+  }
+
+  /// `Choose a service`
+  String get catalogTitle {
+    return Intl.message(
+      'Choose a service',
+      name: 'catalogTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search for a service`
+  String get catalogSearchPlaceholder {
+    return Intl.message(
+      'Search for a service',
+      name: 'catalogSearchPlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No service found`
+  String get catalogNoResults {
+    return Intl.message(
+      'No service found',
+      name: 'catalogNoResults',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The catalog is unavailable offline`
+  String get catalogEmptyOffline {
+    return Intl.message(
+      'The catalog is unavailable offline',
+      name: 'catalogEmptyOffline',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last loaded results`
+  String get catalogCachedNotice {
+    return Intl.message(
+      'Last loaded results',
+      name: 'catalogCachedNotice',
+      desc: 'Shown when the catalog could not be reached and stored results are displayed',
+      args: [],
+    );
+  }
+
+  /// `Choose a plan`
+  String get catalogChoosePlan {
+    return Intl.message(
+      'Choose a plan',
+      name: 'catalogChoosePlan',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No prices on file`
+  String get catalogNoPlans {
+    return Intl.message(
+      'No prices on file',
+      name: 'catalogNoPlans',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter the price yourself`
+  String get catalogEnterPriceYourself {
+    return Intl.message(
+      'Enter the price yourself',
+      name: 'catalogEnterPriceYourself',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Price as of`
+  String get catalogPriceFrom {
+    return Intl.message(
+      'Price as of',
+      name: 'catalogPriceFrom',
+      desc: 'Precedes the date a catalog price was last verified, e.g. "Price as of 09/09/2026"',
+      args: [],
+    );
+  }
+
+  /// `A suggestion, please check it`
+  String get catalogPriceIsSuggestion {
+    return Intl.message(
+      'A suggestion, please check it',
+      name: 'catalogPriceIsSuggestion',
+      desc: 'Tells the user the prefilled price is researched, not live',
+      args: [],
+    );
+  }
+
+  /// `Worldwide`
+  String get catalogRegionGlobal {
+    return Intl.message(
+      'Worldwide',
+      name: 'catalogRegionGlobal',
+      desc: 'Shown for a catalog price that is the same in every country',
+      args: [],
+    );
+  }
+
+  /// `The catalog holds no services yet.`
+  String get catalogEmpty {
+    return Intl.message(
+      'The catalog holds no services yet.',
+      name: 'catalogEmpty',
+      desc: 'Shown when the catalog was read successfully but holds nothing',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -72,10 +72,60 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "catalogCachedNotice": MessageLookupByLibrary.simpleMessage(
+      "Last loaded results",
+    ),
+    "catalogChoosePlan": MessageLookupByLibrary.simpleMessage("Choose a plan"),
+    "catalogEmpty": MessageLookupByLibrary.simpleMessage(
+      "The catalog holds no services yet.",
+    ),
+    "catalogEmptyOffline": MessageLookupByLibrary.simpleMessage(
+      "The catalog is unavailable offline",
+    ),
+    "catalogEnterPriceYourself": MessageLookupByLibrary.simpleMessage(
+      "Enter the price yourself",
+    ),
+    "catalogNoPlans": MessageLookupByLibrary.simpleMessage("No prices on file"),
+    "catalogNoResults": MessageLookupByLibrary.simpleMessage(
+      "No service found",
+    ),
+    "catalogPriceFrom": MessageLookupByLibrary.simpleMessage("Price as of"),
+    "catalogPriceIsSuggestion": MessageLookupByLibrary.simpleMessage(
+      "A suggestion, please check it",
+    ),
+    "catalogRegionGlobal": MessageLookupByLibrary.simpleMessage("Worldwide"),
+    "catalogSearchPlaceholder": MessageLookupByLibrary.simpleMessage(
+      "Search for a service",
+    ),
+    "catalogTitle": MessageLookupByLibrary.simpleMessage("Choose a service"),
     "categories": MessageLookupByLibrary.simpleMessage("Categories"),
+    "categoryCloudStorage": MessageLookupByLibrary.simpleMessage(
+      "Cloud storage",
+    ),
+    "categoryFitness": MessageLookupByLibrary.simpleMessage("Fitness"),
+    "categoryFood": MessageLookupByLibrary.simpleMessage("Food & delivery"),
+    "categoryGaming": MessageLookupByLibrary.simpleMessage("Gaming"),
+    "categoryNews": MessageLookupByLibrary.simpleMessage("News"),
+    "categoryOther": MessageLookupByLibrary.simpleMessage("Other"),
+    "categorySoftware": MessageLookupByLibrary.simpleMessage("Software"),
+    "categoryStreamingAudio": MessageLookupByLibrary.simpleMessage(
+      "Audiobooks & podcasts",
+    ),
+    "categoryStreamingMusic": MessageLookupByLibrary.simpleMessage(
+      "Music streaming",
+    ),
+    "categoryStreamingVideo": MessageLookupByLibrary.simpleMessage(
+      "Video streaming",
+    ),
+    "categoryTelecom": MessageLookupByLibrary.simpleMessage(
+      "Mobile & internet",
+    ),
     "categoryTitle": MessageLookupByLibrary.simpleMessage("Category Title"),
     "chooseAColor": MessageLookupByLibrary.simpleMessage("Choose a color"),
     "chooseColor": MessageLookupByLibrary.simpleMessage("Choose color"),
+    "chooseFromCatalog": MessageLookupByLibrary.simpleMessage(
+      "Choose from catalog",
+    ),
     "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
     "contactDeveloper": MessageLookupByLibrary.simpleMessage(
       "Contact Developer",

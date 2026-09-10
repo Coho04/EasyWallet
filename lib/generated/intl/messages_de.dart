@@ -74,12 +74,66 @@ class MessageLookup extends MessageLookupByLibrary {
     "byPaymentMethod": MessageLookupByLibrary.simpleMessage("Nach Zahlungsart"),
     "calendar": MessageLookupByLibrary.simpleMessage("Kalender"),
     "cancel": MessageLookupByLibrary.simpleMessage("Abbrechen"),
+    "catalogCachedNotice": MessageLookupByLibrary.simpleMessage(
+      "Zuletzt geladene Ergebnisse",
+    ),
+    "catalogChoosePlan": MessageLookupByLibrary.simpleMessage("Tarif wählen"),
+    "catalogEmpty": MessageLookupByLibrary.simpleMessage(
+      "Im Katalog sind noch keine Dienste hinterlegt.",
+    ),
+    "catalogEmptyOffline": MessageLookupByLibrary.simpleMessage(
+      "Der Katalog ist offline nicht verfügbar",
+    ),
+    "catalogEnterPriceYourself": MessageLookupByLibrary.simpleMessage(
+      "Preis selbst eintragen",
+    ),
+    "catalogNoPlans": MessageLookupByLibrary.simpleMessage(
+      "Keine Preise hinterlegt",
+    ),
+    "catalogNoResults": MessageLookupByLibrary.simpleMessage(
+      "Kein Dienst gefunden",
+    ),
+    "catalogPriceFrom": MessageLookupByLibrary.simpleMessage("Preis vom"),
+    "catalogPriceIsSuggestion": MessageLookupByLibrary.simpleMessage(
+      "Vorschlag – bitte prüfen",
+    ),
+    "catalogRegionGlobal": MessageLookupByLibrary.simpleMessage("Weltweit"),
+    "catalogSearchPlaceholder": MessageLookupByLibrary.simpleMessage(
+      "Dienst suchen",
+    ),
+    "catalogTitle": MessageLookupByLibrary.simpleMessage("Dienst wählen"),
     "categories": MessageLookupByLibrary.simpleMessage("Kategorien"),
+    "categoryCloudStorage": MessageLookupByLibrary.simpleMessage(
+      "Cloud-Speicher",
+    ),
+    "categoryFitness": MessageLookupByLibrary.simpleMessage("Fitness"),
+    "categoryFood": MessageLookupByLibrary.simpleMessage(
+      "Essen & Lieferdienste",
+    ),
+    "categoryGaming": MessageLookupByLibrary.simpleMessage("Gaming"),
+    "categoryNews": MessageLookupByLibrary.simpleMessage("Nachrichten"),
+    "categoryOther": MessageLookupByLibrary.simpleMessage("Sonstiges"),
+    "categorySoftware": MessageLookupByLibrary.simpleMessage("Software"),
+    "categoryStreamingAudio": MessageLookupByLibrary.simpleMessage(
+      "Hörbücher & Podcasts",
+    ),
+    "categoryStreamingMusic": MessageLookupByLibrary.simpleMessage(
+      "Musik-Streaming",
+    ),
+    "categoryStreamingVideo": MessageLookupByLibrary.simpleMessage(
+      "Video-Streaming",
+    ),
+    "categoryTelecom": MessageLookupByLibrary.simpleMessage(
+      "Mobilfunk & Internet",
+    ),
     "categoryTitle": MessageLookupByLibrary.simpleMessage("Kategorie Titel"),
     "chooseAColor": MessageLookupByLibrary.simpleMessage(
       "Wählen Sie eine Farbe",
     ),
     "chooseColor": MessageLookupByLibrary.simpleMessage("Farbe wählen"),
+    "chooseFromCatalog": MessageLookupByLibrary.simpleMessage(
+      "Aus Katalog wählen",
+    ),
     "confirm": MessageLookupByLibrary.simpleMessage("Bestätigen"),
     "contactDeveloper": MessageLookupByLibrary.simpleMessage(
       "Kontaktieren Sie den Entwickler",

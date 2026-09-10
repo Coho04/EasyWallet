@@ -273,5 +273,47 @@
   "daysAbbreviation": "d",
   "@daysAbbreviation": {
     "description": "Single letter suffix for a day count, e.g. \"4 d\""
+  },
+  "categoryStreamingVideo": "Video streaming",
+  "categoryStreamingMusic": "Music streaming",
+  "categoryStreamingAudio": "Audiobooks & podcasts",
+  "categoryCloudStorage": "Cloud storage",
+  "categorySoftware": "Software",
+  "categoryGaming": "Gaming",
+  "categoryNews": "News",
+  "categoryFitness": "Fitness",
+  "categoryTelecom": "Mobile & internet",
+  "categoryFood": "Food & delivery",
+  "categoryOther": "Other",
+  "chooseFromCatalog": "Choose from catalog",
+  "@chooseFromCatalog": {
+    "description": "Button that opens the catalog of known subscription services"
+  },
+  "catalogTitle": "Choose a service",
+  "catalogSearchPlaceholder": "Search for a service",
+  "catalogNoResults": "No service found",
+  "catalogEmptyOffline": "The catalog is unavailable offline",
+  "catalogCachedNotice": "Last loaded results",
+  "@catalogCachedNotice": {
+    "description": "Shown when the catalog could not be reached and stored results are displayed"
+  },
+  "catalogChoosePlan": "Choose a plan",
+  "catalogNoPlans": "No prices on file",
+  "catalogEnterPriceYourself": "Enter the price yourself",
+  "catalogPriceFrom": "Price as of",
+  "@catalogPriceFrom": {
+    "description": "Precedes the date a catalog price was last verified, e.g. \"Price as of 09/09/2026\""
+  },
+  "catalogPriceIsSuggestion": "A suggestion, please check it",
+  "@catalogPriceIsSuggestion": {
+    "description": "Tells the user the prefilled price is researched, not live"
+  },
+  "catalogRegionGlobal": "Worldwide",
+  "@catalogRegionGlobal": {
+    "description": "Shown for a catalog price that is the same in every country"
+  },
+  "catalogEmpty": "The catalog holds no services yet.",
+  "@catalogEmpty": {
+    "description": "Shown when the catalog was read successfully but holds nothing"
   }
 }
