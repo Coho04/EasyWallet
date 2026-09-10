@@ -5,6 +5,7 @@ import 'package:easy_wallet/managers/background_fetch_manager.dart';
 import 'package:easy_wallet/provider/category_provider.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
+import 'package:easy_wallet/provider/tour_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
@@ -43,6 +44,7 @@ void initializeSentry() async {
             ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
             ChangeNotifierProvider(create: (_) => CategoryProvider()),
             ChangeNotifierProvider(create: (_) => CurrencyProvider()),
+            ChangeNotifierProvider(create: (_) => TourController()),
           ],
           child: const EasyWalletApp(),
         ),

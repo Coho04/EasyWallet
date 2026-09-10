@@ -3,7 +3,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
+import 'package:easy_wallet/managers/subscription_catalog_service.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/model/subscription_template.dart';
+import 'package:easy_wallet/views/subscription/template_picker.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/views/components/form_fields/amount_field.dart';
@@ -45,12 +48,41 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
 
   List<category.Category> _selectedCategories = [];
 
+  /// The catalog tariff the amount was filled in from, kept so the form can
+  /// say how old that price is. Null once the user edits the amount.
+  TemplatePlan? _catalogPlan;
+
+  /// The amount exactly as the catalog filled it in. Once the field says
+  /// something else the number is the user's own and the origin note goes.
+  String? _catalogAmountText;
+
   bool _isTitleValid = true;
   bool _isAmountValid = true;
 
   @override
   void initState() {
     super.initState();
+    _amountController.addListener(_forgetCatalogPriceOnEdit);
+  }
+
+  @override
+  void dispose() {
+    _amountController.removeListener(_forgetCatalogPriceOnEdit);
+    super.dispose();
+  }
+
+  /// Drops the origin note as soon as the user changes the amount: it would
+  /// otherwise date a number the catalog never supplied.
+  void _forgetCatalogPriceOnEdit() {
+    if (_catalogPlan == null) {
+      return;
+    }
+    if (_amountController.text != _catalogAmountText) {
+      setState(() {
+        _catalogPlan = null;
+        _catalogAmountText = null;
+      });
+    }
   }
 
   @override
@@ -81,6 +113,10 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                   child: Form(
                     child: ListView(
                       children: [
+                  if (SubscriptionCatalogService.isConfigured) ...[
+                    _buildCatalogButton(isDarkMode),
+                    const SizedBox(height: 16),
+                  ],
                   _buildHeader(isDarkMode),
                   const SizedBox(height: 16),
                   EasyWalletTextField(
@@ -106,6 +142,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                     controller: _amountController,
                     isValid: _isAmountValid,
                   ),
+                  if (_catalogPlan != null) _buildPriceOrigin(),
                   const SizedBox(height: 16),
                   EasyWalletDatePickerField(
                       label: Intl.message('startDate'),
@@ -261,6 +298,89 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         ],
       ),
     );
+    });
+  }
+
+  /// Opens the catalog of known services. Only ever an offer: the form below
+  /// stays fully usable, and everything the catalog fills in stays editable.
+  Widget _buildCatalogButton(bool isDarkMode) {
+    return CupertinoButton(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      color: isDarkMode
+          ? CupertinoColors.darkBackgroundGray
+          : CupertinoColors.systemGrey6,
+      borderRadius: BorderRadius.circular(8.0),
+      onPressed: _pickFromCatalog,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(CupertinoIcons.square_grid_2x2,
+              size: 20, color: CupertinoColors.activeBlue),
+          const SizedBox(width: 8),
+          Flexible(
+            child: AutoText(
+              text: Intl.message('chooseFromCatalog'),
+              color: CupertinoColors.activeBlue,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Where the prefilled amount comes from and how old it is. Catalog prices
+  /// are researched snapshots, and a stale price shown as fact is worse in a
+  /// finance app than no price at all.
+  Widget _buildPriceOrigin() {
+    final plan = _catalogPlan!;
+    final checkedAt = plan.priceCheckedAt;
+    final origin = checkedAt == null
+        ? Intl.message('catalogPriceIsSuggestion')
+        : '${Intl.message('catalogPriceFrom')} ${DateFormat.yMd().format(checkedAt)}'
+            ' · ${Intl.message('catalogPriceIsSuggestion')}';
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, left: 4),
+      child: Text(
+        origin,
+        style: const TextStyle(fontSize: 12, color: CupertinoColors.systemGrey),
+      ),
+    );
+  }
+
+  Future<void> _pickFromCatalog() async {
+    final selection = await Navigator.of(context).push<TemplateSelection>(
+      CupertinoPageRoute(builder: (_) => const TemplatePickerView()),
+    );
+    if (selection == null || !mounted) {
+      return;
+    }
+    _applySelection(selection);
+  }
+
+  /// Fills the form from a catalog entry. Overwrites only what the catalog
+  /// actually knows, so a user who picks a service after filling in half the
+  /// form does not lose the other half.
+  void _applySelection(TemplateSelection selection) {
+    final template = selection.template;
+    final plan = selection.plan;
+
+    setState(() {
+      _titleController.text = template.name;
+      _isTitleValid = true;
+      if (template.websiteUrl != null) {
+        _urlController.text = template.websiteUrl!;
+      }
+      if (plan != null) {
+        // Written without grouping separators on purpose: the field parses
+        // its own text back, and a thousands dot would turn 1490 into 1.49.
+        _catalogAmountText = plan.amountAsFieldText;
+        _amountController.text = _catalogAmountText!;
+        _isAmountValid = true;
+        _currencyCode = plan.currency.name;
+        _selectedPayRate = plan.rate.value;
+      }
+      _catalogPlan = plan;
     });
   }
 

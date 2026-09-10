@@ -33,7 +33,9 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m5(title, price) =>
       "Your subscription ${title} (${price} €) is due soon!";
 
-  static String m6(title) => "The trial of ${title} ends soon";
+  static String m6(current, total) => "Step ${current} of ${total}";
+
+  static String m7(title) => "The trial of ${title} ends soon";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -72,10 +74,60 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "catalogCachedNotice": MessageLookupByLibrary.simpleMessage(
+      "Last loaded results",
+    ),
+    "catalogChoosePlan": MessageLookupByLibrary.simpleMessage("Choose a plan"),
+    "catalogEmpty": MessageLookupByLibrary.simpleMessage(
+      "The catalog holds no services yet.",
+    ),
+    "catalogEmptyOffline": MessageLookupByLibrary.simpleMessage(
+      "The catalog is unavailable offline",
+    ),
+    "catalogEnterPriceYourself": MessageLookupByLibrary.simpleMessage(
+      "Enter the price yourself",
+    ),
+    "catalogNoPlans": MessageLookupByLibrary.simpleMessage("No prices on file"),
+    "catalogNoResults": MessageLookupByLibrary.simpleMessage(
+      "No service found",
+    ),
+    "catalogPriceFrom": MessageLookupByLibrary.simpleMessage("Price as of"),
+    "catalogPriceIsSuggestion": MessageLookupByLibrary.simpleMessage(
+      "A suggestion, please check it",
+    ),
+    "catalogRegionGlobal": MessageLookupByLibrary.simpleMessage("Worldwide"),
+    "catalogSearchPlaceholder": MessageLookupByLibrary.simpleMessage(
+      "Search for a service",
+    ),
+    "catalogTitle": MessageLookupByLibrary.simpleMessage("Choose a service"),
     "categories": MessageLookupByLibrary.simpleMessage("Categories"),
+    "categoryCloudStorage": MessageLookupByLibrary.simpleMessage(
+      "Cloud storage",
+    ),
+    "categoryFitness": MessageLookupByLibrary.simpleMessage("Fitness"),
+    "categoryFood": MessageLookupByLibrary.simpleMessage("Food & delivery"),
+    "categoryGaming": MessageLookupByLibrary.simpleMessage("Gaming"),
+    "categoryNews": MessageLookupByLibrary.simpleMessage("News"),
+    "categoryOther": MessageLookupByLibrary.simpleMessage("Other"),
+    "categorySoftware": MessageLookupByLibrary.simpleMessage("Software"),
+    "categoryStreamingAudio": MessageLookupByLibrary.simpleMessage(
+      "Audiobooks & podcasts",
+    ),
+    "categoryStreamingMusic": MessageLookupByLibrary.simpleMessage(
+      "Music streaming",
+    ),
+    "categoryStreamingVideo": MessageLookupByLibrary.simpleMessage(
+      "Video streaming",
+    ),
+    "categoryTelecom": MessageLookupByLibrary.simpleMessage(
+      "Mobile & internet",
+    ),
     "categoryTitle": MessageLookupByLibrary.simpleMessage("Category Title"),
     "chooseAColor": MessageLookupByLibrary.simpleMessage("Choose a color"),
     "chooseColor": MessageLookupByLibrary.simpleMessage("Choose color"),
+    "chooseFromCatalog": MessageLookupByLibrary.simpleMessage(
+      "Choose from catalog",
+    ),
     "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
     "contactDeveloper": MessageLookupByLibrary.simpleMessage(
       "Contact Developer",
@@ -338,8 +390,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "total": MessageLookupByLibrary.simpleMessage("Total"),
     "totalCosts": MessageLookupByLibrary.simpleMessage("Total costs"),
     "totalExpenses": MessageLookupByLibrary.simpleMessage("Total Expenses"),
+    "tourCalendarBody": MessageLookupByLibrary.simpleMessage(
+      "Shows month by month which payment falls on which day, so an expensive week never catches you out.",
+    ),
+    "tourCalendarTitle": MessageLookupByLibrary.simpleMessage("Calendar"),
+    "tourCategoriesBody": MessageLookupByLibrary.simpleMessage(
+      "Sort subscriptions into your own groups such as streaming or software, then filter the overview by them.",
+    ),
+    "tourCategoriesTitle": MessageLookupByLibrary.simpleMessage("Categories"),
+    "tourDone": MessageLookupByLibrary.simpleMessage("Done"),
+    "tourNext": MessageLookupByLibrary.simpleMessage("Next"),
+    "tourProgress": m6,
+    "tourRestartAction": MessageLookupByLibrary.simpleMessage("View"),
+    "tourRestartLabel": MessageLookupByLibrary.simpleMessage("App tour"),
+    "tourSettingsBody": MessageLookupByLibrary.simpleMessage(
+      "Currency, monthly limit and reminders live here, along with export, import and cloud sync.",
+    ),
+    "tourSettingsTitle": MessageLookupByLibrary.simpleMessage("Settings"),
+    "tourSkip": MessageLookupByLibrary.simpleMessage("Skip"),
+    "tourStatisticsBody": MessageLookupByLibrary.simpleMessage(
+      "How your spending develops, which subscription costs the most, and how prices have moved over time.",
+    ),
+    "tourStatisticsTitle": MessageLookupByLibrary.simpleMessage("Statistics"),
+    "tourSubscriptionsBody": MessageLookupByLibrary.simpleMessage(
+      "Every subscription lands here. The top shows what your month and year cost, below it sits each subscription with its next billing date.",
+    ),
+    "tourSubscriptionsTitle": MessageLookupByLibrary.simpleMessage(
+      "Your subscriptions",
+    ),
     "trialEndDate": MessageLookupByLibrary.simpleMessage("Trial end"),
-    "trialEndsSoon": m6,
+    "trialEndsSoon": m7,
     "trialReminder": MessageLookupByLibrary.simpleMessage("Trial ending"),
     "twoDaysBefore": MessageLookupByLibrary.simpleMessage("Two Days Before"),
     "unknown": MessageLookupByLibrary.simpleMessage("unknown"),

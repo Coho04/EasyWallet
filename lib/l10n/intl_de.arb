@@ -273,5 +273,80 @@
   "daysAbbreviation": "T",
   "@daysAbbreviation": {
     "description": "Single letter suffix for a day count, e.g. \"4 d\""
+  },
+  "categoryStreamingVideo": "Video-Streaming",
+  "categoryStreamingMusic": "Musik-Streaming",
+  "categoryStreamingAudio": "Hörbücher & Podcasts",
+  "categoryCloudStorage": "Cloud-Speicher",
+  "categorySoftware": "Software",
+  "categoryGaming": "Gaming",
+  "categoryNews": "Nachrichten",
+  "categoryFitness": "Fitness",
+  "categoryTelecom": "Mobilfunk & Internet",
+  "categoryFood": "Essen & Lieferdienste",
+  "categoryOther": "Sonstiges",
+  "chooseFromCatalog": "Aus Katalog wählen",
+  "@chooseFromCatalog": {
+    "description": "Button that opens the catalog of known subscription services"
+  },
+  "catalogTitle": "Dienst wählen",
+  "catalogSearchPlaceholder": "Dienst suchen",
+  "catalogNoResults": "Kein Dienst gefunden",
+  "catalogEmptyOffline": "Der Katalog ist offline nicht verfügbar",
+  "catalogCachedNotice": "Zuletzt geladene Ergebnisse",
+  "@catalogCachedNotice": {
+    "description": "Shown when the catalog could not be reached and stored results are displayed"
+  },
+  "catalogChoosePlan": "Tarif wählen",
+  "catalogNoPlans": "Keine Preise hinterlegt",
+  "catalogEnterPriceYourself": "Preis selbst eintragen",
+  "catalogPriceFrom": "Preis vom",
+  "@catalogPriceFrom": {
+    "description": "Precedes the date a catalog price was last verified, e.g. \"Price as of 09/09/2026\""
+  },
+  "catalogPriceIsSuggestion": "Vorschlag – bitte prüfen",
+  "@catalogPriceIsSuggestion": {
+    "description": "Tells the user the prefilled price is researched, not live"
+  },
+  "catalogRegionGlobal": "Weltweit",
+  "@catalogRegionGlobal": {
+    "description": "Shown for a catalog price that is the same in every country"
+  },
+  "tourSubscriptionsTitle": "Deine Abos",
+  "tourSubscriptionsBody": "Hier laufen alle Abos zusammen. Oben steht, was dich der Monat und das Jahr kosten, darunter jedes einzelne Abo mit seinem nächsten Abbuchungstag.",
+  "tourCategoriesTitle": "Kategorien",
+  "tourCategoriesBody": "Ordne Abos in eigene Gruppen wie Streaming oder Software ein. In der Übersicht kannst du danach filtern.",
+  "tourCalendarTitle": "Kalender",
+  "tourCalendarBody": "Zeigt Monat für Monat, an welchem Tag welche Abbuchung ansteht — so siehst du teure Tage, bevor sie kommen.",
+  "tourStatisticsTitle": "Statistiken",
+  "tourStatisticsBody": "Wie sich deine Ausgaben entwickeln, welches Abo am meisten kostet und wie sich die Preise über die Zeit verändert haben.",
+  "tourSettingsTitle": "Einstellungen",
+  "tourSettingsBody": "Währung, Monatslimit und Erinnerungen stellst du hier ein. Export, Import und die Cloud-Synchronisierung findest du ebenfalls hier.",
+  "tourNext": "Weiter",
+  "tourDone": "Fertig",
+  "tourSkip": "Überspringen",
+  "@tourSkip": {
+    "description": "Leaves the guided tour before the last step"
+  },
+  "tourProgress": "Schritt {current} von {total}",
+  "@tourProgress": {
+    "description": "Position within the guided tour, e.g. \"Step 2 of 5\"",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "tourRestartLabel": "Rundgang",
+  "@tourRestartLabel": {
+    "description": "Settings row that plays the guided tour again"
+  },
+  "tourRestartAction": "Ansehen",
+  "catalogEmpty": "Im Katalog sind noch keine Dienste hinterlegt.",
+  "@catalogEmpty": {
+    "description": "Shown when the catalog was read successfully but holds nothing"
   }
 }
