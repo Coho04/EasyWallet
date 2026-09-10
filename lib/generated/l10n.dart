@@ -1855,6 +1855,151 @@ class S {
     );
   }
 
+  /// `Your subscriptions`
+  String get tourSubscriptionsTitle {
+    return Intl.message(
+      'Your subscriptions',
+      name: 'tourSubscriptionsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Every subscription lands here. The top shows what your month and year cost, below it sits each subscription with its next billing date.`
+  String get tourSubscriptionsBody {
+    return Intl.message(
+      'Every subscription lands here. The top shows what your month and year cost, below it sits each subscription with its next billing date.',
+      name: 'tourSubscriptionsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Categories`
+  String get tourCategoriesTitle {
+    return Intl.message(
+      'Categories',
+      name: 'tourCategoriesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sort subscriptions into your own groups such as streaming or software, then filter the overview by them.`
+  String get tourCategoriesBody {
+    return Intl.message(
+      'Sort subscriptions into your own groups such as streaming or software, then filter the overview by them.',
+      name: 'tourCategoriesBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Calendar`
+  String get tourCalendarTitle {
+    return Intl.message(
+      'Calendar',
+      name: 'tourCalendarTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shows month by month which payment falls on which day, so an expensive week never catches you out.`
+  String get tourCalendarBody {
+    return Intl.message(
+      'Shows month by month which payment falls on which day, so an expensive week never catches you out.',
+      name: 'tourCalendarBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Statistics`
+  String get tourStatisticsTitle {
+    return Intl.message(
+      'Statistics',
+      name: 'tourStatisticsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How your spending develops, which subscription costs the most, and how prices have moved over time.`
+  String get tourStatisticsBody {
+    return Intl.message(
+      'How your spending develops, which subscription costs the most, and how prices have moved over time.',
+      name: 'tourStatisticsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get tourSettingsTitle {
+    return Intl.message(
+      'Settings',
+      name: 'tourSettingsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Currency, monthly limit and reminders live here, along with export, import and cloud sync.`
+  String get tourSettingsBody {
+    return Intl.message(
+      'Currency, monthly limit and reminders live here, along with export, import and cloud sync.',
+      name: 'tourSettingsBody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Next`
+  String get tourNext {
+    return Intl.message('Next', name: 'tourNext', desc: '', args: []);
+  }
+
+  /// `Done`
+  String get tourDone {
+    return Intl.message('Done', name: 'tourDone', desc: '', args: []);
+  }
+
+  /// `Skip`
+  String get tourSkip {
+    return Intl.message(
+      'Skip',
+      name: 'tourSkip',
+      desc: 'Leaves the guided tour before the last step',
+      args: [],
+    );
+  }
+
+  /// `Step {current} of {total}`
+  String tourProgress(int current, int total) {
+    return Intl.message(
+      'Step $current of $total',
+      name: 'tourProgress',
+      desc: 'Position within the guided tour, e.g. "Step 2 of 5"',
+      args: [current, total],
+    );
+  }
+
+  /// `App tour`
+  String get tourRestartLabel {
+    return Intl.message(
+      'App tour',
+      name: 'tourRestartLabel',
+      desc: 'Settings row that plays the guided tour again',
+      args: [],
+    );
+  }
+
+  /// `View`
+  String get tourRestartAction {
+    return Intl.message('View', name: 'tourRestartAction', desc: '', args: []);
+  }
+
   /// `The catalog holds no services yet.`
   String get catalogEmpty {
     return Intl.message(

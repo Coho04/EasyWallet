@@ -312,6 +312,39 @@
   "@catalogRegionGlobal": {
     "description": "Shown for a catalog price that is the same in every country"
   },
+  "tourSubscriptionsTitle": "Your subscriptions",
+  "tourSubscriptionsBody": "Every subscription lands here. The top shows what your month and year cost, below it sits each subscription with its next billing date.",
+  "tourCategoriesTitle": "Categories",
+  "tourCategoriesBody": "Sort subscriptions into your own groups such as streaming or software, then filter the overview by them.",
+  "tourCalendarTitle": "Calendar",
+  "tourCalendarBody": "Shows month by month which payment falls on which day, so an expensive week never catches you out.",
+  "tourStatisticsTitle": "Statistics",
+  "tourStatisticsBody": "How your spending develops, which subscription costs the most, and how prices have moved over time.",
+  "tourSettingsTitle": "Settings",
+  "tourSettingsBody": "Currency, monthly limit and reminders live here, along with export, import and cloud sync.",
+  "tourNext": "Next",
+  "tourDone": "Done",
+  "tourSkip": "Skip",
+  "@tourSkip": {
+    "description": "Leaves the guided tour before the last step"
+  },
+  "tourProgress": "Step {current} of {total}",
+  "@tourProgress": {
+    "description": "Position within the guided tour, e.g. \"Step 2 of 5\"",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "tourRestartLabel": "App tour",
+  "@tourRestartLabel": {
+    "description": "Settings row that plays the guided tour again"
+  },
+  "tourRestartAction": "View",
   "catalogEmpty": "The catalog holds no services yet.",
   "@catalogEmpty": {
     "description": "Shown when the catalog was read successfully but holds nothing"

@@ -14,6 +14,7 @@ import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/persistence_controller.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
+import 'package:easy_wallet/provider/tour_provider.dart';
 import 'package:easy_wallet/views/components/auto_text.dart';
 import 'package:easy_wallet/views/components/card_section_component.dart';
 import 'package:easy_wallet/views/components/settings_row.dart';
@@ -229,6 +230,12 @@ class SettingsViewState extends State<SettingsView>
         },
       );
     }
+  }
+
+  /// Plays the guided tour again. The tour lives above the tab bar, so this
+  /// only asks for it — MainView is what shows it and moves the tabs along.
+  void _startTour() {
+    context.read<TourController>().start();
   }
 
   String _rateApp() {
@@ -484,6 +491,11 @@ class SettingsViewState extends State<SettingsView>
                       'imprint', "https://code-sphere.de/imprint"),
                   _buildLinkActionButton(
                       'privacyPolicy', "https://code-sphere.de/privacy"),
+                  SettingsRow.value(
+                    label: Intl.message('tourRestartLabel'),
+                    value: Intl.message('tourRestartAction'),
+                    onTap: _startTour,
+                  ),
                   _buildLinkActionButton(
                       'help', "https://support.code-sphere.de"),
                   _buildLinkActionButton('feedback', _rateApp()),

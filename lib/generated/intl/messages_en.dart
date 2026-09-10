@@ -33,7 +33,9 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m5(title, price) =>
       "Your subscription ${title} (${price} €) is due soon!";
 
-  static String m6(title) => "The trial of ${title} ends soon";
+  static String m6(current, total) => "Step ${current} of ${total}";
+
+  static String m7(title) => "The trial of ${title} ends soon";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -388,8 +390,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "total": MessageLookupByLibrary.simpleMessage("Total"),
     "totalCosts": MessageLookupByLibrary.simpleMessage("Total costs"),
     "totalExpenses": MessageLookupByLibrary.simpleMessage("Total Expenses"),
+    "tourCalendarBody": MessageLookupByLibrary.simpleMessage(
+      "Shows month by month which payment falls on which day, so an expensive week never catches you out.",
+    ),
+    "tourCalendarTitle": MessageLookupByLibrary.simpleMessage("Calendar"),
+    "tourCategoriesBody": MessageLookupByLibrary.simpleMessage(
+      "Sort subscriptions into your own groups such as streaming or software, then filter the overview by them.",
+    ),
+    "tourCategoriesTitle": MessageLookupByLibrary.simpleMessage("Categories"),
+    "tourDone": MessageLookupByLibrary.simpleMessage("Done"),
+    "tourNext": MessageLookupByLibrary.simpleMessage("Next"),
+    "tourProgress": m6,
+    "tourRestartAction": MessageLookupByLibrary.simpleMessage("View"),
+    "tourRestartLabel": MessageLookupByLibrary.simpleMessage("App tour"),
+    "tourSettingsBody": MessageLookupByLibrary.simpleMessage(
+      "Currency, monthly limit and reminders live here, along with export, import and cloud sync.",
+    ),
+    "tourSettingsTitle": MessageLookupByLibrary.simpleMessage("Settings"),
+    "tourSkip": MessageLookupByLibrary.simpleMessage("Skip"),
+    "tourStatisticsBody": MessageLookupByLibrary.simpleMessage(
+      "How your spending develops, which subscription costs the most, and how prices have moved over time.",
+    ),
+    "tourStatisticsTitle": MessageLookupByLibrary.simpleMessage("Statistics"),
+    "tourSubscriptionsBody": MessageLookupByLibrary.simpleMessage(
+      "Every subscription lands here. The top shows what your month and year cost, below it sits each subscription with its next billing date.",
+    ),
+    "tourSubscriptionsTitle": MessageLookupByLibrary.simpleMessage(
+      "Your subscriptions",
+    ),
     "trialEndDate": MessageLookupByLibrary.simpleMessage("Trial end"),
-    "trialEndsSoon": m6,
+    "trialEndsSoon": m7,
     "trialReminder": MessageLookupByLibrary.simpleMessage("Trial ending"),
     "twoDaysBefore": MessageLookupByLibrary.simpleMessage("Two Days Before"),
     "unknown": MessageLookupByLibrary.simpleMessage("unknown"),

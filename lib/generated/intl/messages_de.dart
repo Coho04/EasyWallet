@@ -33,7 +33,9 @@ class MessageLookup extends MessageLookupByLibrary {
   static String m5(title, price) =>
       "Ihr Abonnement ${title} (${price} €) steht bald an!";
 
-  static String m6(title) => "Die Probezeit von ${title} endet bald";
+  static String m6(current, total) => "Schritt ${current} von ${total}";
+
+  static String m7(title) => "Die Probezeit von ${title} endet bald";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -418,8 +420,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "total": MessageLookupByLibrary.simpleMessage("Gesamt"),
     "totalCosts": MessageLookupByLibrary.simpleMessage("Gesamt kosten"),
     "totalExpenses": MessageLookupByLibrary.simpleMessage("Gesamtausgaben"),
+    "tourCalendarBody": MessageLookupByLibrary.simpleMessage(
+      "Zeigt Monat für Monat, an welchem Tag welche Abbuchung ansteht — so siehst du teure Tage, bevor sie kommen.",
+    ),
+    "tourCalendarTitle": MessageLookupByLibrary.simpleMessage("Kalender"),
+    "tourCategoriesBody": MessageLookupByLibrary.simpleMessage(
+      "Ordne Abos in eigene Gruppen wie Streaming oder Software ein. In der Übersicht kannst du danach filtern.",
+    ),
+    "tourCategoriesTitle": MessageLookupByLibrary.simpleMessage("Kategorien"),
+    "tourDone": MessageLookupByLibrary.simpleMessage("Fertig"),
+    "tourNext": MessageLookupByLibrary.simpleMessage("Weiter"),
+    "tourProgress": m6,
+    "tourRestartAction": MessageLookupByLibrary.simpleMessage("Ansehen"),
+    "tourRestartLabel": MessageLookupByLibrary.simpleMessage("Rundgang"),
+    "tourSettingsBody": MessageLookupByLibrary.simpleMessage(
+      "Währung, Monatslimit und Erinnerungen stellst du hier ein. Export, Import und die Cloud-Synchronisierung findest du ebenfalls hier.",
+    ),
+    "tourSettingsTitle": MessageLookupByLibrary.simpleMessage("Einstellungen"),
+    "tourSkip": MessageLookupByLibrary.simpleMessage("Überspringen"),
+    "tourStatisticsBody": MessageLookupByLibrary.simpleMessage(
+      "Wie sich deine Ausgaben entwickeln, welches Abo am meisten kostet und wie sich die Preise über die Zeit verändert haben.",
+    ),
+    "tourStatisticsTitle": MessageLookupByLibrary.simpleMessage("Statistiken"),
+    "tourSubscriptionsBody": MessageLookupByLibrary.simpleMessage(
+      "Hier laufen alle Abos zusammen. Oben steht, was dich der Monat und das Jahr kosten, darunter jedes einzelne Abo mit seinem nächsten Abbuchungstag.",
+    ),
+    "tourSubscriptionsTitle": MessageLookupByLibrary.simpleMessage(
+      "Deine Abos",
+    ),
     "trialEndDate": MessageLookupByLibrary.simpleMessage("Ende der Probezeit"),
-    "trialEndsSoon": m6,
+    "trialEndsSoon": m7,
     "trialReminder": MessageLookupByLibrary.simpleMessage("Probezeit endet"),
     "twoDaysBefore": MessageLookupByLibrary.simpleMessage("Zwei Tage vorher"),
     "unknown": MessageLookupByLibrary.simpleMessage("Unbekannt"),
