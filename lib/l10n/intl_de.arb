@@ -400,5 +400,14 @@
   "cancelBy": "Kündigen bis",
   "@cancelBy": {
     "description": "Precedes the last date on which the user can still cancel"
+  },
+  "priceChange": "Preisentwicklung",
+  "priceSince": "seit",
+  "@priceSince": {
+    "description": "Precedes the date a price has been tracked from, e.g. \"+42% since 01/2024\""
+  },
+  "yearlyPriceIncrease": "Preissteigerung pro Jahr",
+  "@yearlyPriceIncrease": {
+    "description": "Statistics tile: how much more a year of subscriptions costs than at the start"
   }
 }

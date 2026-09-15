@@ -9,6 +9,7 @@ import 'package:easy_wallet/views/subscription/edit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:easy_wallet/class/price_trend.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_wallet/model/category.dart' as category;
@@ -171,8 +172,14 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
                                   value: '',
                                 );
                               }
+                              final trend = PriceTrend.of(history);
                               return Column(
                                 children: [
+                                  if (trend != null)
+                                    CardDetailRow(
+                                      label: Intl.message('priceChange'),
+                                      value: _formatTrend(trend, currency),
+                                    ),
                                   for (final change in history.reversed)
                                     CardDetailRow(
                                       label: _formatDateTime(change.changedAt),
@@ -311,6 +318,17 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
           .deleteSubscription(subscription);
       Navigator.of(context).pop();
     }
+  }
+
+  /// The headline of a price history: how much it moved, in percent and in
+  /// money, and since when. A list of amounts leaves that to the reader.
+  String _formatTrend(PriceTrend trend, Currency currency) {
+    final sign = trend.hasRisen ? '+' : '-';
+    final percent = trend.percent.abs().toStringAsFixed(0);
+    final amount = Money.format(trend.change.abs(), currency.symbol);
+    final since = DateFormat.yMMM().format(trend.since);
+
+    return '$sign$percent% ($sign$amount) ${Intl.message('priceSince')} $since';
   }
 
   String _formatDateTime(DateTime? dateTime, {bool withTime = false}) {

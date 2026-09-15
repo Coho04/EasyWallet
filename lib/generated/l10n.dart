@@ -2149,6 +2149,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Price development`
+  String get priceChange {
+    return Intl.message(
+      'Price development',
+      name: 'priceChange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `since`
+  String get priceSince {
+    return Intl.message(
+      'since',
+      name: 'priceSince',
+      desc: 'Precedes the date a price has been tracked from, e.g. "+42% since 01/2024"',
+      args: [],
+    );
+  }
+
+  /// `Price increase per year`
+  String get yearlyPriceIncrease {
+    return Intl.message(
+      'Price increase per year',
+      name: 'yearlyPriceIncrease',
+      desc: 'Statistics tile: how much more a year of subscriptions costs than at the start',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

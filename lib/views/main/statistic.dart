@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:easy_wallet/class/billing_schedule.dart';
+import 'package:easy_wallet/class/price_trend.dart';
 import 'package:easy_wallet/model/subscription.dart';
 
 import '../../model/chart_data.dart';
@@ -43,6 +44,10 @@ class StatisticViewState extends State<StatisticView> {
   double _monthlyLimit = 0.0;
   String _costToMonthEnd = '';
   String _costToYearEnd = '';
+
+  /// How much more a year of the active subscriptions costs than when their
+  /// prices were first recorded. Empty while nothing has changed yet.
+  String _yearlyPriceIncrease = '';
 
   @override
   void initState() {
@@ -73,10 +78,18 @@ class StatisticViewState extends State<StatisticView> {
     final toMonth = await calculateExpensesToEndOfMonth(subscriptions, currency);
     final toYear = await calculateExpensesToEndOfYear(subscriptions, currency);
 
+    final history = await Subscription.priceHistoryForAll();
+    final increase = PriceTrend.yearlyIncrease(subscriptions, history);
+
     if (!mounted) return;
     setState(() {
       _costToMonthEnd = toMonth;
       _costToYearEnd = toYear;
+      // Only worth a row when there is something to report; an unchanging
+      // price is the normal case and does not need a line saying so.
+      _yearlyPriceIncrease = increase.abs() < 0.005
+          ? ''
+          : Money.format(increase, currency.symbol);
       _isLoading = false;
     });
   }
@@ -145,6 +158,9 @@ class StatisticViewState extends State<StatisticView> {
                       children: [
                         _statRow(Intl.message('untilEndOfMonth'), _costToMonthEnd),
                         _statRow(Intl.message('untilEndOfYear'), _costToYearEnd),
+                        if (_yearlyPriceIncrease.isNotEmpty)
+                          _statRow(Intl.message('yearlyPriceIncrease'),
+                              _yearlyPriceIncrease),
                       ],
                     ),
                     const SizedBox(height: 12),

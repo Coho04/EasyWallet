@@ -387,7 +387,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "previousInvoice": MessageLookupByLibrary.simpleMessage(
       "Vorherige Rechnung",
     ),
+    "priceChange": MessageLookupByLibrary.simpleMessage("Preisentwicklung"),
     "priceHistory": MessageLookupByLibrary.simpleMessage("Preisverlauf"),
+    "priceSince": MessageLookupByLibrary.simpleMessage("seit"),
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Datenschutz"),
     "quarterly": MessageLookupByLibrary.simpleMessage("Vierteljährlich"),
     "rateApp": MessageLookupByLibrary.simpleMessage("Bewerten Sie die App"),
@@ -487,6 +489,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "yearly": MessageLookupByLibrary.simpleMessage("Jährlich"),
     "yearlyExpenses": MessageLookupByLibrary.simpleMessage(
       "Jährliche Ausgaben",
+    ),
+    "yearlyPriceIncrease": MessageLookupByLibrary.simpleMessage(
+      "Preissteigerung pro Jahr",
     ),
     "yearlyVsMonthlyExpenses": MessageLookupByLibrary.simpleMessage(
       "Jährliche vs Monatliche Ausgaben",

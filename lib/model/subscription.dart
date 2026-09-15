@@ -484,6 +484,23 @@ class Subscription {
     return rows.map(PriceChange.fromJson).toList();
   }
 
+  /// Every recorded price of every subscription, keyed by subscription id.
+  /// One query instead of one per subscription, for the statistics screen.
+  static Future<Map<int, List<PriceChange>>> priceHistoryForAll() async {
+    if (kIsWeb) {
+      throw UnsupportedError("Database is not supported on the web");
+    }
+    final db = await PersistenceController.instance.database;
+    final rows = await db.query('price_history', orderBy: 'changedAt ASC');
+
+    final bySubscription = <int, List<PriceChange>>{};
+    for (final row in rows) {
+      final id = row['subscription_id'] as int;
+      bySubscription.putIfAbsent(id, () => []).add(PriceChange.fromJson(row));
+    }
+    return bySubscription;
+  }
+
   Future<void> delete() async {
     if (kIsWeb) {
       throw UnsupportedError("Database is not supported on the web");
