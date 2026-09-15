@@ -158,6 +158,9 @@ class BackgroundFetchManager {
       if (notification.isTrialEnd) {
         title = S.current.trialReminder;
         body = S.current.trialEndsSoon(notification.title);
+      } else if (notification.isCancellationDeadline) {
+        title = S.current.cancellationReminder;
+        body = S.current.cancellationDeadlineSoon(notification.title);
       } else {
         title = S.current.subscriptionReminder;
         body = withPrice

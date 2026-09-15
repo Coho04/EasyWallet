@@ -380,5 +380,25 @@
   "rateShortYearly": "Y",
   "@rateShortYearly": {
     "description": "Abbreviation after a price billed once a year"
+  },
+  "cancellationReminder": "Cancellation deadline",
+  "cancellationDeadlineSoon": "Last chance to cancel {title}",
+  "@cancellationDeadlineSoon": {
+    "description": "Notification body warning that the cancellation window closes",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "noticePeriod": "Notice period",
+  "noticePeriodDays": "Days before renewal",
+  "@noticePeriodDays": {
+    "description": "Unit shown next to the notice period input"
+  },
+  "noNoticePeriod": "No notice period",
+  "cancelBy": "Cancel by",
+  "@cancelBy": {
+    "description": "Precedes the last date on which the user can still cancel"
   }
 }

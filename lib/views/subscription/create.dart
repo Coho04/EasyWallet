@@ -42,6 +42,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   DateTime? _trialEndDate;
   String? _currencyCode;
   final _splitCountController = TextEditingController();
+  final _noticePeriodController = TextEditingController();
   String _selectedPayRate = PaymentRate.monthly.value;
   String _selectedPayMethode = PaymentMethode.invoice.value;
   String _selectedRememberCycle = RememberCycle.sameDay.value;
@@ -178,6 +179,22 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
                   EasyWalletTextField(
                     controller: _splitCountController,
                     placeholder: Intl.message('notShared'),
+                    keyboardType: TextInputType.number,
+                    isDarkMode: isDarkMode,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    Intl.message('noticePeriod'),
+                    style: TextStyle(
+                      color: isDarkMode
+                          ? CupertinoColors.white
+                          : CupertinoColors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  EasyWalletTextField(
+                    controller: _noticePeriodController,
+                    placeholder: Intl.message('noticePeriodDays'),
                     keyboardType: TextInputType.number,
                     isDarkMode: isDarkMode,
                   ),
@@ -596,6 +613,7 @@ Future<void> _pickTrialEndDate() async {
         endDate: _endDate,
         trialEndDate: _trialEndDate,
         splitCount: int.tryParse(_splitCountController.text.trim()),
+        noticePeriodDays: int.tryParse(_noticePeriodController.text.trim()),
         currencyCode: _currencyCode,
         repeatPattern: _selectedPayRate,
         notes: notes,

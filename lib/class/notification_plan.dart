@@ -2,6 +2,18 @@ import 'package:easy_wallet/class/billing_schedule.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/model/subscription.dart';
 
+/// What a reminder is about.
+enum NotificationKind {
+  /// A charge is coming up.
+  billing,
+
+  /// A free trial is about to turn into a paid subscription.
+  trialEnd,
+
+  /// The last chance to cancel before the subscription renews.
+  cancellationDeadline,
+}
+
 /// One reminder that should be handed to the operating system.
 class PlannedNotification {
   const PlannedNotification({
@@ -10,7 +22,7 @@ class PlannedNotification {
     required this.at,
     required this.title,
     required this.amount,
-    this.isTrialEnd = false,
+    this.kind = NotificationKind.billing,
   });
 
   /// Stable within a planning run, so the platform can replace it later.
@@ -20,9 +32,15 @@ class PlannedNotification {
   final String title;
   final double amount;
 
+  final NotificationKind kind;
+
   /// A warning that a free trial is about to turn into a paid subscription,
   /// rather than a reminder of an upcoming charge.
-  final bool isTrialEnd;
+  bool get isTrialEnd => kind == NotificationKind.trialEnd;
+
+  /// A warning that the window for cancelling is about to close.
+  bool get isCancellationDeadline =>
+      kind == NotificationKind.cancellationDeadline;
 }
 
 /// Works out which reminders are due when, so they can be handed to the system
@@ -66,7 +84,7 @@ class NotificationPlan {
       // cancel before it starts costing money.
       final trialEnd = subscription.trialEndDate;
       if (trialEnd != null && subscription.isInTrialOn(now)) {
-        final warnOn = trialEnd.subtract(offset);
+        final warnOn = _daysBefore(trialEnd, offset);
         final at = DateTime(
             warnOn.year, warnOn.month, warnOn.day, hour, minute);
         if (at.isAfter(now)) {
@@ -76,7 +94,27 @@ class NotificationPlan {
             at: at,
             title: subscription.title,
             amount: subscription.amount,
-            isTrialEnd: true,
+            kind: NotificationKind.trialEnd,
+          ));
+        }
+      }
+
+      // The window for cancelling closes before the renewal, and missing it
+      // costs another full period. Warned about on its own, because by the
+      // time the charge reminder arrives it is already too late.
+      final deadline = subscription.cancellationDeadline(asOf: now);
+      if (deadline != null) {
+        final warnOn = _daysBefore(deadline, offset);
+        final at =
+            DateTime(warnOn.year, warnOn.month, warnOn.day, hour, minute);
+        if (at.isAfter(now)) {
+          planned.add(PlannedNotification(
+            id: _idFor(id, _cancellationOccurrence),
+            subscriptionId: id,
+            at: at,
+            title: subscription.title,
+            amount: subscription.amount,
+            kind: NotificationKind.cancellationDeadline,
           ));
         }
       }
@@ -92,7 +130,7 @@ class NotificationPlan {
 
       var taken = 0;
       for (var i = 0; i < dates.length && taken < occurrencesPerSubscription; i++) {
-        final billedOn = dates[i].subtract(offset);
+        final billedOn = _daysBefore(dates[i], offset);
         final at = DateTime(
           billedOn.year,
           billedOn.month,
@@ -119,8 +157,17 @@ class NotificationPlan {
     return planned.length > maxCount ? planned.sublist(0, maxCount) : planned;
   }
 
-  /// Reserved slot so the trial warning cannot collide with a billing id.
+  /// [date] moved back by [offset] in calendar days.
+  ///
+  /// Subtracting a Duration works in absolute time, so a reminder set a week
+  /// before a date across a daylight saving change lands at 23:00 the day
+  /// before — and the reminder goes out a day early.
+  static DateTime _daysBefore(DateTime date, Duration offset) =>
+      DateTime(date.year, date.month, date.day - offset.inDays);
+
+  /// Reserved slots so the special warnings cannot collide with a billing id.
   static const int _trialOccurrence = 99;
+  static const int _cancellationOccurrence = 98;
 
   /// Ids stay inside the 32 bit range the notification plugins expect.
   static int _idFor(int subscriptionId, int occurrence) =>

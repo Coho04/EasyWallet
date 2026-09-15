@@ -31,6 +31,10 @@ class Subscription {
 
   /// Currency this subscription is billed in. Null means the app's currency.
   String? currencyCode;
+
+  /// How many days before a renewal this subscription has to be cancelled.
+  /// Null means no notice period is recorded.
+  int? noticePeriodDays;
   bool isPaused;
   bool isPinned;
   String? notes;
@@ -50,6 +54,7 @@ class Subscription {
     this.trialEndDate,
     this.splitCount,
     this.currencyCode,
+    this.noticePeriodDays,
     required this.isPaused,
     required this.isPinned,
     this.notes,
@@ -71,6 +76,7 @@ class Subscription {
       'trialEndDate': trialEndDate?.toIso8601String(),
       'splitCount': splitCount,
       'currencyCode': currencyCode,
+      'noticePeriodDays': noticePeriodDays,
       'isPaused': isPaused ? 1 : 0,
       'isPinned': isPinned ? 1 : 0,
       'notes': notes,
@@ -277,6 +283,36 @@ class Subscription {
     return amount / count;
   }
 
+  /// The next day by which this subscription has to be cancelled so it does
+  /// not renew, or null when there is nothing to act on.
+  ///
+  /// Counted back from a renewal, not from today: a contract with three months
+  /// notice has to be cancelled three months before it renews, and knowing
+  /// that the day after the window closed is worthless. Deadlines that have
+  /// already passed are skipped, so what comes back is always a date the user
+  /// can still do something about.
+  ///
+  /// Null once an end date is set — the subscription already stops on its own
+  /// and there is nothing left to cancel.
+  DateTime? cancellationDeadline({DateTime? asOf}) {
+    final notice = noticePeriodDays;
+    if (notice == null || notice <= 0) return null;
+    if (!repeating || date == null || endDate != null) return null;
+
+    final from = _dateOnly(asOf ?? DateTime.now());
+    for (var step = 0;; step++) {
+      final renewal = rate.shift(date!, step);
+      // Calendar days, not a Duration: subtracting 92 days of absolute time
+      // across a daylight saving change lands at 23:00 the day before, and
+      // the deadline would silently be a day early.
+      final deadline =
+          DateTime(renewal.year, renewal.month, renewal.day - notice);
+      if (deadline.isAfter(from)) {
+        return deadline;
+      }
+    }
+  }
+
   /// Whether the free trial is still running on [day]. The trial end date is
   /// inclusive, so the last free day is the date itself.
   bool isInTrialOn(DateTime day) {
@@ -342,6 +378,7 @@ class Subscription {
           : null,
       splitCount: json['splitCount'],
       currencyCode: json['currencyCode'],
+      noticePeriodDays: json['noticePeriodDays'],
       isPaused: json['isPaused'] == 1,
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],
@@ -369,6 +406,7 @@ class Subscription {
           : null,
       splitCount: json['splitCount'],
       currencyCode: json['currencyCode'],
+      noticePeriodDays: json['noticePeriodDays'],
       isPaused: json['isPaused'] == 1,
       isPinned: json['isPinned'] == 1,
       notes: json['notes'],

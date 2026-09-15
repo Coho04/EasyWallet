@@ -20,22 +20,24 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'de';
 
-  static String m0(count) => "${count} Abonnements";
+  static String m0(title) => "Letzte Chance, ${title} zu kündigen";
 
-  static String m1(title) => "\"${title}\" wird unwiderruflich gelöscht.";
+  static String m1(count) => "${count} Abonnements";
 
-  static String m2(count) => "${count} Abos importiert";
+  static String m2(title) => "\"${title}\" wird unwiderruflich gelöscht.";
 
-  static String m3(amount) => "${amount} über";
+  static String m3(count) => "${count} Abos importiert";
 
-  static String m4(title) => "Ihr Abonnement ${title} steht bald an!";
+  static String m4(amount) => "${amount} über";
 
-  static String m5(title, price) =>
+  static String m5(title) => "Ihr Abonnement ${title} steht bald an!";
+
+  static String m6(title, price) =>
       "Ihr Abonnement ${title} (${price} €) steht bald an!";
 
-  static String m6(current, total) => "Schritt ${current} von ${total}";
+  static String m7(current, total) => "Schritt ${current} von ${total}";
 
-  static String m7(title) => "Die Probezeit von ${title} endet bald";
+  static String m8(title) => "Die Probezeit von ${title} endet bald";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -76,6 +78,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "byPaymentMethod": MessageLookupByLibrary.simpleMessage("Nach Zahlungsart"),
     "calendar": MessageLookupByLibrary.simpleMessage("Kalender"),
     "cancel": MessageLookupByLibrary.simpleMessage("Abbrechen"),
+    "cancelBy": MessageLookupByLibrary.simpleMessage("Kündigen bis"),
+    "cancellationDeadlineSoon": m0,
+    "cancellationReminder": MessageLookupByLibrary.simpleMessage(
+      "Kündigungsfrist",
+    ),
     "catalogCachedNotice": MessageLookupByLibrary.simpleMessage(
       "Zuletzt geladene Ergebnisse",
     ),
@@ -156,7 +163,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "couldNotLaunch": MessageLookupByLibrary.simpleMessage(
       "Konnte nicht gestartet werden",
     ),
-    "countSubscriptions": m0,
+    "countSubscriptions": m1,
     "createdOn": MessageLookupByLibrary.simpleMessage("Erstellt am"),
     "creditCard": MessageLookupByLibrary.simpleMessage("Kreditkarte"),
     "currency": MessageLookupByLibrary.simpleMessage("Währung"),
@@ -189,7 +196,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteSubscription": MessageLookupByLibrary.simpleMessage(
       "Dieses Abonnement löschen",
     ),
-    "deleteSubscriptionHint": m1,
+    "deleteSubscriptionHint": m2,
     "deleteSubscriptionQuestion": MessageLookupByLibrary.simpleMessage(
       "Löschen?",
     ),
@@ -267,7 +274,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "importFailed": MessageLookupByLibrary.simpleMessage(
       "Import fehlgeschlagen",
     ),
-    "importedCount": m2,
+    "importedCount": m3,
     "imprint": MessageLookupByLibrary.simpleMessage("Impressum"),
     "inTrial": MessageLookupByLibrary.simpleMessage("Probezeit"),
     "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
@@ -313,6 +320,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "noEntriesFound": MessageLookupByLibrary.simpleMessage(
       "Keine Einträge gefunden",
     ),
+    "noNoticePeriod": MessageLookupByLibrary.simpleMessage(
+      "Keine Frist hinterlegt",
+    ),
     "noPriceChanges": MessageLookupByLibrary.simpleMessage(
       "Noch keine Preisänderung",
     ),
@@ -325,6 +335,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "noTrial": MessageLookupByLibrary.simpleMessage("Keine Probezeit"),
     "notShared": MessageLookupByLibrary.simpleMessage("Nicht geteilt"),
     "notes": MessageLookupByLibrary.simpleMessage("Notizen"),
+    "noticePeriod": MessageLookupByLibrary.simpleMessage("Kündigungsfrist"),
+    "noticePeriodDays": MessageLookupByLibrary.simpleMessage(
+      "Tage vor Verlängerung",
+    ),
     "notificationTime": MessageLookupByLibrary.simpleMessage(
       "Benachrichtigungszeit",
     ),
@@ -339,7 +353,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "outstandingExpenditureMonth": MessageLookupByLibrary.simpleMessage(
       "Offene Ausgaben Monat",
     ),
-    "overBudgetBy": m3,
+    "overBudgetBy": m4,
     "overview": MessageLookupByLibrary.simpleMessage("Übersicht"),
     "pause": MessageLookupByLibrary.simpleMessage("Pause"),
     "pauseSubscription": MessageLookupByLibrary.simpleMessage(
@@ -406,8 +420,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptionCurrency": MessageLookupByLibrary.simpleMessage(
       "Währung des Abos",
     ),
-    "subscriptionIsDueSoon": m4,
-    "subscriptionIsDueSoonWithPrice": m5,
+    "subscriptionIsDueSoon": m5,
+    "subscriptionIsDueSoonWithPrice": m6,
     "subscriptionReminder": MessageLookupByLibrary.simpleMessage(
       "Abonnement Erinnerung",
     ),
@@ -438,7 +452,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tourCategoriesTitle": MessageLookupByLibrary.simpleMessage("Kategorien"),
     "tourDone": MessageLookupByLibrary.simpleMessage("Fertig"),
     "tourNext": MessageLookupByLibrary.simpleMessage("Weiter"),
-    "tourProgress": m6,
+    "tourProgress": m7,
     "tourRestartAction": MessageLookupByLibrary.simpleMessage("Ansehen"),
     "tourRestartLabel": MessageLookupByLibrary.simpleMessage("Rundgang"),
     "tourSettingsBody": MessageLookupByLibrary.simpleMessage(
@@ -457,7 +471,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Deine Abos",
     ),
     "trialEndDate": MessageLookupByLibrary.simpleMessage("Ende der Probezeit"),
-    "trialEndsSoon": m7,
+    "trialEndsSoon": m8,
     "trialReminder": MessageLookupByLibrary.simpleMessage("Probezeit endet"),
     "twoDaysBefore": MessageLookupByLibrary.simpleMessage("Zwei Tage vorher"),
     "unknown": MessageLookupByLibrary.simpleMessage("Unbekannt"),

@@ -1,4 +1,5 @@
 import 'package:easy_wallet/class/money.dart';
+import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
@@ -110,6 +111,13 @@ class SubscriptionShowViewState extends State<SubscriptionShowView> {
                           CardDetailRow(
                             label: Intl.message('firstDebit'),
                             value: _formatDateTime(subscription.date),
+                          ),
+                          CardDetailRow(
+                            label: Intl.message('cancelBy'),
+                            value: subscription.cancellationDeadline() == null
+                                ? Intl.message('noNoticePeriod')
+                                : _formatDateTime(
+                                    subscription.cancellationDeadline()),
                           ),
                           CardDetailRow(
                             label: Intl.message('endDate'),

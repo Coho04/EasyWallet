@@ -48,7 +48,7 @@ class PersistenceController {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, 'easywallet.db');
 
-    return await openDatabase(path, version: 6, onCreate: (db, version) {
+    return await openDatabase(path, version: 7, onCreate: (db, version) {
       db.execute('''
         CREATE TABLE IF NOT EXISTS categories(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -89,6 +89,7 @@ class PersistenceController {
             trialEndDate TEXT DEFAULT NULL,
             splitCount INTEGER DEFAULT NULL,
             currencyCode TEXT DEFAULT NULL,
+            noticePeriodDays INTEGER DEFAULT NULL,
             isPaused INTEGER DEFAULT NULL,
             isPinned INTEGER DEFAULT NULL,
             notes TEXT DEFAULT NULL,
@@ -145,6 +146,10 @@ class PersistenceController {
             FOREIGN KEY (subscription_id) REFERENCES subscriptions(id) ON DELETE CASCADE
           )
           ''');
+      }
+      if (oldVersion < 7) {
+        await db.execute(
+            'ALTER TABLE subscriptions ADD COLUMN noticePeriodDays INTEGER DEFAULT NULL;');
       }
     });
   }

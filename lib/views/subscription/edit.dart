@@ -46,6 +46,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   DateTime? _trialEndDate;
   String? _currencyCode;
   final _splitCountController = TextEditingController();
+  final _noticePeriodController = TextEditingController();
   String _paymentRate = PaymentRate.monthly.value;
   String _rememberCycle = RememberCycle.dayBefore.value;
   String _selectedPayMethode = PaymentMethode.invoice.value;
@@ -68,6 +69,8 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
     _currencyCode = widget.subscription.currencyCode;
     _splitCountController.text =
         widget.subscription.splitCount?.toString() ?? '';
+    _noticePeriodController.text =
+        widget.subscription.noticePeriodDays?.toString() ?? '';
     _paymentRate =
         widget.subscription.repeatPattern ?? PaymentRate.monthly.value;
     _rememberCycle =
@@ -109,6 +112,8 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       subscription.trialEndDate = _trialEndDate;
       subscription.splitCount =
           int.tryParse(_splitCountController.text.trim());
+      subscription.noticePeriodDays =
+          int.tryParse(_noticePeriodController.text.trim());
       subscription.currencyCode = _currencyCode;
       subscription.notes = _notesController.text.trim();
       subscription.repeatPattern = _paymentRate;
@@ -210,6 +215,22 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
                   EasyWalletTextField(
                     controller: _splitCountController,
                     placeholder: Intl.message('notShared'),
+                    keyboardType: TextInputType.number,
+                    isDarkMode: isDarkMode,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    Intl.message('noticePeriod'),
+                    style: TextStyle(
+                      color: isDarkMode
+                          ? CupertinoColors.white
+                          : CupertinoColors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  EasyWalletTextField(
+                    controller: _noticePeriodController,
+                    placeholder: Intl.message('noticePeriodDays'),
                     keyboardType: TextInputType.number,
                     isDarkMode: isDarkMode,
                   ),

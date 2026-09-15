@@ -380,5 +380,25 @@
   "rateShortYearly": "J",
   "@rateShortYearly": {
     "description": "Abbreviation after a price billed once a year"
+  },
+  "cancellationReminder": "Kündigungsfrist",
+  "cancellationDeadlineSoon": "Letzte Chance, {title} zu kündigen",
+  "@cancellationDeadlineSoon": {
+    "description": "Notification body warning that the cancellation window closes",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "noticePeriod": "Kündigungsfrist",
+  "noticePeriodDays": "Tage vor Verlängerung",
+  "@noticePeriodDays": {
+    "description": "Unit shown next to the notice period input"
+  },
+  "noNoticePeriod": "Keine Frist hinterlegt",
+  "cancelBy": "Kündigen bis",
+  "@cancelBy": {
+    "description": "Precedes the last date on which the user can still cancel"
   }
 }

@@ -17,6 +17,7 @@ Subscription sub({
     endDate: DateTime(2027, 1, 10),
     trialEndDate: DateTime(2026, 2, 1),
     splitCount: 2,
+    noticePeriodDays: 92,
     isPaused: false,
     isPinned: true,
     repeating: true,
@@ -50,6 +51,7 @@ void main() {
       expect(restored.endDate, DateTime(2027, 1, 10));
       expect(restored.trialEndDate, DateTime(2026, 2, 1));
       expect(restored.splitCount, 2);
+      expect(restored.noticePeriodDays, 92);
       expect(restored.isPinned, isTrue);
       expect(restored.repeatPattern, 'monthly');
       expect(restored.rememberCycle, 'day_before');

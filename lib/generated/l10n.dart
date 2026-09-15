@@ -2089,6 +2089,66 @@ class S {
       args: [],
     );
   }
+
+  /// `Cancellation deadline`
+  String get cancellationReminder {
+    return Intl.message(
+      'Cancellation deadline',
+      name: 'cancellationReminder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last chance to cancel {title}`
+  String cancellationDeadlineSoon(String title) {
+    return Intl.message(
+      'Last chance to cancel $title',
+      name: 'cancellationDeadlineSoon',
+      desc: 'Notification body warning that the cancellation window closes',
+      args: [title],
+    );
+  }
+
+  /// `Notice period`
+  String get noticePeriod {
+    return Intl.message(
+      'Notice period',
+      name: 'noticePeriod',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Days before renewal`
+  String get noticePeriodDays {
+    return Intl.message(
+      'Days before renewal',
+      name: 'noticePeriodDays',
+      desc: 'Unit shown next to the notice period input',
+      args: [],
+    );
+  }
+
+  /// `No notice period`
+  String get noNoticePeriod {
+    return Intl.message(
+      'No notice period',
+      name: 'noNoticePeriod',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel by`
+  String get cancelBy {
+    return Intl.message(
+      'Cancel by',
+      name: 'cancelBy',
+      desc: 'Precedes the last date on which the user can still cancel',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

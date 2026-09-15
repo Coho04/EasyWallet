@@ -20,22 +20,24 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(count) => "${count} subscriptions";
+  static String m0(title) => "Last chance to cancel ${title}";
 
-  static String m1(title) => "\"${title}\" will be deleted permanently.";
+  static String m1(count) => "${count} subscriptions";
 
-  static String m2(count) => "${count} subscriptions imported";
+  static String m2(title) => "\"${title}\" will be deleted permanently.";
 
-  static String m3(amount) => "${amount} over";
+  static String m3(count) => "${count} subscriptions imported";
 
-  static String m4(title) => "Your subscription ${title} is due soon!";
+  static String m4(amount) => "${amount} over";
 
-  static String m5(title, price) =>
+  static String m5(title) => "Your subscription ${title} is due soon!";
+
+  static String m6(title, price) =>
       "Your subscription ${title} (${price} €) is due soon!";
 
-  static String m6(current, total) => "Step ${current} of ${total}";
+  static String m7(current, total) => "Step ${current} of ${total}";
 
-  static String m7(title) => "The trial of ${title} ends soon";
+  static String m8(title) => "The trial of ${title} ends soon";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -74,6 +76,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "calendar": MessageLookupByLibrary.simpleMessage("Calendar"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "cancelBy": MessageLookupByLibrary.simpleMessage("Cancel by"),
+    "cancellationDeadlineSoon": m0,
+    "cancellationReminder": MessageLookupByLibrary.simpleMessage(
+      "Cancellation deadline",
+    ),
     "catalogCachedNotice": MessageLookupByLibrary.simpleMessage(
       "Last loaded results",
     ),
@@ -144,7 +151,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "costShare": MessageLookupByLibrary.simpleMessage("Cost share"),
     "costs": MessageLookupByLibrary.simpleMessage("Costs"),
     "couldNotLaunch": MessageLookupByLibrary.simpleMessage("Could not launch"),
-    "countSubscriptions": m0,
+    "countSubscriptions": m1,
     "createdOn": MessageLookupByLibrary.simpleMessage("Created on"),
     "creditCard": MessageLookupByLibrary.simpleMessage("Creditcard"),
     "currency": MessageLookupByLibrary.simpleMessage("Currency"),
@@ -177,7 +184,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "deleteSubscription": MessageLookupByLibrary.simpleMessage(
       "Delete this subscription",
     ),
-    "deleteSubscriptionHint": m1,
+    "deleteSubscriptionHint": m2,
     "deleteSubscriptionQuestion": MessageLookupByLibrary.simpleMessage(
       "Delete?",
     ),
@@ -249,7 +256,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "import": MessageLookupByLibrary.simpleMessage("Import"),
     "importData": MessageLookupByLibrary.simpleMessage("Import Data"),
     "importFailed": MessageLookupByLibrary.simpleMessage("Import failed"),
-    "importedCount": m2,
+    "importedCount": m3,
     "imprint": MessageLookupByLibrary.simpleMessage("Imprint"),
     "inTrial": MessageLookupByLibrary.simpleMessage("Trial"),
     "includeCostInNotifications": MessageLookupByLibrary.simpleMessage(
@@ -291,6 +298,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "noDataYet": MessageLookupByLibrary.simpleMessage("No data yet"),
     "noEndDate": MessageLookupByLibrary.simpleMessage("No end date"),
     "noEntriesFound": MessageLookupByLibrary.simpleMessage("No entries found"),
+    "noNoticePeriod": MessageLookupByLibrary.simpleMessage("No notice period"),
     "noPriceChanges": MessageLookupByLibrary.simpleMessage(
       "No price changes yet",
     ),
@@ -301,6 +309,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "noTrial": MessageLookupByLibrary.simpleMessage("No trial"),
     "notShared": MessageLookupByLibrary.simpleMessage("Not shared"),
     "notes": MessageLookupByLibrary.simpleMessage("Notes"),
+    "noticePeriod": MessageLookupByLibrary.simpleMessage("Notice period"),
+    "noticePeriodDays": MessageLookupByLibrary.simpleMessage(
+      "Days before renewal",
+    ),
     "notificationTime": MessageLookupByLibrary.simpleMessage(
       "Notification Time",
     ),
@@ -315,7 +327,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "outstandingExpenditureMonth": MessageLookupByLibrary.simpleMessage(
       "Outstanding expenditure month",
     ),
-    "overBudgetBy": m3,
+    "overBudgetBy": m4,
     "overview": MessageLookupByLibrary.simpleMessage("Overview"),
     "pause": MessageLookupByLibrary.simpleMessage("Pause"),
     "pauseSubscription": MessageLookupByLibrary.simpleMessage(
@@ -376,8 +388,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "subscriptionCurrency": MessageLookupByLibrary.simpleMessage(
       "Subscription currency",
     ),
-    "subscriptionIsDueSoon": m4,
-    "subscriptionIsDueSoonWithPrice": m5,
+    "subscriptionIsDueSoon": m5,
+    "subscriptionIsDueSoonWithPrice": m6,
     "subscriptionReminder": MessageLookupByLibrary.simpleMessage(
       "Subscription Reminder",
     ),
@@ -408,7 +420,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tourCategoriesTitle": MessageLookupByLibrary.simpleMessage("Categories"),
     "tourDone": MessageLookupByLibrary.simpleMessage("Done"),
     "tourNext": MessageLookupByLibrary.simpleMessage("Next"),
-    "tourProgress": m6,
+    "tourProgress": m7,
     "tourRestartAction": MessageLookupByLibrary.simpleMessage("View"),
     "tourRestartLabel": MessageLookupByLibrary.simpleMessage("App tour"),
     "tourSettingsBody": MessageLookupByLibrary.simpleMessage(
@@ -427,7 +439,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Your subscriptions",
     ),
     "trialEndDate": MessageLookupByLibrary.simpleMessage("Trial end"),
-    "trialEndsSoon": m7,
+    "trialEndsSoon": m8,
     "trialReminder": MessageLookupByLibrary.simpleMessage("Trial ending"),
     "twoDaysBefore": MessageLookupByLibrary.simpleMessage("Two Days Before"),
     "unknown": MessageLookupByLibrary.simpleMessage("unknown"),
