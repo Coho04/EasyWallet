@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/sort_option.dart';
+import 'package:easy_wallet/class/billing_schedule.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:easy_wallet/persistence_controller.dart';
 import 'package:easy_wallet/provider/category_provider.dart';
@@ -173,32 +174,30 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
     return filtered;
   }
 
+  /// What is actually billed in the current calendar month. A yearly
+  /// subscription only counts in its anniversary month, a quarterly one in
+  /// every third month — which is why the months are counted rather than
+  /// guessed from the interval name.
   double _calcMonthly(List<Subscription> subs) {
     final now = DateTime.now();
-    double total = 0.0;
+    final firstOfMonth = DateTime(now.year, now.month, 1);
+    final lastOfMonth = DateTime(now.year, now.month + 1, 0);
+
+    var total = 0.0;
     for (final s in subs) {
       if (s.isPaused) continue;
-      if (s.repeatPattern == 'monthly') {
-        total += s.amount;
-      } else if (s.repeatPattern == 'yearly') {
-        // yearly sub bills in the same calendar month each year
-        if (s.date != null && s.date!.month == now.month) {
-          total += s.amount;
-        }
-      }
+      total +=
+          s.amount * BillingSchedule.datesFor(s, firstOfMonth, lastOfMonth).length;
     }
     return total;
   }
 
+  /// What a full year of the active subscriptions costs.
   double _calcYearly(List<Subscription> subs) {
-    double total = 0.0;
+    var total = 0.0;
     for (final s in subs) {
       if (s.isPaused) continue;
-      if (s.repeatPattern == 'monthly') {
-        total += s.amount * 12;
-      } else if (s.repeatPattern == 'yearly') {
-        total += s.amount;
-      }
+      total += s.rate.perYear(s.amount);
     }
     return total;
   }

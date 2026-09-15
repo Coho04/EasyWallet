@@ -3,7 +3,6 @@ import 'package:easy_wallet/generated/l10n.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/model/subscription.dart';
-import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/views/components/color_picker_sheet.dart';
 import 'package:easy_wallet/model/category.dart';
@@ -196,10 +195,7 @@ class CategoryIndexViewState extends State<CategoryIndexView> {
     var monthly = 0.0;
     for (final subscription in subscriptions) {
       if (subscription.isPaused || subscription.isExpired) continue;
-      final share = subscription.shareIn(currency.name, rates);
-      monthly += subscription.repeatPattern == PaymentRate.yearly.value
-          ? share / 12
-          : share;
+      monthly += subscription.monthlyShareIn(currency.name, rates);
     }
 
     final count = subscriptions.length;

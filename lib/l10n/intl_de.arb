@@ -348,5 +348,37 @@
   "catalogEmpty": "Im Katalog sind noch keine Dienste hinterlegt.",
   "@catalogEmpty": {
     "description": "Shown when the catalog was read successfully but holds nothing"
+  },
+  "quarterly": "Vierteljährlich",
+  "@quarterly": {
+    "description": "Billing interval: every three months"
+  },
+  "fourMonthly": "Alle 4 Monate",
+  "@fourMonthly": {
+    "description": "Billing interval: every four months"
+  },
+  "halfYearly": "Halbjährlich",
+  "@halfYearly": {
+    "description": "Billing interval: every six months"
+  },
+  "rateShortMonthly": "M",
+  "@rateShortMonthly": {
+    "description": "Abbreviation after a price, e.g. \"12.99 EUR/M\""
+  },
+  "rateShortQuarterly": "3M",
+  "@rateShortQuarterly": {
+    "description": "Abbreviation after a price billed every three months"
+  },
+  "rateShortFourMonthly": "4M",
+  "@rateShortFourMonthly": {
+    "description": "Abbreviation after a price billed every four months"
+  },
+  "rateShortHalfYearly": "6M",
+  "@rateShortHalfYearly": {
+    "description": "Abbreviation after a price billed every six months"
+  },
+  "rateShortYearly": "J",
+  "@rateShortYearly": {
+    "description": "Abbreviation after a price billed once a year"
   }
 }

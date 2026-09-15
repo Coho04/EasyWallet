@@ -57,10 +57,7 @@ class SubscriptionListComponentState
   }
 
   String _cycleLabel(BuildContext context) {
-    final pattern = widget.subscription.repeatPattern;
-    if (pattern == 'yearly') return S.of(context).yearly;
-    if (pattern == 'monthly') return S.of(context).monthly;
-    return '';
+    return widget.subscription.rate.translate();
   }
 
   @override

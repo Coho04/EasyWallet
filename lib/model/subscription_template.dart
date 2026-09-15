@@ -243,7 +243,10 @@ class TemplatePlan {
     }
     final wanted = interval.trim().toLowerCase();
     for (final rate in PaymentRate.values) {
-      if (rate.value == wanted) {
+      // Both sides lowercased: the interval names are camelCase internally,
+      // so comparing a lowercased input against them directly would never
+      // match "fourMonthly" no matter how the catalog spells it.
+      if (rate.value.toLowerCase() == wanted) {
         return rate;
       }
     }

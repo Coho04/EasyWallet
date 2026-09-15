@@ -1,10 +1,15 @@
 import 'package:easy_wallet/class/data_transfer.dart';
+import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/model/category.dart';
 import 'package:easy_wallet/model/subscription.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Subscription sub({String title = 'Netflix', double amount = 9.99}) {
+Subscription sub({
+  String title = 'Netflix',
+  double amount = 9.99,
+  String repeatPattern = 'monthly',
+}) {
   return Subscription(
     id: 1,
     amount: amount,
@@ -15,7 +20,7 @@ Subscription sub({String title = 'Netflix', double amount = 9.99}) {
     isPaused: false,
     isPinned: true,
     repeating: true,
-    repeatPattern: 'monthly',
+    repeatPattern: repeatPattern,
     rememberCycle: 'day_before',
     title: title,
   );
@@ -48,6 +53,24 @@ void main() {
       expect(restored.isPinned, isTrue);
       expect(restored.repeatPattern, 'monthly');
       expect(restored.rememberCycle, 'day_before');
+    });
+
+
+    test('carries every billing interval through a backup', () {
+      // A backup is the one place a subscription leaves the app and comes
+      // back. An interval lost here turns into a monthly subscription on
+      // restore, with every total three or twelve times off.
+      for (final rate in PaymentRate.values) {
+        final json = DataTransfer.encode(
+          subscriptions: [sub(repeatPattern: rate.value)],
+          categories: [],
+        );
+
+        final restored = DataTransfer.decode(json).subscriptions.single;
+
+        expect(restored.repeatPattern, rate.value, reason: rate.value);
+        expect(restored.rate, rate, reason: rate.value);
+      }
     });
 
     test('records which version wrote the backup', () {

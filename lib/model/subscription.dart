@@ -84,64 +84,58 @@ class Subscription {
     };
   }
 
+  /// The billing interval. Falls back to monthly when a subscription carries
+  /// none, which is what [PaymentRate.findByName] has always done.
+  PaymentRate get rate => PaymentRate.findByName(repeatPattern ?? '');
+
+  /// The first billing strictly after [day].
+  ///
+  /// Every date question below goes through here, so a new interval is
+  /// supported everywhere at once instead of in four places that each have to
+  /// remember it.
+  DateTime nextBillAfter(DateTime day) {
+    final anchor = date!;
+    for (var step = 0;; step++) {
+      final occurrence = rate.shift(anchor, step);
+      if (occurrence.isAfter(day)) {
+        return occurrence;
+      }
+    }
+  }
+
   int remainingDays() {
     if (date == null) return 0;
-    DateTime nextBillDate = date!;
-    DateTime today = DateTime.now();
-    DateTime todayDateOnly = DateTime(today.year, today.month, today.day);
-
-    if (repeatPattern == PaymentRate.yearly.value) {
-      while (nextBillDate.isBefore(todayDateOnly) ||
-          nextBillDate.isAtSameMomentAs(todayDateOnly)) {
-        nextBillDate = DateTime(
-            nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
-      }
-    } else if (repeatPattern == PaymentRate.monthly.value) {
-      while (nextBillDate.isBefore(todayDateOnly) ||
-          nextBillDate.isAtSameMomentAs(todayDateOnly)) {
-        nextBillDate = DateTime(
-            nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
-        while (
-            !DateTime(nextBillDate.year, nextBillDate.month, nextBillDate.day)
-                .isValidDate()) {
-          nextBillDate = DateTime(
-              nextBillDate.year, nextBillDate.month, nextBillDate.day - 1);
-        }
-      }
-    }
-    return nextBillDate.difference(todayDateOnly).inDays;
+    final today = _dateOnly(DateTime.now());
+    return nextBillAfter(today).difference(today).inDays;
   }
 
+  /// The price expressed in the other common unit: a yearly amount per month,
+  /// anything else per year.
   double? convertPrice() {
-    if (repeatPattern == PaymentRate.yearly.value) {
-      return (amount / 12);
-    } else if (repeatPattern == PaymentRate.monthly.value) {
-      return (amount * 12);
+    if (rate == PaymentRate.yearly) {
+      return rate.perMonth(amount);
     }
-    return null;
+    return rate.perYear(amount);
   }
 
+  /// The most recent billing on or before today, or the start date while the
+  /// subscription has not been billed yet.
   DateTime? calculatePreviousBillDate() {
     if (date == null || repeatPattern == null) {
       return null;
     }
-    DateTime today = DateTime.now();
-    DateTime startBillDate = date!;
+    final today = _dateOnly(DateTime.now());
+    final anchor = date!;
 
-    if (repeatPattern == PaymentRate.monthly.value) {
-      while (startBillDate.add(const Duration(days: 31)).isBefore(today)) {
-        startBillDate = DateTime(
-            startBillDate.year, startBillDate.month + 1, startBillDate.day);
+    DateTime? previous;
+    for (var step = 0;; step++) {
+      final occurrence = rate.shift(anchor, step);
+      if (occurrence.isAfter(today)) {
+        break;
       }
-    } else if (repeatPattern == PaymentRate.yearly.value) {
-      while (startBillDate.add(const Duration(days: 366)).isBefore(today)) {
-        startBillDate = DateTime(
-            startBillDate.year + 1, startBillDate.month, startBillDate.day);
-      }
-    } else {
-      return null;
+      previous = occurrence;
     }
-    return startBillDate;
+    return previous ?? _dateOnly(anchor);
   }
 
   Future<Color> getDominantColorFromUrl({String customUrl = ""}) async {
@@ -166,29 +160,7 @@ class Subscription {
     if (date == null) {
       return DateTime.now();
     }
-    DateTime nextBillDate = date!;
-    DateTime today = DateTime.now();
-
-    if (repeatPattern == PaymentRate.yearly.value) {
-      while (!nextBillDate.isAfter(today)) {
-        nextBillDate = DateTime(
-            nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
-      }
-    } else if (repeatPattern == PaymentRate.monthly.value) {
-      while (!nextBillDate.isAfter(today)) {
-        int newMonth = nextBillDate.month + 1;
-        int newYear = nextBillDate.year;
-        if (newMonth > 12) {
-          newMonth = 1;
-          newYear++;
-        }
-        nextBillDate = DateTime(newYear, newMonth, nextBillDate.day);
-        while (nextBillDate.month != newMonth) {
-          nextBillDate = DateTime(newYear, newMonth, nextBillDate.day - 1);
-        }
-      }
-    }
-    return nextBillDate;
+    return nextBillAfter(DateTime.now());
   }
 
   Widget buildImage({
@@ -272,6 +244,19 @@ class Subscription {
 
   bool get isExpired => isExpiredOn(DateTime.now());
 
+  /// This user's share of the cost per month, in [targetCurrency].
+  ///
+  /// The one place that turns a billed amount into a monthly figure. The
+  /// statistics, the category list and the header each used to do it with
+  /// their own `yearly ? /12 : amount`, which counted every interval nobody
+  /// had thought of as if it were billed monthly.
+  double monthlyShareIn(String? targetCurrency, ExchangeRates? rates) =>
+      rate.perMonth(shareIn(targetCurrency, rates));
+
+  /// This user's share of the cost per year, in [targetCurrency].
+  double yearlyShareIn(String? targetCurrency, ExchangeRates? rates) =>
+      rate.perYear(shareIn(targetCurrency, rates));
+
   /// This user's share expressed in [targetCurrency]. Without rates, or when
   /// the subscription has no currency of its own, the amount is used as is.
   double shareIn(String? targetCurrency, ExchangeRates? rates) {
@@ -305,6 +290,9 @@ class Subscription {
 
   bool get isInTrial => isInTrialOn(DateTime.now());
 
+  static DateTime _dateOnly(DateTime date) =>
+      DateTime(date.year, date.month, date.day);
+
   /// The day up to which this subscription is billed: the end date once it has
   /// passed, otherwise [asOf].
   DateTime _billedUntil(DateTime asOf) {
@@ -320,48 +308,27 @@ class Subscription {
       return 0;
     }
     final today = _billedUntil(asOf ?? DateTime.now());
-    DateTime nextBillDate = date!;
-    int count = 0;
-    if (repeatPattern == PaymentRate.yearly.value) {
-      while (nextBillDate.isBefore(today)) {
-        nextBillDate = DateTime(
-            nextBillDate.year + 1, nextBillDate.month, nextBillDate.day);
-        count++;
+    final anchor = date!;
+
+    var count = 0;
+    for (var step = 0;; step++) {
+      if (!rate.shift(anchor, step).isBefore(today)) {
+        break;
       }
-    } else if (repeatPattern == PaymentRate.monthly.value) {
-      while (nextBillDate.isBefore(today)) {
-        nextBillDate = DateTime(
-            nextBillDate.year, nextBillDate.month + 1, nextBillDate.day);
-        count++;
-      }
+      count++;
     }
     return count;
   }
 
+  /// What has been paid so far. Derived from [countPayment] rather than
+  /// counted again on its own: the two used to step through the calendar
+  /// differently, so a subscription could show a payment count and a total
+  /// that did not match.
   double sumPayment({DateTime? asOf}) {
-    if (date == null) {
-      return 0.0;
-    }
-    final today = _billedUntil(asOf ?? DateTime.now());
-    DateTime nextBillDate = date!;
-    Duration interval;
-    if (repeatPattern == PaymentRate.yearly.value) {
-      interval = const Duration(days: 365);
-    } else {
-      interval = const Duration(days: 30);
-    }
-
-    double sum = 0;
-    while (nextBillDate.isBefore(today)) {
-      nextBillDate = nextBillDate.add(interval);
-      sum += amount;
-    }
-    return sum;
+    return countPayment(asOf: asOf) * amount;
   }
 
-  PaymentRate getRepeatPattern() {
-    return PaymentRate.findByName(repeatPattern!);
-  }
+  PaymentRate getRepeatPattern() => rate;
 
   factory Subscription.fromJson(Map<String, dynamic> json) {
     return Subscription(
@@ -505,21 +472,8 @@ class Subscription {
 
 
   String displayConvertedPrice(Currency currency) {
-    String priceString = Money.format(amount, currency.symbol);
-    return repeatPattern == PaymentRate.yearly.value
-        ? '$priceString/${Intl.message('Y')}'
-        : '$priceString/${Intl.message('M')}';
-  }
-}
-
-extension on DateTime {
-  bool isValidDate() {
-    try {
-      DateTime(year, month, day);
-      return true;
-    } catch (e) {
-      return false;
-    }
+    final priceString = Money.format(amount, currency.symbol);
+    return '$priceString/${Intl.message(rate.shortLabelKey)}';
   }
 }
 

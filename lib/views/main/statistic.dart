@@ -17,6 +17,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:easy_wallet/class/billing_schedule.dart';
 import 'package:easy_wallet/model/subscription.dart';
 
 import '../../model/chart_data.dart';
@@ -252,11 +253,8 @@ class StatisticViewState extends State<StatisticView> {
     List<Subscription> nextDue = [];
 
     for (var subscription in subscriptions) {
-      if (subscription.repeatPattern == PaymentRate.monthly.value) {
-        totalMonthlyExpenses += subscription.shareOfAmount;
-      } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
-        totalYearlyExpenses += subscription.shareOfAmount;
-      }
+      totalMonthlyExpenses += subscription.rate.perMonth(subscription.shareOfAmount);
+      totalYearlyExpenses += subscription.rate.perYear(subscription.shareOfAmount);
 
       subscription.isPinned ? pinnedCount++ : unpinnedCount++;
       if (subscription.date != null &&
@@ -273,37 +271,36 @@ class StatisticViewState extends State<StatisticView> {
     nextDueSubscriptions = nextDue;
   }
 
+  /// What is actually billed in the current calendar month, converted into the
+  /// user's currency. Counted from the schedule rather than derived from the
+  /// interval name, so every interval lands in the right month.
   double _calcMonthly(List<Subscription> subs) {
     final provider = Provider.of<CurrencyProvider>(context, listen: false);
     final currency = provider.currency;
     final rates = provider.rates;
     final now = DateTime.now();
-    double total = 0.0;
+    final firstOfMonth = DateTime(now.year, now.month, 1);
+    final lastOfMonth = DateTime(now.year, now.month + 1, 0);
+
+    var total = 0.0;
     for (final s in subs) {
       if (s.isPaused || s.isExpired) continue;
-      if (s.repeatPattern == 'monthly') {
-        total += s.shareIn(currency.name, rates);
-      } else if (s.repeatPattern == 'yearly') {
-        if (s.date != null && s.date!.month == now.month) {
-          total += s.shareIn(currency.name, rates);
-        }
-      }
+      total += s.shareIn(currency.name, rates) *
+          BillingSchedule.datesFor(s, firstOfMonth, lastOfMonth).length;
     }
     return total;
   }
 
+  /// What a full year of the active subscriptions costs.
   double _calcYearly(List<Subscription> subs) {
     final provider = Provider.of<CurrencyProvider>(context, listen: false);
     final currency = provider.currency;
     final rates = provider.rates;
-    double total = 0.0;
+
+    var total = 0.0;
     for (final s in subs) {
       if (s.isPaused || s.isExpired) continue;
-      if (s.repeatPattern == 'monthly') {
-        total += s.shareIn(currency.name, rates) * 12;
-      } else if (s.repeatPattern == 'yearly') {
-        total += s.shareIn(currency.name, rates);
-      }
+      total += s.yearlyShareIn(currency.name, rates);
     }
     return total;
   }
@@ -331,8 +328,7 @@ class StatisticViewState extends State<StatisticView> {
   }
 
   Widget _top3Row(Subscription sub, Currency currency) {
-    final equiv =
-        sub.repeatPattern == 'yearly' ? sub.amount / 12 : sub.amount;
+    final equiv = sub.rate.perMonth(sub.amount);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: GestureDetector(
@@ -410,10 +406,8 @@ class StatisticViewState extends State<StatisticView> {
   List<Subscription> _top3Subscriptions(List<Subscription> subscriptions) {
     final active = subscriptions.where((s) => !s.isPaused).toList();
     active.sort((a, b) {
-      final aEquiv =
-          a.repeatPattern == 'yearly' ? a.amount / 12 : a.amount;
-      final bEquiv =
-          b.repeatPattern == 'yearly' ? b.amount / 12 : b.amount;
+      final aEquiv = a.rate.perMonth(a.amount);
+      final bEquiv = b.rate.perMonth(b.amount);
       return bEquiv.compareTo(aEquiv);
     });
     return active.take(3).toList();
@@ -426,9 +420,7 @@ class StatisticViewState extends State<StatisticView> {
     final perMethod = <String, double>{};
     for (final s in subscriptions) {
       if (s.isPaused || s.isExpired) continue;
-      final monthly = s.repeatPattern == PaymentRate.yearly.value
-          ? s.shareOfAmount / 12
-          : s.shareOfAmount;
+      final monthly = s.rate.perMonth(s.shareOfAmount);
       final method = PaymentMethode.findByName(
               s.paymentMethode ?? PaymentMethode.invoice.value)
           .translate();
@@ -577,59 +569,23 @@ class StatisticViewState extends State<StatisticView> {
 
   Future<String> calculateExpensesToEndOfYear(
       List<Subscription> subscriptions, Currency currency) async {
-    double yearlyExpenses = 0.0;
-    DateTime today = DateTime.now();
-    DateTime endOfYear = DateTime(today.year, 12, 31);
+    final today = DateTime.now();
+    final tomorrow =
+        DateTime(today.year, today.month, today.day).add(const Duration(days: 1));
+    final endOfYear = DateTime(today.year, 12, 31);
 
-    for (var subscription in subscriptions) {
+    var yearlyExpenses = 0.0;
+    for (final subscription in subscriptions) {
       if (subscription.isPaused) continue;
-      DateTime nextDueDate = subscription.getNextBillDate();
-      if (subscription.repeatPattern == PaymentRate.monthly.value) {
-        while (nextDueDate.isBefore(endOfYear.add(const Duration(days: 1)))) {
-          yearlyExpenses += subscription.amount;
-          nextDueDate = DateTime(
-              nextDueDate.year, nextDueDate.month + 1, nextDueDate.day);
-        }
-      } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
-        if (nextDueDate.isBefore(endOfYear.add(const Duration(days: 1)))) {
-          yearlyExpenses += subscription.amount;
-        }
-      }
+      yearlyExpenses += subscription.amount *
+          BillingSchedule.datesFor(subscription, tomorrow, endOfYear).length;
     }
     return Money.format(yearlyExpenses, currency.symbol);
   }
 
   DateTime? getNextDueDate(Subscription subscription, DateTime referenceDate) {
     if (subscription.date == null) return null;
-    DateTime startDate = subscription.date!;
-    if (startDate.isAfter(referenceDate)) {
-      return startDate;
-    }
-
-    if (subscription.repeatPattern == PaymentRate.monthly.value) {
-      DateTime nextDueDate =
-          DateTime(startDate.year, startDate.month, startDate.day);
-      while (nextDueDate.isBefore(referenceDate) ||
-          nextDueDate.isAtSameMomentAs(referenceDate)) {
-        nextDueDate = DateTime(nextDueDate.year, nextDueDate.month + 1, 1);
-        int lastDayOfMonth =
-            DateTime(nextDueDate.year, nextDueDate.month + 1, 0).day;
-        nextDueDate = DateTime(nextDueDate.year, nextDueDate.month,
-            min(startDate.day, lastDayOfMonth));
-      }
-      return nextDueDate;
-    } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
-      DateTime nextDueDate =
-          DateTime(startDate.year + 1, startDate.month, startDate.day);
-      while (nextDueDate.isBefore(referenceDate) ||
-          nextDueDate.isAtSameMomentAs(referenceDate)) {
-        nextDueDate =
-            DateTime(nextDueDate.year + 1, nextDueDate.month, startDate.day);
-      }
-      return nextDueDate;
-    } else {
-      return null;
-    }
+    return subscription.nextBillAfter(referenceDate);
   }
 
   Widget _buildChart(List<CartesianSeries<ChartData, String>> data) {
@@ -665,34 +621,24 @@ class StatisticViewState extends State<StatisticView> {
   List<CartesianSeries<ChartData, String>> _makeYearlyToMonthlyData(
       List<Subscription> subscriptions) {
     List<CartesianSeries<ChartData, String>> seriesList = [];
-    double totalMonthlyAmount = subscriptions
-        .where((subscription) =>
-            subscription.repeatPattern == PaymentRate.monthly.value)
-        .fold(0.0, (sum, subscription) => sum + subscription.amount * 12);
 
-    double totalYearlyAmount = subscriptions
-        .where((subscription) =>
-            subscription.repeatPattern == PaymentRate.yearly.value)
-        .fold(0.0, (sum, subscription) => sum + subscription.amount);
+    // Every interval gets its own column, and each subscription is annualised
+    // first so a quarterly and a yearly one can be compared at all.
+    final double totalAmount = subscriptions.fold(
+        0.0, (sum, subscription) => sum + subscription.rate.perYear(subscription.amount));
 
-    if (totalMonthlyAmount == 0 || totalYearlyAmount == 0) {
-      String placeholderCategory =
-          (totalMonthlyAmount == 0) ? 'monthly' : 'yearly';
+    if (totalAmount == 0) {
       seriesList.add(
-        buildPlaceholderSeries(placeholderCategory, stackedColumnSeries: true),
+        buildPlaceholderSeries(PaymentRate.monthly.value,
+            stackedColumnSeries: true),
       );
+      return seriesList;
     }
-    double totalAmount = totalMonthlyAmount + totalYearlyAmount;
 
     for (var subscription in subscriptions) {
-      String category = subscription.repeatPattern == PaymentRate.monthly.value
-          ? 'monthly'
-          : 'yearly';
+      String category = subscription.rate.value;
 
-      double actualAmount =
-          subscription.repeatPattern == PaymentRate.monthly.value
-              ? subscription.amount * 12
-              : subscription.amount;
+      double actualAmount = subscription.rate.perYear(subscription.amount);
 
       double percentage = (actualAmount / totalAmount) * 100;
 

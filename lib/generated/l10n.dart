@@ -2009,6 +2009,86 @@ class S {
       args: [],
     );
   }
+
+  /// `Quarterly`
+  String get quarterly {
+    return Intl.message(
+      'Quarterly',
+      name: 'quarterly',
+      desc: 'Billing interval: every three months',
+      args: [],
+    );
+  }
+
+  /// `Every 4 months`
+  String get fourMonthly {
+    return Intl.message(
+      'Every 4 months',
+      name: 'fourMonthly',
+      desc: 'Billing interval: every four months',
+      args: [],
+    );
+  }
+
+  /// `Every 6 months`
+  String get halfYearly {
+    return Intl.message(
+      'Every 6 months',
+      name: 'halfYearly',
+      desc: 'Billing interval: every six months',
+      args: [],
+    );
+  }
+
+  /// `M`
+  String get rateShortMonthly {
+    return Intl.message(
+      'M',
+      name: 'rateShortMonthly',
+      desc: 'Abbreviation after a price, e.g. "12.99 EUR/M"',
+      args: [],
+    );
+  }
+
+  /// `3M`
+  String get rateShortQuarterly {
+    return Intl.message(
+      '3M',
+      name: 'rateShortQuarterly',
+      desc: 'Abbreviation after a price billed every three months',
+      args: [],
+    );
+  }
+
+  /// `4M`
+  String get rateShortFourMonthly {
+    return Intl.message(
+      '4M',
+      name: 'rateShortFourMonthly',
+      desc: 'Abbreviation after a price billed every four months',
+      args: [],
+    );
+  }
+
+  /// `6M`
+  String get rateShortHalfYearly {
+    return Intl.message(
+      '6M',
+      name: 'rateShortHalfYearly',
+      desc: 'Abbreviation after a price billed every six months',
+      args: [],
+    );
+  }
+
+  /// `Y`
+  String get rateShortYearly {
+    return Intl.message(
+      'Y',
+      name: 'rateShortYearly',
+      desc: 'Abbreviation after a price billed once a year',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -177,9 +177,26 @@ void main() {
         isNull,
       );
       expect(
-        plan('{"amount_minor": 500, "currency": "EUR", "interval": "quarterly"}'),
+        plan('{"amount_minor": 500, "currency": "EUR", "interval": "daily"}'),
         isNull,
       );
+    });
+
+    test('reads the intervals the app has since learned', () {
+      // The catalog contract cut quarterly prices because the app could not
+      // express them. It can now, so they must survive parsing.
+      for (final interval in const {
+        'quarterly': PaymentRate.quarterly,
+        'fourMonthly': PaymentRate.fourMonthly,
+        'halfYearly': PaymentRate.halfYearly,
+      }.entries) {
+        final parsed = plan(
+            '{"amount_minor": 4999, "currency": "EUR", "interval": "${interval.key}"}');
+
+        expect(parsed, isNotNull, reason: interval.key);
+        expect(parsed!.rate, interval.value);
+        expect(parsed.amount, closeTo(49.99, 0.001));
+      }
     });
 
     test('drops a plan without a usable amount', () {

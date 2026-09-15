@@ -443,4 +443,144 @@ void main() {
     });
   });
 
+
+  group('BillingSchedule with intervals of several months', () {
+    test('bills a quarterly subscription every third month', () {
+      final dates = BillingSchedule.datesFor(
+        sub(
+          title: 'Quarterly',
+          date: DateTime(2026, 1, 15),
+          repeatPattern: PaymentRate.quarterly.value,
+        ),
+        DateTime(2026, 1, 1),
+        DateTime(2026, 12, 31),
+      );
+
+      expect(dates, [
+        DateTime(2026, 1, 15),
+        DateTime(2026, 4, 15),
+        DateTime(2026, 7, 15),
+        DateTime(2026, 10, 15),
+      ]);
+    });
+
+    test('bills a four-monthly subscription three times a year', () {
+      final dates = BillingSchedule.datesFor(
+        sub(
+          title: 'Every four months',
+          date: DateTime(2026, 2, 1),
+          repeatPattern: PaymentRate.fourMonthly.value,
+        ),
+        DateTime(2026, 1, 1),
+        DateTime(2026, 12, 31),
+      );
+
+      expect(dates, [
+        DateTime(2026, 2, 1),
+        DateTime(2026, 6, 1),
+        DateTime(2026, 10, 1),
+      ]);
+    });
+
+    test('bills a half-yearly subscription twice a year', () {
+      final dates = BillingSchedule.datesFor(
+        sub(
+          title: 'Half yearly',
+          date: DateTime(2026, 3, 9),
+          repeatPattern: PaymentRate.halfYearly.value,
+        ),
+        DateTime(2026, 1, 1),
+        DateTime(2026, 12, 31),
+      );
+
+      expect(dates, [DateTime(2026, 3, 9), DateTime(2026, 9, 9)]);
+    });
+
+    test('carries a quarterly subscription across the turn of the year', () {
+      final dates = BillingSchedule.datesFor(
+        sub(
+          title: 'Quarterly',
+          date: DateTime(2026, 11, 20),
+          repeatPattern: PaymentRate.quarterly.value,
+        ),
+        DateTime(2026, 11, 1),
+        DateTime(2027, 6, 30),
+      );
+
+      expect(dates, [
+        DateTime(2026, 11, 20),
+        DateTime(2027, 2, 20),
+        DateTime(2027, 5, 20),
+      ]);
+    });
+
+    test('keeps the anchor day through a short month', () {
+      final dates = BillingSchedule.datesFor(
+        sub(
+          title: 'Quarterly',
+          date: DateTime(2026, 1, 31),
+          repeatPattern: PaymentRate.quarterly.value,
+        ),
+        DateTime(2026, 1, 1),
+        DateTime(2026, 12, 31),
+      );
+
+      expect(dates, [
+        DateTime(2026, 1, 31),
+        DateTime(2026, 4, 30),
+        DateTime(2026, 7, 31),
+        DateTime(2026, 10, 31),
+      ]);
+    });
+
+    test('counts a quarterly subscription once, not three times, a quarter', () {
+      // The bug this guards against: treating anything that is not yearly as
+      // monthly made a quarterly subscription three times too expensive in
+      // every total the app shows.
+      final byDay = BillingSchedule.byDay(
+        [
+          sub(
+            title: 'Quarterly',
+            amount: 30,
+            date: DateTime(2026, 1, 10),
+            repeatPattern: PaymentRate.quarterly.value,
+          )
+        ],
+        DateTime(2026, 1, 1),
+        DateTime(2026, 12, 31),
+      );
+
+      expect(BillingSchedule.total(byDay), closeTo(120, 0.001));
+    });
+
+    test('stops a longer interval at the end date like any other', () {
+      final dates = BillingSchedule.datesFor(
+        sub(
+          title: 'Quarterly',
+          date: DateTime(2026, 1, 15),
+          endDate: DateTime(2026, 7, 14),
+          repeatPattern: PaymentRate.quarterly.value,
+        ),
+        DateTime(2026, 1, 1),
+        DateTime(2026, 12, 31),
+      );
+
+      expect(dates, [DateTime(2026, 1, 15), DateTime(2026, 4, 15)]);
+    });
+
+    test('skips a longer interval while a trial is running', () {
+      final dates = BillingSchedule.datesFor(
+        sub(
+          title: 'Quarterly',
+          date: DateTime(2026, 1, 15),
+          trialEndDate: DateTime(2026, 5, 1),
+          repeatPattern: PaymentRate.quarterly.value,
+        ),
+        DateTime(2026, 1, 1),
+        DateTime(2026, 12, 31),
+      );
+
+      expect(dates, [DateTime(2026, 7, 15), DateTime(2026, 10, 15)]);
+    });
+  });
 }

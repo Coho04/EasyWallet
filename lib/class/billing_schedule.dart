@@ -63,7 +63,7 @@ class BillingSchedule {
     final dates = <DateTime>[];
 
     for (var step = 0;; step++) {
-      final occurrence = _shift(anchor, pattern, step);
+      final occurrence = pattern.shift(anchor, step);
       if (occurrence.isAfter(rangeEnd)) {
         break;
       }
@@ -119,32 +119,6 @@ class BillingSchedule {
 
     return total;
   }
-
-  /// The [step]th occurrence after [anchor]. The day of month of [anchor] stays
-  /// the anchor: a subscription starting on the 31st falls on the 28th in
-  /// February but returns to the 31st in March instead of drifting.
-  static DateTime _shift(DateTime anchor, PaymentRate pattern, int step) {
-    final int year;
-    final int month;
-
-    if (pattern == PaymentRate.yearly) {
-      year = anchor.year + step;
-      month = anchor.month;
-    } else {
-      final months = anchor.month - 1 + step;
-      year = anchor.year + months ~/ 12;
-      month = months % 12 + 1;
-    }
-
-    final day = anchor.day <= _daysInMonth(year, month)
-        ? anchor.day
-        : _daysInMonth(year, month);
-
-    return DateTime(year, month, day);
-  }
-
-  static int _daysInMonth(int year, int month) =>
-      DateTime(year, month + 1, 0).day;
 
   static DateTime _dateOnly(DateTime date) =>
       DateTime(date.year, date.month, date.day);
