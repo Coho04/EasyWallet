@@ -48,7 +48,7 @@ dependencies:
   sentry_flutter: ^9.29.0
   http: ^1.4.0
   icloud_storage: ^2.2.0
-  image: ^4.9.2
+  image: ^4.10.1
   local_auth: ^3.0.2
   file_picker: ^12.2.0
   auto_size_text: ^3.0.0
