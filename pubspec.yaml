@@ -45,7 +45,7 @@ dependencies:
   path: ^1.9.1
   home_widget: ^0.9.4
   collection: ^1.19.1
-  sentry_flutter: ^9.29.0
+  sentry_flutter: ^10.0.0-alpha.5
   http: ^1.4.0
   icloud_storage: ^2.2.0
   image: ^4.10.1
