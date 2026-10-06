@@ -40,7 +40,7 @@ dependencies:
   timezone: ^0.11.1
   shared_preferences: ^2.5.3
   syncfusion_flutter_charts: ^35.1.37
-  url_launcher: ^6.3.2
+  url_launcher: ^6.3.3
   permission_handler: ^13.0.2
   path: ^1.9.1
   home_widget: ^0.10.0
