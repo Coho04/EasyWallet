@@ -1,4 +1,5 @@
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/model/subscription_icon.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
@@ -67,6 +68,42 @@ void main() {
       expect(json['timestamp'], '2020-01-01T00:00:00.000Z');
       expect(json['title'], 'Netflix');
       expect(json['url'], 'http://netflix.com');
+      // Without a chosen icon the icon columns are present but empty, so
+      // the row and the backup keep the favicon from the URL.
+      expect(json.containsKey('iconType'), isTrue);
+      expect(json['iconType'], isNull);
+      expect(json['iconValue'], isNull);
+      expect(json['iconColor'], isNull);
+    });
+
+    test('toJson writes a chosen icon into the three icon fields', () {
+      var subscription = Subscription(
+          amount: 9.99,
+          isPaused: false,
+          isPinned: false,
+          repeating: true,
+          title: 'Netflix',
+          icon: SubscriptionIcon(
+              type: 'symbol', value: 'tv', color: 0xFFFF0000));
+
+      var json = subscription.toJson();
+      expect(json['iconType'], 'symbol');
+      expect(json['iconValue'], 'tv');
+      expect(json['iconColor'], 0xFFFF0000);
+    });
+
+    test('fromJson reads a chosen icon', () {
+      var subscription = Subscription.fromJson({
+        'amount': 9.99,
+        'title': 'Netflix',
+        'repeatPattern': 'monthly',
+        'iconType': 'emoji',
+        'iconValue': '🎬',
+        'iconColor': null,
+      });
+
+      expect(subscription.icon,
+          SubscriptionIcon(type: 'emoji', value: '🎬'));
     });
   });
 }

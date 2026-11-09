@@ -1,7 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:easy_wallet/class/data_transfer.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/model/category.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/model/subscription_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -88,6 +91,45 @@ void main() {
           throwsA(isA<FormatException>()));
       expect(() => DataTransfer.decode('{"something": 1}'),
           throwsA(isA<FormatException>()));
+    });
+
+    test('carries a chosen icon through a backup', () {
+      // Pictures are embedded in the record precisely so that a backup or a
+      // synced copy brings them back without any files next to it.
+      final picture = Uint8List.fromList(List.generate(300, (i) => i % 256));
+      for (final icon in [
+        SubscriptionIcon.symbol('tv', const Color(0xFF34C759)),
+        SubscriptionIcon.emoji('🎬'),
+        SubscriptionIcon.image(picture),
+      ]) {
+        final json = DataTransfer.encode(
+          subscriptions: [sub()..icon = icon],
+          categories: [],
+        );
+
+        final restored = DataTransfer.decode(json).subscriptions.single;
+
+        expect(restored.icon, icon, reason: icon.type);
+      }
+      final restoredPicture = DataTransfer.decode(DataTransfer.encode(
+        subscriptions: [sub()..icon = SubscriptionIcon.image(picture)],
+        categories: [],
+      )).subscriptions.single.icon!;
+      expect(restoredPicture.imageBytes, picture);
+    });
+
+    test('reads a backup written before icons existed', () {
+      final backup = DataTransfer.decode(
+        '{"version":1,"subscriptions":[{"id":3,"amount":4.99,'
+        '"title":"Spotify","url":"https://spotify.com","isPaused":0,'
+        '"isPinned":0,"repeating":1,"repeatPattern":"monthly"}],'
+        '"categories":[]}',
+      );
+
+      final restored = backup.subscriptions.single;
+      expect(restored.title, 'Spotify');
+      expect(restored.icon, isNull);
+      expect(restored.chosenIcon, isNull);
     });
 
     test('reads a backup without categories', () {

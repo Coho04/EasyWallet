@@ -1,10 +1,10 @@
 import 'package:easy_wallet/enum/currency.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/model/subscription_icon.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/provider/subscription_provider.dart';
 import 'package:easy_wallet/views/components/form_fields/amount_field.dart';
@@ -12,6 +12,7 @@ import 'package:easy_wallet/views/components/form_fields/date_picker_field.dart'
 import 'package:easy_wallet/views/components/form_fields/dropdown_field.dart';
 import 'package:easy_wallet/views/components/form_fields/text_field.dart';
 import 'package:easy_wallet/views/components/gradient_header.dart';
+import 'package:easy_wallet/views/components/icon_picker_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
@@ -50,6 +51,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   String _paymentRate = PaymentRate.monthly.value;
   String _rememberCycle = RememberCycle.dayBefore.value;
   String _selectedPayMethode = PaymentMethode.invoice.value;
+  SubscriptionIcon? _icon;
 
   bool _titleValid = true;
   bool _amountValid = true;
@@ -76,6 +78,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
     _rememberCycle =
         widget.subscription.rememberCycle ?? RememberCycle.dayBefore.value;
     _selectedPayMethode = widget.subscription.paymentMethode ?? PaymentMethode.invoice.value;
+    _icon = widget.subscription.icon;
   }
 
   @override
@@ -119,6 +122,7 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
       subscription.repeatPattern = _paymentRate;
       subscription.rememberCycle = _rememberCycle;
       subscription.paymentMethode = _selectedPayMethode;
+      subscription.icon = _icon;
       subscription =
           await Provider.of<SubscriptionProvider>(context, listen: false)
               .saveSubscription(subscription);
@@ -317,7 +321,11 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
   Widget _buildHeader(bool isDarkMode) {
     return Row(
       children: [
-        _buildImage(),
+        SubscriptionIconPicker(
+          icon: _icon,
+          url: _urlController.text,
+          onChanged: (icon) => setState(() => _icon = icon),
+        ),
         const SizedBox(width: 16),
         Expanded(
           child: CupertinoTextField(
@@ -345,29 +353,6 @@ class SubscriptionEditViewState extends State<SubscriptionEditView> {
         ),
       ],
     );
-  }
-
-  Widget _buildImage() {
-    if (_urlController.text.isEmpty) {
-      return const Icon(
-        CupertinoIcons.creditcard,
-        color: CupertinoColors.systemGrey,
-        size: 40,
-      );
-    } else {
-      return CachedNetworkImage(
-        imageUrl:
-            'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(_urlController.text).host}',
-        placeholder: (context, url) => const CupertinoActivityIndicator(),
-        errorWidget: (context, url, error) => const Icon(
-          CupertinoIcons.exclamationmark_triangle,
-          color: CupertinoColors.systemGrey,
-          size: 40,
-        ),
-        width: 40,
-        height: 40,
-      );
-    }
   }
 
   Future<void> _selectSubscriptionCurrency() async {
