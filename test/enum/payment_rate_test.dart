@@ -22,11 +22,16 @@ void main() {
 
     test('all returns list of all payment rate values', () {
       List<String> expectedValues = [
+        "weekly",
+        "biweekly",
+        "fourWeekly",
         "monthly",
+        "bimonthly",
         "quarterly",
         "fourMonthly",
         "halfYearly",
-        "yearly"
+        "yearly",
+        "biennial",
       ];
       expect(PaymentRate.all(), equals(expectedValues));
     });
@@ -40,8 +45,14 @@ void main() {
     });
 
     test('is ordered from the shortest interval to the longest', () {
-      final months = PaymentRate.values.map((r) => r.monthsPerPeriod).toList();
-      expect(months, [1, 3, 4, 6, 12]);
+      final perYear = PaymentRate.values.map((r) => r.periodsPerYear).toList();
+      for (var i = 1; i < perYear.length; i++) {
+        expect(
+          perYear[i],
+          lessThan(perYear[i - 1]),
+          reason: PaymentRate.values[i].value,
+        );
+      }
     });
 
     test('gives every interval its own abbreviation', () {
@@ -65,6 +76,34 @@ void main() {
       expect(PaymentRate.fourMonthly.perYear(40), closeTo(120, 0.001));
       expect(PaymentRate.halfYearly.perYear(60), closeTo(120, 0.001));
       expect(PaymentRate.yearly.perYear(120), closeTo(120, 0.001));
+      expect(PaymentRate.biennial.perYear(240), closeTo(120, 0.001));
+    });
+
+    test('counts week-based intervals by the average year', () {
+      // 365.2425 / 7 — a year has 52 weeks plus a day or two, so every few
+      // years a 53rd weekly payment falls into it.
+      expect(PaymentRate.weekly.perYear(10), closeTo(521.775, 0.001));
+      expect(PaymentRate.biweekly.perYear(20), closeTo(521.775, 0.001));
+      expect(PaymentRate.fourWeekly.perYear(40), closeTo(521.775, 0.001));
+      expect(PaymentRate.weekly.perMonth(10), closeTo(43.481, 0.001));
+    });
+
+    test('a four-weekly price is more per year than the same monthly one', () {
+      // Gyms bill every four weeks: 13 payments a year, not 12.
+      expect(
+        PaymentRate.fourWeekly.perYear(30),
+        greaterThan(PaymentRate.monthly.perYear(30)),
+      );
+    });
+
+    test('every interval is either week-based or month-based', () {
+      for (final rate in PaymentRate.values) {
+        expect(
+          (rate.monthsPerPeriod > 0) != (rate.daysPerPeriod > 0),
+          isTrue,
+          reason: rate.value,
+        );
+      }
     });
 
     test('per month and per year stay consistent with each other', () {
@@ -92,10 +131,14 @@ void main() {
     });
 
     test('crosses the turn of the year', () {
-      expect(PaymentRate.quarterly.shift(DateTime(2026, 11, 10), 1),
-          DateTime(2027, 2, 10));
-      expect(PaymentRate.fourMonthly.shift(DateTime(2026, 10, 10), 2),
-          DateTime(2027, 6, 10));
+      expect(
+        PaymentRate.quarterly.shift(DateTime(2026, 11, 10), 1),
+        DateTime(2027, 2, 10),
+      );
+      expect(
+        PaymentRate.fourMonthly.shift(DateTime(2026, 10, 10), 2),
+        DateTime(2027, 6, 10),
+      );
     });
 
     test('keeps the anchor day instead of drifting through short months', () {
@@ -118,13 +161,39 @@ void main() {
       expect(PaymentRate.quarterly.shift(leapDay, 4), DateTime(2025, 2, 28));
     });
 
+    test('moves week-based intervals by whole days', () {
+      expect(PaymentRate.weekly.shift(start, 1), DateTime(2026, 1, 22));
+      expect(PaymentRate.biweekly.shift(start, 1), DateTime(2026, 1, 29));
+      expect(PaymentRate.fourWeekly.shift(start, 1), DateTime(2026, 2, 12));
+      expect(
+        PaymentRate.weekly.shift(DateTime(2026, 12, 28), 1),
+        DateTime(2027, 1, 4),
+      );
+    });
+
+    test('keeps week-based billings at midnight across daylight saving', () {
+      // 2026-03-29 is the switch to summer time in Europe.
+      final next = PaymentRate.weekly.shift(DateTime(2026, 3, 25), 1);
+      expect(next, DateTime(2026, 4, 1));
+      expect(next.hour, 0);
+    });
+
+    test('moves the new month-based intervals', () {
+      expect(PaymentRate.bimonthly.shift(start, 1), DateTime(2026, 3, 15));
+      expect(PaymentRate.biennial.shift(start, 1), DateTime(2028, 1, 15));
+    });
+
     test('lands on the same day as repeated single steps', () {
       for (final rate in PaymentRate.values) {
         var stepwise = DateTime(2026, 3, 20);
         for (var i = 0; i < 5; i++) {
           stepwise = rate.shift(stepwise, 1);
         }
-        expect(rate.shift(DateTime(2026, 3, 20), 5), stepwise, reason: rate.value);
+        expect(
+          rate.shift(DateTime(2026, 3, 20), 5),
+          stepwise,
+          reason: rate.value,
+        );
       }
     });
   });

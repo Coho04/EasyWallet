@@ -2090,6 +2090,166 @@ class S {
     );
   }
 
+  /// `Weekly`
+  String get weekly {
+    return Intl.message(
+      'Weekly',
+      name: 'weekly',
+      desc: 'Billing interval: every week',
+      args: [],
+    );
+  }
+
+  /// `Every 2 weeks`
+  String get biweekly {
+    return Intl.message(
+      'Every 2 weeks',
+      name: 'biweekly',
+      desc: 'Billing interval: every two weeks',
+      args: [],
+    );
+  }
+
+  /// `Every 4 weeks`
+  String get fourWeekly {
+    return Intl.message(
+      'Every 4 weeks',
+      name: 'fourWeekly',
+      desc: 'Billing interval: every four weeks (13 times a year)',
+      args: [],
+    );
+  }
+
+  /// `Every 2 months`
+  String get bimonthly {
+    return Intl.message(
+      'Every 2 months',
+      name: 'bimonthly',
+      desc: 'Billing interval: every two months',
+      args: [],
+    );
+  }
+
+  /// `Every 2 years`
+  String get biennial {
+    return Intl.message(
+      'Every 2 years',
+      name: 'biennial',
+      desc: 'Billing interval: every two years',
+      args: [],
+    );
+  }
+
+  /// `W`
+  String get rateShortWeekly {
+    return Intl.message(
+      'W',
+      name: 'rateShortWeekly',
+      desc: 'Abbreviation after a price billed every week',
+      args: [],
+    );
+  }
+
+  /// `2W`
+  String get rateShortBiweekly {
+    return Intl.message(
+      '2W',
+      name: 'rateShortBiweekly',
+      desc: 'Abbreviation after a price billed every two weeks',
+      args: [],
+    );
+  }
+
+  /// `4W`
+  String get rateShortFourWeekly {
+    return Intl.message(
+      '4W',
+      name: 'rateShortFourWeekly',
+      desc: 'Abbreviation after a price billed every four weeks',
+      args: [],
+    );
+  }
+
+  /// `2M`
+  String get rateShortBimonthly {
+    return Intl.message(
+      '2M',
+      name: 'rateShortBimonthly',
+      desc: 'Abbreviation after a price billed every two months',
+      args: [],
+    );
+  }
+
+  /// `2Y`
+  String get rateShortBiennial {
+    return Intl.message(
+      '2Y',
+      name: 'rateShortBiennial',
+      desc: 'Abbreviation after a price billed every two years',
+      args: [],
+    );
+  }
+
+  /// `App Store`
+  String get app_store {
+    return Intl.message(
+      'App Store',
+      name: 'app_store',
+      desc: 'Payment method: billed through Apple\'s App Store',
+      args: [],
+    );
+  }
+
+  /// `Google Play`
+  String get google_play {
+    return Intl.message(
+      'Google Play',
+      name: 'google_play',
+      desc: 'Payment method: billed through Google Play',
+      args: [],
+    );
+  }
+
+  /// `Klarna`
+  String get klarna {
+    return Intl.message(
+      'Klarna',
+      name: 'klarna',
+      desc: 'Payment method',
+      args: [],
+    );
+  }
+
+  /// `Amazon Pay`
+  String get amazon_pay {
+    return Intl.message(
+      'Amazon Pay',
+      name: 'amazon_pay',
+      desc: 'Payment method',
+      args: [],
+    );
+  }
+
+  /// `Bank transfer`
+  String get bank_transfer {
+    return Intl.message(
+      'Bank transfer',
+      name: 'bank_transfer',
+      desc: 'Payment method: manual bank transfer',
+      args: [],
+    );
+  }
+
+  /// `Cash`
+  String get cash {
+    return Intl.message(
+      'Cash',
+      name: 'cash',
+      desc: 'Payment method: cash',
+      args: [],
+    );
+  }
+
   /// `Cancellation deadline`
   String get cancellationReminder {
     return Intl.message(

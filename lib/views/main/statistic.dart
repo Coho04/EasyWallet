@@ -491,29 +491,6 @@ class StatisticViewState extends State<StatisticView> {
     );
   }
 
-  double calculateMonthlyExpenses(List<Subscription> subscriptions) {
-    var totalMonthlyExpenses = 0.0;
-    for (var subscription in subscriptions) {
-      if (subscription.repeatPattern == PaymentRate.monthly.value) {
-        totalMonthlyExpenses += subscription.shareOfAmount;
-      }
-    }
-    return totalMonthlyExpenses;
-  }
-
-  double calculateTotalSpentThisYear(List<Subscription> subscriptions) {
-    double totalExpenses = 0.0;
-    for (var subscription in subscriptions) {
-      if (subscription.isPaused) continue;
-      if (subscription.repeatPattern == PaymentRate.monthly.value) {
-        totalExpenses += subscription.shareOfAmount * 12;
-      } else if (subscription.repeatPattern == PaymentRate.yearly.value) {
-        totalExpenses += subscription.shareOfAmount;
-      }
-    }
-    return totalExpenses;
-  }
-
   List<PieChartSectionData> buildPieChartSections(
       List<Subscription> subscriptions) {
     double totalExpenses =

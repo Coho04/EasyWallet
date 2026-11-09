@@ -7,6 +7,12 @@ enum PaymentMethode with TranslatableEnum {
   sepa(value: 'sepa', color: Colors.cyan),
   applePay(value: 'apple_pay', color: Colors.grey),
   googlePay(value: 'google_pay', color: Colors.greenAccent),
+  appStore(value: 'app_store', color: Colors.blueGrey),
+  googlePlay(value: 'google_play', color: Colors.green),
+  klarna(value: 'klarna', color: Colors.pinkAccent),
+  amazonPay(value: 'amazon_pay', color: Colors.amber),
+  bankTransfer(value: 'bank_transfer', color: Colors.indigo),
+  cash(value: 'cash', color: Colors.brown),
   invoice(value: 'invoice', color: Colors.orange);
 
   const PaymentMethode({
@@ -14,9 +20,12 @@ enum PaymentMethode with TranslatableEnum {
     required this.color,
   });
 
+  /// Falls back to [invoice] for a value this version does not know — e.g.
+  /// from a backup made by a newer version — instead of throwing.
   static PaymentMethode findByName(String name) {
     return PaymentMethode.values.firstWhere(
-          (e) => e.value == name,
+      (e) => e.value == name,
+      orElse: () => PaymentMethode.invoice,
     );
   }
 

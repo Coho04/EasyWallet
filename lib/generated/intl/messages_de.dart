@@ -72,9 +72,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "alphabeticalDescending": MessageLookupByLibrary.simpleMessage(
       "Alphabetisch absteigend",
     ),
+    "amazon_pay": MessageLookupByLibrary.simpleMessage("Amazon Pay"),
     "appCurrency": MessageLookupByLibrary.simpleMessage("App-Währung"),
     "appStats": MessageLookupByLibrary.simpleMessage("App Statistiken"),
+    "app_store": MessageLookupByLibrary.simpleMessage("App Store"),
     "apple_pay": MessageLookupByLibrary.simpleMessage("Apple Pay"),
+    "bank_transfer": MessageLookupByLibrary.simpleMessage("Überweisung"),
+    "biennial": MessageLookupByLibrary.simpleMessage("Alle 2 Jahre"),
+    "bimonthly": MessageLookupByLibrary.simpleMessage("Alle 2 Monate"),
+    "biweekly": MessageLookupByLibrary.simpleMessage("Alle 2 Wochen"),
     "byPaymentMethod": MessageLookupByLibrary.simpleMessage("Nach Zahlungsart"),
     "calendar": MessageLookupByLibrary.simpleMessage("Kalender"),
     "cancel": MessageLookupByLibrary.simpleMessage("Abbrechen"),
@@ -83,6 +89,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancellationReminder": MessageLookupByLibrary.simpleMessage(
       "Kündigungsfrist",
     ),
+    "cash": MessageLookupByLibrary.simpleMessage("Bar"),
     "catalogCachedNotice": MessageLookupByLibrary.simpleMessage(
       "Zuletzt geladene Ergebnisse",
     ),
@@ -252,6 +259,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
     "firstDebit": MessageLookupByLibrary.simpleMessage("Erste Lastschrift"),
     "fourMonthly": MessageLookupByLibrary.simpleMessage("Alle 4 Monate"),
+    "fourWeekly": MessageLookupByLibrary.simpleMessage("Alle 4 Wochen"),
     "general": MessageLookupByLibrary.simpleMessage("Allgemein"),
     "generalInformation": MessageLookupByLibrary.simpleMessage(
       "Allgemeine Informationen",
@@ -266,6 +274,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Google Drive Abmeldung erfolgreich",
     ),
     "google_pay": MessageLookupByLibrary.simpleMessage("Google Pay"),
+    "google_play": MessageLookupByLibrary.simpleMessage("Google Play"),
     "halfYearly": MessageLookupByLibrary.simpleMessage("Halbjährlich"),
     "help": MessageLookupByLibrary.simpleMessage("Hilfe"),
     "hint": MessageLookupByLibrary.simpleMessage("Hinweis"),
@@ -290,6 +299,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "issuesOfMonthlySubscriptions": MessageLookupByLibrary.simpleMessage(
       "Ausgaben der Monatlichen Abonnements",
     ),
+    "klarna": MessageLookupByLibrary.simpleMessage("Klarna"),
     "limitLabel": MessageLookupByLibrary.simpleMessage("Limit"),
     "loading": MessageLookupByLibrary.simpleMessage("Laden..."),
     "month": MessageLookupByLibrary.simpleMessage("Monat"),
@@ -393,10 +403,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Datenschutz"),
     "quarterly": MessageLookupByLibrary.simpleMessage("Vierteljährlich"),
     "rateApp": MessageLookupByLibrary.simpleMessage("Bewerten Sie die App"),
+    "rateShortBiennial": MessageLookupByLibrary.simpleMessage("2J"),
+    "rateShortBimonthly": MessageLookupByLibrary.simpleMessage("2M"),
+    "rateShortBiweekly": MessageLookupByLibrary.simpleMessage("2W"),
     "rateShortFourMonthly": MessageLookupByLibrary.simpleMessage("4M"),
+    "rateShortFourWeekly": MessageLookupByLibrary.simpleMessage("4W"),
     "rateShortHalfYearly": MessageLookupByLibrary.simpleMessage("6M"),
     "rateShortMonthly": MessageLookupByLibrary.simpleMessage("M"),
     "rateShortQuarterly": MessageLookupByLibrary.simpleMessage("3M"),
+    "rateShortWeekly": MessageLookupByLibrary.simpleMessage("W"),
     "rateShortYearly": MessageLookupByLibrary.simpleMessage("J"),
     "remainingCosts": MessageLookupByLibrary.simpleMessage(
       "Verbleibende Kosten",
@@ -485,6 +500,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "untilEndOfYear": MessageLookupByLibrary.simpleMessage("Bis Jahresende"),
     "version": MessageLookupByLibrary.simpleMessage("Version"),
     "weekBefore": MessageLookupByLibrary.simpleMessage("Eine Woche vorher"),
+    "weekly": MessageLookupByLibrary.simpleMessage("Wöchentlich"),
     "year": MessageLookupByLibrary.simpleMessage("Jahr"),
     "yearly": MessageLookupByLibrary.simpleMessage("Jährlich"),
     "yearlyExpenses": MessageLookupByLibrary.simpleMessage(

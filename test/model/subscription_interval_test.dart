@@ -158,12 +158,19 @@ void main() {
         final next = s.getNextBillDate();
 
         expect(next.isAfter(DateTime.now()), isTrue, reason: rate.value);
-        expect(next.day, 11, reason: rate.value);
         // The next billing has to be reachable from the start date in whole
         // periods, otherwise the schedule has drifted.
-        final monthsApart =
-            (next.year - 2020) * 12 + (next.month - 3);
-        expect(monthsApart % rate.monthsPerPeriod, 0, reason: rate.value);
+        if (rate.daysPerPeriod > 0) {
+          final daysApart = DateTime.utc(next.year, next.month, next.day)
+              .difference(DateTime.utc(2020, 3, 11))
+              .inDays;
+          expect(daysApart % rate.daysPerPeriod, 0, reason: rate.value);
+        } else {
+          expect(next.day, 11, reason: rate.value);
+          final monthsApart =
+              (next.year - 2020) * 12 + (next.month - 3);
+          expect(monthsApart % rate.monthsPerPeriod, 0, reason: rate.value);
+        }
       }
     });
 
@@ -184,7 +191,9 @@ void main() {
       for (final rate in PaymentRate.values) {
         expect(
           sub(rate: rate, date: DateTime(2019, 7, 4)).remainingDays(),
-          lessThanOrEqualTo(rate.monthsPerPeriod * 31),
+          lessThanOrEqualTo(rate.daysPerPeriod > 0
+              ? rate.daysPerPeriod
+              : rate.monthsPerPeriod * 31),
           reason: rate.value,
         );
       }
