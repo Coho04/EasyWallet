@@ -10,6 +10,8 @@ import 'package:easy_wallet/class/widget_payload.dart';
 import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/model/category.dart' as model;
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/model/subscription_icon.dart';
+import 'package:easy_wallet/views/components/subscription_icon_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:home_widget/home_widget.dart';
@@ -44,7 +46,7 @@ class HomeWidgetBridge {
   static const String keyUpcoming = 'upcomingData';
   static const String keyCalendar = 'calendarData';
 
-  /// One rendered favicon per subscription, addressed by id.
+  /// One rendered icon per subscription, addressed by id.
   static String iconKey(int id) => 'icon_$id';
 
   /// How many billings the list shows.
@@ -158,7 +160,7 @@ class HomeWidgetBridge {
     );
   }
 
-  /// Renders one favicon per subscription into the shared container and
+  /// Renders one icon per subscription into the shared container and
   /// returns where each landed.
   ///
   /// The icon has to be in the image cache first: rendering happens in one
@@ -171,6 +173,20 @@ class HomeWidgetBridge {
     for (final subscription in subscriptions) {
       final id = subscription.id;
       if (id == null || paths.containsKey(id)) continue;
+
+      // A chosen icon wins here too, or the widget would show the favicon of
+      // a subscription the app itself shows with a symbol.
+      final chosen = subscription.chosenIcon;
+      if (chosen != null) {
+        try {
+          final path = await _writeChosenIcon(id, chosen);
+          if (path.isNotEmpty) paths[id] = path;
+        } catch (_) {
+          // No icon is better than no widget.
+        }
+        continue;
+      }
+
       final url = subscription.url;
       if (url == null || url.isEmpty) continue;
 
@@ -190,6 +206,23 @@ class HomeWidgetBridge {
     }
 
     return paths;
+  }
+
+  /// A picked picture is already a small PNG or JPEG and is written as it
+  /// is. Symbols and emojis are glyphs, which the widget cannot draw from
+  /// here, so they are rendered into a picture like the favicons.
+  static Future<String> _writeChosenIcon(int id, SubscriptionIcon icon) {
+    final bytes = icon.imageBytes;
+    if (icon.kind == IconKind.image && bytes != null) {
+      return HomeWidget.saveFile(iconKey(id), bytes,
+          extension: icon.imageExtension);
+    }
+    return HomeWidget.renderFlutterWidget(
+      SubscriptionIconView(icon: icon, width: 64, height: 64, borderRadius: 0),
+      key: iconKey(id),
+      logicalSize: const Size(64, 64),
+      pixelRatio: 3,
+    );
   }
 
   static Future<ui.Image> _awaitImage(ImageProvider provider) {

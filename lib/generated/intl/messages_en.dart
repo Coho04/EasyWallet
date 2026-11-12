@@ -68,9 +68,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "alphabeticalDescending": MessageLookupByLibrary.simpleMessage(
       "Alphabetical Descending",
     ),
+    "amazon_pay": MessageLookupByLibrary.simpleMessage("Amazon Pay"),
     "appCurrency": MessageLookupByLibrary.simpleMessage("App currency"),
     "appStats": MessageLookupByLibrary.simpleMessage("App Statistics"),
+    "app_store": MessageLookupByLibrary.simpleMessage("App Store"),
     "apple_pay": MessageLookupByLibrary.simpleMessage("Apple Pay"),
+    "bank_transfer": MessageLookupByLibrary.simpleMessage("Bank transfer"),
+    "biennial": MessageLookupByLibrary.simpleMessage("Every 2 years"),
+    "bimonthly": MessageLookupByLibrary.simpleMessage("Every 2 months"),
+    "biweekly": MessageLookupByLibrary.simpleMessage("Every 2 weeks"),
     "byPaymentMethod": MessageLookupByLibrary.simpleMessage(
       "By payment method",
     ),
@@ -81,6 +87,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancellationReminder": MessageLookupByLibrary.simpleMessage(
       "Cancellation deadline",
     ),
+    "cash": MessageLookupByLibrary.simpleMessage("Cash"),
     "catalogCachedNotice": MessageLookupByLibrary.simpleMessage(
       "Last loaded results",
     ),
@@ -132,9 +139,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "categoryTitle": MessageLookupByLibrary.simpleMessage("Category Title"),
     "chooseAColor": MessageLookupByLibrary.simpleMessage("Choose a color"),
     "chooseColor": MessageLookupByLibrary.simpleMessage("Choose color"),
+    "chooseEmoji": MessageLookupByLibrary.simpleMessage("Choose an emoji"),
     "chooseFromCatalog": MessageLookupByLibrary.simpleMessage(
       "Choose from catalog",
     ),
+    "chooseIcon": MessageLookupByLibrary.simpleMessage("Choose icon"),
+    "chooseSymbol": MessageLookupByLibrary.simpleMessage("Choose a symbol"),
     "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
     "contactDeveloper": MessageLookupByLibrary.simpleMessage(
       "Contact Developer",
@@ -200,6 +210,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "editSubscription": MessageLookupByLibrary.simpleMessage(
       "Edit subscription",
     ),
+    "emojiPlaceholder": MessageLookupByLibrary.simpleMessage("Type an emoji"),
     "enableAuthProtection": MessageLookupByLibrary.simpleMessage(
       "Enable Biometric",
     ),
@@ -236,6 +247,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "feedback": MessageLookupByLibrary.simpleMessage("Feedback"),
     "firstDebit": MessageLookupByLibrary.simpleMessage("First Debit"),
     "fourMonthly": MessageLookupByLibrary.simpleMessage("Every 4 months"),
+    "fourWeekly": MessageLookupByLibrary.simpleMessage("Every 4 weeks"),
     "general": MessageLookupByLibrary.simpleMessage("General"),
     "generalInformation": MessageLookupByLibrary.simpleMessage(
       "General information",
@@ -250,9 +262,17 @@ class MessageLookup extends MessageLookupByLibrary {
       "Google Drive logout successful",
     ),
     "google_pay": MessageLookupByLibrary.simpleMessage("Google Pay"),
+    "google_play": MessageLookupByLibrary.simpleMessage("Google Play"),
     "halfYearly": MessageLookupByLibrary.simpleMessage("Every 6 months"),
     "help": MessageLookupByLibrary.simpleMessage("Help"),
     "hint": MessageLookupByLibrary.simpleMessage("Hint"),
+    "iconEmoji": MessageLookupByLibrary.simpleMessage("Emoji"),
+    "iconFromWebsite": MessageLookupByLibrary.simpleMessage("Use website icon"),
+    "iconImage": MessageLookupByLibrary.simpleMessage("Photo from library"),
+    "iconImageFailed": MessageLookupByLibrary.simpleMessage(
+      "This picture could not be used as an icon.",
+    ),
+    "iconSymbol": MessageLookupByLibrary.simpleMessage("Symbol"),
     "import": MessageLookupByLibrary.simpleMessage("Import"),
     "importData": MessageLookupByLibrary.simpleMessage("Import Data"),
     "importFailed": MessageLookupByLibrary.simpleMessage("Import failed"),
@@ -272,6 +292,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "issuesOfMonthlySubscriptions": MessageLookupByLibrary.simpleMessage(
       "Issues of monthly subscriptions",
     ),
+    "klarna": MessageLookupByLibrary.simpleMessage("Klarna"),
     "limitLabel": MessageLookupByLibrary.simpleMessage("Limit"),
     "loading": MessageLookupByLibrary.simpleMessage("Loading..."),
     "month": MessageLookupByLibrary.simpleMessage("month"),
@@ -363,10 +384,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "privacyPolicy": MessageLookupByLibrary.simpleMessage("Privacy Policy"),
     "quarterly": MessageLookupByLibrary.simpleMessage("Quarterly"),
     "rateApp": MessageLookupByLibrary.simpleMessage("Rate the App"),
+    "rateShortBiennial": MessageLookupByLibrary.simpleMessage("2Y"),
+    "rateShortBimonthly": MessageLookupByLibrary.simpleMessage("2M"),
+    "rateShortBiweekly": MessageLookupByLibrary.simpleMessage("2W"),
     "rateShortFourMonthly": MessageLookupByLibrary.simpleMessage("4M"),
+    "rateShortFourWeekly": MessageLookupByLibrary.simpleMessage("4W"),
     "rateShortHalfYearly": MessageLookupByLibrary.simpleMessage("6M"),
     "rateShortMonthly": MessageLookupByLibrary.simpleMessage("M"),
     "rateShortQuarterly": MessageLookupByLibrary.simpleMessage("3M"),
+    "rateShortWeekly": MessageLookupByLibrary.simpleMessage("W"),
     "rateShortYearly": MessageLookupByLibrary.simpleMessage("Y"),
     "remainingCosts": MessageLookupByLibrary.simpleMessage("Remaining costs"),
     "remembering": MessageLookupByLibrary.simpleMessage("Remembering"),
@@ -455,6 +481,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "untilEndOfYear": MessageLookupByLibrary.simpleMessage("Until end of year"),
     "version": MessageLookupByLibrary.simpleMessage("Version"),
     "weekBefore": MessageLookupByLibrary.simpleMessage("One Week Before"),
+    "weekly": MessageLookupByLibrary.simpleMessage("Weekly"),
     "year": MessageLookupByLibrary.simpleMessage("year"),
     "yearly": MessageLookupByLibrary.simpleMessage("Yearly"),
     "yearlyExpenses": MessageLookupByLibrary.simpleMessage("Yearly Expenses"),

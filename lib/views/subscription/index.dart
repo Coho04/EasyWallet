@@ -75,13 +75,13 @@ class SubscriptionIndexViewState extends State<SubscriptionIndexView> {
   }
 
   Future<Color> _accentColor(Subscription sub) {
-    if (sub.url == null || sub.url!.isEmpty) {
+    if (sub.chosenIcon == null && (sub.url == null || sub.url!.isEmpty)) {
       return Future.value(CupertinoColors.activeBlue);
     }
-    final key = sub.getFaviconUrl();
+    final key = sub.accentKey;
     return _futureCache.putIfAbsent(
       key,
-      () => sub.getDominantColorFromUrl(customUrl: key).then((c) {
+      () => sub.accentColor(fallback: CupertinoColors.activeBlue).then((c) {
         _colorCache[key] = c;
         return c;
       }),

@@ -381,6 +381,70 @@
   "@rateShortYearly": {
     "description": "Abbreviation after a price billed once a year"
   },
+  "weekly": "Weekly",
+  "@weekly": {
+    "description": "Billing interval: every week"
+  },
+  "biweekly": "Every 2 weeks",
+  "@biweekly": {
+    "description": "Billing interval: every two weeks"
+  },
+  "fourWeekly": "Every 4 weeks",
+  "@fourWeekly": {
+    "description": "Billing interval: every four weeks (13 times a year)"
+  },
+  "bimonthly": "Every 2 months",
+  "@bimonthly": {
+    "description": "Billing interval: every two months"
+  },
+  "biennial": "Every 2 years",
+  "@biennial": {
+    "description": "Billing interval: every two years"
+  },
+  "rateShortWeekly": "W",
+  "@rateShortWeekly": {
+    "description": "Abbreviation after a price billed every week"
+  },
+  "rateShortBiweekly": "2W",
+  "@rateShortBiweekly": {
+    "description": "Abbreviation after a price billed every two weeks"
+  },
+  "rateShortFourWeekly": "4W",
+  "@rateShortFourWeekly": {
+    "description": "Abbreviation after a price billed every four weeks"
+  },
+  "rateShortBimonthly": "2M",
+  "@rateShortBimonthly": {
+    "description": "Abbreviation after a price billed every two months"
+  },
+  "rateShortBiennial": "2Y",
+  "@rateShortBiennial": {
+    "description": "Abbreviation after a price billed every two years"
+  },
+  "app_store": "App Store",
+  "@app_store": {
+    "description": "Payment method: billed through Apple's App Store"
+  },
+  "google_play": "Google Play",
+  "@google_play": {
+    "description": "Payment method: billed through Google Play"
+  },
+  "klarna": "Klarna",
+  "@klarna": {
+    "description": "Payment method"
+  },
+  "amazon_pay": "Amazon Pay",
+  "@amazon_pay": {
+    "description": "Payment method"
+  },
+  "bank_transfer": "Bank transfer",
+  "@bank_transfer": {
+    "description": "Payment method: manual bank transfer"
+  },
+  "cash": "Cash",
+  "@cash": {
+    "description": "Payment method: cash"
+  },
   "cancellationReminder": "Cancellation deadline",
   "cancellationDeadlineSoon": "Last chance to cancel {title}",
   "@cancellationDeadlineSoon": {
@@ -409,5 +473,29 @@
   "yearlyPriceIncrease": "Price increase per year",
   "@yearlyPriceIncrease": {
     "description": "Statistics tile: how much more a year of subscriptions costs than at the start"
-  }
+  },
+  "chooseIcon": "Choose icon",
+  "@chooseIcon": {
+    "description": "Title of the sheet that changes the icon of a subscription"
+  },
+  "iconSymbol": "Symbol",
+  "@iconSymbol": {
+    "description": "Icon source: a symbol from the app's own set"
+  },
+  "iconEmoji": "Emoji",
+  "@iconEmoji": {
+    "description": "Icon source: a single emoji"
+  },
+  "iconImage": "Photo from library",
+  "@iconImage": {
+    "description": "Icon source: a picture from the device's photo library"
+  },
+  "iconFromWebsite": "Use website icon",
+  "@iconFromWebsite": {
+    "description": "Removes the chosen icon so the favicon of the subscription's URL is shown again"
+  },
+  "chooseSymbol": "Choose a symbol",
+  "chooseEmoji": "Choose an emoji",
+  "emojiPlaceholder": "Type an emoji",
+  "iconImageFailed": "This picture could not be used as an icon."
 }

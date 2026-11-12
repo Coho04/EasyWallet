@@ -1,10 +1,10 @@
 import 'package:easy_wallet/enum/currency.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/easy_wallet_app.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
 import 'package:easy_wallet/managers/subscription_catalog_service.dart';
 import 'package:easy_wallet/model/subscription.dart';
+import 'package:easy_wallet/model/subscription_icon.dart';
 import 'package:easy_wallet/model/subscription_template.dart';
 import 'package:easy_wallet/views/subscription/template_picker.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
@@ -15,6 +15,7 @@ import 'package:easy_wallet/views/components/form_fields/date_picker_field.dart'
 import 'package:easy_wallet/views/components/form_fields/dropdown_field.dart';
 import 'package:easy_wallet/views/components/form_fields/text_field.dart';
 import 'package:easy_wallet/views/components/gradient_header.dart';
+import 'package:easy_wallet/views/components/icon_picker_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
@@ -46,6 +47,7 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   String _selectedPayRate = PaymentRate.monthly.value;
   String _selectedPayMethode = PaymentMethode.invoice.value;
   String _selectedRememberCycle = RememberCycle.sameDay.value;
+  SubscriptionIcon? _icon;
 
   List<category.Category> _selectedCategories = [];
 
@@ -404,7 +406,11 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
   Widget _buildHeader(bool isDarkMode) {
     return Row(
       children: [
-        _buildImage(),
+        SubscriptionIconPicker(
+          icon: _icon,
+          url: _urlController.text,
+          onChanged: (icon) => setState(() => _icon = icon),
+        ),
         const SizedBox(width: 16),
         Expanded(
           child: CupertinoTextField(
@@ -432,29 +438,6 @@ class SubscriptionCreateViewState extends State<SubscriptionCreateView> {
         ),
       ],
     );
-  }
-
-  Widget _buildImage() {
-    if (_urlController.text.isEmpty) {
-      return const Icon(
-        CupertinoIcons.creditcard,
-        color: CupertinoColors.systemGrey,
-        size: 40,
-      );
-    } else {
-      return CachedNetworkImage(
-        imageUrl:
-            'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(_urlController.text).host}',
-        placeholder: (context, url) => const CupertinoActivityIndicator(),
-        errorWidget: (context, url, error) => const Icon(
-          CupertinoIcons.exclamationmark_triangle,
-          color: CupertinoColors.systemGrey,
-          size: 40,
-        ),
-        width: 40,
-        height: 40,
-      );
-    }
   }
 
   Future<void> _pickDate() async {
@@ -618,6 +601,7 @@ Future<void> _pickTrialEndDate() async {
         repeatPattern: _selectedPayRate,
         notes: notes,
         url: url,
+        icon: _icon,
         rememberCycle: _selectedRememberCycle,
         paymentMethode: _selectedPayMethode,
         timestamp: DateTime.now(),

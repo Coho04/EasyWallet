@@ -170,12 +170,8 @@ void main() {
     });
 
     test('drops a plan whose interval the app cannot store', () {
-      // A weekly price silently stored as monthly would be a wrong number in
+      // A daily price silently stored as monthly would be a wrong number in
       // every total the app shows.
-      expect(
-        plan('{"amount_minor": 500, "currency": "EUR", "interval": "weekly"}'),
-        isNull,
-      );
       expect(
         plan('{"amount_minor": 500, "currency": "EUR", "interval": "daily"}'),
         isNull,
@@ -189,6 +185,11 @@ void main() {
         'quarterly': PaymentRate.quarterly,
         'fourMonthly': PaymentRate.fourMonthly,
         'halfYearly': PaymentRate.halfYearly,
+        'weekly': PaymentRate.weekly,
+        'biweekly': PaymentRate.biweekly,
+        'fourWeekly': PaymentRate.fourWeekly,
+        'bimonthly': PaymentRate.bimonthly,
+        'biennial': PaymentRate.biennial,
       }.entries) {
         final parsed = plan(
             '{"amount_minor": 4999, "currency": "EUR", "interval": "${interval.key}"}');

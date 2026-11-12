@@ -1,11 +1,11 @@
 import 'package:easy_wallet/class/exchange_rates.dart';
 import 'package:easy_wallet/class/money.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/enum/currency.dart';
 import 'package:easy_wallet/enum/payment_rate.dart';
 import 'package:easy_wallet/enum/remember_cycle.dart';
+import 'package:easy_wallet/model/subscription_icon.dart';
 import 'package:easy_wallet/persistence_controller.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:easy_wallet/views/components/subscription_icon_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -46,6 +46,9 @@ class Subscription {
   String title;
   String? url;
 
+  /// The icon the user picked. Null means the icon comes from [url].
+  SubscriptionIcon? icon;
+
   Subscription({
     this.id,
     required this.amount,
@@ -65,6 +68,7 @@ class Subscription {
     this.timestamp,
     required this.title,
     this.url,
+    this.icon,
   });
 
   Map<String, dynamic> toJson() {
@@ -87,6 +91,9 @@ class Subscription {
       'timestamp': timestamp?.toIso8601String(),
       'title': title,
       'url': url,
+      'iconType': icon?.type,
+      'iconValue': icon?.value,
+      'iconColor': icon?.color,
     };
   }
 
@@ -158,8 +165,25 @@ class Subscription {
     return Colors.grey;
   }
 
-  String getFaviconUrl() {
-    return 'https://www.google.com/s2/favicons?sz=64&domain_url=${Uri.parse(url!).host}';
+  String getFaviconUrl() => faviconUrlFor(url!);
+
+  /// The chosen icon, as long as this build can draw it. A chosen icon always
+  /// wins over the favicon; one this build cannot draw is treated as absent.
+  SubscriptionIcon? get chosenIcon =>
+      (icon?.isRenderable ?? false) ? icon : null;
+
+  /// Identifies the picture the accent colour is taken from, for the colour
+  /// caches of the list and the statistics.
+  String get accentKey => chosenIcon?.cacheKey ?? getFaviconUrl();
+
+  /// The colour this subscription is drawn in: the one belonging to the
+  /// chosen icon, otherwise the dominant colour of the favicon as before.
+  Future<Color> accentColor({Color fallback = Colors.grey}) {
+    final chosen = chosenIcon;
+    if (chosen != null) {
+      return chosen.accentColor(fallback: fallback);
+    }
+    return getDominantColorFromUrl(customUrl: getFaviconUrl());
   }
 
   DateTime getNextBillDate() {
@@ -176,34 +200,15 @@ class Subscription {
     double errorImgSize = 40,
     double borderRadius = 8.0,
   }) {
-    if (url == null || url!.isEmpty) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: Icon(
-          url == null
-              ? CupertinoIcons.exclamationmark_triangle
-              : Icons.account_balance_wallet_rounded,
-          color: CupertinoColors.systemGrey,
-          size: errorImgSize,
-        ),
-      );
-    } else {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: CachedNetworkImage(
-          imageUrl: getFaviconUrl(),
-          placeholder: (context, url) => const CupertinoActivityIndicator(),
-          errorWidget: (context, url, error) => const Icon(
-            CupertinoIcons.exclamationmark_triangle,
-            color: CupertinoColors.systemGrey,
-            size: 40,
-          ),
-          fit: boxFit,
-          width: width,
-          height: height,
-        ),
-      );
-    }
+    return SubscriptionIconView(
+      icon: icon,
+      url: url,
+      width: width,
+      height: height,
+      fit: boxFit,
+      errorImgSize: errorImgSize,
+      borderRadius: borderRadius,
+    );
   }
 
   Future<bool> hasCategories() async {
@@ -391,6 +396,7 @@ class Subscription {
           json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
       title: json['title'],
       url: json['url'],
+      icon: SubscriptionIcon.fromJson(json),
     );
   }
 
@@ -419,6 +425,7 @@ class Subscription {
           json['timestamp'] != null ? DateTime.parse(json['timestamp']) : null,
       title: json['title'],
       url: json['url'],
+      icon: SubscriptionIcon.fromJson(json),
     );
   }
 

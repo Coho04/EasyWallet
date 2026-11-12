@@ -48,7 +48,7 @@ class PersistenceController {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, 'easywallet.db');
 
-    return await openDatabase(path, version: 7, onCreate: (db, version) {
+    return await openDatabase(path, version: 8, onCreate: (db, version) {
       db.execute('''
         CREATE TABLE IF NOT EXISTS categories(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -98,7 +98,10 @@ class PersistenceController {
             repeatPattern TEXT DEFAULT NULL,
             timestamp TEXT DEFAULT NULL,
             paymentMethode TEXT DEFAULT NULL,
-            url TEXT DEFAULT NULL
+            url TEXT DEFAULT NULL,
+            iconType TEXT DEFAULT NULL,
+            iconValue TEXT DEFAULT NULL,
+            iconColor INTEGER DEFAULT NULL
           )
           ''',
       );
@@ -150,6 +153,16 @@ class PersistenceController {
       if (oldVersion < 7) {
         await db.execute(
             'ALTER TABLE subscriptions ADD COLUMN noticePeriodDays INTEGER DEFAULT NULL;');
+      }
+      if (oldVersion < 8) {
+        // An explicitly chosen icon. All NULL for existing rows, which keeps
+        // showing their favicon exactly as before.
+        await db.execute(
+            'ALTER TABLE subscriptions ADD COLUMN iconType TEXT DEFAULT NULL;');
+        await db.execute(
+            'ALTER TABLE subscriptions ADD COLUMN iconValue TEXT DEFAULT NULL;');
+        await db.execute(
+            'ALTER TABLE subscriptions ADD COLUMN iconColor INTEGER DEFAULT NULL;');
       }
     });
   }

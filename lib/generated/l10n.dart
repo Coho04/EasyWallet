@@ -2090,6 +2090,166 @@ class S {
     );
   }
 
+  /// `Weekly`
+  String get weekly {
+    return Intl.message(
+      'Weekly',
+      name: 'weekly',
+      desc: 'Billing interval: every week',
+      args: [],
+    );
+  }
+
+  /// `Every 2 weeks`
+  String get biweekly {
+    return Intl.message(
+      'Every 2 weeks',
+      name: 'biweekly',
+      desc: 'Billing interval: every two weeks',
+      args: [],
+    );
+  }
+
+  /// `Every 4 weeks`
+  String get fourWeekly {
+    return Intl.message(
+      'Every 4 weeks',
+      name: 'fourWeekly',
+      desc: 'Billing interval: every four weeks (13 times a year)',
+      args: [],
+    );
+  }
+
+  /// `Every 2 months`
+  String get bimonthly {
+    return Intl.message(
+      'Every 2 months',
+      name: 'bimonthly',
+      desc: 'Billing interval: every two months',
+      args: [],
+    );
+  }
+
+  /// `Every 2 years`
+  String get biennial {
+    return Intl.message(
+      'Every 2 years',
+      name: 'biennial',
+      desc: 'Billing interval: every two years',
+      args: [],
+    );
+  }
+
+  /// `W`
+  String get rateShortWeekly {
+    return Intl.message(
+      'W',
+      name: 'rateShortWeekly',
+      desc: 'Abbreviation after a price billed every week',
+      args: [],
+    );
+  }
+
+  /// `2W`
+  String get rateShortBiweekly {
+    return Intl.message(
+      '2W',
+      name: 'rateShortBiweekly',
+      desc: 'Abbreviation after a price billed every two weeks',
+      args: [],
+    );
+  }
+
+  /// `4W`
+  String get rateShortFourWeekly {
+    return Intl.message(
+      '4W',
+      name: 'rateShortFourWeekly',
+      desc: 'Abbreviation after a price billed every four weeks',
+      args: [],
+    );
+  }
+
+  /// `2M`
+  String get rateShortBimonthly {
+    return Intl.message(
+      '2M',
+      name: 'rateShortBimonthly',
+      desc: 'Abbreviation after a price billed every two months',
+      args: [],
+    );
+  }
+
+  /// `2Y`
+  String get rateShortBiennial {
+    return Intl.message(
+      '2Y',
+      name: 'rateShortBiennial',
+      desc: 'Abbreviation after a price billed every two years',
+      args: [],
+    );
+  }
+
+  /// `App Store`
+  String get app_store {
+    return Intl.message(
+      'App Store',
+      name: 'app_store',
+      desc: 'Payment method: billed through Apple\'s App Store',
+      args: [],
+    );
+  }
+
+  /// `Google Play`
+  String get google_play {
+    return Intl.message(
+      'Google Play',
+      name: 'google_play',
+      desc: 'Payment method: billed through Google Play',
+      args: [],
+    );
+  }
+
+  /// `Klarna`
+  String get klarna {
+    return Intl.message(
+      'Klarna',
+      name: 'klarna',
+      desc: 'Payment method',
+      args: [],
+    );
+  }
+
+  /// `Amazon Pay`
+  String get amazon_pay {
+    return Intl.message(
+      'Amazon Pay',
+      name: 'amazon_pay',
+      desc: 'Payment method',
+      args: [],
+    );
+  }
+
+  /// `Bank transfer`
+  String get bank_transfer {
+    return Intl.message(
+      'Bank transfer',
+      name: 'bank_transfer',
+      desc: 'Payment method: manual bank transfer',
+      args: [],
+    );
+  }
+
+  /// `Cash`
+  String get cash {
+    return Intl.message(
+      'Cash',
+      name: 'cash',
+      desc: 'Payment method: cash',
+      args: [],
+    );
+  }
+
   /// `Cancellation deadline`
   String get cancellationReminder {
     return Intl.message(
@@ -2176,6 +2336,96 @@ class S {
       'Price increase per year',
       name: 'yearlyPriceIncrease',
       desc: 'Statistics tile: how much more a year of subscriptions costs than at the start',
+      args: [],
+    );
+  }
+
+  /// `Choose icon`
+  String get chooseIcon {
+    return Intl.message(
+      'Choose icon',
+      name: 'chooseIcon',
+      desc: 'Title of the sheet that changes the icon of a subscription',
+      args: [],
+    );
+  }
+
+  /// `Symbol`
+  String get iconSymbol {
+    return Intl.message(
+      'Symbol',
+      name: 'iconSymbol',
+      desc: 'Icon source: a symbol from the app\'s own set',
+      args: [],
+    );
+  }
+
+  /// `Emoji`
+  String get iconEmoji {
+    return Intl.message(
+      'Emoji',
+      name: 'iconEmoji',
+      desc: 'Icon source: a single emoji',
+      args: [],
+    );
+  }
+
+  /// `Photo from library`
+  String get iconImage {
+    return Intl.message(
+      'Photo from library',
+      name: 'iconImage',
+      desc: 'Icon source: a picture from the device\'s photo library',
+      args: [],
+    );
+  }
+
+  /// `Use website icon`
+  String get iconFromWebsite {
+    return Intl.message(
+      'Use website icon',
+      name: 'iconFromWebsite',
+      desc: 'Removes the chosen icon so the favicon of the subscription\'s URL is shown again',
+      args: [],
+    );
+  }
+
+  /// `Choose a symbol`
+  String get chooseSymbol {
+    return Intl.message(
+      'Choose a symbol',
+      name: 'chooseSymbol',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose an emoji`
+  String get chooseEmoji {
+    return Intl.message(
+      'Choose an emoji',
+      name: 'chooseEmoji',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type an emoji`
+  String get emojiPlaceholder {
+    return Intl.message(
+      'Type an emoji',
+      name: 'emojiPlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This picture could not be used as an icon.`
+  String get iconImageFailed {
+    return Intl.message(
+      'This picture could not be used as an icon.',
+      name: 'iconImageFailed',
+      desc: '',
       args: [],
     );
   }
