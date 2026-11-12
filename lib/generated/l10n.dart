@@ -2339,6 +2339,96 @@ class S {
       args: [],
     );
   }
+
+  /// `Choose icon`
+  String get chooseIcon {
+    return Intl.message(
+      'Choose icon',
+      name: 'chooseIcon',
+      desc: 'Title of the sheet that changes the icon of a subscription',
+      args: [],
+    );
+  }
+
+  /// `Symbol`
+  String get iconSymbol {
+    return Intl.message(
+      'Symbol',
+      name: 'iconSymbol',
+      desc: 'Icon source: a symbol from the app\'s own set',
+      args: [],
+    );
+  }
+
+  /// `Emoji`
+  String get iconEmoji {
+    return Intl.message(
+      'Emoji',
+      name: 'iconEmoji',
+      desc: 'Icon source: a single emoji',
+      args: [],
+    );
+  }
+
+  /// `Photo from library`
+  String get iconImage {
+    return Intl.message(
+      'Photo from library',
+      name: 'iconImage',
+      desc: 'Icon source: a picture from the device\'s photo library',
+      args: [],
+    );
+  }
+
+  /// `Use website icon`
+  String get iconFromWebsite {
+    return Intl.message(
+      'Use website icon',
+      name: 'iconFromWebsite',
+      desc: 'Removes the chosen icon so the favicon of the subscription\'s URL is shown again',
+      args: [],
+    );
+  }
+
+  /// `Choose a symbol`
+  String get chooseSymbol {
+    return Intl.message(
+      'Choose a symbol',
+      name: 'chooseSymbol',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose an emoji`
+  String get chooseEmoji {
+    return Intl.message(
+      'Choose an emoji',
+      name: 'chooseEmoji',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type an emoji`
+  String get emojiPlaceholder {
+    return Intl.message(
+      'Type an emoji',
+      name: 'emojiPlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This picture could not be used as an icon.`
+  String get iconImageFailed {
+    return Intl.message(
+      'This picture could not be used as an icon.',
+      name: 'iconImageFailed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

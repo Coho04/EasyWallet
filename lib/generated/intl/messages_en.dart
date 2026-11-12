@@ -139,9 +139,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "categoryTitle": MessageLookupByLibrary.simpleMessage("Category Title"),
     "chooseAColor": MessageLookupByLibrary.simpleMessage("Choose a color"),
     "chooseColor": MessageLookupByLibrary.simpleMessage("Choose color"),
+    "chooseEmoji": MessageLookupByLibrary.simpleMessage("Choose an emoji"),
     "chooseFromCatalog": MessageLookupByLibrary.simpleMessage(
       "Choose from catalog",
     ),
+    "chooseIcon": MessageLookupByLibrary.simpleMessage("Choose icon"),
+    "chooseSymbol": MessageLookupByLibrary.simpleMessage("Choose a symbol"),
     "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
     "contactDeveloper": MessageLookupByLibrary.simpleMessage(
       "Contact Developer",
@@ -207,6 +210,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "editSubscription": MessageLookupByLibrary.simpleMessage(
       "Edit subscription",
     ),
+    "emojiPlaceholder": MessageLookupByLibrary.simpleMessage("Type an emoji"),
     "enableAuthProtection": MessageLookupByLibrary.simpleMessage(
       "Enable Biometric",
     ),
@@ -262,6 +266,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "halfYearly": MessageLookupByLibrary.simpleMessage("Every 6 months"),
     "help": MessageLookupByLibrary.simpleMessage("Help"),
     "hint": MessageLookupByLibrary.simpleMessage("Hint"),
+    "iconEmoji": MessageLookupByLibrary.simpleMessage("Emoji"),
+    "iconFromWebsite": MessageLookupByLibrary.simpleMessage("Use website icon"),
+    "iconImage": MessageLookupByLibrary.simpleMessage("Photo from library"),
+    "iconImageFailed": MessageLookupByLibrary.simpleMessage(
+      "This picture could not be used as an icon.",
+    ),
+    "iconSymbol": MessageLookupByLibrary.simpleMessage("Symbol"),
     "import": MessageLookupByLibrary.simpleMessage("Import"),
     "importData": MessageLookupByLibrary.simpleMessage("Import Data"),
     "importFailed": MessageLookupByLibrary.simpleMessage("Import failed"),

@@ -97,13 +97,11 @@ class StatisticViewState extends State<StatisticView> {
   Future<void> prefetchColors(List<Subscription> subscriptions) async {
     final futures = <Future>[];
     for (var subscription in subscriptions) {
-      String faviconUrl = subscription.getFaviconUrl();
-      futures.add(subscription
-          .getDominantColorFromUrl(customUrl: faviconUrl)
-          .then((color) {
-        colorCache[faviconUrl] = color;
+      final colorKey = subscription.accentKey;
+      futures.add(subscription.accentColor().then((color) {
+        colorCache[colorKey] = color;
       }).catchError((e) {
-        colorCache[faviconUrl] = Colors.grey;
+        colorCache[colorKey] = Colors.grey;
       }));
     }
     await Future.wait(futures);
@@ -498,9 +496,9 @@ class StatisticViewState extends State<StatisticView> {
     return List.generate(subscriptions.length, (index) {
       final subscription = subscriptions[index];
       double percentage = (subscription.amount / totalExpenses) * 100;
-      String faviconUrl = subscription.getFaviconUrl();
-      Color? color = colorCache.containsKey(faviconUrl)
-          ? colorCache[faviconUrl]
+      final colorKey = subscription.accentKey;
+      Color? color = colorCache.containsKey(colorKey)
+          ? colorCache[colorKey]
           : getRandomColor();
 
       final isTouched = index == touchedIndex;
@@ -516,7 +514,9 @@ class StatisticViewState extends State<StatisticView> {
         titlePositionPercentageOffset: 0.65,
         radius: radius,
         badgeWidget: BadgeComponent(
-            imageUrl: faviconUrl, size: widgetSize, subscription: subscription),
+            imageUrl: subscription.getFaviconUrl(),
+            size: widgetSize,
+            subscription: subscription),
         badgePositionPercentageOffset: 1.25,
         titleStyle: TextStyle(
           fontSize: fontSize,
@@ -667,7 +667,7 @@ class StatisticViewState extends State<StatisticView> {
   dynamic buildStackedColumn100Series(
       Subscription subscription, String category, double value,
       {bool stackedColumnSeries = false}) {
-    Color? color = colorCache[subscription.getFaviconUrl()] ?? Colors.grey;
+    Color? color = colorCache[subscription.accentKey] ?? Colors.grey;
     bool isSelected = _selectedSubscriptionId == subscription.id;
     final isDarkMode =
         MediaQuery.of(context).platformBrightness == Brightness.dark;

@@ -21,6 +21,11 @@ or yearly), a payment method, a reminder cycle, optional notes, and a website.
 The website provides the service's icon, which is why entries appear with their
 real logo.
 
+- **Icon** — optional. Tapping the icon in the form picks a symbol (with a
+  colour), an emoji or a photo from the library instead. A chosen icon wins over
+  the website's, sets the subscription's accent colour and shows in the home
+  screen widget too. Photos are shrunk to 128 px and stored inside the
+  subscription, so backups and cloud sync carry them without extra files.
 - **End date** — optional. A cancelled subscription runs until that day and is
   not billed afterwards; the day itself still counts.
 - **Pause** — keeps the entry but stops billing and reminders.
@@ -102,7 +107,7 @@ dart pub global run intl_utils:generate
 | | |
 | --- | --- |
 | Framework | Flutter with Cupertino widgets throughout; the only Material widget left in the running app is a transparent wrapper the third-party chip display requires |
-| Storage | sqflite, schema version 5, migrated with `ALTER TABLE` on upgrade |
+| Storage | sqflite, schema version 8, migrated with `ALTER TABLE` on upgrade |
 | State | `provider` |
 | Localisation | `intl` with `intl_utils` |
 | Notifications | `flutter_local_notifications`, scheduled ahead via `zonedSchedule` |

@@ -99,7 +99,7 @@
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your photo library to save backups.</string>
+	<string>EasyWallet needs access to your photo library to use a photo as the icon of a subscription and to save backups.</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 </dict>

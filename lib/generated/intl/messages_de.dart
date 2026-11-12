@@ -147,9 +147,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Wählen Sie eine Farbe",
     ),
     "chooseColor": MessageLookupByLibrary.simpleMessage("Farbe wählen"),
+    "chooseEmoji": MessageLookupByLibrary.simpleMessage("Emoji wählen"),
     "chooseFromCatalog": MessageLookupByLibrary.simpleMessage(
       "Aus Katalog wählen",
     ),
+    "chooseIcon": MessageLookupByLibrary.simpleMessage("Icon wählen"),
+    "chooseSymbol": MessageLookupByLibrary.simpleMessage("Symbol wählen"),
     "confirm": MessageLookupByLibrary.simpleMessage("Bestätigen"),
     "contactDeveloper": MessageLookupByLibrary.simpleMessage(
       "Kontaktieren Sie den Entwickler",
@@ -221,6 +224,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "editSubscription": MessageLookupByLibrary.simpleMessage(
       "Abonnement bearbeiten",
     ),
+    "emojiPlaceholder": MessageLookupByLibrary.simpleMessage("Emoji eingeben"),
     "enableAuthProtection": MessageLookupByLibrary.simpleMessage(
       "Biometrie aktivieren",
     ),
@@ -278,6 +282,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "halfYearly": MessageLookupByLibrary.simpleMessage("Halbjährlich"),
     "help": MessageLookupByLibrary.simpleMessage("Hilfe"),
     "hint": MessageLookupByLibrary.simpleMessage("Hinweis"),
+    "iconEmoji": MessageLookupByLibrary.simpleMessage("Emoji"),
+    "iconFromWebsite": MessageLookupByLibrary.simpleMessage(
+      "Icon der Website verwenden",
+    ),
+    "iconImage": MessageLookupByLibrary.simpleMessage("Foto aus der Mediathek"),
+    "iconImageFailed": MessageLookupByLibrary.simpleMessage(
+      "Dieses Bild konnte nicht als Icon verwendet werden.",
+    ),
+    "iconSymbol": MessageLookupByLibrary.simpleMessage("Symbol"),
     "import": MessageLookupByLibrary.simpleMessage("Importieren"),
     "importData": MessageLookupByLibrary.simpleMessage("Daten importieren"),
     "importFailed": MessageLookupByLibrary.simpleMessage(

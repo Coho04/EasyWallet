@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_wallet/class/money.dart';
 import 'package:easy_wallet/managers/subscription_catalog_service.dart';
+import 'package:easy_wallet/model/subscription_icon.dart';
 import 'package:easy_wallet/model/subscription_template.dart';
 import 'package:easy_wallet/provider/currency_provider.dart';
 import 'package:easy_wallet/views/components/gradient_header.dart';
@@ -236,7 +237,7 @@ class TemplatePickerViewState extends State<TemplatePickerView> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: CachedNetworkImage(
-        imageUrl: 'https://www.google.com/s2/favicons?sz=64&domain_url=$host',
+        imageUrl: faviconUrlFor(template.websiteUrl!),
         width: 36,
         height: 36,
         fit: BoxFit.cover,

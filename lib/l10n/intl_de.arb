@@ -473,5 +473,29 @@
   "yearlyPriceIncrease": "Preissteigerung pro Jahr",
   "@yearlyPriceIncrease": {
     "description": "Statistics tile: how much more a year of subscriptions costs than at the start"
-  }
+  },
+  "chooseIcon": "Icon wählen",
+  "@chooseIcon": {
+    "description": "Title of the sheet that changes the icon of a subscription"
+  },
+  "iconSymbol": "Symbol",
+  "@iconSymbol": {
+    "description": "Icon source: a symbol from the app's own set"
+  },
+  "iconEmoji": "Emoji",
+  "@iconEmoji": {
+    "description": "Icon source: a single emoji"
+  },
+  "iconImage": "Foto aus der Mediathek",
+  "@iconImage": {
+    "description": "Icon source: a picture from the device's photo library"
+  },
+  "iconFromWebsite": "Icon der Website verwenden",
+  "@iconFromWebsite": {
+    "description": "Removes the chosen icon so the favicon of the subscription's URL is shown again"
+  },
+  "chooseSymbol": "Symbol wählen",
+  "chooseEmoji": "Emoji wählen",
+  "emojiPlaceholder": "Emoji eingeben",
+  "iconImageFailed": "Dieses Bild konnte nicht als Icon verwendet werden."
 }
