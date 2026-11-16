@@ -713,10 +713,10 @@ packages:
     dependency: transitive
     description:
       name: material_ui
-      sha256: "32d98f11cf5942a095a8c3e01b03e4de3b17941437713dcf36b1088fb62e23d2"
+      sha256: "474c135fd46b56ff1d35ca982155e8863d28fbc6464d1192acf4ee53a738680e"
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.0"
+    version: "1.11.0"
   meta:
     dependency: transitive
     description:
@@ -1126,18 +1126,18 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_charts
-      sha256: "07e2a341b7c1811cf19424dedf4cc3496e47e1c053b52521a54cb29fba644525"
+      sha256: "7c845dc994bc290d3a291be3be14b85b978e814bad04284a64d80906504f95c3"
       url: "https://pub.dev"
     source: hosted
-    version: "35.1.43"
+    version: "35.1.46"
   syncfusion_flutter_core:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: "8134debe4523ef329e4e62f9167d1853b2af4779219e7bb1dc03cf3a26ac571f"
+      sha256: f62f7a981072ce5dfbff4d8cf2fc667322a65ba0cfd13bf357270827b7206191
       url: "https://pub.dev"
     source: hosted
-    version: "35.1.43"
+    version: "35.1.46"
   synchronized:
     dependency: transitive
     description:
